@@ -1,4 +1,4 @@
-Battlecode Server
+Battlecode Server [![Build Status](https://circleci.com/gh/battlecode/battlecode-server.svg?style=svg&circle-token=1c4becec6066bcbddddee5b3cca9d5c4b8828069)](https://circleci.com/gh/battlecode/battlecode-server)
 =================
 
 *NOTE: If you are a competitor, you can download the installer that does all these steps for you. See http://www.battlecode.org/contestants/releases/.*
