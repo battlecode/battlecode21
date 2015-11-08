@@ -1,4 +1,4 @@
-Battlecode Server [![Build Status](https://circleci.com/gh/battlecode/battlecode-server.svg?style=svg&circle-token=1c4becec6066bcbddddee5b3cca9d5c4b8828069)](https://circleci.com/gh/battlecode/battlecode-server)
+Battlecode Server [![Build Status](https://circleci.com/gh/battlecode/battlecode-server.svg?style=shield&circle-token=1c4becec6066bcbddddee5b3cca9d5c4b8828069)](https://circleci.com/gh/battlecode/battlecode-server)
 =================
 
 Basic Guide to the Codebase
