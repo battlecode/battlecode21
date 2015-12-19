@@ -19,7 +19,9 @@ These are serialized and then transferred to the client, which processes these e
 necessary updates.
 * `analysis`: deprecated code that would be cool to bring back.
 * `doc`: tells Javadocs how to create the documentation. `RobotDoc` is pretty important.
-* `engine`: the core game engine code that handles all the robot code execution.
+* `instrumenter`: handles instrumenting player code so that it is isolated, deterministic, and counts bytecodes.
+  * `instrumenter/bytecode`: the actual bytecode-modification code.
+  * `instrumenter/inject`: classes we replace various parts of java.lang with. Also contains RobotMonitor, which counts bytecodes.
 * `server`: contains the main class that starts up the engine.
 * `serial`: contains some information that gets sent to the client as part of every match, such as who won.
 
