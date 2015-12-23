@@ -29,5 +29,3 @@ Tests
 -----
 
 Tests can be run locally with "ant test", and are also run continuous-integration style on CircleCI.
-
-Note that only test classes *ending* in the word Test are run as tests.
