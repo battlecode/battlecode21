@@ -1,6 +1,14 @@
 Battlecode Server [![Build Status](https://circleci.com/gh/battlecode/battlecode-server.svg?style=shield&circle-token=1c4becec6066bcbddddee5b3cca9d5c4b8828069)](https://circleci.com/gh/battlecode/battlecode-server)
 =================
 
+Basic Guide to Building
+-----------------------
+Java 1.8 is required.
+
+1. `ant retrieve` - fetches dependencies
+2. `ant` - will build and compile
+3. `ant jar` - generates the battlecode jarfile (needed by battelcode-client)
+
 Basic Guide to the Codebase
 ---------------------------
 
