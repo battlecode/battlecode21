@@ -1,4 +1,4 @@
-# battlecode-playback 📼 [![CircleCI](https://circleci.com/gh/battlecode/battlecode-playback.svg?style=svg)](https://circleci.com/gh/battlecode/battlecode-playback)
+# battlecode-playback 📼
 Analyze battlecode match files programmatically.
 
 ## Contributing
