@@ -1,5 +1,9 @@
-# battlecode-playback 📼
+# battlecode-playback 📼 [![CircleCI](https://circleci.com/gh/battlecode/battlecode-playback.svg?style=svg)](https://circleci.com/gh/battlecode/battlecode-playback)
 Analyze battlecode match files programmatically.
+
+## Contributing
+Before you commit, you HAVE to run `npm run build` and commit the changes in the out/ directory.
+This is a slightly painful fact due to typescript, sorry.
 
 ## Quick sample:
 Install [node](nodejs.org).
