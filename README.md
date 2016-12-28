@@ -1,13 +1,17 @@
 Battlecode Server [![Build Status](https://circleci.com/gh/battlecode/battlecode-server.svg?style=shield&circle-token=1c4becec6066bcbddddee5b3cca9d5c4b8828069)](https://circleci.com/gh/battlecode/battlecode-server)
 =================
 
+If you're a competitor, you don't need to be here.
+
+Unless you're a hacker.
+
 Basic Guide to Building
 -----------------------
 Java 1.8 is required.
 
-1. `ant retrieve` - fetches dependencies
-2. `ant` - will build and compile
-3. `ant jar` - generates the battlecode jarfile (needed by battlecode-client)
+1. `./gradlew build` - to build
+2. `./gradlew javadoc` - to make javadocs
+3. `./gradlew test` - to run tests
 
 Basic Guide to the Codebase
 ---------------------------
@@ -32,8 +36,3 @@ necessary updates.
   * `instrumenter/inject`: classes we replace various parts of java.lang with. Also contains RobotMonitor, which counts bytecodes.
 * `server`: contains the main class that starts up the engine.
 * `serial`: contains some information that gets sent to the client as part of every match, such as who won.
-
-Tests
------
-
-Tests can be run locally with "ant test", and are also run continuous-integration style on CircleCI.
