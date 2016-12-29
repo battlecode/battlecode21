@@ -7,7 +7,7 @@ Unless you're a hacker.
 
 Basic Guide to Building
 -----------------------
-Java 1.8 is required.
+Java 1.8 is required. Make sure you have the `JAVA_HOME` environment variable set to the appropriate value for your system.
 
 1. `./gradlew build` - to build
 2. `./gradlew javadoc` - to make javadocs
