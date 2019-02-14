@@ -19,29 +19,6 @@ def build(bytecode, new_code, new_names, new_co_consts):
                     bytecode.co_freevars,
                     bytecode.co_cellvars)
 
-instruction_count = 0
-def __instrument__():
-    global instruction_count
-    instruction_count += 1
-
-code = """
-y = 1
-z = 3
-y = []
-
-def f():
-    x = 0
-    for i in range(10000):
-        x += 1
-    return x + 5
-
-class Robot:
-    def __init__(self):
-        self.x = 1
-
-k = f()
-
-"""
 
 class Instruction(SimpleNamespace):
     def __init__(self, instruction, in_dict=None):
@@ -178,11 +155,3 @@ def instrument(bytecode):
     new_names = tuple(bytecode.co_names) + ('__instrument__', )
 
     return build(bytecode, byte_string, new_names, new_co_consts)
-
-
-bytecode = compile(code, '<inline>', 'exec')
-
-bytecode = instrument(bytecode)
-
-exec(bytecode)
-print(instruction_count)
