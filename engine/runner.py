@@ -40,6 +40,8 @@ class RobotRunner():
         self.globals['__builtins__']['__metaclass__'] = type
         self.globals['__builtins__']['__instrument__'] = self.instrument_call
         self.globals['__builtins__']['__import__'] = self.import_call
+        self.globals['__builtins__']['_getitem_'] = self.getitem_call
+        self.globals['__builtins__']['_write_'] = self.write_call
 
         for key, value in game_methods.items():
             self.globals['__builtins__'][key] = value
@@ -54,6 +56,23 @@ class RobotRunner():
         self.kill_me = False
 
         self.debug = debug
+
+
+    def write_call(self, obj):
+        if isinstance(obj, type(sys)):
+            raise RuntimeError('Can\'t write to modules.')
+
+        elif isinstance(obj, type(lambda:1)):
+            raise RuntimeError('Can\'t write to functions.')
+
+        return obj
+
+    def getitem_call(self, accessed, attribute):
+        if isinstance(attribute, str) and len(attribute) > 0:
+            if attribute[0] == '_':
+                raise RuntimeError('Cannot access attributes that begin with "_".')
+
+        return accessed[attribute]
 
     def instrument_call(self):
         if self.bytecode == 0:
@@ -116,16 +135,18 @@ class RobotRunner():
         self.initialized = True
 
         try:
-            exec(self.code['robot'], self.globals, self.locals)
+            exec(self.code['robot'], self.globals, self.locals)            
+            self.globals.update(self.locals)
+        
         except Exception:
             self.game_methods['robot_error'](sys.exc_info())
 
     def do_turn(self):
         self.bytecode += self.EXTRA_BYTECODE
         
-        if 'turn' in self.locals:
+        if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda:1)):
             try:
-                self.locals['turn']()
+                exec(self.locals['turn'].__code__, self.globals, self.locals)
             except Exception:
                 self.game_methods['robot_error'](sys.exc_info())
 
@@ -137,15 +158,25 @@ class RobotRunner():
 
 def run_robots(robots):
     threads = [RobotThread(robot) for robot in robots]
-    for thread in threads:
-        thread.start()
 
-    alive = len(threads)
-    while alive > 0:
+    try:
         for thread in threads:
-            alive = 0
-            if thread.robot.kill_me and thread.is_alive():
+            thread.start()
+
+        alive = len(threads)
+        while alive > 0:
+            for thread in threads:
+                alive = 0
+                if thread.robot.kill_me and thread.is_alive():
+                    thread.end()
+                    thread.robot.kill_me = False
+                elif thread.is_alive():
+                    alive += 1
+
+    except KeyboardInterrupt:
+        print("Exiting robot execution gracefully.")
+        for thread in threads:
+            if thread.is_alive():
                 thread.end()
-                thread.robot.kill_me = False
-            elif thread.is_alive():
-                alive += 1
+        sys.exit()
+

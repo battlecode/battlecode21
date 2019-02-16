@@ -2,8 +2,9 @@ from os import listdir
 from os.path import isfile, join
 from instrument import instrument
 import marshal, pickle
+from RestrictedPython import compile_restricted
 
-class Code:
+class CodeContainer:
     def __init__(self, code):
         self.code = code
 
@@ -14,7 +15,7 @@ class Code:
         for filename in dic:
             module_name = filename.split('.py')[0]
             
-            compiled = compile(dic[filename], filename, 'exec')
+            compiled = compile_restricted(dic[filename], filename, 'exec')
 
             code[module_name] = instrument(compiled)
         
@@ -32,7 +33,7 @@ class Code:
             with open(location) as f:
                 code[filename] = f.read()
 
-        return Code.from_directory_dict(code)
+        return cls.from_directory_dict(code)
 
     def to_bytes(self):
         packet = {}
@@ -57,7 +58,7 @@ class Code:
     @classmethod
     def from_file(cls, filename):
         with open(filename, 'rb') as f:
-            return Code.from_bytes(f.read())
+            return cls.from_bytes(f.read())
 
     def __getitem__(self, key):
         return self.code[key]
