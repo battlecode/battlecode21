@@ -1,6 +1,5 @@
 import dis
-from types import CodeType
-from types import SimpleNamespace
+from types import CodeType, SimpleNamespace
 
 def build(bytecode, new_code, new_names, new_co_consts):
     return CodeType(bytecode.co_argcount,
@@ -92,6 +91,10 @@ def instrument(bytecode):
 
         target = [t for t in instructions if instruction.argval == t.offset][0]
         instruction.jump_to = target
+
+        # If any targets jump to themselves, that's not kosher.
+        if instruction == target:
+            raise SyntaxError('No self-referential loops.')
 
     # We then inject the injection before every call, except for those
     # following an EXTENDED_ARGS.
