@@ -1,13 +1,14 @@
-from RestrictedPython import compile_restricted, safe_builtins
-import threader
-import threading
+from RestrictedPython import compile_restricted, safe_builtins, Guards
+import threading, threader 
 import sys
 from time import sleep
+import traceback
 import pdb
 
 class RobotThread(threading.Thread):
     def __init__(self, robot):
         threading.Thread.__init__(self)
+        
         self.stopped = False
         self.robot = robot
 
@@ -16,6 +17,7 @@ class RobotThread(threading.Thread):
             self.robot.init_robot()
         else:
             self.robot.do_turn()
+
         self.stopped = True
 
     def is_alive(self):
@@ -26,14 +28,18 @@ class RobotThread(threading.Thread):
             threader.killThread(self.ident)
             self.stopped = True
 
+    def join(self):
+        while self.is_alive():
+            sleep(0.0001)
+
 class RobotRunner():
     STARTING_BYTECODE = 10000
     EXTRA_BYTECODE    = 5000
     
-    def __init__(self, code, game_methods, debug=False):
+    def __init__(self, code, game_methods, log_method, error_method, debug=False):
         self.locals = {}
         self.globals = {
-            '__builtins__': safe_builtins,
+            '__builtins__': dict(safe_builtins),
             '__name__':'__main__'
         }
 
@@ -42,10 +48,17 @@ class RobotRunner():
         self.globals['__builtins__']['__import__'] = self.import_call
         self.globals['__builtins__']['_getitem_'] = self.getitem_call
         self.globals['__builtins__']['_write_'] = self.write_call
+        self.globals['__builtins__']['_getiter_'] = lambda i: i
+        self.globals['__builtins__']['_inplacevar_'] = self.inplacevar_cal
+        self.globals['__builtins__']['_unpack_sequence_'] = Guards.guarded_unpack_sequence
+        self.globals['__builtins__']['_iter_unpack_sequence_'] = Guards.guarded_iter_unpack_sequence
+        self.globals['__builtins__']['log'] = log_method
+        self.globals['__builtins__']['enumerate'] = enumerate
 
         for key, value in game_methods.items():
             self.globals['__builtins__'][key] = value
 
+        self.error_method = error_method
         self.game_methods = game_methods
         self.code = code
         self.imports = {}
@@ -53,10 +66,27 @@ class RobotRunner():
         self.bytecode = self.STARTING_BYTECODE
 
         self.initialized = False
-        self.kill_me = False
 
         self.debug = debug
 
+    def inplacevar_cal(self, op, x, y):
+        if not isinstance(op, str):
+            raise SyntaxError('Unsupported in place op.')
+
+        if op == '+=':
+            return x + y
+
+        elif op == '-=':
+            return x - y
+
+        elif op == '*=':
+            return x * y
+
+        elif op == '/=':
+            return x / y
+
+        else:
+            raise SyntaxError('Unsupported in place op "' + op + '".')
 
     def write_call(self, obj):
         if isinstance(obj, type(sys)):
@@ -76,14 +106,12 @@ class RobotRunner():
 
     def instrument_call(self):
         if self.bytecode == 0:
-            try:
-                raise RuntimeError('Ran out of bytecode.')
-            except:
-                self.game_methods['robot_error'](sys.exc_info())
+            self.error_method('Ran out of bytecode.')
             
-            self.kill_me = True
+            threading.current_thread().end()
+
             while True:
-                sleep(0.1)
+                sleep(0.0001)
         
         self.bytecode -= 1
 
@@ -132,14 +160,13 @@ class RobotRunner():
         return new_module
 
     def init_robot(self):
-        self.initialized = True
-
         try:
             exec(self.code['robot'], self.globals, self.locals)            
             self.globals.update(self.locals)
+            self.initialized = True
         
         except Exception:
-            self.game_methods['robot_error'](sys.exc_info())
+            self.error_method(traceback.format_exc(limit=5))
 
     def do_turn(self):
         self.bytecode += self.EXTRA_BYTECODE
@@ -148,35 +175,12 @@ class RobotRunner():
             try:
                 exec(self.locals['turn'].__code__, self.globals, self.locals)
             except Exception:
-                self.game_methods['robot_error'](sys.exc_info())
-
+                self.error_method(traceback.format_exc(limit=5))
         else:
-            try:
-                raise RuntimeError('Couldn\'t find turn function.')
-            except:
-                self.game_methods['robot_error'](sys.exc_info())
-
-def run_robots(robots):
-    threads = [RobotThread(robot) for robot in robots]
-
-    try:
-        for thread in threads:
-            thread.start()
-
-        alive = len(threads)
-        while alive > 0:
-            for thread in threads:
-                alive = 0
-                if thread.robot.kill_me and thread.is_alive():
-                    thread.end()
-                    thread.robot.kill_me = False
-                elif thread.is_alive():
-                    alive += 1
-
-    except KeyboardInterrupt:
-        print("Exiting robot execution gracefully.")
-        for thread in threads:
-            if thread.is_alive():
-                thread.end()
-        sys.exit()
-
+            self.error_method('Couldn\'t find turn function.')
+       
+        
+    def run(self):
+        thread = RobotThread(self)
+        thread.start()
+        thread.join()

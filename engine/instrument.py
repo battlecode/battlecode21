@@ -71,13 +71,29 @@ def instrument(bytecode):
 
     instructions = list(dis.get_instructions(bytecode))
 
+    function_name_index = len(bytecode.co_names)
+
     # First, we define our injection.
     injection = [
-        dis.Instruction(opcode=116, opname='LOAD_GLOBAL', arg=len(bytecode.co_names), argval=len(bytecode.co_names), argrepr=len(bytecode.co_names), offset=None, starts_line=None, is_jump_target=False),
+        dis.Instruction(opcode=116, opname='LOAD_GLOBAL', arg=function_name_index%256, argval=function_name_index%256, argrepr=function_name_index%256, offset=None, starts_line=None, is_jump_target=False),
         dis.Instruction(opcode=131, opname='CALL_FUNCTION', arg=0, argval=0, argrepr=0, offset=None, starts_line=None, is_jump_target=False),
         dis.Instruction(opcode=1, opname='POP_TOP', arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=False)
     ]
 
+    while function_name_index > 255:
+        function_name_index >>= 8
+        injection = [
+            dis.Instruction(
+                opcode=144,
+                opname='EXTENDED_ARGS',
+                arg=function_name_index%256,
+                argval=function_name_index%256,
+                argrepr=function_name_index%256,
+                offset=None,
+                starts_line=None,
+                is_jump_target=False
+            )
+        ] + injection
 
     # For maintence we add an empty jump_to field to each instruction.
     for i, instruction in enumerate(instructions):
@@ -153,7 +169,7 @@ def instrument(bytecode):
             i += 1
 
     # Finally, we repackage up our instructions into a bytestring, and send off.
-    byte_array = [[i.opcode, 0 if i.arg is None else i.arg] for i in instructions]
+    byte_array = [[i.opcode, 0 if i.arg is None else i.arg%256] for i in instructions]
     byte_string = bytes(sum(byte_array, []))
     new_names = tuple(bytecode.co_names) + ('__instrument__', )
 

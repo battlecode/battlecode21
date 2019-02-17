@@ -4,6 +4,8 @@ from instrument import instrument
 import marshal, pickle
 from RestrictedPython import compile_restricted
 
+RESTRICTED = True
+
 class CodeContainer:
     def __init__(self, code):
         self.code = code
@@ -15,7 +17,9 @@ class CodeContainer:
         for filename in dic:
             module_name = filename.split('.py')[0]
             
-            compiled = compile_restricted(dic[filename], filename, 'exec')
+            compiler = compile_restricted if RESTRICTED else compile
+
+            compiled = compiler(dic[filename], filename, 'exec')
 
             code[module_name] = instrument(compiled)
         
