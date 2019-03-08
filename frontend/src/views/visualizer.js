@@ -1,4 +1,4 @@
-import Game from 'bc19/game';
+import Game from 'bhse19/game';
 import * as PIXI from "pixi.js";
 
 var CHECKPOINT = 1000;
