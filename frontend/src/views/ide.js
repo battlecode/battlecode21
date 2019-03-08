@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
-import bc19 from 'bc19/runtime';
-import Game from 'bc19/game';
-import Compiler from 'bc19/compiler';
+import bc19 from 'bhse19/runtime';
+import Game from 'bhse19/game';
+import Compiler from 'bhse19/compiler';
 
 import Visualizer from './visualizer';
 import Slider from 'rc-slider';
