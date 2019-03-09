@@ -3,6 +3,7 @@ import * as PIXI from "pixi.js";
 
 var CHECKPOINT = 1000;
 var TIME_PER_TURN = 50;
+
 /*
 Castle by BGBOXXX Design from the Noun Project
 Church by Ben Davis from the Noun Project
@@ -190,7 +191,7 @@ class Visualizer {
 
         this.RES_FACTOR = 10;
 
-        this.renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x222222, antialias: false, transparent: false });
+        this.renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x222222, antialias: false, transparent: false, resolution: devicePixelRatio, autoResize: true});
         //this.renderer.resize(this.RES_FACTOR*this.height, this.RES_FACTOR*this.height);
         //this.renderer.resize(this.height, this.height);
 
@@ -210,10 +211,10 @@ class Visualizer {
         mapGraphics.endFill();
         for (let y = 0; y < this.MAP_HEIGHT; y++) for (let x = 0; x < this.MAP_WIDTH; x++) {
             if (!this.game.map[y][x] || this.game.karbonite_map[y][x]) {
-                var color = this.game.karbonite_map[y][x] ? this.KARBONITE : this.OBSTACLE;
-                mapGraphics.beginFill(color);
+                var color = this.game.map[y][x] ? this.KARBONITE : this.OBSTACLE;
+                mapGraphics.beginFill(color, this.game.map[y][x] ? this.game.karbonite_map[y][x] / 10 : 1);
                 if (this.game.karbonite_map[y][x]) {
-                    const SIZE_FACTOR = 0.6;
+                    const SIZE_FACTOR = 1;
                     const BORDER = (1 - SIZE_FACTOR) / 2;
                     mapGraphics.drawRect((x+BORDER)*draw_width, (y+BORDER)*draw_height, SIZE_FACTOR*draw_width, SIZE_FACTOR*draw_height);
                 }
