@@ -27,7 +27,6 @@ class IDE extends Component {
     constructor() {
         super();
 
-        var l = Cookies.get('lang');
         var t = Cookies.get('theme');
         var ci = Cookies.get('chess_init');
         var ce = Cookies.get('chess_extra');
@@ -41,7 +40,7 @@ class IDE extends Component {
             errors:'',
             chess_init:(ci ? ci : 100),
             chess_extra:(ce ? ce : 30),
-            lang:(l ? l : 'javascript'),
+            lang:('javascript'),
             theme:(t ? t : 'light'),
             vimkeys:Cookies.get('vimkeys'),
             seed:Cookies.get('seed'),
@@ -379,14 +378,6 @@ class IDE extends Component {
                         transitionDuration:"500ms",
                         zIndex:"50"
                     }}>
-                        <div className="form-group" style={{padding:"10px"}}>
-                            <label>Language</label>
-                            <select className="form-control" id="lang" value={ this.state.lang } onChange={ this.changeHandler }>
-                                <option value='javascript'>Javascript</option>
-                                <option value='python'>Python</option>
-                                <option value='java'>Java</option>
-                            </select>
-                        </div>
                         <div className="form-group" style={{padding:"10px", marginTop:"-20px"}}>
                             <label>Theme</label>
                             <select className="form-control" id="theme" value={ this.state.theme }  onChange={ this.changeHandler }>
