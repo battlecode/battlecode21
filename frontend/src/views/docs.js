@@ -237,45 +237,41 @@ var robot = new MyRobot();`}</pre>
                                     <p>The following properties are available for all robots:</p>
                                     <ul>
                                         <li><code>r.id</code>: The id of the robot, which is an integer between 1 and {SPECS.MAX_ID}. Always available.</li>
-                                        <li><code>r.unit</code>: The robot's unit type, where { SPECS.CASTLE } stands for Castle, { SPECS.CHURCH } stands for Church, { SPECS.PILGRIM} stands for Pilgrim, {SPECS.CRUSADER} stands for Crusader, {SPECS.PROPHET} stands for Prophet and {SPECS.PREACHER} stands for Preacher. Available if visible.</li>
-                                        <li><code>r.health</code>: The health of the robot. Only available for <code>r = this.me</code>.</li>
+                                        <li><code>r.unit</code>: The robot's unit type, where { SPECS.PLANET } stands for Planet and { SPECS.VOYAGER } stands for Voyager.</li>
+                                        <li><code>r.signal</code>: The signal of the robot.</li>
+                                    </ul>
+                                    <p>The following properties are available if the robot is visible (that is, if <code>isVisible(r)</code> is <code>true</code></p>
+                                    <ul>
                                         <li><code>r.team</code>: The team of the robot, where {SPECS.RED} stands for RED and {SPECS.BLUE} stands for BLUE. Available if visible, or you are a castle. </li>
                                         <li><code>r.x</code>: The x position of the robot. Available if visible or within radio range. </li>
                                         <li><code>r.y</code>: The y position of the robot. Available if visible or within radio range. </li>
-                                        <li><code>r.karbonite</code>: The amount of Karbonite that the robot carries. Only available for <code>r = this.me</code>.</li>
+                                    </ul>
+                                    <p>In addition, the following properties are available if <code>r = this.me</code></p>
+                                    <ul>
                                         <li><code>r.turn</code>: The turn count of the robot (initialiazed to 0, and incremented just before <code>turn()</code>). Always available.</li>
-                                        <li><code>r.signal</code>: The signal of the robot. Available if radioable.</li>
                                         <li><code>r.time</code>: The chess clock's value at the start of the turn, in ms.  Only available if <code>r == this.me</code>.</li>
 
                                     </ul>
-                                    <p>Visible means that <code>r</code> is within <code>this.me</code>'s vision radius (particularly, <code>this.me</code> is always visible to itself). Radioable means that <code>this.me</code> is within <code>r</code>'s signal radius. </p>
                                     <hr /><h6>Actions</h6><hr />
                                     <p>The following is a list of methods that can be returned in <code>turn()</code>, to perform an action. Note that the action will only be performed if it is returned; thus, only one of these actions can be performed per turn. </p>
                                     <ul>
                                         <li><code>this.move(dx, dy)</code>: Move <code>dx</code> steps in the x direction, and <code>dy</code> steps in the y direction. Uses Fuel (depending on unit and distance). Available for Pilgrims, Crusaders, Prophets, Preachers. </li>
                                         <li><code>this.mine()</code>: Mine { SPECS.KARBONITE_YIELD } Karbonite or { SPECS.FUEL_YIELD } Fuel, if on a corresponding resource tile. Uses { SPECS.MINE_FUEL_COST } Fuel. Available for Pilgrims. </li>
                                         <li><code>this.give(dx, dy, karbonite, fuel)</code>: Give <code>karbonite</code> Karbonite and <code>fuel</code> Fuel to the robot in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. A robot can only give to another robot that is in one of its 8 adjacent tiles, and cannot give more than it has. Uses 0 Fuel. Available for all robots.  If a unit tries to give a robot more than its capacity, the excess is loss to the void.</li>
-                                        <li><code>this.attack(dx, dy)</code>: Attack the robot in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. A robot can only attack another robot that is within its attack radius (depending on unit). Uses Fuel (depending on unit). Available for Crusaders, Prophets, Preachers. </li>
-                                        <li><code>this.buildUnit(unit, dx, dy)</code>: Build a unit of the type <code>unit</code> (integer, see <code>r.unit</code>) in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. Can only build in adjacent, empty and passable tiles. Uses Fuel and Karbonite (depending on the constructed unit). Available for Pilgrims, Castles, Churches. Pilgrims can only build Churches, and Castles and Churches can only build Pilgrims, Crusaders, Prophets and Preachers.</li>
-                                        <li><code>this.proposeTrade(karbonite, fuel)</code>: Propose a trade with the other team. <code>karbonite</code> and <code>fuel</code> need to be integers. For example, for RED to make the offer "I give you 10 Karbonite if you give me 10 Fuel", the parameters would be <code>karbonite = 10</code> and <code>fuel = -10</code> (for BLUE, the signs are reversed). If the proposed trade is the same as the other team's <code>last_offer</code>, a trade is performed, after which the <code>last_offer</code> of both teams will be nullified. Available for Castles.</li> 
+                                        <li><code>this.attack(dx, dy)</code>: Attack the robot in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. A robot can only attack another robot that is within its attack radius (depending on unit). Uses <code>{SPECS.UNITS[1].CONSTRUCTION_ORBS}</code> Orbs.</li>
+                                        <li><code>this.buildUnit(dx, dy)</code>: Build a Voyager in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. Can only build in adjacent, empty and passable tiles. Uses Karbonite ches can only build Pilgrims, Crusaders, Prophets and Preachers.</li>
                                     </ul>
                                     <hr /><h6>Communication</h6><hr />
                                     <ul>
-                                        <li><code>this.signal(value, sq_radius)</code>: Broadcast <code>value</code> to all robots within the squared radius <code>sq_radius</code>. Uses <code>Math.ceil(Math.sqrt(sq_radius))</code> Fuel. <code>value</code> should be an integer between <code>0</code> and <code>2^{SPECS.COMMUNICATION_BITS}-1</code> (inclusive). Can be called multiple times in one <code>turn()</code>; however, only the most recent signal will be used, while each signal will cost Fuel. </li>
-                                        <li><code>this.castleTalk(value)</code>: Broadcast <code>value</code> to all Castles of the same team. Does not use Fuel. <code>value</code> should be an integer between <code>0</code> and <code>2^{SPECS.CASTLE_TALK_BITS}-1</code> (inclusive). Can be called multiple times in one <code>turn()</code>; however, only the most recent castle talk will be used. </li>
+                                        <li><code>this.signal(value)</code>: Broadcast <code>value</code> to all robots. The <code>value</code> should be an integer between <code>0</code> and <code>2^{SPECS.COMMUNICATION_BITS}-1</code> (inclusive). Can be called multiple times in one <code>turn()</code>; however, only the most recent signal will be used. </li>
                                     </ul>
                                     <hr /><h6>Helper Methods</h6><hr />
                                     <ul>
                                         <li><code>this.log(message)</code>: Print a message to the command line.  You cannot use ordinary <code>console.log</code> in Battlecode for security reasons.</li>
-                                        <li><code>this.getVisibleRobots()</code>: Returns a list containing all robots within <code>this.me</code>'s vision radius and all robots whose radio broadcasts can be heard (accessed via <code>other_r.signal</code>). For castles, robots of the same team not within the vision radius will also be included, to be able to read the <code>castle_talk</code> property. </li>
                                         <li><code>this.getVisibleRobotMap()</code>: Returns a 2d grid of integers the size of <code>this.map</code>. All tiles outside <code>this.me</code>'s vision radius will contain <code>-1</code>. All tiles within the vision will be <code>0</code> if empty, and will be a robot id if it contains a robot. </li>
                                         <li><code>this.getRobot(id)</code>: Returns a robot object with the given integer <code>id</code>.  Returns <code>null</code> if such a robot is not in your vision (for Castles, it also returns a robot object for all robots on <code>this.me</code>'s team that are not in the robot's vision, to access <code>castle_talk</code>).</li>
-                                        <li><code>this.isVisible(robot)</code>: Returns <code>true</code> if the given robot object is visible.</li>
-                                        <li><code>this.isRadioing(robot)</code>: Returns <code>true</code> if the given robot object is currently sending radio (signal).</li>
-                                        <li><code>this.getPassableMap()</code>: Returns <code>this.map</code>. </li>
-                                        <li><code>this.getKarboniteMap()</code>: Returns <code>this.karbonite_map</code>. </li>
-                                        <li><code>this.getFuelMap()</code>: Returns <code>this.fuel_map</code>. </li>
-
+                                        <li><code>this.isVisible(id)</code>: Returns <code>true</code> if and only if the robot identified by <code>id</code> is within <code>this.me</code>'s vision radius (particularly, <code>this.me</code> is always visible to itself). </li>
+                               
                                     </ul>
                                 </div>
                             </div>
