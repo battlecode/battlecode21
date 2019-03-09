@@ -188,10 +188,10 @@ class Visualizer {
         this.graphGraphics = new PIXI.Graphics();
         this.stage.addChild(this.graphGraphics);
 
-        this.RES_FACTOR = 4;
+        this.RES_FACTOR = 10;
 
-        this.renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x222222, antialias: true, transparent: false });
-        this.renderer.resize(this.RES_FACTOR*this.height, this.RES_FACTOR*this.height);
+        this.renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x222222, antialias: false, transparent: false });
+        //this.renderer.resize(this.RES_FACTOR*this.height, this.RES_FACTOR*this.height);
         //this.renderer.resize(this.height, this.height);
 
 
