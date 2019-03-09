@@ -107,6 +107,7 @@ class Api {
     });
   }
 
+    // updates team
   static updateTeam(params, callback) {
     $.ajax({
       url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/`,

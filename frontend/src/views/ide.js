@@ -97,7 +97,12 @@ class IDE extends Component {
 
     push() {
         Compiler.Compile(this.state.lang, this.firepad.getText(), function(code) {
-            Api.pushTeamCode(code, function() {});
+            console.log('push code')
+            Api.pushTeamCode(code, function(has_no_error) {
+                if (has_no_error) {
+                    document.getElementById('submission-status').innerHTML = 'Submission successful!';
+                }
+            });
         }, function(errors) {
             this.setState({error: true, errors:errors});
         }.bind(this));
@@ -361,6 +366,16 @@ class IDE extends Component {
                     <i onClick={ this.showMenu } style={{cursor:"pointer"}} className="pe-7s-menu" />
                     <i onClick={ this.run } className="pe-7s-play pull-right" style={{cursor:"pointer", marginTop:"2px"}} />
                     <i onClick={ this.push } className="pe-7s-upload" style={{marginLeft:"10px", cursor:"pointer"}} />
+                    <div style={{
+                        fontSize: '0.6em',
+                        display: 'inline-block'
+                    }}>
+                        <span id="submission-status" style={{
+                            paddingTop: '0px',
+                            paddingLeft: '10px',
+                            display: 'block'
+                        }}></span>
+                    </div>
                 </div>
                 <div style={{
                     width:"100%",
@@ -378,7 +393,7 @@ class IDE extends Component {
                         transitionDuration:"500ms",
                         zIndex:"50"
                     }}>
-                        <div className="form-group" style={{padding:"10px", marginTop:"-20px"}}>
+                        <div className="form-group" style={{padding:"10px", marginTop:"0px"}}>
                             <label>Theme</label>
                             <select className="form-control" id="theme" value={ this.state.theme }  onChange={ this.changeHandler }>
                                 <option value='textmate'>Light</option>
