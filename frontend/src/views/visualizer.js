@@ -203,7 +203,6 @@ class Visualizer {
         this.BLANK = '0xFFFFFF';
         this.OBSTACLE = '0x444444';
         this.KARBONITE = '0x22BB22';
-        this.FUEL = '0xCCCC00';
    
         var draw_width = this.RES_FACTOR*this.grid_width / this.MAP_WIDTH;
         var draw_height = this.RES_FACTOR*this.grid_height / this.MAP_HEIGHT;
@@ -211,10 +210,10 @@ class Visualizer {
         mapGraphics.drawRect(0, 0, this.RES_FACTOR*this.grid_width, this.RES_FACTOR*this.grid_height);
         mapGraphics.endFill();
         for (let y = 0; y < this.MAP_HEIGHT; y++) for (let x = 0; x < this.MAP_WIDTH; x++) {
-            if (!this.game.map[y][x] || this.game.karbonite_map[y][x] || this.game.fuel_map[y][x]) {
-                var color = this.game.karbonite_map[y][x] ? this.KARBONITE : this.game.fuel_map[y][x] ? this.FUEL : this.OBSTACLE;
+            if (!this.game.map[y][x] || this.game.karbonite_map[y][x]) {
+                var color = this.game.karbonite_map[y][x] ? this.KARBONITE : this.OBSTACLE;
                 mapGraphics.beginFill(color);
-                if (this.game.karbonite_map[y][x] || this.game.fuel_map[y][x]) {
+                if (this.game.karbonite_map[y][x]) {
                     const SIZE_FACTOR = 0.6;
                     const BORDER = (1 - SIZE_FACTOR) / 2;
                     mapGraphics.drawRect((x+BORDER)*draw_width, (y+BORDER)*draw_height, SIZE_FACTOR*draw_width, SIZE_FACTOR*draw_height);
@@ -328,12 +327,6 @@ class Visualizer {
         this.blue_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20, fill: '0x0000FF' });
         this.blue_karbtext.position = new PIXI.Point(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT/2);
         this.textstage.addChild(this.blue_karbtext);
-        this.red_fueltext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20, fill: '0xFF0000' });
-        this.red_fueltext.position = new PIXI.Point(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.graph_height-this.B_BORDER_HEIGHT+5);
-        this.textstage.addChild(this.red_fueltext);
-        this.blue_fueltext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20, fill: '0x0000FF' });
-        this.blue_fueltext.position = new PIXI.Point(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.graph_height-this.B_BORDER_HEIGHT/2);
-        this.textstage.addChild(this.blue_fueltext);
 
         this.roundtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 12, fill: '0xFFFFFF' });
         this.roundtext.position = new PIXI.Point(this.grid_width+10, 10);
@@ -369,32 +362,20 @@ class Visualizer {
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER, this.T_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT-this.KF_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
         this.graphGraphics.endFill();
-        this.graphGraphics.beginFill(this.FUEL);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER, this.T_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT-this.KF_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
-        this.graphGraphics.endFill();
         // Figure out scaling for the graphs.
         const KARB_LINE = 20;
-        const FUEL_LINE = 100;
         var MAX_KARB = Math.ceil(Math.max(5, this.game.karbonite[0]/KARB_LINE, this.game.karbonite[1]/KARB_LINE));
-        var MAX_FUEL = Math.ceil(Math.max(5, this.game.fuel[0]/FUEL_LINE, this.game.fuel[1]/FUEL_LINE));
         // Then, draw! I'm so sorry this is so disgusting. We do, in order, red karb, red fuel, blue karb, and blue fuel.
         // This puts those in the right places.
         this.graphGraphics.beginFill('0xFF0000');
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER,
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[0]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[0]/MAX_KARB/KARB_LINE);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.fuel[0]/MAX_FUEL/FUEL_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.fuel[0]/MAX_FUEL/FUEL_LINE);
         this.graphGraphics.endFill();
         this.graphGraphics.beginFill('0x0000FF');
         this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH/2+this.LR_BORDER,
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[1]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[1]/MAX_KARB/KARB_LINE);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH*3/2+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.fuel[1]/MAX_FUEL/FUEL_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.fuel[1]/MAX_FUEL/FUEL_LINE);
         this.graphGraphics.endFill();
 
         // Draw markers in graphs.
@@ -402,10 +383,6 @@ class Visualizer {
         for(var k = 1; k < MAX_KARB; k++) {
             this.graphGraphics.moveTo(this.grid_width+this.LR_BORDER, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
             this.graphGraphics.lineTo(this.grid_width+this.LR_BORDER+this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
-        }
-        for(var f = 1; f < MAX_FUEL; f++){
-            this.graphGraphics.moveTo(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_FUEL*this.IND_G_HEIGHT);
-            this.graphGraphics.lineTo(this.grid_width+2*this.LR_BORDER+2*this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_FUEL*this.IND_G_HEIGHT);
         }
 
         // Round text
@@ -417,9 +394,6 @@ class Visualizer {
         // Draw text for the stats
         this.red_karbtext.text = ''+this.game.karbonite[0];
         this.blue_karbtext.text = ''+this.game.karbonite[1];
-
-        this.red_fueltext.text = ''+this.game.fuel[0];
-        this.blue_fueltext.text = ''+this.game.fuel[1];
 
         // Handle click and infotext
         if (this.active_x !== -1) {
@@ -434,7 +408,6 @@ class Visualizer {
                 this.infotext.text  = "position   : ("+this.active_x+", "+this.active_y+")\n";
                 this.infotext.text += "passable   : "+this.game.map[this.active_y][this.active_x]+"\n";
                 this.infotext.text += "karbonite  : "+this.game.karbonite_map[this.active_y][this.active_x]+"\n";
-                this.infotext.text += "fuel       : "+this.game.fuel_map[this.active_y][this.active_x]+"\n";
             }
 
             this.active_x = -1;
@@ -452,9 +425,7 @@ class Visualizer {
                 this.infotext.text += "unit       : "+["castle", "church", "pilgrim", "crusader", "prophet", "preacher"][robot.unit]+"\n";
                 this.infotext.text += "health     : "+robot.health+"\n";
                 this.infotext.text += "karbonite  : "+robot.karbonite+"\n";
-                this.infotext.text += "fuel       : "+robot.fuel+"\n";
                 this.infotext.text += "signal     : "+robot.signal+"\n";
-                this.infotext.text += "castletalk : "+robot.castle_talk+"\n";
             }
         }
 
