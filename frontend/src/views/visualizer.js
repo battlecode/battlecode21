@@ -3,7 +3,6 @@ import * as PIXI from "pixi.js";
 
 var CHECKPOINT = 1000;
 var TIME_PER_TURN = 50;
-
 /*
 Castle by BGBOXXX Design from the Noun Project
 Church by Ben Davis from the Noun Project
