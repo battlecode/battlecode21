@@ -46,6 +46,7 @@ class IDE extends Component {
             seed:Cookies.get('seed'),
             auto:Cookies.get('auto'),
             numTurns:0,
+            numRounds:0,
             turn:null
         };
 
@@ -60,11 +61,19 @@ class IDE extends Component {
         this.exitErrors = this.exitErrors.bind(this);
         this.changeSlider = this.changeSlider.bind(this);
         this.startStop = this.startStop.bind(this);
+        this.startStopGame = this.startStopGame.bind(this);
     }
 
 
     startStop() {
         this.v.startStop();
+    }
+    startStopGame() {
+        if (this.c.stopped) {
+            this.c.unstop()
+        } else {
+            this.c.stop();
+        }
     }
 
 
@@ -120,7 +129,7 @@ class IDE extends Component {
             }.bind(this), 300, 300);
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
-                this.setState({logs:logs,numTurns:this.v.numTurns(),turn:this.v.turn});
+                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.numTurns(),turn:this.v.turn});
                 this.v.populateCheckpoints();
 
             }.bind(this));
@@ -288,27 +297,36 @@ class IDE extends Component {
                         borderRadius:"20px"
                     }} onClick={ this.exitTheater }/>
 
+
+                
                     <div id="viewer" style={{
                         position:"absolute",
                         top:"20px",
-                        left:"calc(50% - 150px)",
-                        width:"calc(100% - 40px)",
+                        float:"left",
                         height:"60%",
+                        width:"50%",
+                        textAlign: "center"
                     }}></div>
-                    <Slider style={{
-                        display:(this.v == null)?'none':'block',
-                        width:'80%',
-                        left:'10%',
-                        position:'absolute',
-                        top:'340px'
-                    }} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
-                    <button style={{
-                        display:(this.v == null)?'none':'block',
-                        width:'80%',
-                        position:'absolute',
-                        left:'10%',
-                        top:'360px'
-                    }} onClick={this.startStop}>START/STOP</button>
+                    <div id="viewer-ops" style={{
+                        marginTop:"20px",
+                        float:"right",
+                        width:"50%",
+                        height:"60%",
+                        paddingLeft: "50px",
+                        paddingRight:"50px",
+                        display:(this.v == null)?'none':'block'
+                    }}>
+                        <h1>{this.state.numRounds}</h1>
+                        <Slider style={{
+                            width:'100%'
+                        }} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
+                        <button style={{
+                            width:'100%'
+                        }} onClick={this.startStop}>START/STOP VIEWER</button>
+                        <button style={{
+                            width:'100%'
+                        }} onClick={this.startStopGame}>START/STOP GAME</button>
+                    </div>
 
 
                     <div id="console" style={{
