@@ -13,11 +13,11 @@ import * as Cookies from "js-cookie";
 
 var firebase_config = {
     apiKey: "AIzaSyBT7Mu9Bw6UH0Tr-mKXMwhKjdnLppdjvA4",
-    authDomain: "battlecode18.firebaseapp.com",
-    databaseURL: "https://battlecode18.firebaseio.com",
-    projectId: "battlecode18",
-    storageBucket: "battlecode18.appspot.com",
-    messagingSenderId: "323934682061"
+    authDomain: "battlehack-se19.firebaseapp.com",
+    databaseURL: "https://battlehack-se19.firebaseio.com",
+    //projectId: "battlecode18",
+    //storageBucket: "battlecode18.appspot.com",
+    //messagingSenderId: "323934682061"
 };
 
 window.ace.require("ace/ext/language_tools");
