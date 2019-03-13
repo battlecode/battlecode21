@@ -92,24 +92,25 @@ var robot = new MyRobot();`}</pre>
                                     <hr /><h6>State Information</h6><hr />
                                     <ul>
                                         <li><code>this.me</code>: The robot object (see below) for this robot.</li>
-                                        <li><code>this.map</code>: The full map. Boolean grid where <code>true</code> indicates passable and <code>false</code> indicates impassable. Indexed <code>[y][x]</code>, like all 2D arrays in Battlecode.</li>
-                                        <li><code>this.orbs_map</code>: The Orbs map. Grid with integer values indicating how much orbs are present at each position. </li>
-                                        <li><code>this.orbs</code>: The global amount of Orbs that the team possesses.</li>
+                                        <li><code>this.map</code>: The full map. Boolean grid where <code>true</code> indicates passable and <code>false</code> indicates impassable. Indexed <code>[r][c]</code> (row, column), with <code>[0][0]</code> being the upper left corner.</li>
+                                        <li><code>this.orbs_map</code>: The Orbs map. Grid with integer values indicating how much orbs are present at each position. Indexed in the same way as <code>this.map</code>.</li>
+                                        <li><code>this.n</code>: The size of the map. </li>
+                                        <li><code>this.orbs</code>: The total amount of Orbs that the team possesses.</li>
                                         <li><code>this.robots</code>: All units that exist (including <code>this.me</code>), in random order.</li>
                                     </ul>
                                     <hr /><h6>The Robot Object</h6><hr />
                                     <p style={{fontSize: '14px'}}>Let <code>r</code> be any robot object (e.g., <code>r = this.me</code> or <code>r = this.robots[1]</code>).</p>
                                     <p style={{fontSize: '14px'}}>The following properties are available for all robots:</p>
                                     <ul>
-                                        <li><code>r.id</code>: The id of the robot, which is an integer between 1 and {SPECS.MAX_ID}..</li>
+                                        <li><code>r.id</code>: The id of the robot, which is an integer between 1 and {SPECS.MAX_ID}.</li>
                                         <li><code>r.unit</code>: The robot's unit type, where { SPECS.PLANET } stands for Planet and { SPECS.VOYAGER } stands for Voyager.</li>
                                         <li><code>r.signal</code>: The current signal of the robot.</li>
                                     </ul>
                                     <p style={{fontSize: '14px'}}>The following properties are available if the robot is visible (that is, if <code>isVisible(r)</code> is <code>true</code>).</p>
                                     <ul>
                                         <li><code>r.team</code>: The team of the robot, where {SPECS.RED} stands for RED and {SPECS.BLUE} stands for BLUE.</li>
-                                        <li><code>r.x</code>: The x position of the robot.</li>
-                                        <li><code>r.y</code>: The y position of the robot. </li>
+                                        <li><code>r.r</code>: The position of the robot in the North-South direction (the row that the robot is in).</li>
+                                        <li><code>r.c</code>: The position of the robot in the East-West direction (the column that the robot is in).</li>
                                     </ul>
                                     <p style={{fontSize: '14px'}}> In addition, the following properties are available if <code>r = this.me</code>.</p>
                                     <ul>
@@ -120,8 +121,8 @@ var robot = new MyRobot();`}</pre>
                                     <hr /><h6>Actions</h6><hr />
                                     <p style={{fontSize: '14px'}}>The following is a list of methods that can be returned in <code>turn()</code>, to perform an action. Note that the action will only be performed if it is returned. </p>
                                     <ul>
-                                        <li><code>this.move(dx, dy)</code>: Move <code>dx</code> steps in the x direction, and <code>dy</code> steps in the y direction. Only Voyagers can move.</li>
-                                        <li><code>this.buildUnit(dx, dy)</code>: Build a Voyager in the tile that is <code>dx</code> steps in the x direction and <code>dy</code> steps in the y direction from <code>this.me</code>. Can only build in adjacent, empty and passable tiles.
+                                        <li><code>this.move(dr, dc)</code>: Move <code>dr</code> steps in the North-South direction, and <code>dc</code> steps in the East-West direction. Only Voyagers can move.</li>
+                                        <li><code>this.buildUnit(dr, dc)</code>: Build a Voyager in the tile that is <code>dr</code> steps in the North-South direction and <code>dc</code> steps in the East-West direction from <code>this.me</code>. Can only build in adjacent, empty and passable tiles.
                                         Uses <code>{SPECS.UNITS[1].CONSTRUCTION_KARBONITE}</code> Orbs. Only Planets can build.</li>
                                     </ul>
                                     <hr /><h6>Communication</h6><hr />
@@ -131,10 +132,9 @@ var robot = new MyRobot();`}</pre>
                                     <hr /><h6>Helper Methods</h6><hr />
                                     <ul>
                                         <li><code>this.log(message)</code>: Print a message to the command line.  You cannot use ordinary <code>console.log</code> in Battlecode for security reasons.</li>
-                                        <li><code>this.getVisibleRobotMap()</code>: Returns a 2d grid of integers the size of <code>this.map</code>. All tiles outside <code>this.me</code>'s vision radius will contain <code>-1</code>. All tiles within the vision will be <code>0</code> if empty, and will be a robot id if it contains a robot. </li>
+                                        <li><code>this.getVisibleRobotMap()</code>: Returns a 2d grid of integers the size of <code>this.map</code>. All tiles outside <code>this.me</code>'s vision radius will contain <code>-1</code>. All tiles within the vision will be <code>0</code> if empty, and will be a robot id if it contains a robot.</li>
                                         <li><code>this.getRobot(id)</code>: Returns a robot object with the given integer <code>id</code>.  Returns <code>null</code> if such a robot is not in your vision radius.</li>
                                         <li><code>this.isVisible(id)</code>: Returns <code>true</code> if and only if the robot identified by <code>id</code> is within <code>this.me</code>'s vision radius (particularly, <code>this.me</code> is always visible to itself). </li>
-
                                     </ul>
                                 </div>
                             </div>
