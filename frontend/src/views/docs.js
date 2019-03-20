@@ -40,7 +40,7 @@ class Docs extends Component {
                                     <p>Movement in the 4 cardinal directions (North, South, East, West) is allowed. However, <b>Voyager</b>s cannot be placed directly adjacent to another <b>Voyager</b> of the same team (diagonals inclusive). </p>
                                     <p>Each <b>Voyager</b> has a unique { SPECS.MAX_ID }-bit integer ID and a vision radius that allows them to see any other <b>Voyagers</b> within a squared vision radius of { SPECS.UNITS.VISION_RADIUS } (12 tiles of vision total, excluding its own tile). A picture is included below - orange tiles mark visible areas.</p>
                                     <p class="aligncenter">
-                                        <img src="../../public/assets/voyager_vision.png" style="width: 50%" />
+                                        <img src="../../public/assets/voyager_vision.png" style={{width: "50%"}} />
                                     </p>
                                     <p><b>Planet</b>s are 1x1 “Voyager factories”; they can produce more <b>Voyagers</b> to send out into space, but doing so will cost them { SPECS.UNITS.CONSTRUCTION_KARBONITE } <b>Orbs</b> per <b>Voyager</b>.</p>
                                     <He>Communication</He>
