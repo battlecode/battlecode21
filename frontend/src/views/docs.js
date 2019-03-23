@@ -27,26 +27,54 @@ class Docs extends Component {
                                 <div className="content">
                                     <p>Human civilization on Earth has reached its termination. Fortunately, decades of effort by astronauts, scientists, and engineers seem to have been wildly fruitful, as the explorers they sent into outer space have thrived in their respective landing locations. Inhabitants of the Red Planet — the Zulu Marauders — have regressed to a medieval lifestyle in outer space, living by a feudal system.
                                         Inhabitants of the Blue Planet — the Space Marines — are intent on funneling all resources toward researching the ocean life around them. Although both have made countless attempts to build one society, there is no compromising with the Zulu Marauders and Space Marines.
-                                        With their irreconcilable differences, both civilizations have decided to completely part ways and build separate lives. However, they both have found galactical <b>Orbs</b> to be extremely valuable, and are intent on gathering as many as possible. As a Zulu Marauder or Space Marine, you must send out <b>Voyagers</b> to explore your area and amass the material around you - specifically, to collect valuable <b>Orbs</b> - to build your society. </p>
+                                        With their irreconcilable differences, both civilizations have decided to completely part ways and build separate lives. However, they both have found galactical <b>Orbs</b> to be extremely valuable, and are intent on gathering as many as possible. As a Zulu Marauder or Space Marine, you must send out <b>Voyagers</b> to explore your area and amass the material around you — specifically, to collect valuable <b>Orbs</b> — to build your society. </p>
                                     <He>Game Format</He>
-                                    <p>Battlecode: Voyage is a two-player turn-based game, where <b>Voyagers</b> on a tiled grid are each controlled by individual computer programs. The objective of the game is to end up with more <b>Orbs</b> than the opponent after { SPECS.MAX_ROUNDS } rounds. Each civilization has a single <b>Planet</b> that can spawn <b>Voyagers</b>. If by { SPECS.MAX_ROUNDS } rounds both the Zulu Marauders and the Space Marines have amassed the same number of <b>Orbs</b>, the tie is broken by the existing number of units and a coin toss, in that order.</p>
-                                    <He>Map and Resources Overview</He>
-                                    <p>Game maps are procedurally generated, and are square 2D grids ranging between { SPECS.MIN_BOARD_SIZE }x{ SPECS.MIN_BOARD_SIZE } and { SPECS.MAX_BOARD_SIZE }x{ SPECS.MAX_BOARD_SIZE } tiles. Every map is either horizontally or vertically symmetric, and the top left corner has the coordinates (0, 0). Each tile in the map is either passable or impassable; passable tiles are light gray, while obstacles (spaceship corpses from previous exploration, large asteroids, other debris not collectable by the small <b>Voyagers</b>) are black. Each teams starts with one <b>Planet</b> and one <b>Voyager</b>.</p>
-                                    <p>The map is overlaid with a grid of <b>Orb</b> counts; each tile contains an integral number of <b>Orbs</b> between { SPECS.MIN_CELL_KARBONITE } and { SPECS.MAX_CELL_KARBONITE } (inclusive). This value is constant throughout the entire game. At the end of each round, each <b>Voyager</b> will use their own gravitational field to pick up all <b>Orbs</b> that are closer to them than the opposing team's <b>Voyagers</b>. The total number of <b>Orbs</b> collected per round will be the sum of the tile values in their range. Tiles will be worth the same values that they were initialized with throughout the entire game.</p>
-                                    <p>Robots have knowledge of the full map at the beginning of the game (including passable/impassable terrain, <b>Orb</b> values, and <b>Planet</b> locations).
+                                    <p>Battlecode: Voyage is a two-player turn-based game, where <b>Voyagers</b> on a 
+                                    tiled grid are each controlled by individual computer programs. 
+                                    The objective of the game is to end up with more <b>Orbs</b> than the opponent  
+                                    after { SPECS.MAX_ROUNDS } rounds. Orbs are collected by the law of gravity in tiled spaces (i.e., Manhattan distance). Each civilization has a single <b>Planet</b> that 
+                                    can spawn <b>Voyagers</b>. If by { SPECS.MAX_ROUNDS } rounds both the Zulu Marauders 
+                                    and the Space Marines have amassed the same number of <b>Orbs</b>, the tie is broken by the existing number of units and a coin toss, in that order.</p>
+                                    <He>Map</He>
+                                    <p>Game maps are procedurally generated, and are square 2D grids ranging between { SPECS.MIN_BOARD_SIZE }x{ SPECS.MIN_BOARD_SIZE } and { SPECS.MAX_BOARD_SIZE }x{ SPECS.MAX_BOARD_SIZE } tiles. Every map is either horizontally or vertically symmetric, and the top left corner has the coordinates (0, 0). Each tile in the map is either passable or impassable; passable tiles are light gray, while obstacles (spaceship corpses from previous exploration, large asteroids, other debris not collectable by the small <b>Voyagers</b>) are black. 
+                                    All units have full knowledge of the map from the beginning.
+                                    Both teams start with one <b>Planet</b>, located at symmetric positions on the map. </p>
+                                    <He>Orbs</He>
+                                    <p>The map is overlaid with a grid of <b>Orb</b> counts; each tile contains an 
+                                    integral number of <b>Orbs</b> between { SPECS.MIN_CELL_KARBONITE } and { SPECS.MAX_CELL_KARBONITE } (inclusive). 
+                                    Impassable tiles have 0 <b>Orbs</b>. The <b>Orbs</b> count is constant throughout the entire game, and is known by all units from the start.
+                                    </p><p>At the end of each round, each <b>Voyager</b> will use their own 
+                                    gravitational field to pick up all <b>Orbs</b> that are closer to them than to all other <b>Voyagers</b> (in Manhattan distance). 
+                                    That is, the total number of <b>Orbs</b> collected in a round for one civilization will be the sum of the <b>Orbs</b> values of all tiles that are closer to any of the civilization's <b>Voyagers</b> than to all of the opposing 
+                                    teams <b>Voyagers</b>. <b>Planets</b> have too small mass to affect the gravitational field, and thus cannot collect <b>Orbs</b>.
+                                    Neither civilization collects the <b>Orbs</b> of tiles that are equally close to their closest <b>Voyagers</b> of each civilization.
+                                    Note that the <b>Orbs</b>-assignment process is equivalent to dividing the grid into regions based on the <a target="_blank" href="https://en.wikipedia.org/wiki/Voronoi_diagram#Illustration">Manhattan-distance Voronoi diagram</a>. 
                                     </p>
-                                    <He>Units Overview</He>
-                                    <p>Each <b>Voyager</b> is initialized with a { SPECS.CHESS_INITIAL }ms chess clock, and receives { SPECS.CHESS_EXTRA }ms of additional computation each round. Each turn is additionally capped at { SPECS.TURN_MAX_TIME }ms, after which the code will be stopped. If a robot exceeds its chess clock, it cannot move until it has a positive amount of time in its clock. </p>
-                                    <p>Movement in the 4 cardinal directions (North, South, East, West) is allowed. However, <b>Voyagers</b> cannot be placed directly adjacent to another <b>Voyager</b> of the same team (diagonals inclusive). </p>
-                                    <p>Each <b>Voyager</b> has a unique { SPECS.MAX_ID }-bit integer ID and a vision radius that allows them to see any other <b>Voyagers</b> within a squared vision radius of { SPECS.UNITS.VISION_RADIUS } (12 tiles of vision total, excluding its own tile). A picture is included below - orange tiles mark visible areas.</p>
-                                    <p class="aligncenter">
-                                        <img src="../../assets/img/voyager_vision.png" style={{width: "50%"}} />
-                                    </p>
-                                    <p><b>Planets</b> are 1x1 “Voyager factories”; they can produce more <b>Voyagers</b> to send out into space, but doing so will cost them { SPECS.UNITS.CONSTRUCTION_KARBONITE } <b>Orbs</b> per <b>Voyager</b>.</p>
+                                    <He>Units</He>
+                                    <p>Each unit is initialized with a { SPECS.CHESS_INITIAL }ms chess clock, and receives { SPECS.CHESS_EXTRA }ms of additional computation each round. Each turn is additionally capped at { SPECS.TURN_MAX_TIME }ms, after which the code will be stopped. If a robot exceeds its chess clock, it cannot move until it has a positive amount of time in its clock. </p>
+                                    <p><b>Voyagers</b> can move 1 step in the 4 cardinal directions (North, South, East, West). However, <b>Voyagers</b> cannot move to a tile that is directly adjacent to another <b>Voyager</b> of the same team (diagonals inclusive). </p>
+                                    <p><b>Planets</b> are Voyager factories; they can produce more <b>Voyagers</b> to send out into space, but doing so will cost the civilization { SPECS.UNITS[SPECS.VOYAGER].CONSTRUCTION_KARBONITE } <b>Orbs</b> per <b>Voyager</b>.</p>
+                                    <p>Each unit has a unique { SPECS.MAX_ID }-bit integer ID and a vision radius that allows them to see any other unit within a <i>squared</i> radius
+                                      of { SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }. This means that a unit at position <code>(r,c)</code> can see another unit at position <code>(r',c')</code> if and only if <code>(r-r')^2 + (c-c')^2 {"<="} { SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }</code>. 
+                                      <a href="../../assets/img/voyager_vision.png"> Here is a picture</a> showing the visible regions (note that the same is true for <b>Planets</b> as well as for <b>Voyagers</b>).</p>
+                                    
                                     <He>Communication</He>
-                                    <p>In any given turn, a <b>Voyager</b> or <b>Planet</b> can broadcast a { SPECS.COMMUNICATION_BITS }-bit message to all other units (including the opponent’s units) on the map. On the next round, all units within that radius will see that that a <b>Planet</b> or <b>Voyager</b> of the sender’s ID broadcasted the given message (from its new position, if the unit moved). Units can radio broadcast simultaneously with all other actions. Note that robots can see the unit ID and x, y location that produced a broadcast, but not which team the unite belongs to.</p>
+                                    <p>In any given turn, a <b>Voyager</b> or <b>Planet</b> can 
+                                    broadcast a { SPECS.COMMUNICATION_BITS }-bit message to all other units 
+                                    (including the opponent's units) on the map. 
+                                    Until the broadcasting unit's next turn, all units will see the signal broadcasted by it.
+                                    If a unit does not signal in a given turn, its broadcasted message will be reset to 0.
+                                    Units can radio broadcast simultaneously with all other actions.</p>
                                     <He>Turn Queue</He>
-                                    <p>Battlecode: Voyage games consist of up to { SPECS.MAX_ROUNDS } rounds, and each round consists of a turn for every unit on the board. This is acheived by cycling each round through a queue that consists of all units on the map. The queue is initialized with each team’s <b>Planets</b> in alternating red, blue order. Then, whenever a <b>Planet</b> produces a new Voyager, it is added to the end of the turn queue as soon as the <b>Planet's</b> turn ends. To rephrase, <b>Voyagers</b> built in a round will get a turn in the same round. A round consists of a full pass through the turn queue.</p>
+                                    <p>Battlecode: Voyage games consist of exactly { SPECS.MAX_ROUNDS } rounds,
+                                     and each round consists of a turn for every unit on the board. 
+                                     This is acheived by cycling each round through a queue that 
+                                     consists of all units on the map. The queue is 
+                                     initialized with each team’s <b>Planets</b> in alternating red, blue order. 
+                                     Then, whenever a <b>Planet</b> produces a new <b>Voyager</b>, it is 
+                                     added to the end of the turn queue as soon as the <b>Planet's</b> turn ends. 
+                                     To rephrase, <b>Voyagers</b> built in a round will get a turn in the same round. 
+                                     A round consists of a full pass through the turn queue.</p>
 
                                 </div>
                             </div>
@@ -56,7 +84,7 @@ class Docs extends Component {
                                     <p className="category">Updated 3/9/19 3:50PM EST</p>
                                 </div>
                                 <div className="content">
-                                    <p>Below is an example of a simple bot. It it is a Voyager, it moves randomly, and if it is a Planet,
+                                    <p>Below is an example of a simple bot. If it is a Voyager, it moves randomly, and if it is a Planet,
                                         it tries to build as soon as it can.
                                     </p>
                                     <pre>{`import {BCAbstractRobot, SPECS} from 'battlecode';
@@ -71,7 +99,7 @@ class MyRobot extends BCAbstractRobot {
         }
 
         else if (this.me.unit === SPECS.PLANET) {
-            if (this.orbs >= SPECS.UNITS[SPECS.VOYAGER].CONSTRUCTION_KARBONITE) {
+            if (this.orbs >= 65536) {
                 return this.buildUnit(0, 1)
             }
         }
