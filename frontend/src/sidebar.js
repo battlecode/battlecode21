@@ -29,7 +29,7 @@ class SideBar extends Component {
             <div className="sidebar" data-color="orange">
                 <div className="sidebar-wrapper">
                     <div className="logo">
-                        <a href="#" className="simple-text">SPACE</a>
+                        <a href="#" className="simple-text">VOYAGE</a>
                     </div>
                     <ul className="nav">
                         <NLink to={`${process.env.PUBLIC_URL}/home`}><i className="pe-7s-home" />Home</NLink>
