@@ -32,17 +32,17 @@ class Docs extends Component {
                                     <p>Battlecode: Voyage is a two-player turn-based game, where <b>Voyagers</b> on a 
                                     tiled grid are each controlled by individual computer programs. 
                                     The objective of the game is to end up with more <b>Orbs</b> than the opponent  
-                                    after { SPECS.MAX_ROUNDS } rounds. Orbs are collected by the law of gravity in tiled spaces (i.e., Manhattan distance). Each civilization has a single <b>Planet</b> that 
-                                    can spawn <b>Voyagers</b>. If by { SPECS.MAX_ROUNDS } rounds both the Zulu Marauders 
+                                    after <code>{ SPECS.MAX_ROUNDS }</code> rounds. Orbs are collected by the law of gravity in tiled spaces (i.e., Manhattan distance). Each civilization has a single <b>Planet</b> that 
+                                    can spawn <b>Voyagers</b>. If by <code>{ SPECS.MAX_ROUNDS }</code> rounds both the Zulu Marauders 
                                     and the Space Marines have amassed the same number of <b>Orbs</b>, the tie is broken by the existing number of units and a coin toss, in that order.</p>
                                     <He>Map</He>
-                                    <p>Game maps are procedurally generated, and are square 2D grids ranging between { SPECS.MIN_BOARD_SIZE }x{ SPECS.MIN_BOARD_SIZE } and { SPECS.MAX_BOARD_SIZE }x{ SPECS.MAX_BOARD_SIZE } tiles. Every map is either horizontally or vertically symmetric, and the top left corner has the coordinates (0, 0). Each tile in the map is either passable or impassable; passable tiles are light gray, while obstacles (spaceship corpses from previous exploration, large asteroids, other debris not collectable by the small <b>Voyagers</b>) are black. 
+                                    <p>Game maps are procedurally generated, and are square 2D grids ranging between <code>{ SPECS.MIN_BOARD_SIZE }x{ SPECS.MIN_BOARD_SIZE }</code> and <code>{ SPECS.MAX_BOARD_SIZE }x{ SPECS.MAX_BOARD_SIZE }</code> tiles. Every map is either horizontally or vertically symmetric, and the top left corner has the coordinates <code>(0,0)</code>. Each tile in the map is either passable or impassable; passable tiles are light gray, while obstacles (spaceship corpses from previous exploration, large asteroids, other debris not collectable by the small <b>Voyagers</b>) are black. 
                                     All units have full knowledge of the map from the beginning.
                                     Both teams start with one <b>Planet</b>, located at symmetric positions on the map. </p>
                                     <He>Orbs</He>
                                     <p>The map is overlaid with a grid of <b>Orb</b> counts; each tile contains an 
-                                    integral number of <b>Orbs</b> between { SPECS.MIN_CELL_KARBONITE } and { SPECS.MAX_CELL_KARBONITE } (inclusive). 
-                                    Impassable tiles have 0 <b>Orbs</b>. The <b>Orbs</b> count is constant throughout the entire game, and is known by all units from the start.
+                                    integral number of <b>Orbs</b> between <code>{ SPECS.MIN_CELL_KARBONITE }</code> and <code>{ SPECS.MAX_CELL_KARBONITE }</code> (inclusive). 
+                                    Impassable tiles have <code>0</code> <b>Orbs</b>. The <b>Orbs</b> count is constant throughout the entire game, and is known by all units from the start.
                                     </p><p>At the end of each round, each <b>Voyager</b> will use their own 
                                     gravitational field to pick up all <b>Orbs</b> that are closer to them than to all other <b>Voyagers</b> (in Manhattan distance). 
                                     That is, the total number of <b>Orbs</b> collected in a round for one civilization will be the sum of the <b>Orbs</b> values of all tiles that are closer to any of the civilization's <b>Voyagers</b> than to all of the opposing 
@@ -51,22 +51,22 @@ class Docs extends Component {
                                     Note that the <b>Orbs</b>-assignment process is equivalent to dividing the grid into regions based on the <a target="_blank" href="https://en.wikipedia.org/wiki/Voronoi_diagram#Illustration">Manhattan-distance Voronoi diagram</a>. 
                                     </p>
                                     <He>Units</He>
-                                    <p>Each unit is initialized with a { SPECS.CHESS_INITIAL }ms chess clock, and receives { SPECS.CHESS_EXTRA }ms of additional computation each round. Each turn is additionally capped at { SPECS.TURN_MAX_TIME }ms, after which the code will be stopped. If a robot exceeds its chess clock, it cannot move until it has a positive amount of time in its clock. </p>
-                                    <p><b>Voyagers</b> can move 1 step in the 4 cardinal directions (North, South, East, West). However, <b>Voyagers</b> cannot move to a tile that is directly adjacent to another <b>Voyager</b> of the same team (diagonals inclusive). </p>
-                                    <p><b>Planets</b> are Voyager factories; they can produce more <b>Voyagers</b> to send out into space, but doing so will cost the civilization { SPECS.UNITS[SPECS.VOYAGER].CONSTRUCTION_KARBONITE } <b>Orbs</b> per <b>Voyager</b>.</p>
-                                    <p>Each unit has a unique { SPECS.MAX_ID }-bit integer ID and a vision radius that allows them to see any other unit within a <i>squared</i> radius
-                                      of { SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }. This means that a unit at position <code>(r,c)</code> can see another unit at position <code>(r',c')</code> if and only if <code>(r-r')^2 + (c-c')^2 {"<="} { SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }</code>. 
+                                    <p>Each unit is initialized with a <code>{ SPECS.CHESS_INITIAL }</code>ms chess clock, and receives <code>{ SPECS.CHESS_EXTRA }</code>ms of additional computation each round. Each turn is additionally capped at <code>{ SPECS.TURN_MAX_TIME }</code>ms, after which the code will be stopped. If a robot exceeds its chess clock, it cannot move until it has a positive amount of time in its clock. </p>
+                                    <p><b>Voyagers</b> can move <code>1</code> step in the 4 cardinal directions (North, South, East, West). However, <b>Voyagers</b> cannot move to a tile that is directly adjacent to another <b>Voyager</b> of the same team (diagonals inclusive). </p>
+                                    <p><b>Planets</b> are Voyager factories; they can produce more <b>Voyagers</b> to send out into space, but doing so will cost the civilization <code>{ SPECS.UNITS[SPECS.VOYAGER].CONSTRUCTION_KARBONITE }</code> <b>Orbs</b> per <b>Voyager</b>.</p>
+                                    <p>Each unit has a unique <code>{ SPECS.MAX_ID }</code>-bit integer ID and a vision radius that allows them to see any other unit within a <i>squared</i> radius
+                                      of <code>{ SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }</code>. This means that a unit at position <code>(r,c)</code> can see another unit at position <code>(r',c')</code> if and only if <code>(r-r')^2 + (c-c')^2 {"<="} { SPECS.UNITS[SPECS.VOYAGER].VISION_RADIUS }</code>. 
                                       <a href="../../assets/img/voyager_vision.png"> Here is a picture</a> showing the visible regions (note that the same is true for <b>Planets</b> as well as for <b>Voyagers</b>).</p>
                                     
                                     <He>Communication</He>
                                     <p>In any given turn, a <b>Voyager</b> or <b>Planet</b> can 
-                                    broadcast a { SPECS.COMMUNICATION_BITS }-bit message to all other units 
+                                    broadcast a <code>{ SPECS.COMMUNICATION_BITS }</code>-bit message to all other units 
                                     (including the opponent's units) on the map. 
                                     Until the broadcasting unit's next turn, all units will see the signal broadcasted by it.
-                                    If a unit does not signal in a given turn, its broadcasted message will be reset to 0.
+                                    If a unit does not signal in a given turn, its broadcasted message will be reset to <code>0</code>.
                                     Units can radio broadcast simultaneously with all other actions.</p>
                                     <He>Turn Queue</He>
-                                    <p>Battlecode: Voyage games consist of exactly { SPECS.MAX_ROUNDS } rounds,
+                                    <p>Battlecode: Voyage games consist of exactly <code>{ SPECS.MAX_ROUNDS }</code> rounds,
                                      and each round consists of a turn for every unit on the board. 
                                      This is acheived by cycling each round through a queue that 
                                      consists of all units on the map. The queue is 
