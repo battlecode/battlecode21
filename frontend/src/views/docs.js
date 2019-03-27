@@ -93,7 +93,7 @@ class MyRobot extends BCAbstractRobot {
     turn() {
 
         if (this.me.unit === SPECS.VOYAGER) {
-            const choices = [[0,-1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
+            const choices = [[0,-1], [1, 0], [0, 1], [-1, 0]];
             const choice = choices[Math.floor(Math.random()*choices.length)]
             return this.move(choice[0], choice[1]);
         }
