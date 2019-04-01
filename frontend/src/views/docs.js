@@ -21,7 +21,7 @@ class Docs extends Component {
                         <div className="col-md-12">
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Battlecode: Voyage Official Game Specs</h4>
+                                    <h4 className="title">Battlehack: Voyage Official Game Specs</h4>
                                     <p className="category">Updated 3/20/19 5:00PM EST</p>
                                 </div>
                                 <div className="content">
@@ -29,10 +29,11 @@ class Docs extends Component {
                                         Inhabitants of the Blue Planet — the Space Marines — are intent on funneling all resources toward researching the ocean life around them. Although both have made countless attempts to build one society, there is no compromising with the Zulu Marauders and Space Marines.
                                         With their irreconcilable differences, both civilizations have decided to completely part ways and build separate lives. However, they both have found galactical <b>Orbs</b> to be extremely valuable, and are intent on gathering as many as possible. As a Zulu Marauder or Space Marine, you must send out <b>Voyagers</b> to explore your area and amass the material around you — specifically, to collect valuable <b>Orbs</b> — to build your society. </p>
                                     <He>Game Format</He>
-                                    <p>Battlecode: Voyage is a two-player turn-based game, where <b>Voyagers</b> on a 
+                                    <p>Battlehack: Voyage is a two-player turn-based game, where <b>Voyagers</b> on a 
                                     tiled grid are each controlled by individual computer programs. 
                                     The objective of the game is to end up with more <b>Orbs</b> than the opponent  
-                                    after <code>{ SPECS.MAX_ROUNDS }</code> rounds. Orbs are collected by the law of gravity in tiled spaces (i.e., Manhattan distance). Each civilization has a single <b>Planet</b> that 
+                                    after <code>{ SPECS.MAX_ROUNDS }</code> rounds. <b>Orbs</b> are collected by the law of gravity in tiled spaces 
+                                    (i.e., <b>Orbs</b> flow towards the closest <b>Voyager</b>, in Manhattan distance). Each civilization has a single <b>Planet</b> that 
                                     can spawn <b>Voyagers</b>. If by <code>{ SPECS.MAX_ROUNDS }</code> rounds both the Zulu Marauders 
                                     and the Space Marines have amassed the same number of <b>Orbs</b>, the tie is broken by the existing number of units and a coin toss, in that order.</p>
                                     <He>Map</He>
@@ -66,7 +67,7 @@ class Docs extends Component {
                                     If a unit does not signal in a given turn, its broadcasted message will be reset to <code>0</code>.
                                     Units can radio broadcast simultaneously with all other actions.</p>
                                     <He>Turn Queue</He>
-                                    <p>Battlecode: Voyage games consist of exactly <code>{ SPECS.MAX_ROUNDS }</code> rounds,
+                                    <p>Battlehack: Voyage games consist of exactly <code>{ SPECS.MAX_ROUNDS }</code> rounds,
                                      and each round consists of a turn for every unit on the board. 
                                      This is acheived by cycling each round through a queue that 
                                      consists of all units on the map. The queue is 
@@ -162,9 +163,9 @@ var robot = new MyRobot();`}</pre>
                                     </ul>
                                     <hr /><h6>Helper Methods</h6><hr />
                                     <ul>
-                                        <li><code>this.log(message)</code>: Print a message to the command line.  You cannot use ordinary <code>console.log</code> in Battlecode for security reasons.</li>
+                                        <li><code>this.log(message)</code>: Print a message to the command line.  You cannot use ordinary <code>console.log</code> in Battlehack for security reasons.</li>
                                         <li><code>this.getVisibleRobotMap()</code>: Returns a 2d grid of integers the size of <code>this.map</code>. All tiles outside <code>this.me</code>'s vision radius will contain <code>-1</code>. All tiles within the vision will be <code>0</code> if empty, and will be a robot id if it contains a robot.</li>
-                                        <li><code>this.getRobot(id)</code>: Returns a robot object with the given integer <code>id</code>.  Returns <code>null</code> if such a robot is not in your vision radius.</li>
+                                        <li><code>this.getRobot(id)</code>: Returns a robot object with the given integer <code>id</code>.  Returns <code>null</code> if such a robot does not exist.</li>
                                         <li><code>this.isVisible(id)</code>: Returns <code>true</code> if and only if the robot identified by <code>id</code> is within <code>this.me</code>'s vision radius (particularly, <code>this.me</code> is always visible to itself). </li>
                                     </ul>
                                 </div>
