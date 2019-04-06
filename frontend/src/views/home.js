@@ -94,6 +94,7 @@ class StatCard extends UpdateCard {
                     <div className="footer">
                         <div className="legend">
                             <i className="fa fa-circle text-info" /> Win
+                            <span style={{marginLeft: "10px"}}> </span>
                             <i className="fa fa-circle text-danger" /> Loss
                         </div>
                         <hr />
