@@ -95,13 +95,13 @@ class MyRobot extends BCAbstractRobot {
 
         if (this.me.unit === SPECS.VOYAGER) {
             const choices = [[0,-1], [1, 0], [0, 1], [-1, 0]];
-            const choice = choices[Math.floor(Math.random()*choices.length)]
+            const choice = choices[Math.floor(Math.random()*choices.length)];
             return this.move(choice[0], choice[1]);
         }
 
         else if (this.me.unit === SPECS.PLANET) {
             if (this.orbs >= 65536) {
-                return this.buildUnit(0, 1)
+                return this.buildUnit(0, 1);
             }
         }
 
