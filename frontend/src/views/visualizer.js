@@ -57,6 +57,7 @@ class Visualizer {
         this.a_pressed = false;
         this.s_pressed = false;
         this.d_pressed = false;
+        this.p_pressed = false;
 
         // Figure out how to convert between local and screen coordinates
         this.calculated_offset = false;
@@ -117,10 +118,10 @@ class Visualizer {
                 const NEW_WIDTH = Math.min(this.MAP_WIDTH, Math.max(8, ZOOM*OLD_WIDTH)), NEW_HEIGHT = Math.min(this.MAP_HEIGHT, Math.max(8, ZOOM*OLD_HEIGHT));
                 const ZOOM_X = NEW_WIDTH / OLD_WIDTH, ZOOM_Y = NEW_HEIGHT / OLD_HEIGHT;
                 // Keep tile of focus right where it is.
-                this.x1 = this.mouse_x - (this.mouse_x-this.x1)*ZOOM_X;
-                this.y1 = this.mouse_y - (this.mouse_y-this.y1)*ZOOM_Y;
-                this.x2 = this.mouse_x + (this.x2-this.mouse_x)*ZOOM_X;
-                this.y2 = this.mouse_y + (this.y2-this.mouse_y)*ZOOM_Y;
+                this.x1 = Math.round(this.mouse_x - (this.mouse_x-this.x1)*ZOOM_X);
+                this.y1 = Math.round(this.mouse_y - (this.mouse_y-this.y1)*ZOOM_Y);
+                this.x2 = Math.round(this.mouse_x + (this.x2-this.mouse_x)*ZOOM_X);
+                this.y2 = Math.round(this.mouse_y + (this.y2-this.mouse_y)*ZOOM_Y);
                 
                 // Correct horizontal bounds.
                 if(this.x1 < 0) {
@@ -162,6 +163,9 @@ class Visualizer {
             if (charCode === 68 || charCode === 100) {
                 this.d_pressed = true;
             }
+            if (charCode === 80 || charCode === 112) {
+                this.p_pressed = true;
+            }
         }.bind(this);
         document.onkeyup = function(k) {
             var charCode = (typeof k.which == "number") ? k.which : k.keyCode
@@ -177,9 +181,13 @@ class Visualizer {
             if (charCode === 68 || charCode === 100) {
                 this.d_pressed = false;
             }
+            if (charCode === 80 || charCode === 112) {
+                this.p_pressed = false;
+            }
         }.bind(this);
 
         this.mapGraphics = new PIXI.Graphics();
+        this.stage.addChild(this.mapGraphics);
 
         this.graphGraphics = new PIXI.Graphics();
         this.stage.addChild(this.graphGraphics);
@@ -312,23 +320,26 @@ class Visualizer {
         }
    
         // Draw tiles
+        var influence = [0, 0]
         this.mapGraphics.lineStyle(0, 0x000000); // reset line style to nada
         for (let y = this.y1; y < this.y2; y++) for (let x = this.x1; x < this.x2; x++) {
             const MAX_KARB_BRIGHTNESS = 100;
             const MAX_KARB_VAL = 7
             var color; // This can be optimized a bit if necessary, but I have a hunch it won't be the bottleneck.
             if (!this.game.map[y][x]) color = this.OBSTACLE;
+            else if (this.p_pressed || this.game.influence[y][x] === -1) {
+                color = toHex(MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
+            }
             else if (this.game.influence[y][x] === 0) {
-                color = toHex(MAX_KARB_BRIGHTNESS,0,0, this.game.karbonite_map[y][x] / MAX_KARB_VAL);
+                color = toHex(MAX_KARB_BRIGHTNESS,0,0, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
+                influence[0]++;
             }
             else if (this.game.influence[y][x] === 1) {
-                color = toHex(0,0,MAX_KARB_BRIGHTNESS, this.game.karbonite_map[y][x] / MAX_KARB_VAL);
-            }
-            else {
-                color = toHex(MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS, this.game.karbonite_map[y][x] / MAX_KARB_VAL);
+                color = toHex(0,0,MAX_KARB_BRIGHTNESS, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
+                influence[1]++;
             }
             this.mapGraphics.beginFill(color)
-            this.mapGraphics.drawRect(x*draw_width, y*draw_height, draw_width, draw_height);
+            this.mapGraphics.drawRect((x-this.x1)*draw_width, (y-this.y1)*draw_height, draw_width, draw_height);
             this.mapGraphics.endFill();
         }
 
@@ -339,7 +350,7 @@ class Visualizer {
         // Hopefully pixi resolves overlap within a graphics the way I think it does
         // otherwise I will need to mess with order within the stage.
         for (let i = 0; i < this.game.robots.length; i++) {
-            let robot = this.game.robots.units[i];
+            let robot = this.game.robots[i];
             // Only draw if in screen bounds
             if (robot.x >= this.x1 && robot.x < this.x2 && robot.y >= this.y1 && robot.y < this.y2) {
                 let x = robot.x-this.x1;
@@ -362,12 +373,12 @@ class Visualizer {
         // Gridlines
         this.mapGraphics.lineStyle(1, this.OBSTACLE);
         for(var y = this.y1; y <= this.y2; y++) {
-            this.mapGraphics.moveTo(0, y*draw_height);
-            this.mapGraphics.lineTo(this.grid_width, y*draw_height);
+            this.mapGraphics.moveTo(0, (y-this.y1)*draw_height);
+            this.mapGraphics.lineTo(this.grid_width, (y-this.y1)*draw_height);
         }
         for(var x = this.x1; x <= this.x2; x++){
-            this.mapGraphics.moveTo(x*draw_width, 0);
-            this.mapGraphics.lineTo(x*draw_width, this.grid_height);
+            this.mapGraphics.moveTo((x-this.x1)*draw_width, 0);
+            this.mapGraphics.lineTo((x-this.x1)*draw_width, this.grid_height);
         }
 
         // Draw graphs
@@ -388,9 +399,9 @@ class Visualizer {
         this.graphGraphics.endFill();
         // Figure out scaling for the graphs.
         const KARB_LINE = 65536;
-        const ROBOT_LINE = 5;
+        const INFLUENCE_LINE = 100;
         var MAX_KARB = Math.ceil(Math.max(5, this.game.karbonite[0]/KARB_LINE, this.game.karbonite[1]/KARB_LINE));
-        var MAX_ROBOTS = Math.ceil(Math.max(5, num_robots[0]/ROBOT_LINE, num_robots[1]/ROBOT_LINE));
+        var MAX_INFLUENCE = Math.ceil(Math.max(5, influence[0]/INFLUENCE_LINE, influence[1]/INFLUENCE_LINE));
         // Then, draw! I'm so sorry this is so disgusting. We do, in order, red karb, red units, blue karb, and blue units.
         // This puts those in the right places.
         this.graphGraphics.beginFill('0xFF0000');
@@ -398,16 +409,16 @@ class Visualizer {
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[0]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[0]/MAX_KARB/KARB_LINE);
         this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-num_robots[0]/MAX_ROBOTS/ROBOT_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*num_robots[0]/MAX_ROBOTS/ROBOT_LINE);
+            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-influence[0]/MAX_INFLUENCE/INFLUENCE_LINE),
+            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*influence[0]/MAX_INFLUENCE/INFLUENCE_LINE);
         this.graphGraphics.endFill();
         this.graphGraphics.beginFill('0x0000FF');
         this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH/2+this.LR_BORDER,
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[1]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[1]/MAX_KARB/KARB_LINE);
         this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH*3/2+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-num_robots[1]/MAX_ROBOTS/ROBOT_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*num_robots[1]/MAX_ROBOTS/ROBOT_LINE);
+            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-influence[1]/MAX_INFLUENCE/INFLUENCE_LINE),
+            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*influence[1]/MAX_INFLUENCE/INFLUENCE_LINE);
         this.graphGraphics.endFill();
 
         // Draw markers in graphs.
@@ -416,9 +427,9 @@ class Visualizer {
             this.graphGraphics.moveTo(this.grid_width+this.LR_BORDER, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
             this.graphGraphics.lineTo(this.grid_width+this.LR_BORDER+this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
         }
-        for(var f = 1; f < MAX_ROBOTS; f++){
-            this.graphGraphics.moveTo(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_ROBOTS*this.IND_G_HEIGHT);
-            this.graphGraphics.lineTo(this.grid_width+2*this.LR_BORDER+2*this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_ROBOTS*this.IND_G_HEIGHT);
+        for(var f = 1; f < MAX_INFLUENCE; f++){
+            this.graphGraphics.moveTo(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_INFLUENCE*this.IND_G_HEIGHT);
+            this.graphGraphics.lineTo(this.grid_width+2*this.LR_BORDER+2*this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_INFLUENCE*this.IND_G_HEIGHT);
         }
 
         // Round text
@@ -428,8 +439,8 @@ class Visualizer {
         this.roundtext.text += "Winner : "+((this.game.winner === 0 || this.game.winner === 1)?(this.game.winner===0?'red':'blue'):"???")+"\n";
 
         // Draw text for the stats
-        this.red_karbtext.text = ''+this.game.karbonite[0];
-        this.blue_karbtext.text = ''+this.game.karbonite[1];
+        this.red_karbtext.text = ''+this.game.karbonite[0]+'  '+influence[0];
+        this.blue_karbtext.text = ''+this.game.karbonite[1]+'  '+influence[1];
 
         // Handle click and infotext
         if (this.active_x !== -1) {
@@ -494,7 +505,7 @@ class Visualizer {
         // for (let i = 0; i < 6; i++) for (let j = 0; j < spritepools[i].length && spritepools[i][j].visible; j++) spritepools[i][j].visible = false; // Other
         
         // Move frame
-        const PAN_SPEED = 0.4;
+        const PAN_SPEED = 1;
         if (this.w_pressed) {
             this.y1 -= PAN_SPEED;
             this.y2 -= PAN_SPEED;
