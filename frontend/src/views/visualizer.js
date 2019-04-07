@@ -4,22 +4,27 @@ import * as PIXI from "pixi.js";
 var CHECKPOINT = 1000;
 var TIME_PER_TURN = 50;
 
-
-/* For my use:
-
-this.game.width, this.height -- self-explanatory
-this.game.robots -- list of active objects.
-    this.game.robots[i].unit = 0 means planet
-    this.game.robots[i].unit = 1 means voyager
-this.game.teams -- maps ids to teams (0, 1)
-this.game.karbonite -- how much karbonite each player has
-this.game.influence -- map of what belongs to whom
-this.game.karbonite_map -- map of karbonite values
-this.game.map -- passability map.
-
+/*
+Castle by BGBOXXX Design from the Noun Project
+Church by Ben Davis from the Noun Project
+Pilgrim Hat by Bonnie Beach from the Noun Project
+Sword by uzeir syarief from the Noun Project
+sniper by rizqa anindita from the Noun Project
+Tank by Sandhi Priyasmoro from the Noun Project
 */
-
-
+ 
+ 
+/*
+"CASTLE": 0,
+"CHURCH": 1,
+"PILGRIM": 2,
+"CRUSADER": 3,
+"PROPHET": 4,
+"PREACHER": 5,
+"RED": 0,
+"BLUE": 1,
+*/
+ 
 class Visualizer {
     constructor(div, replay, turn_callback, width=840, height=672) {
         this.replay = replay;
@@ -50,14 +55,13 @@ class Visualizer {
         this.grid_height = this.height;
         this.graph_width = this.width - this.grid_width;
         this.graph_height = this.height*.8;
-        this.MAP_WIDTH = this.game.width;
-        this.MAP_HEIGHT = this.game.height;
+        this.MAP_WIDTH = this.game.map[0].length;
+        this.MAP_HEIGHT = this.game.map.length;
 
         this.w_pressed = false;
         this.a_pressed = false;
         this.s_pressed = false;
         this.d_pressed = false;
-        this.p_pressed = false;
 
         // Figure out how to convert between local and screen coordinates
         this.calculated_offset = false;
@@ -118,10 +122,10 @@ class Visualizer {
                 const NEW_WIDTH = Math.min(this.MAP_WIDTH, Math.max(8, ZOOM*OLD_WIDTH)), NEW_HEIGHT = Math.min(this.MAP_HEIGHT, Math.max(8, ZOOM*OLD_HEIGHT));
                 const ZOOM_X = NEW_WIDTH / OLD_WIDTH, ZOOM_Y = NEW_HEIGHT / OLD_HEIGHT;
                 // Keep tile of focus right where it is.
-                this.x1 = Math.round(this.mouse_x - (this.mouse_x-this.x1)*ZOOM_X);
-                this.y1 = Math.round(this.mouse_y - (this.mouse_y-this.y1)*ZOOM_Y);
-                this.x2 = Math.round(this.mouse_x + (this.x2-this.mouse_x)*ZOOM_X);
-                this.y2 = Math.round(this.mouse_y + (this.y2-this.mouse_y)*ZOOM_Y);
+                this.x1 = this.mouse_x - (this.mouse_x-this.x1)*ZOOM_X;
+                this.y1 = this.mouse_y - (this.mouse_y-this.y1)*ZOOM_Y;
+                this.x2 = this.mouse_x + (this.x2-this.mouse_x)*ZOOM_X;
+                this.y2 = this.mouse_y + (this.y2-this.mouse_y)*ZOOM_Y;
                 
                 // Correct horizontal bounds.
                 if(this.x1 < 0) {
@@ -163,9 +167,6 @@ class Visualizer {
             if (charCode === 68 || charCode === 100) {
                 this.d_pressed = true;
             }
-            if (charCode === 80 || charCode === 112) {
-                this.p_pressed = true;
-            }
         }.bind(this);
         document.onkeyup = function(k) {
             var charCode = (typeof k.which == "number") ? k.which : k.keyCode
@@ -181,34 +182,73 @@ class Visualizer {
             if (charCode === 68 || charCode === 100) {
                 this.d_pressed = false;
             }
-            if (charCode === 80 || charCode === 112) {
-                this.p_pressed = false;
-            }
         }.bind(this);
 
-        this.mapGraphics = new PIXI.Graphics();
-        this.stage.addChild(this.mapGraphics);
+        var mapGraphics = new PIXI.Graphics();
 
         this.graphGraphics = new PIXI.Graphics();
         this.stage.addChild(this.graphGraphics);
 
+        this.RES_FACTOR = 10;
+
         this.renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x222222, antialias: false, transparent: false, resolution: devicePixelRatio, autoResize: true});
+        //this.renderer.resize(this.RES_FACTOR*this.height, this.RES_FACTOR*this.height);
+        //this.renderer.resize(this.height, this.height);
+
 
         // Clear container before draw
         this.container.innerHTML = '';
         this.container.append(this.renderer.view);
 
+        this.BLANK = '0xFFFFFF';
+        this.OBSTACLE = '0x444444';
+        this.KARBONITE = '0x22BB22';
+   
+        var draw_width = this.RES_FACTOR*this.grid_width / this.MAP_WIDTH;
+        var draw_height = this.RES_FACTOR*this.grid_height / this.MAP_HEIGHT;
+        mapGraphics.beginFill(this.BLANK);
+        mapGraphics.drawRect(0, 0, this.RES_FACTOR*this.grid_width, this.RES_FACTOR*this.grid_height);
+        mapGraphics.endFill();
+        for (let y = 0; y < this.MAP_HEIGHT; y++) for (let x = 0; x < this.MAP_WIDTH; x++) {
+            if (!this.game.map[y][x] || this.game.karbonite_map[y][x]) {
+                var color = this.game.map[y][x] ? this.KARBONITE : this.OBSTACLE;
+                mapGraphics.beginFill(color, this.game.map[y][x] ? this.game.karbonite_map[y][x] / 10 : 1);
+                if (this.game.karbonite_map[y][x]) {
+                    const SIZE_FACTOR = 1;
+                    const BORDER = (1 - SIZE_FACTOR) / 2;
+                    mapGraphics.drawRect((x+BORDER)*draw_width, (y+BORDER)*draw_height, SIZE_FACTOR*draw_width, SIZE_FACTOR*draw_height);
+                }
+                else mapGraphics.drawRect(x*draw_width, y*draw_height, draw_width, draw_height);
+                mapGraphics.endFill();
+            }
+        }
+
+        // Gridlines
+        mapGraphics.lineStyle(this.RES_FACTOR, this.OBSTACLE);
+        for(var y = 0; y <= this.MAP_HEIGHT; y++) {
+            mapGraphics.moveTo(0, y*draw_height);
+            mapGraphics.lineTo(this.RES_FACTOR*this.grid_width, y*draw_height);
+        }
+        for(var x = 0; x <= this.MAP_WIDTH; x++){
+            mapGraphics.moveTo(x*draw_width, 0);
+            mapGraphics.lineTo(x*draw_width, this.RES_FACTOR*this.grid_height);
+        }
+
+        //PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+        var map_texture = PIXI.RenderTexture.create(this.RES_FACTOR*this.height, this.RES_FACTOR*this.height);
+        
+        this.renderer.render(mapGraphics, map_texture);
+        this.map = new PIXI.Sprite(map_texture);
+        this.grid_mask = new PIXI.Graphics();
+        this.grid_mask.beginFill(0xFF0000);
+        this.grid_mask.drawRect(0, 0, this.grid_width, this.grid_height);
+        this.grid_mask.endFill();
+        this.map.mask = this.grid_mask;
+        this.stage.addChild(this.map);
+
         // Reset the renderer
         this.renderer.resize(this.width, this.height);
 
-        /*
-
-        Since this is for a hackathon, and I'm not even sure sprites would be better
-        I have elected not to implement them. If I am given assets and people want sprites
-        that can be accomplished pretty quickly.
-
-        */
-        /*
         // Sprites!
         this.spritestage = new PIXI.Container();
         this.stage.addChild(this.spritestage);
@@ -268,7 +308,6 @@ class Visualizer {
             this.spritestage.addChild(sprite);
             this.strategic_sprite_pools[i].push(sprite);
         }
-        */
 
         // Borders and such for the graphs
         this.IND_G_WIDTH = this.graph_width*.8 / 2;
@@ -299,8 +338,7 @@ class Visualizer {
 
     draw() { // for later perhaps making strategic view
 
-        // Not using sprites
-        // var spritepools = this.strategic ? this.strategic_sprite_pools : this.sprite_pools;
+        var spritepools = this.strategic ? this.strategic_sprite_pools : this.sprite_pools;
 
         // where to put the map sprite
         const VIEW_WIDTH = this.x2-this.x1,
@@ -309,116 +347,35 @@ class Visualizer {
         var draw_width = this.grid_width / VIEW_WIDTH;
         var draw_height = this.grid_height / VIEW_HEIGHT;
 
-        this.OBSTACLE = '0xFFFF00'; // Bright yellow obstacles!
+        this.map.width = this.grid_width*this.MAP_WIDTH/VIEW_WIDTH;
+        this.map.height = this.grid_height*this.MAP_HEIGHT/VIEW_HEIGHT;
 
-        function componentToHex(c) {
-            var hex = c.toString(16);
-            return hex.length == 1 ? "0" + hex : hex;
-        }
-        function toHex(r,g,b,alpha) {
-            return "0x" + componentToHex(Math.round(r*alpha)) + componentToHex(Math.round(g*alpha)) + componentToHex(Math.round(b*alpha));
-        }
-   
-        // Draw tiles
-        var influence = [0, 0]
-        this.mapGraphics.lineStyle(0, 0x000000); // reset line style to nada
-        for (let y = this.y1; y < this.y2; y++) for (let x = this.x1; x < this.x2; x++) {
-            const MAX_KARB_BRIGHTNESS = 100;
-            const MAX_KARB_VAL = 7
-            var color; // This can be optimized a bit if necessary, but I have a hunch it won't be the bottleneck.
-            if (!this.game.map[y][x]) color = this.OBSTACLE;
-            else if (this.p_pressed || this.game.influence[y][x] === -1) {
-                color = toHex(MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS,MAX_KARB_BRIGHTNESS, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
-            }
-            else if (this.game.influence[y][x] === 0) {
-                color = toHex(MAX_KARB_BRIGHTNESS,0,0, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
-                influence[0]++;
-            }
-            else if (this.game.influence[y][x] === 1) {
-                color = toHex(0,0,MAX_KARB_BRIGHTNESS, 0.4+0.6*this.game.karbonite_map[y][x] / MAX_KARB_VAL);
-                influence[1]++;
-            }
-            this.mapGraphics.beginFill(color)
-            this.mapGraphics.drawRect((x-this.x1)*draw_width, (y-this.y1)*draw_height, draw_width, draw_height);
-            this.mapGraphics.endFill();
-        }
-
-
-        // Draw units (non-sprite version)
-        var num_robots = [0, 0]; // Count for statistics
-
-        // Hopefully pixi resolves overlap within a graphics the way I think it does
-        // otherwise I will need to mess with order within the stage.
-        for (let i = 0; i < this.game.robots.length; i++) {
-            let robot = this.game.robots[i];
-            // Only draw if in screen bounds
-            if (robot.x >= this.x1 && robot.x < this.x2 && robot.y >= this.y1 && robot.y < this.y2) {
-                let x = robot.x-this.x1;
-                let y = robot.y-this.y1;
-                this.mapGraphics.beginFill(robot.team === 0 ? '0xFF0000' : '0x0000FF');
-                if (robot.unit === 1) {
-                    num_robots[robot.team] += 1;
-                    this.mapGraphics.lineStyle(2, 0x000000);
-                    const SIZE_FACTOR = 0.75;
-                    const BORDER = (1 - SIZE_FACTOR) / 2;
-                    this.mapGraphics.drawRect((x+BORDER)*draw_width, (y+BORDER)*draw_height, SIZE_FACTOR*draw_width, SIZE_FACTOR*draw_height);
-                    this.mapGraphics.lineStyle(0, 0x000000);
-                }
-                else this.mapGraphics.drawRect(draw_width*x, draw_height*y, draw_width, draw_height);
-                this.mapGraphics.endFill();
-            }
-        }
-
-
-        // Gridlines
-        this.mapGraphics.lineStyle(1, this.OBSTACLE);
-        for(var y = this.y1; y <= this.y2; y++) {
-            this.mapGraphics.moveTo(0, (y-this.y1)*draw_height);
-            this.mapGraphics.lineTo(this.grid_width, (y-this.y1)*draw_height);
-        }
-        for(var x = this.x1; x <= this.x2; x++){
-            this.mapGraphics.moveTo((x-this.x1)*draw_width, 0);
-            this.mapGraphics.lineTo((x-this.x1)*draw_width, this.grid_height);
-        }
+        this.map.x = -this.grid_width * this.x1 / VIEW_WIDTH;
+        this.map.y = -this.grid_height * this.y1 / VIEW_HEIGHT;
 
         // Draw graphs
         this.graphGraphics.clear();
 
-        this.KARBONITE = '0x22BB22'
-        this.UNITS = '0x00CCCC'
-
-        // Indicate karbonite vs robot sections of graphs
+        // Indicate karbonite vs fuel sections of graphs
         this.graphGraphics.lineStyle(0);
         this.graphGraphics.beginFill(this.KARBONITE);
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER, this.T_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT-this.KF_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
         this.graphGraphics.endFill();
-        this.graphGraphics.beginFill(this.UNITS);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER, this.T_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT-this.KF_BORDER_HEIGHT, this.IND_G_WIDTH, this.KF_BORDER_HEIGHT);
-        this.graphGraphics.endFill();
         // Figure out scaling for the graphs.
-        const KARB_LINE = 65536;
-        const INFLUENCE_LINE = 100;
+        const KARB_LINE = 20;
         var MAX_KARB = Math.ceil(Math.max(5, this.game.karbonite[0]/KARB_LINE, this.game.karbonite[1]/KARB_LINE));
-        var MAX_INFLUENCE = Math.ceil(Math.max(5, influence[0]/INFLUENCE_LINE, influence[1]/INFLUENCE_LINE));
-        // Then, draw! I'm so sorry this is so disgusting. We do, in order, red karb, red units, blue karb, and blue units.
+        // Then, draw! I'm so sorry this is so disgusting. We do, in order, red karb, red fuel, blue karb, and blue fuel.
         // This puts those in the right places.
         this.graphGraphics.beginFill('0xFF0000');
         this.graphGraphics.drawRect(this.grid_width+this.LR_BORDER,
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[0]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[0]/MAX_KARB/KARB_LINE);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-influence[0]/MAX_INFLUENCE/INFLUENCE_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*influence[0]/MAX_INFLUENCE/INFLUENCE_LINE);
         this.graphGraphics.endFill();
         this.graphGraphics.beginFill('0x0000FF');
         this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH/2+this.LR_BORDER,
             this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-this.game.karbonite[1]/MAX_KARB/KARB_LINE),
             this.IND_G_WIDTH/2, this.IND_G_HEIGHT*this.game.karbonite[1]/MAX_KARB/KARB_LINE);
-        this.graphGraphics.drawRect(this.grid_width+this.IND_G_WIDTH*3/2+2*this.LR_BORDER,
-            this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+this.IND_G_HEIGHT*(1-influence[1]/MAX_INFLUENCE/INFLUENCE_LINE),
-            this.IND_G_WIDTH/2, this.IND_G_HEIGHT*influence[1]/MAX_INFLUENCE/INFLUENCE_LINE);
         this.graphGraphics.endFill();
 
         // Draw markers in graphs.
@@ -426,10 +383,6 @@ class Visualizer {
         for(var k = 1; k < MAX_KARB; k++) {
             this.graphGraphics.moveTo(this.grid_width+this.LR_BORDER, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
             this.graphGraphics.lineTo(this.grid_width+this.LR_BORDER+this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+k/MAX_KARB*this.IND_G_HEIGHT);
-        }
-        for(var f = 1; f < MAX_INFLUENCE; f++){
-            this.graphGraphics.moveTo(this.grid_width+2*this.LR_BORDER+this.IND_G_WIDTH, this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_INFLUENCE*this.IND_G_HEIGHT);
-            this.graphGraphics.lineTo(this.grid_width+2*this.LR_BORDER+2*this.IND_G_WIDTH,this.T_BORDER_HEIGHT+this.KF_BORDER_HEIGHT+f/MAX_INFLUENCE*this.IND_G_HEIGHT);
         }
 
         // Round text
@@ -439,8 +392,8 @@ class Visualizer {
         this.roundtext.text += "Winner : "+((this.game.winner === 0 || this.game.winner === 1)?(this.game.winner===0?'red':'blue'):"???")+"\n";
 
         // Draw text for the stats
-        this.red_karbtext.text = ''+this.game.karbonite[0]+'  '+influence[0];
-        this.blue_karbtext.text = ''+this.game.karbonite[1]+'  '+influence[1];
+        this.red_karbtext.text = ''+this.game.karbonite[0];
+        this.blue_karbtext.text = ''+this.game.karbonite[1];
 
         // Handle click and infotext
         if (this.active_x !== -1) {
@@ -466,17 +419,18 @@ class Visualizer {
                 this.infotext.text = 'Click somewhere for information!';
             }
             else {
-                this.infotext.text  = "position  : ("+robot.x+", "+robot.y+")\n";
-                this.infotext.text += "id        : "+robot.id+"\n";
-                this.infotext.text += "team      : "+["red", "blue"][robot.team]+"\n";
-                this.infotext.text += "unit      : "+["planet", "voyager"][robot.unit]+"\n";
-                this.infotext.text += "signal    : "+robot.signal+"\n";
+                this.infotext.text  = "position   : ("+robot.x+", "+robot.y+")\n";
+                this.infotext.text += "id         : "+robot.id+"\n";
+                this.infotext.text += "team       : "+["red", "blue"][robot.team]+"\n";
+                this.infotext.text += "unit       : "+["castle", "church", "pilgrim", "crusader", "prophet", "preacher"][robot.unit]+"\n";
+                this.infotext.text += "health     : "+robot.health+"\n";
+                this.infotext.text += "karbonite  : "+robot.karbonite+"\n";
+                this.infotext.text += "signal     : "+robot.signal+"\n";
             }
         }
 
 
-        // Draw units (sprite version)
-        /*
+        // Draw units       
         var units = new Array(6);
         for (let i = 0; i < 6; i++) units[i] = [];
         for (let i = 0; i < this.game.robots.length; i++) {
@@ -496,16 +450,14 @@ class Visualizer {
                 counter++;
             }
         }
-        */
        
-        // Render!
         this.renderer.render(this.stage);
        
         // Reset all sprite pools to be invisible
-        // for (let i = 0; i < 6; i++) for (let j = 0; j < spritepools[i].length && spritepools[i][j].visible; j++) spritepools[i][j].visible = false; // Other
+        for (let i = 0; i < 6; i++) for (let j = 0; j < spritepools[i].length && spritepools[i][j].visible; j++) spritepools[i][j].visible = false; // Other
         
         // Move frame
-        const PAN_SPEED = 1;
+        const PAN_SPEED = 0.4;
         if (this.w_pressed) {
             this.y1 -= PAN_SPEED;
             this.y2 -= PAN_SPEED;
