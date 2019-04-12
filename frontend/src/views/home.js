@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import Api from '../api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 
 class UpdateCard extends Component {
@@ -150,6 +150,46 @@ class DateCard extends UpdateCard {
     }
 }
 
+class InstrCard extends UpdateCard {
+    constructor() {
+        super();
+        this.state.dates = [];
+    }
+
+    componentDidMount() {
+        // meh
+    }
+
+    render() {
+        return (
+            <div className="card ">
+                <div className="header">
+                    <h4 className="title">Welcome!</h4>
+                    <p className="category">Battlehack Southeast 2019.</p>
+                </div>
+                <div className="content">
+                    <p>
+                        Human civilization has come to an end and it is up to you to collect
+                        enough space orbs to build a new society!
+                        Learn how to do that by reading the <i>Battlehack: Voyage</i> game specifications
+                        in <Link to="/docs">the docs</Link>.
+                    </p>
+                    <p>
+                        To start writing your civilization-saving code, go to  
+                        the <Link to="/team">team section</Link> and create a team. Then, head over
+                        to the <Link to="/ide">IDE</Link>, and paste the example code from
+                        the docs. Run a test game against yourself by clicking the run button
+                        in the top right!
+                    </p>
+                    <p>
+                        To scrimmage other teams, 
+                    </p>
+                </div>
+            </div>
+        );
+    }
+}
+
 class Home extends Component {
     constructor() {
         super();
@@ -170,6 +210,11 @@ class Home extends Component {
                         <div className="col-md-6">
                             <StatCard />
                         </div>
+                        <div className="col-md-6">
+                            <InstrCard />
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="col-md-6">
                             <DateCard />
                         </div>
