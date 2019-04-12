@@ -617,7 +617,7 @@ class Visualizer {
     }
 
     numRounds() {
-        return (this.replay.length - 6)/8;
+        return 256;
     }
 
     startStop() {

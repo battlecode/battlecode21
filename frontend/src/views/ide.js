@@ -23,6 +23,20 @@ var firebase_config = {
 window.ace.require("ace/ext/language_tools");
 window.firebase.initializeApp(firebase_config);
 
+
+/*
+Okay, so here's how the IDE game running works. It's not pretty.
+
+When the user starts a game, an instance of the Game class is created
+as this.g. We also create the runtime bc19 to run the game. Simultaneously,
+we have a Visualizer instance running as this.v. It is fed the replay file
+this.g.replay, which is continuously updated as the game progresses. To do the
+visualizing process, this.v itself spawns a new Game instance, called
+this.v.game. The reason for this is that we want to
+be able to pause the visualizer while running the game (why, exactly?), and also
+because that is how the visualizer needs to work for the standalone viewer.
+*/
+
 class IDE extends Component {
     constructor() {
         super();
@@ -45,9 +59,10 @@ class IDE extends Component {
             vimkeys:Cookies.get('vimkeys'),
             seed:Cookies.get('seed'),
             auto:Cookies.get('auto'),
-            numTurns:0,
-            numRounds:0,
-            turn:null
+            numTurns:0, // # loaded turns
+            numRounds:0, // # loaded rounds
+            turn:null, // # turn in viewer
+            round:null // # round in viewer
         };
 
         this.storage = {};
@@ -124,12 +139,21 @@ class IDE extends Component {
             this.setState({theater:true, loading:false});
             var seed = (!this.state.seed || this.state.seed === '' || this.state.seed === 0) ? Math.floor(Math.pow(2,31)*Math.random()) : parseInt(this.state.seed,10);
             this.g = new Game(seed, parseInt(this.state.chess_init,10), parseInt(this.state.chess_extra,10), false, true);
-            this.v = new Visualizer('viewer', this.g.replay, function(round) {
-                this.setState({round:round});
+            this.v = new Visualizer('viewer', this.g.replay, function(turn) {
+                if (turn !== this.v.turn) {
+                    console.log("UNBELIEVABLE. IDE.JS");
+                }
+                if (turn !== this.v.game.turn) {
+                    console.log("UNBELIEVABLE VERSION 2. IDE.JS");
+                }
+                this.setState({turn:turn});
             }.bind(this), 300, 300);
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
-                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.game.rounds,turn:this.v.turn, round:this.v.game.round});
+                if (this.v.numTurns() !== this.g.turn) {
+                    console.log('SOMETHING IS VERY WRONG LINE 134 OF IDE.JS');
+                }
+                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.g.round,turn:this.v.turn, round:this.v.game.round});
                 this.v.populateCheckpoints();
 
             }.bind(this));
@@ -318,13 +342,16 @@ class IDE extends Component {
                         paddingRight:"50px",
                         display:(this.v == null)?'none':'block'
                     }}>
-                        <h1>{this.state.numRounds}</h1>
+                        <h1>{this.state.round}/256</h1>
                         <Slider style={{
                             width:'100%'
                         }} max={this.state.numRounds} onChange={this.changeSlider} value={this.state.round} />
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStop}>START/STOP VIEWER</button>
+                        <Slider style={{
+                            width:'100%'
+                        }} max={this.state.numRounds} value={this.g.round} />
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStopGame}>START/STOP GAME</button>
