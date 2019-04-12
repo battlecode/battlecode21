@@ -36,6 +36,7 @@ class Visualizer {
 
         this.width = width;
         this.height = height;
+        this.shouldDestroy = false;
 
         this.container = document.getElementById(div);
 
@@ -299,6 +300,8 @@ class Visualizer {
 
     draw() { // for later perhaps making strategic view
 
+        if (this.shouldDestroy) return;
+
         // Not using sprites
         // var spritepools = this.strategic ? this.strategic_sprite_pools : this.sprite_pools;
 
@@ -541,12 +544,13 @@ class Visualizer {
             this.y2 = this.MAP_HEIGHT;
         }
 
-        requestAnimationFrame(function() {
+        this.animframe = requestAnimationFrame(function() {
             setTimeout(this.draw.bind(this),33);
         }.bind(this));
     }
 
     populateCheckpoints() {
+        if (this.shouldDestroy) return;
         var last_checkpoint_turn = CHECKPOINT * (this.checkpoints.length-1);
         var final_checkpoint_turn = this.numTurns() - (this.numTurns()%CHECKPOINT); // checkpoint before/at numturns
         if (final_checkpoint_turn === last_checkpoint_turn) return; // have all possible checkpoints
@@ -637,6 +641,23 @@ class Visualizer {
 
     renderGame() {
         // pass, this will come from michael
+    }
+
+    destroyVis() {
+        if (this.running) this.startStop();
+
+        this.shouldDestroy = true;
+
+        cancelAnimationFrame(this.animframe);
+
+        
+        this.stage.destroy(true);
+        this.stag = null;
+
+        this.renderer.destroy(true);
+        this.renderer = null;
+
+        this.replay = null;
     }
 
 
