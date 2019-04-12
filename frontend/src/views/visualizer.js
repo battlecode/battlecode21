@@ -616,6 +616,10 @@ class Visualizer {
         return (this.replay.length - 6)/8;
     }
 
+    numRounds() {
+        return (this.replay.length - 6)/8;
+    }
+
     startStop() {
         if (this.running) {
             clearInterval(this.interval);

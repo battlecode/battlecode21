@@ -47,7 +47,6 @@ class IDE extends Component {
             auto:Cookies.get('auto'),
             numTurns:0,
             numRounds:0,
-            round:null,
             turn:null
         };
 
@@ -130,7 +129,7 @@ class IDE extends Component {
             }.bind(this), 300, 300);
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
-                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.numRounds(),turn:this.v.turn, round:this.v.round});
+                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.game.rounds,turn:this.v.turn, round:this.v.game.round});
                 this.v.populateCheckpoints();
 
             }.bind(this));
