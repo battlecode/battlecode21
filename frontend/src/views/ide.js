@@ -146,7 +146,7 @@ class IDE extends Component {
                 if (turn !== this.v.game.turn) {
                     console.log("UNBELIEVABLE VERSION 2. IDE.JS");
                 }
-                this.setState({turn:turn});
+                this.setState({turn:turn,round:this.v.game.round});
             }.bind(this), 300, 300);
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
