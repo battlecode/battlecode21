@@ -151,7 +151,7 @@ class IDE extends Component {
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
                 if (this.v.numTurns() !== this.g.turn) {
-                    console.log('SOMETHING IS VERY WRONG LINE 134 OF IDE.JS');
+                    console.log('SOMETHING IS VERY WRONG IN IDE.JS');
                 }
                 this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.g.round,turn:this.v.turn, round:this.v.game.round});
                 this.v.populateCheckpoints();
@@ -345,13 +345,14 @@ class IDE extends Component {
                         <h1>{this.state.round}/256</h1>
                         <Slider style={{
                             width:'100%'
-                        }} max={this.state.numRounds} onChange={this.changeSlider} value={this.state.round} />
+                        }} max={256} onChange={this.changeSlider} value={this.state.round} />
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStop}>START/STOP VIEWER</button>
                         <Slider style={{
                             width:'100%'
-                        }} max={this.state.numRounds} value={this.g.round} />
+                        }} max={256} value={this.state.numRounds} />
+                        <h6>Has loaded {this.state.numRounds} out of 256 rounds.</h6>
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStopGame}>START/STOP GAME</button>
