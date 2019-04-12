@@ -47,6 +47,7 @@ class IDE extends Component {
             auto:Cookies.get('auto'),
             numTurns:0,
             numRounds:0,
+            round:null,
             turn:null
         };
 
@@ -140,10 +141,12 @@ class IDE extends Component {
         }.bind(this));
     }
 
-    changeSlider(turn) {
+    changeSlider(round) {
         if (this.v.running) this.v.startStop();
-        this.v.goToTurn(turn);
-        this.setState({turn:turn});
+        this.v.goToRound(round);
+        this.setState({round:round});
+        // this.v.goToTurn(turn);
+        // this.setState({turn:turn});
     }
 
     componentDidUpdate() {
@@ -182,7 +185,7 @@ class IDE extends Component {
     changeHandler(e) {
         var id = e.target.id;
         var val = e.target.value;
-        
+
         Cookies.set(id, val);
         this.setState(function(prev, props) {
             prev[id] = val;
@@ -224,18 +227,18 @@ class IDE extends Component {
                     width:"70px",
                     height:"70px"
                 }} className='sk-circle'>
-                  <div className="sk-circle1 sk-child"></div>
-                  <div className="sk-circle2 sk-child"></div>
-                  <div className="sk-circle3 sk-child"></div>
-                  <div className="sk-circle4 sk-child"></div>
-                  <div className="sk-circle5 sk-child"></div>
-                  <div className="sk-circle6 sk-child"></div>
-                  <div className="sk-circle7 sk-child"></div>
-                  <div className="sk-circle8 sk-child"></div>
-                  <div className="sk-circle9 sk-child"></div>
-                  <div className="sk-circle10 sk-child"></div>
-                  <div className="sk-circle11 sk-child"></div>
-                  <div className="sk-circle12 sk-child"></div>
+                    <div className="sk-circle1 sk-child"></div>
+                    <div className="sk-circle2 sk-child"></div>
+                    <div className="sk-circle3 sk-child"></div>
+                    <div className="sk-circle4 sk-child"></div>
+                    <div className="sk-circle5 sk-child"></div>
+                    <div className="sk-circle6 sk-child"></div>
+                    <div className="sk-circle7 sk-child"></div>
+                    <div className="sk-circle8 sk-child"></div>
+                    <div className="sk-circle9 sk-child"></div>
+                    <div className="sk-circle10 sk-child"></div>
+                    <div className="sk-circle11 sk-child"></div>
+                    <div className="sk-circle12 sk-child"></div>
                 </div>
 
                 <div style={{
@@ -298,7 +301,7 @@ class IDE extends Component {
                     }} onClick={ this.exitTheater }/>
 
 
-                
+
                     <div id="viewer" style={{
                         position:"absolute",
                         top:"20px",
@@ -319,7 +322,7 @@ class IDE extends Component {
                         <h1>{this.state.numRounds}</h1>
                         <Slider style={{
                             width:'100%'
-                        }} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
+                        }} max={this.state.numRounds} onChange={this.changeSlider} value={this.state.round} />
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStop}>START/STOP VIEWER</button>
@@ -350,10 +353,10 @@ class IDE extends Component {
                             padding:"10px",
                             overflow:"scroll"
                         }}>
-                            { this.state.logs[0].map((log, idx) => 
+                            { this.state.logs[0].map((log, idx) =>
                                 <span key={ idx }>
                                     <span style={{color:log.type==="error"?"red":"green"}}>[Robot { log.robot }{log.type==='error'?' Error':''}]</span> {log.message}
-                                <br /></span>
+                                    <br /></span>
                             )}
                         </div>
                         <div id="blueConsole" style={{
@@ -366,10 +369,10 @@ class IDE extends Component {
                             padding:"10px",
                             overflow:"scroll"
                         }}>
-                            { this.state.logs[1].map((log, idx) => 
+                            { this.state.logs[1].map((log, idx) =>
                                 <span key={ idx }>
                                     <span style={{color:log.type==="error"?"red":"green"}}>[Robot { log.robot }{log.type==='error'?' Error':''}]</span> {log.message}
-                                <br /></span>
+                                    <br /></span>
                             )}
                         </div>
                     </div>
