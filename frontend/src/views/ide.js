@@ -192,9 +192,9 @@ class IDE extends Component {
         this.c.destroy();
         this.c = null;
         // NEED TO CHECK IF THESE THINGS ARE ACTUALLY DELETED BUT THAT'S OKAY
-        this.g = null;
         this.v.replay = null;
         this.v = null;
+        this.g = null;
         this.setState({theater:false});
     }
 
