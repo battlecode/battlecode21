@@ -156,7 +156,7 @@ class LoginRegister extends Component {
         }}
       >
       <div
-        className="orangeBackground"
+        className="spaceBackground"
         style={{
           height: '100vh',
           width: '100vw',

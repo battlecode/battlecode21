@@ -26,7 +26,7 @@ class SideBar extends Component {
 
     render() {
         return (
-            <div className="sidebar" data-color="orange">
+            <div className="sidebar" data-color="space">
                 <div className="sidebar-wrapper">
                     <div className="logo">
                         <a href="#" className="simple-text">VOYAGE</a>
