@@ -182,7 +182,9 @@ class InstrCard extends UpdateCard {
                         in the top right!
                     </p>
                     <p>
-                        To scrimmage other teams, 
+                        To scrimmage other teams, push your code by clicking the upload button
+                        in the top left. Navigate to the <Link to="/scrimmaging">scrimmaging section</Link> and
+                        request a scrimmage by searching for another team.
                     </p>
                 </div>
             </div>
