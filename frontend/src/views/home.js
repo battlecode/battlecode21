@@ -210,10 +210,10 @@ class Home extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-6">
-                            <StatCard />
+                            <InstrCard />
                         </div>
                         <div className="col-md-6">
-                            <InstrCard />
+                            <StatCard />
                         </div>
                     </div>
                     <div className="row">
