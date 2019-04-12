@@ -1,7 +1,7 @@
 import Game from 'bhse19/game';
 import * as PIXI from "pixi.js";
 
-var CHECKPOINT = 1000;
+var CHECKPOINT = 10;
 var TIME_PER_TURN = 50;
 
 
@@ -588,20 +588,22 @@ class Visualizer {
     goToRound(round) {
         // Find the first checkpoint with game.round greater than round, then take the one before it.
         // If no such checkpoint exists, take the last checkpoint and hope for the best.
-        this.game = this.checkpoints[this.checkpoints.length-1].copy();
-        this.turn = this.checkpoints.length*CHECKPOINT
+        //this.game = this.checkpoints[this.checkpoints.length-1].copy();
+        //this.turn = this.checkpoints.length*CHECKPOINT
         for (let i = 0; i<this.checkpoints.length; i++) {
             if (this.checkpoints[i].round > round) {
-                this.game = this.checkpoints[i-1].copy();
-                this.turn = (i-1)*CHECKPOINT;
+                //this.game = this.checkpoints[i-1].copy();
+                //this.turn = (i-1)*CHECKPOINT;
+                this.goToTurn((i-1)*CHECKPOINT);
                 break;
             }
         }
 
+
         // Now, advance (bounded by the numTurns())
-        for (let i = 0; i<this.numTurns(); i++) {
+        /*for (let i = 0; i<this.numTurns(); i++) {
             if (this.game.round !== round) this.nextTurn();
-        }
+        }*/
 
     }
 

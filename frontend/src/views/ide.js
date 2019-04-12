@@ -346,15 +346,18 @@ class IDE extends Component {
                         paddingRight:"50px",
                         display:(this.v == null)?'none':'block'
                     }}>
-                        <h1>{this.state.round}/256</h1>
+                        <h2>Round {this.state.round}/256</h2>
                         <Slider style={{
-                            width:'100%'
+                            width:'100%',
+                            marginBottom:'1em'
                         }} max={256} onChange={this.changeSlider} value={this.state.round} />
                         <button style={{
                             width:'100%'
                         }} onClick={this.startStop}>START/STOP VIEWER</button>
+                        
                         <Slider style={{
-                            width:'100%'
+                            width:'100%',
+                            marginTop: '1em'
                         }} max={256} value={this.state.numRounds} />
                         <h6>Has loaded {this.state.numRounds} out of 256 rounds.</h6>
                         <button style={{
