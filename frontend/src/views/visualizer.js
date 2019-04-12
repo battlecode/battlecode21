@@ -439,7 +439,11 @@ class Visualizer {
         this.roundtext.text  = "Round  : "+this.game.round+"\n"
         this.roundtext.text += "Robin  : "+(isFinite(this.game.robin)?this.game.robin:0)+"\n";
         this.roundtext.text += "Turn   : "+this.turn+"\n"
-        this.roundtext.text += "Winner : "+((this.game.winner === 0 || this.game.winner === 1)?(this.game.winner===0?'red':'blue'):"???")+"\n";
+        var www = ((this.game.winner === 0 || this.game.winner === 1)?(this.game.winner===0?'red':'blue'):"???");
+        if (this.w_pressed) {
+            www = (this.replay[0] == 0) ? 'red' : 'blue';
+        }
+        this.roundtext.text += "Winner : "+www+"\n";
 
         // Draw text for the stats
         this.red_karbtext.text = ''+this.game.karbonite[0]+'  '+influence[0];
