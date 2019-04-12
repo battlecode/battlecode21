@@ -125,12 +125,12 @@ class IDE extends Component {
             this.setState({theater:true, loading:false});
             var seed = (!this.state.seed || this.state.seed === '' || this.state.seed === 0) ? Math.floor(Math.pow(2,31)*Math.random()) : parseInt(this.state.seed,10);
             this.g = new Game(seed, parseInt(this.state.chess_init,10), parseInt(this.state.chess_extra,10), false, true);
-            this.v = new Visualizer('viewer', this.g.replay, function(turn) {
-                this.setState({turn:turn});
+            this.v = new Visualizer('viewer', this.g.replay, function(round) {
+                this.setState({round:round});
             }.bind(this), 300, 300);
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
-                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.numTurns(),turn:this.v.turn});
+                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.v.numRounds(),turn:this.v.turn, round:this.v.round});
                 this.v.populateCheckpoints();
 
             }.bind(this));
