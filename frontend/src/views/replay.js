@@ -26,10 +26,12 @@ class ReplayViewer extends Component {
         if (url.length === 2) {
             var replay_url = url[url.length-1];
 
-            var windWid = window.innerWidth;
-            var windHeigh = window.innerHeight;
-            var wid = Math.min(windWid, windHeigh/1.25);
-            var heigh = Math.min(windHeigh, windWid*1.25);
+            var pixx = document.getElementById('pixi');
+
+            var windWid = pixx.offsetWidth;
+            var windHeigh = window.innerHeight-100;
+            var wid = Math.min(windWid, windHeigh*1.25);
+            var heigh = Math.min(windHeigh, windWid/1.25);
 
             document.getElementById('dropzonehej').style.display = 'none';
 
@@ -52,10 +54,6 @@ class ReplayViewer extends Component {
         var windHeigh = window.innerHeight-100;
         var wid = Math.min(windWid, windHeigh*1.25);
         var heigh = Math.min(windHeigh, windWid/1.25);
-        console.log(windWid);
-        console.log(windHeigh);
-        console.log(wid);
-        console.log(heigh);
 
         reader.onload = function() {
             this.v = new Visualizer("pixi", new Uint8Array(reader.result), function(turn) {
