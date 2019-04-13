@@ -38,6 +38,9 @@ class Visualizer {
         this.height = height;
         this.shouldDestroy = false;
 
+        // # millisecs extra wait per turn for nicer viewing or suspense.
+        this.extraWait = 0;
+
         this.container = document.getElementById(div);
 
         this.populateCheckpoints();
@@ -651,7 +654,7 @@ class Visualizer {
             this.interval = setInterval(function () {
                 if (this.turn < this.numTurns()) this.goToTurn(this.turn + 1);
                 else this.startStop();
-            }.bind(this), ); 
+            }.bind(this), this.extraWait); 
         }
     }
 

@@ -12,10 +12,12 @@ class ReplayViewer extends Component {
         this.onDrop = this.onDrop.bind(this);
         this.changeSlider = this.changeSlider.bind(this);
         this.startStop = this.startStop.bind(this);
+        this.changeSpeed = this.changeSpeed.bind(this);
 
         this.state = {
             turn:null,
-            numTurns:0
+            numTurns:0,
+            extraWait:0
         };
     }
 
@@ -32,8 +34,6 @@ class ReplayViewer extends Component {
             var windHeigh = window.innerHeight-100;
             var wid = Math.min(windWid, windHeigh*1.25);
             var heigh = Math.min(windHeigh, windWid/1.25);
-
-            document.getElementById('dropzonehej').style.display = 'none';
 
 
             Api.getReplayFromURL(replay_url, function(replay) {
@@ -76,13 +76,24 @@ class ReplayViewer extends Component {
         this.v.startStop();
     }
 
+    changeSpeed(newSpeed) {
+        var ns = newSpeed;
+        this.setState({extraWait:ns});
+        if (this.v) {
+            this.v.extraWait = ns;
+            this.startStop();
+            this.startStop();
+        }
+    }
+
     render() {
         return (
             <div className="content">
                 <div id="pixi"></div>
                 <Slider style={{display:(this.v == null)?'none':'block', 'width':'100%'}} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
                 <button style={{display:(this.v == null)?'none':'block'}} onClick={this.startStop}>START/STOP</button>
-                <div  id="dropzonehej"><ReactDropzone onDrop={this.onDrop}>
+                <Slider style={{display:(this.v == null)?'none':'block', 'width': '200px'}} max={200} onChange={this.changeSpeed} value={this.state.extraWait} />
+                <div id="dropzonehej" style={{display:(this.v == null)?'block':'none'}}><ReactDropzone onDrop={this.onDrop}>
                     {({getRootProps, getInputProps}) => (
                         <div {...getRootProps()}>
                             <input {...getInputProps()} />
