@@ -378,7 +378,7 @@ class Visualizer {
 
 
         // Gridlines
-        this.mapGraphics.lineStyle(1, this.OBSTACLE);
+        this.mapGraphics.lineStyle(this.grid_width/672, this.OBSTACLE);
         for(var y = this.y1; y <= this.y2; y++) {
             this.mapGraphics.moveTo(0, (y-this.y1)*draw_height);
             this.mapGraphics.lineTo(this.grid_width, (y-this.y1)*draw_height);
