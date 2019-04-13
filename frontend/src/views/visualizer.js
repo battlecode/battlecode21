@@ -294,7 +294,7 @@ class Visualizer {
         this.red_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20*this.scaling_factor, fill: '0xFF0000' });
         this.red_karbtext.position = new PIXI.Point(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT+5);
         this.textstage.addChild(this.red_karbtext);
-        this.blue_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20*this.scaling_factor, fill: '0x0000FF' });
+        this.blue_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20*this.scaling_factor, fill: '0x4444FF' });
         this.blue_karbtext.position = new PIXI.Point(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT/2);
         this.textstage.addChild(this.blue_karbtext);
 
