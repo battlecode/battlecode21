@@ -87,6 +87,7 @@ class Visualizer {
             this.active_y = Math.floor(this.y1 + (this.y2-this.y1) * point.y / this.grid_height);
         }.bind(this);
 
+        /*
         this.stage.mousemove = function(e) {
             var point = e.data.getLocalPosition(this.stage);
             this.mouse_x = this.x1 + (this.x2-this.x1) * point.x / this.grid_width;
@@ -103,8 +104,8 @@ class Visualizer {
                 this.pixi_y_offset += event.clientY;
                 this.calculated_offset = true;
             }
-        }.bind(this));
-
+        }.bind(this));*/
+        /*
         this.container.addEventListener('wheel', function(event) {
             var p_x = event.clientX-this.pixi_x_offset, p_y = event.clientY-this.pixi_y_offset
             if (this.calculated_offset && p_x >= 0 && p_x <= this.grid_width && p_y >= 0 && p_y <= this.grid_height) {
@@ -145,6 +146,7 @@ class Visualizer {
                 }
             } event.preventDefault();
         }.bind(this));
+        */
 
         document.onkeypress = function(k) {
             var charCode = (typeof k.which == "number") ? k.which : k.keyCode
@@ -304,6 +306,8 @@ class Visualizer {
 
         // Not using sprites
         // var spritepools = this.strategic ? this.strategic_sprite_pools : this.sprite_pools;
+
+        this.mapGraphics.clear();
 
         // where to put the map sprite
         const VIEW_WIDTH = this.x2-this.x1,
