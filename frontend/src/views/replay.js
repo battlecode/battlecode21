@@ -26,10 +26,18 @@ class ReplayViewer extends Component {
         if (url.length === 2) {
             var replay_url = url[url.length-1];
 
+            var windWid = window.innerWidth;
+            var windHeigh = window.innerHeight;
+            var wid = Math.min(windWid, windHeigh/1.25);
+            var heigh = Math.min(windHeigh, windWid*1.25);
+
+            document.getElementById('dropzonehej').style.display = 'none';
+
+
             Api.getReplayFromURL(replay_url, function(replay) {
                 this.v = new Visualizer("pixi", replay, function(turn) {
                     this.setState({turn:turn});
-                }.bind(this));
+                }.bind(this), wid, heigh);
                 this.setState({numTurns:this.v.numTurns()});
             }.bind(this));
         }
@@ -37,10 +45,22 @@ class ReplayViewer extends Component {
 
     onDrop(files) {
         var reader = new FileReader();
+
+        var pixx = document.getElementById('pixi');
+
+        var windWid = pixx.offsetWidth;
+        var windHeigh = window.innerHeight-100;
+        var wid = Math.min(windWid, windHeigh*1.25);
+        var heigh = Math.min(windHeigh, windWid/1.25);
+        console.log(windWid);
+        console.log(windHeigh);
+        console.log(wid);
+        console.log(heigh);
+
         reader.onload = function() {
             this.v = new Visualizer("pixi", new Uint8Array(reader.result), function(turn) {
                 this.setState({turn:turn});
-            }.bind(this));
+            }.bind(this), wid, heigh);
             this.setState({numTurns:this.v.numTurns()});
         }.bind(this);
 
@@ -64,14 +84,14 @@ class ReplayViewer extends Component {
                 <div id="pixi"></div>
                 <Slider style={{display:(this.v == null)?'none':'block', 'width':'100%'}} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
                 <button style={{display:(this.v == null)?'none':'block'}} onClick={this.startStop}>START/STOP</button>
-                <ReactDropzone onDrop={this.onDrop}>
+                <div  id="dropzonehej"><ReactDropzone onDrop={this.onDrop}>
                     {({getRootProps, getInputProps}) => (
                         <div {...getRootProps()}>
                             <input {...getInputProps()} />
                             <p>Drop files here, or click to select files</p>
                         </div>
                     )}
-                </ReactDropzone>
+                </ReactDropzone></div>
             </div>
         );
     }

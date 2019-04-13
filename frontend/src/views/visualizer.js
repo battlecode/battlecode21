@@ -60,6 +60,8 @@ class Visualizer {
         this.d_pressed = false;
         this.p_pressed = false;
 
+
+
         // Figure out how to convert between local and screen coordinates
         this.calculated_offset = false;
         this.pixi_x_offset = 0;
@@ -80,6 +82,8 @@ class Visualizer {
         this.stage.interactive = true;
 
         this.strategic = false; // By default, don't use strategic view.
+
+        this.scaling_factor = this.grid_width / 672;
 
         this.stage.click = function(e) {
             var point = e.data.getLocalPosition(this.stage);
@@ -273,6 +277,8 @@ class Visualizer {
         }
         */
 
+        
+
         // Borders and such for the graphs
         this.IND_G_WIDTH = this.graph_width*.8 / 2;
         this.LR_BORDER = (this.graph_width - 2*this.IND_G_WIDTH) / 3;
@@ -285,17 +291,17 @@ class Visualizer {
         this.textstage = new PIXI.Container();
         this.stage.addChild(this.textstage);
    
-        this.red_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20, fill: '0xFF0000' });
+        this.red_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20*this.scaling_factor, fill: '0xFF0000' });
         this.red_karbtext.position = new PIXI.Point(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT+5);
         this.textstage.addChild(this.red_karbtext);
-        this.blue_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20, fill: '0x0000FF' });
+        this.blue_karbtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 20*this.scaling_factor, fill: '0x0000FF' });
         this.blue_karbtext.position = new PIXI.Point(this.grid_width+this.LR_BORDER, this.graph_height-this.B_BORDER_HEIGHT/2);
         this.textstage.addChild(this.blue_karbtext);
 
-        this.roundtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 12, fill: '0xFFFFFF' });
+        this.roundtext = new PIXI.Text('', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 12*this.scaling_factor, fill: '0xFFFFFF' });
         this.roundtext.position = new PIXI.Point(this.grid_width+10, 10);
         this.textstage.addChild(this.roundtext);
-        this.infotext = new PIXI.Text('Click somewhere for information!', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 12, fill: '0xFFFFFF',  wordWrap: true, wordWrapWidth: this.graph_width });
+        this.infotext = new PIXI.Text('Click somewhere for information!', { fontFamily: "\"Courier New\", Courier, monospace", fontSize: 12*this.scaling_factor, fill: '0xFFFFFF',  wordWrap: true, wordWrapWidth: this.graph_width });
         this.infotext.position = new PIXI.Point(this.grid_width+10, this.graph_height);
         this.textstage.addChild(this.infotext);
     }
@@ -378,7 +384,7 @@ class Visualizer {
 
 
         // Gridlines
-        this.mapGraphics.lineStyle(this.grid_width/672, this.OBSTACLE);
+        this.mapGraphics.lineStyle(this.scaling_factor, this.OBSTACLE);
         for(var y = this.y1; y <= this.y2; y++) {
             this.mapGraphics.moveTo(0, (y-this.y1)*draw_height);
             this.mapGraphics.lineTo(this.grid_width, (y-this.y1)*draw_height);
@@ -450,8 +456,10 @@ class Visualizer {
         this.roundtext.text += "Winner : "+www+"\n";
 
         // Draw text for the stats
-        this.red_karbtext.text = ''+this.game.karbonite[0]+'  '+influence[0];
-        this.blue_karbtext.text = ''+this.game.karbonite[1]+'  '+influence[1];
+        var numspacesred = 5- this.game.karbonite[0].toString().length + 2
+        var numspacesblue = 5- this.game.karbonite[1].toString().length + 2
+        this.red_karbtext.text = ''+this.game.karbonite[0]+' '.repeat(numspacesred)+influence[0];
+        this.blue_karbtext.text = ''+this.game.karbonite[1]+' '.repeat(numspacesblue)+influence[1];
 
         // Handle click and infotext
         if (this.active_x !== -1) {
