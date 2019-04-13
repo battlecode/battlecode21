@@ -139,6 +139,8 @@ class IDE extends Component {
             this.setState({theater:true, loading:false});
             var seed = (!this.state.seed || this.state.seed === '' || this.state.seed === 0) ? Math.floor(Math.pow(2,31)*Math.random()) : parseInt(this.state.seed,10);
             this.g = new Game(seed, parseInt(this.state.chess_init,10), parseInt(this.state.chess_extra,10), false, true);
+            var viewerWidth = document.getElementById('viewer').offsetWidth;
+            var viewerHeight = document.getElementById('viewer').offsetHeight;
             this.v = new Visualizer('viewer', this.g.replay, function(turn) {
                 if (turn !== this.v.turn) {
                     console.log("UNBELIEVABLE. IDE.JS");
@@ -147,7 +149,7 @@ class IDE extends Component {
                     console.log("UNBELIEVABLE VERSION 2. IDE.JS");
                 }
                 this.setState({turn:turn,round:this.v.game.round});
-            }.bind(this), 300, 300);
+            }.bind(this), Math.min(viewerWidth, viewerHeight), Math.min(viewerWidth, viewerHeight));
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
                 if (this.v.numTurns() !== this.g.turn) {
