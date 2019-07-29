@@ -434,6 +434,17 @@ body > .navbar-collapse[data-color="orange"]:after, .orangeBackground {
   background: linear-gradient(to bottom, #FFA534 0%, #ff5221 100%);
   background-size: 150% 150%;
 }
+.sidebar[data-color="space"]:after,
+body > .navbar-collapse[data-color="space"]:after, .spaceBackground {
+  background: #0b2182;
+  background: -moz-linear-gradient(top, #0b2182 0%, #ff5221 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #0b2182), color-stop(100%, #ff5221));
+  background: -webkit-linear-gradient(top, #0b2182 0%, #ff5221 100%);
+  background: -o-linear-gradient(top, #0b2182 0%, #ff5221 100%);
+  background: -ms-linear-gradient(top, #0b2182 0%, #ff5221 100%);
+  background: linear-gradient(to bottom, #0b2182 0%, #ff5221 100%);
+  background-size: 150% 150%;
+}
 
 .sidebar[data-color="red"]:after,
 body > .navbar-collapse[data-color="red"]:after {

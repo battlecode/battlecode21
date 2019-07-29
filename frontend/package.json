@@ -2,7 +2,7 @@
   "name": "battlecode-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://battlecode.org/dash",
+  "homepage": "https://se19.battlecode.org",
   "devDependencies": {
     "react-scripts": "2.0.3"
   },

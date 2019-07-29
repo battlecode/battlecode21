@@ -1,8 +1,9 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-const URL = 'https://battlecode.org';
+const URL = 'https://se19.battlecode.org';
 //const URL = 'http://localhost:8000'; // DEVELOPMENT
+const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
@@ -107,6 +108,7 @@ class Api {
     });
   }
 
+    // updates team
   static updateTeam(params, callback) {
     $.ajax({
       url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/`,
@@ -309,6 +311,10 @@ class Api {
   }
 
   static loginCheck(callback) {
+    if (DONOTREQUIRELOGIN) {
+      callback(true);
+      return;
+    }
     $.ajaxSetup({
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
     });

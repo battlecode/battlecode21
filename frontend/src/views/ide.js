@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
-import bc19 from 'bc19/runtime';
-import Game from 'bc19/game';
-import Compiler from 'bc19/compiler';
+import bc19 from 'bhse19/runtime';
+import Game from 'bhse19/game';
+import Compiler from 'bhse19/compiler';
 
 import Visualizer from './visualizer';
 import Slider from 'rc-slider';
@@ -13,21 +13,34 @@ import * as Cookies from "js-cookie";
 
 var firebase_config = {
     apiKey: "AIzaSyBT7Mu9Bw6UH0Tr-mKXMwhKjdnLppdjvA4",
-    authDomain: "battlecode18.firebaseapp.com",
-    databaseURL: "https://battlecode18.firebaseio.com",
-    projectId: "battlecode18",
-    storageBucket: "battlecode18.appspot.com",
-    messagingSenderId: "323934682061"
+    authDomain: "battlehack-se19.firebaseapp.com",
+    databaseURL: "https://battlehack-se19.firebaseio.com",
+    //projectId: "battlecode18",
+    //storageBucket: "battlecode18.appspot.com",
+    //messagingSenderId: "323934682061"
 };
 
 window.ace.require("ace/ext/language_tools");
 window.firebase.initializeApp(firebase_config);
 
+
+/*
+Okay, so here's how the IDE game running works. It's not pretty.
+
+When the user starts a game, an instance of the Game class is created
+as this.g. We also create the runtime bc19 to run the game. Simultaneously,
+we have a Visualizer instance running as this.v. It is fed the replay file
+this.g.replay, which is continuously updated as the game progresses. To do the
+visualizing process, this.v itself spawns a new Game instance, called
+this.v.game. The reason for this is that we want to
+be able to pause the visualizer while running the game (why, exactly?), and also
+because that is how the visualizer needs to work for the standalone viewer.
+*/
+
 class IDE extends Component {
     constructor() {
         super();
 
-        var l = Cookies.get('lang');
         var t = Cookies.get('theme');
         var ci = Cookies.get('chess_init');
         var ce = Cookies.get('chess_extra');
@@ -41,13 +54,15 @@ class IDE extends Component {
             errors:'',
             chess_init:(ci ? ci : 100),
             chess_extra:(ce ? ce : 30),
-            lang:(l ? l : 'javascript'),
+            lang:('javascript'),
             theme:(t ? t : 'light'),
             vimkeys:Cookies.get('vimkeys'),
             seed:Cookies.get('seed'),
             auto:Cookies.get('auto'),
-            numTurns:0,
-            turn:null
+            numTurns:0, // # loaded turns
+            numRounds:0, // # loaded rounds
+            turn:null, // # turn in viewer
+            round:null // # round in viewer
         };
 
         this.storage = {};
@@ -61,11 +76,19 @@ class IDE extends Component {
         this.exitErrors = this.exitErrors.bind(this);
         this.changeSlider = this.changeSlider.bind(this);
         this.startStop = this.startStop.bind(this);
+        this.startStopGame = this.startStopGame.bind(this);
     }
 
 
     startStop() {
         this.v.startStop();
+    }
+    startStopGame() {
+        if (this.c.stopped) {
+            this.c.unstop()
+        } else {
+            this.c.stop();
+        }
     }
 
 
@@ -98,7 +121,12 @@ class IDE extends Component {
 
     push() {
         Compiler.Compile(this.state.lang, this.firepad.getText(), function(code) {
-            Api.pushTeamCode(code, function() {});
+            console.log('push code')
+            Api.pushTeamCode(code, function(has_no_error) {
+                if (has_no_error) {
+                    document.getElementById('submission-status').innerHTML = 'Submission successful!';
+                }
+            });
         }, function(errors) {
             this.setState({error: true, errors:errors});
         }.bind(this));
@@ -111,12 +139,23 @@ class IDE extends Component {
             this.setState({theater:true, loading:false});
             var seed = (!this.state.seed || this.state.seed === '' || this.state.seed === 0) ? Math.floor(Math.pow(2,31)*Math.random()) : parseInt(this.state.seed,10);
             this.g = new Game(seed, parseInt(this.state.chess_init,10), parseInt(this.state.chess_extra,10), false, true);
+            var viewerWidth = document.getElementById('viewer').offsetWidth;
+            var viewerHeight = document.getElementById('viewer').offsetHeight;
             this.v = new Visualizer('viewer', this.g.replay, function(turn) {
-                this.setState({turn:turn});
-            }.bind(this), 300, 300);
+                if (turn !== this.v.turn) {
+                    console.log("UNBELIEVABLE. IDE.JS");
+                }
+                if (turn !== this.v.game.turn) {
+                    console.log("UNBELIEVABLE VERSION 2. IDE.JS");
+                }
+                this.setState({turn:turn,round:this.v.game.round});
+            }.bind(this), Math.min(viewerWidth, viewerHeight), Math.min(viewerWidth, viewerHeight));
             this.c = new bc19(this.g, null, function(logs) {}, function(logs) {
                 // log receiver
-                this.setState({logs:logs,numTurns:this.v.numTurns(),turn:this.v.turn});
+                if (this.v.numTurns() !== this.g.turn) {
+                    console.log('SOMETHING IS VERY WRONG IN IDE.JS');
+                }
+                this.setState({logs:logs,numTurns:this.v.numTurns(),numRounds:this.g.round,turn:this.v.turn, round:this.v.game.round});
                 this.v.populateCheckpoints();
 
             }.bind(this));
@@ -127,10 +166,12 @@ class IDE extends Component {
         }.bind(this));
     }
 
-    changeSlider(turn) {
+    changeSlider(round) {
         if (this.v.running) this.v.startStop();
-        this.v.goToTurn(turn);
-        this.setState({turn:turn});
+        this.v.goToRound(round);
+        this.setState({round:round});
+        // this.v.goToTurn(turn);
+        // this.setState({turn:turn});
     }
 
     componentDidUpdate() {
@@ -152,6 +193,10 @@ class IDE extends Component {
     exitTheater() {
         this.c.destroy();
         this.c = null;
+        // NEED TO CHECK IF THESE THINGS ARE ACTUALLY DELETED BUT THAT'S OKAY
+        this.v.destroyVis();
+        this.v = null;
+        this.g = null;
         this.setState({theater:false});
     }
 
@@ -169,7 +214,7 @@ class IDE extends Component {
     changeHandler(e) {
         var id = e.target.id;
         var val = e.target.value;
-        
+
         Cookies.set(id, val);
         this.setState(function(prev, props) {
             prev[id] = val;
@@ -211,18 +256,18 @@ class IDE extends Component {
                     width:"70px",
                     height:"70px"
                 }} className='sk-circle'>
-                  <div className="sk-circle1 sk-child"></div>
-                  <div className="sk-circle2 sk-child"></div>
-                  <div className="sk-circle3 sk-child"></div>
-                  <div className="sk-circle4 sk-child"></div>
-                  <div className="sk-circle5 sk-child"></div>
-                  <div className="sk-circle6 sk-child"></div>
-                  <div className="sk-circle7 sk-child"></div>
-                  <div className="sk-circle8 sk-child"></div>
-                  <div className="sk-circle9 sk-child"></div>
-                  <div className="sk-circle10 sk-child"></div>
-                  <div className="sk-circle11 sk-child"></div>
-                  <div className="sk-circle12 sk-child"></div>
+                    <div className="sk-circle1 sk-child"></div>
+                    <div className="sk-circle2 sk-child"></div>
+                    <div className="sk-circle3 sk-child"></div>
+                    <div className="sk-circle4 sk-child"></div>
+                    <div className="sk-circle5 sk-child"></div>
+                    <div className="sk-circle6 sk-child"></div>
+                    <div className="sk-circle7 sk-child"></div>
+                    <div className="sk-circle8 sk-child"></div>
+                    <div className="sk-circle9 sk-child"></div>
+                    <div className="sk-circle10 sk-child"></div>
+                    <div className="sk-circle11 sk-child"></div>
+                    <div className="sk-circle12 sk-child"></div>
                 </div>
 
                 <div style={{
@@ -284,27 +329,43 @@ class IDE extends Component {
                         borderRadius:"20px"
                     }} onClick={ this.exitTheater }/>
 
+
+
                     <div id="viewer" style={{
                         position:"absolute",
                         top:"20px",
-                        left:"calc(50% - 150px)",
-                        width:"calc(100% - 40px)",
+                        float:"left",
                         height:"60%",
+                        width:"50%",
+                        textAlign: "center"
                     }}></div>
-                    <Slider style={{
-                        display:(this.v == null)?'none':'block',
-                        width:'80%',
-                        left:'10%',
-                        position:'absolute',
-                        top:'340px'
-                    }} max={this.state.numTurns} onChange={this.changeSlider} value={this.state.turn} />
-                    <button style={{
-                        display:(this.v == null)?'none':'block',
-                        width:'80%',
-                        position:'absolute',
-                        left:'10%',
-                        top:'360px'
-                    }} onClick={this.startStop}>START/STOP</button>
+                    <div id="viewer-ops" style={{
+                        marginTop:"20px",
+                        float:"right",
+                        width:"50%",
+                        height:"60%",
+                        paddingLeft: "50px",
+                        paddingRight:"50px",
+                        display:(this.v == null)?'none':'block'
+                    }}>
+                        <h2>Round {this.state.round}/256</h2>
+                        <Slider style={{
+                            width:'100%',
+                            marginBottom:'1em'
+                        }} max={256} onChange={this.changeSlider} value={this.state.round} />
+                        <button style={{
+                            width:'100%'
+                        }} onClick={this.startStop}>START/STOP VIEWER</button>
+                        
+                        <Slider style={{
+                            width:'100%',
+                            marginTop: '1em'
+                        }} max={256} value={this.state.numRounds} />
+                        <h6>Has loaded {this.state.numRounds} out of 256 rounds.</h6>
+                        <button style={{
+                            width:'100%'
+                        }} onClick={this.startStopGame}>START/STOP GAME</button>
+                    </div>
 
 
                     <div id="console" style={{
@@ -328,10 +389,10 @@ class IDE extends Component {
                             padding:"10px",
                             overflow:"scroll"
                         }}>
-                            { this.state.logs[0].map((log, idx) => 
+                            { this.state.logs[0].map((log, idx) =>
                                 <span key={ idx }>
                                     <span style={{color:log.type==="error"?"red":"green"}}>[Robot { log.robot }{log.type==='error'?' Error':''}]</span> {log.message}
-                                <br /></span>
+                                    <br /></span>
                             )}
                         </div>
                         <div id="blueConsole" style={{
@@ -344,10 +405,10 @@ class IDE extends Component {
                             padding:"10px",
                             overflow:"scroll"
                         }}>
-                            { this.state.logs[1].map((log, idx) => 
+                            { this.state.logs[1].map((log, idx) =>
                                 <span key={ idx }>
                                     <span style={{color:log.type==="error"?"red":"green"}}>[Robot { log.robot }{log.type==='error'?' Error':''}]</span> {log.message}
-                                <br /></span>
+                                    <br /></span>
                             )}
                         </div>
                     </div>
@@ -362,6 +423,16 @@ class IDE extends Component {
                     <i onClick={ this.showMenu } style={{cursor:"pointer"}} className="pe-7s-menu" />
                     <i onClick={ this.run } className="pe-7s-play pull-right" style={{cursor:"pointer", marginTop:"2px"}} />
                     <i onClick={ this.push } className="pe-7s-upload" style={{marginLeft:"10px", cursor:"pointer"}} />
+                    <div style={{
+                        fontSize: '0.6em',
+                        display: 'inline-block'
+                    }}>
+                        <span id="submission-status" style={{
+                            paddingTop: '0px',
+                            paddingLeft: '10px',
+                            display: 'block'
+                        }}></span>
+                    </div>
                 </div>
                 <div style={{
                     width:"100%",
@@ -379,15 +450,7 @@ class IDE extends Component {
                         transitionDuration:"500ms",
                         zIndex:"50"
                     }}>
-                        <div className="form-group" style={{padding:"10px"}}>
-                            <label>Language</label>
-                            <select className="form-control" id="lang" value={ this.state.lang } onChange={ this.changeHandler }>
-                                <option value='javascript'>Javascript</option>
-                                <option value='python'>Python</option>
-                                <option value='java'>Java</option>
-                            </select>
-                        </div>
-                        <div className="form-group" style={{padding:"10px", marginTop:"-20px"}}>
+                        <div className="form-group" style={{padding:"10px", marginTop:"0px"}}>
                             <label>Theme</label>
                             <select className="form-control" id="theme" value={ this.state.theme }  onChange={ this.changeHandler }>
                                 <option value='textmate'>Light</option>

@@ -132,7 +132,7 @@ class LoginRegister extends Component {
             value="submit"
             className="btn btn-success btn-block btn-fill"
           >
-            Login
+            Log in
           </button>
           <button
             onClick={this.startRegister}
@@ -146,7 +146,7 @@ class LoginRegister extends Component {
 
     return (
       <div
-        className="content orangeBackground"
+        className="content"
         style={{
           height: '100vh',
           width: '100vw',
@@ -155,6 +155,27 @@ class LoginRegister extends Component {
           left: '0px',
         }}
       >
+      <div
+        className="spaceBackground"
+        style={{
+          height: '100vh',
+          width: '100vw',
+          position: 'fixed',
+          top: '0px',
+          left: '0px',
+          zIndex: '-1'
+        }}
+      ></div>
+        <h1 style={{
+          textAlign: 'center',
+          fontWeight: 'bold',
+          color: 'white'
+        }}>Battlehack: Voyage</h1>
+        <p style={{
+          textAlign: 'center',
+          fontWeight: 'bold',
+          color: 'white'
+        }}>Log in or register below to participate in Battlehack Southeast 2019!</p>
         {errorDiv}
         {successDiv}
         <form onSubmit={this.formSubmit}>
@@ -162,7 +183,7 @@ class LoginRegister extends Component {
             className="card"
             style={{
               width: '350px',
-              margin: error ? '20px auto' : '100px auto',
+              margin: error ? '20px auto' : '40px auto',
             }}
           >
             <div className="content">

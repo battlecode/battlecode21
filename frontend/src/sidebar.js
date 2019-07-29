@@ -26,23 +26,23 @@ class SideBar extends Component {
 
     render() {
         return (
-            <div className="sidebar" data-color="orange">
+            <div className="sidebar" data-color="space">
                 <div className="sidebar-wrapper">
                     <div className="logo">
-                        <a href="#" className="simple-text">CRUSADE</a>
+                        <a href="#" className="simple-text">VOYAGE</a>
                     </div>
-                    <ul className="nav">
-                        <NLink to={`${process.env.PUBLIC_URL}/home`}><i className="pe-7s-home" />Home</NLink>
-                        <NLink to={`${process.env.PUBLIC_URL}/docs`}><i className="pe-7s-note2" />Docs</NLink>
-                        <NLink to={`${process.env.PUBLIC_URL}/updates`}><i className="pe-7s-bell" />Updates</NLink>
-                        <NLink to={`${process.env.PUBLIC_URL}/search`}><i className="pe-7s-search" />Search</NLink>
+                    <ul className="nav nav-pills nav-stacked">
+                        <NLink to={`${process.env.PUBLIC_URL}/home`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-home pe-fw" />Home</p></NLink>
+                        <NLink to={`${process.env.PUBLIC_URL}/docs`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-note2 pe-fw" />Docs</p></NLink>
+                        <NLink to={`${process.env.PUBLIC_URL}/updates`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-bell pe-fw" />Updates</p></NLink>
+                        <NLink to={`${process.env.PUBLIC_URL}/search`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-search pe-fw" />Search</p></NLink>
                         
                         <br />
                         
-                        <NLink to={`${process.env.PUBLIC_URL}/team`}><i className="pe-7s-users" />Team</NLink>
-                        { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/ide`}><i className="pe-7s-pen" />IDE</NLink> }
-                        { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/scrimmaging`}><i className="pe-7s-joy" />Scrimmaging</NLink> }
-                        <NLink to={`${process.env.PUBLIC_URL}/replay`}><i className="pe-7s-monitor" />Replay</NLink>
+                        <NLink to={`${process.env.PUBLIC_URL}/team`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-users pe-fw" />Team</p></NLink>
+                        { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/ide`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-pen pe-fw" />IDE</p></NLink> }
+                        { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/scrimmaging`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-joy pe-fw" />Scrimmaging</p></NLink> }
+                        <NLink to={`${process.env.PUBLIC_URL}/replay`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-monitor pe-fw" />Replay</p></NLink>
                     </ul>
                 </div>
             </div>
