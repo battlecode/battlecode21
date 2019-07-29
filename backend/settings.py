@@ -29,6 +29,10 @@ DEBUG = os.getenv('DEBUG', False)
 ALLOWED_HOSTS = ['*']
 
 
+# The URL of the application
+THIS_URL = 'https://2020.battlecode.org'
+
+
 # Application definition
 
 INSTALLED_APPS = [

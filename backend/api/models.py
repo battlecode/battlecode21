@@ -195,7 +195,7 @@ def gen_registration_key(sender, instance, raw, update_fields, **kwargs):
         context = {
             'username': instance.username,
             'verification_key': instance.registration_key,
-            'url': ' https://battlecode.org/verify/' +
+            'url': settings.THIS_URL + '/verify/' +
             instance.registration_key
         }
         content = render_to_string('email/verification.html', context)
@@ -240,7 +240,7 @@ def password_reset_token_created(sender, reset_password_token, *args, **kwargs):
     context = {
         'username': reset_password_token.user.username,
         'reset_password_url':
-        "https://battlecode.org/dash/password_change?token={}"
+        settings.THIS_URL + "/password_change?token={}"
         .format(reset_password_token.key)
     }
     content = render_to_string('email/password_reset.html', context)
