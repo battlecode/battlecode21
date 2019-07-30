@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import Api from './api';
+import $ from 'jquery';
 
 
 class NLink extends Component {
@@ -20,7 +21,9 @@ class SideBar extends Component {
     componentDidMount() {
         Api.getUserTeam(function(e) {
             this.setState({on_team:(e !== null)});
-            window.init_right_menu();
+            $(document).ready(function() {
+                window.init_right_menu();
+            });
         }.bind(this));
     }
 
