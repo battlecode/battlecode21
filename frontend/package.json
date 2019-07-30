@@ -26,6 +26,7 @@
     "vm2": "^3.6.3"
   },
   "scripts": {
+    "startx": "BROWSER=none react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
