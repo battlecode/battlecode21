@@ -165,7 +165,7 @@ class InstrCard extends UpdateCard {
             <div className="card ">
                 <div className="header">
                     <h4 className="title">Welcome!</h4>
-                    <p className="category">Battlehack Southeast 2019.</p>
+                    <p className="category">Battlecode 2020.</p>
                 </div>
                 <div className="content">
                     <p>
@@ -230,11 +230,11 @@ class Home extends Component {
                         <div className="col-md-12">
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Welcome to Battlehack Southeast: Voyage!</h4>
+                                    <h4 className="title">Welcome to Battlecode 2020!</h4>
                                 </div>
                                 <div className="content">
                                     <div className="typo-line">
-                                        <p>To compete in Battlehack, you must be on a team.  To join or create a team, simply click the <NavLink to={`${process.env.PUBLIC_URL}/team`}>Team</NavLink> link in the sidebar.</p>
+                                        <p>To compete in Battlecode, you must be on a team.  To join or create a team, simply click the <NavLink to={`${process.env.PUBLIC_URL}/team`}>Team</NavLink> link in the sidebar.</p>
                                     </div>
                                 </div>
                             </div>

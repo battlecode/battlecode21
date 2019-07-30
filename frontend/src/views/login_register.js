@@ -175,7 +175,7 @@ class LoginRegister extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Log in or register below to participate in Battlehack Southeast 2019!</p>
+        }}>Log in or register below to participate in Battlecode 2020!</p>
         {errorDiv}
         {successDiv}
         <form onSubmit={this.formSubmit}>

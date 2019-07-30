@@ -24,7 +24,7 @@ class NavBar extends Component {
                             <span className="icon-bar" />
                             <span className="icon-bar" />
                         </button>
-                        <a className="navbar-brand" href="https://se19.battlecode.org">Battlehack Southeast 2019</a>
+                        <a className="navbar-brand" href="https://2020.battlecode.org">Battlecode 2020</a>
                     </div>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav navbar-right">
