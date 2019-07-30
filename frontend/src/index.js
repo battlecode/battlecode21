@@ -5,15 +5,15 @@ import { Switch, Route } from 'react-router';
 
 import Home from './views/home';
 import NotFound from './views/not_found';
-import Docs from './views/docs';
+//import Docs from './views/docs';
 import Scrimmaging from './views/scrimmaging';
 import Tournaments from './views/tournaments';
 import Updates from './views/updates';
 import Search from './views/search';
 import Team from './views/team';
-import IDE from './views/ide';
+//import IDE from './views/ide';
 import Account from './views/account';
-import ReplayViewer from './views/replay';
+//import ReplayViewer from './views/replay';
 import LoginRegister from './views/login_register';
 import VerifyUser from './views/VerifyUser';
 import PasswordForgot from './views/passwordForgot';
@@ -46,15 +46,12 @@ class App extends Component {
             <Switch>
               <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
               <Route path={`${process.env.PUBLIC_URL}/home`} component={Home} />
-              <Route path={`${process.env.PUBLIC_URL}/docs`} component={Docs} />
               <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />
               <Route path={`${process.env.PUBLIC_URL}/updates`} component={Updates} />
               <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
               <Route path={`${process.env.PUBLIC_URL}/team`} component={Team} />
-              <Route path={`${process.env.PUBLIC_URL}/ide`} component={IDE} />
               <Route path={`${process.env.PUBLIC_URL}/account`} component={Account} />
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
-              <Route path={`${process.env.PUBLIC_URL}/replay`} component={ReplayViewer} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />
