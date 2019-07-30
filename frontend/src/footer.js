@@ -25,7 +25,7 @@ class Footer extends Component {
                         </ul>
                     </nav>
                     <p className="copyright pull-right">
-                        © 2019 <a href="https://battlecode.org">MIT Battlecode</a>.
+                        © {new Date().getFullYear()} <a href="https://battlecode.org">MIT Battlecode</a>.
                     </p>
                 </div>
           </footer>
