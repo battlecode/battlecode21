@@ -21,6 +21,13 @@ To stop or start the container: `docker stop bc20db` `docker start bc20db`
 
 To manage the database on a Mac, Postico is a good tool.
 
+The first time the database is set up, run the following from django:
+
+`python manage.py makemigrations`
+`python manage.py migrate`
+
+Then, create a new league (which currently has to be done manually, for example in Postico), with id 0. We don't currently use multiple leagues.
+
 ### Commands
 
 Always work in your virtual environment.
@@ -34,8 +41,6 @@ Then start the backend:
 
 `export DJANGO_SETTINGS_MODULE="dev_settings"`
 `export EMAIL_PASS="passwordtobattlecodegmail"`
-`python manage.py makemigrations`
-`python manage.py migrate`
 `python manage.py runserver`
 
 (The `passwordtobattlecodegmail` should be replaced by the real password.)
