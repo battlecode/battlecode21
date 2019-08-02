@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-const URL = 'https://se19.battlecode.org';
-//const URL = 'http://localhost:8000'; // DEVELOPMENT
+//const URL = 'https://se19.battlecode.org';
+const URL = 'http://localhost:8000'; // DEVELOPMENT
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
@@ -353,6 +353,8 @@ class Api {
       callback(data, true);
     }).fail((xhr, status, error) => {
       console.log(xhr);
+      // if responseJSON is undefined, it is probably because the API is not configured
+      // check that the API is indeed running on URL (localhost:8000 if local development)
       callback(xhr.responseJSON.non_field_errors, false);
     });
   }
