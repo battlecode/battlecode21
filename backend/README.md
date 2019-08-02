@@ -19,6 +19,8 @@ Any time you start the backend, there must also be a Postgres instance up on `lo
 
 To stop or start the container: `docker stop bc20db` `docker start bc20db`
 
+To manage the database on a Mac, Postico is a good tool.
+
 ### Commands
 
 Always work in your virtual environment.
@@ -31,9 +33,12 @@ Install requirements using
 Then start the backend:
 
 `export DJANGO_SETTINGS_MODULE="dev_settings"`
+`export EMAIL_PASS="passwordtobattlecodegmail"`
 `python manage.py makemigrations`
 `python manage.py migrate`
 `python manage.py runserver`
+
+(The `passwordtobattlecodegmail` should be replaced by the real password.)
 
 Open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser.
 
