@@ -9,6 +9,16 @@
 - `/engine`: Game engine
 - `/visualizer`: Game visualizer
 
+## Development
+
+### Website
+
+To run the website locally, first start the backend by following the instructions in `/backend`, and then start the frontend by following the instructions in `/frontend`. The website should then be reachable at http://localhost:3000.
+
+### Engine
+
+To be updated.
+
 ## Notes for porting this to battlecode21
 
 When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Mainting git history is nice, but not trivial. The following steps were taken to port `battlecode19` to this repo and maintain history (assuming we start in this repo):
