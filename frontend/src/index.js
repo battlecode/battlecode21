@@ -15,7 +15,8 @@ import Team from './views/team';
 //import IDE from './views/ide';
 import Account from './views/account';
 //import ReplayViewer from './views/replay';
-import LoginRegister from './views/login_register';
+import LoginRegister from './views/login';
+import Register from './views/register';
 import VerifyUser from './views/VerifyUser';
 import PasswordForgot from './views/passwordForgot';
 import PasswordChange from './views/passwordChange';
@@ -62,20 +63,64 @@ class App extends Component {
       );
     } if (this.state.logged_in === false) {
       return (
-        <Switch>
-          <Route path={`${process.env.PUBLIC_URL}/password_forgot`} component={PasswordForgot} />
-          <Route path={`${process.env.PUBLIC_URL}/password_change`} component={PasswordChange} />
-          <Route path={`${process.env.PUBLIC_URL}/`} component={LoginRegister} />
-        </Switch>
+        <div className="wrapper">
+          <SideBar />
+          <div className="main-panel">
+            <NavBar />
+            <Switch>
+              <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
+              <Route path={`${process.env.PUBLIC_URL}/home`} component={Home} />
+              <Route path={`${process.env.PUBLIC_URL}/updates`} component={Updates} />
+              <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
+              <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
+              <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
+              <Route path="*" component={NotFound} />
+            </Switch>
+            <Footer />
+          </div>
+        </div>
+
       );
     }
     return <div />;
   }
 }
 
+class BeforeLoginApp extends Component {
+  constructor() {
+    super();
+    this.state = { logged_in: null };
+  }
+
+  componentDidMount() {
+    Api.loginCheck((logged_in) => {
+      this.setState({ logged_in });
+    });
+  }
+
+  render() {
+    if (this.state.logged_in) {
+      return (
+        <App />
+      );
+    } if (this.state.logged_in === false) {
+      return (
+        <Switch>
+          <Route path={`${process.env.PUBLIC_URL}/password_forgot`} component={PasswordForgot} />
+          <Route path={`${process.env.PUBLIC_URL}/password_change`} component={PasswordChange} />
+          <Route path={`${process.env.PUBLIC_URL}/login`} component={LoginRegister} />
+          <Route path={`${process.env.PUBLIC_URL}/register`} component={Register} />
+          <Route path="*" component={App} />
+        </Switch>
+      );
+    }
+    return <div />;
+  }
+
+}
 
 ReactDOM.render((
   <BrowserRouter>
-    <App />
+    <BeforeLoginApp />
   </BrowserRouter>
 ), document.getElementById('root'));

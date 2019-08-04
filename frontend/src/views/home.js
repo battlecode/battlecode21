@@ -164,27 +164,11 @@ class InstrCard extends UpdateCard {
         return (
             <div className="card ">
                 <div className="header">
-                    <h4 className="title">Welcome!</h4>
-                    <p className="category">Battlecode 2020.</p>
+                    <h4 className="title">Welcome to Battlecode 2020!</h4>
                 </div>
                 <div className="content">
                     <p>
-                        Human civilization has come to an end and it is up to you to collect
-                        enough space orbs to build a new society!
-                        Learn how to do that by reading the <i>Battlehack: Voyage</i> game specifications
-                        in <Link to="/docs">the docs</Link>.
-                    </p>
-                    <p>
-                        To start writing your civilization-saving code, go to  
-                        the <Link to="/team">team section</Link> and create a team. Then, head over
-                        to the <Link to="/ide">IDE</Link>, and paste the example code from
-                        the docs. Run a test game against yourself by clicking the run button
-                        in the top right!
-                    </p>
-                    <p>
-                        To scrimmage other teams, push your code by clicking the upload button
-                        in the top left. Navigate to the <Link to="/scrimmaging">scrimmaging section</Link> and
-                        request a scrimmage by searching for another team.
+                        🐢
                     </p>
                 </div>
             </div>
@@ -205,7 +189,7 @@ class Home extends Component {
     }
 
     render() {
-        if (this.state.on_team) return (
+        return (
             <div className="content">
                 <div className="container-fluid">
                     <div className="row">
@@ -213,36 +197,12 @@ class Home extends Component {
                             <InstrCard />
                         </div>
                         <div className="col-md-6">
-                            <StatCard />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
                             <DateCard />
                         </div>
                     </div>
                 </div>
             </div>
-        ); else if (this.state.on_team === false) return (
-            <div className="content">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Welcome to Battlecode 2020!</h4>
-                                </div>
-                                <div className="content">
-                                    <div className="typo-line">
-                                        <p>To compete in Battlecode, you must be on a team.  To join or create a team, simply click the <NavLink to={`${process.env.PUBLIC_URL}/team`}>Team</NavLink> link in the sidebar.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        ); else return (<div></div>);
+        );
     }
 }
 

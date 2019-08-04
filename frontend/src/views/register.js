@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
-class LoginRegister extends Component {
+class Register extends Component {
   state = {
     email: '',
     password: '',
@@ -20,7 +20,7 @@ class LoginRegister extends Component {
 
   callback = (message, success) => {
     if (success) {
-      window.location.reload();
+      window.location.assign('/');
     } else {
       this.setState({
         error: message,
@@ -31,16 +31,7 @@ class LoginRegister extends Component {
   formSubmit = (e) => {
     console.log('HI!');
     e.preventDefault();
-    const { register } = this.state;
-    if (register) {
-      this.submitRegister();
-    } else {
-      this.submitLogin();
-    }
-  }
-
-  startRegister = () => {
-    this.setState({ register: true, error: '' });
+    this.submitRegister();
   }
 
   submitLogin = () => {
@@ -113,36 +104,15 @@ class LoginRegister extends Component {
       </div>
     );
 
-    let buttons = null;
-    if (register) {
-      buttons = (
-        <button
-          type="submit"
-          value="submit"
-          className="btn btn-primary btn-block btn-fill"
-        >
-          Register
-        </button>
-      );
-    } else {
-      buttons = (
-        <div>
-          <button
-            type="submit"
-            value="submit"
-            className="btn btn-success btn-block btn-fill"
-          >
-            Log in
-          </button>
-          <button
-            onClick={this.startRegister}
-            className="btn btn-primary btn-block btn-fill"
-          >
-            Register
-          </button>
-        </div>
-      );
-    }
+    let buttons = (
+      <button
+        type="submit"
+        value="submit"
+        className="btn btn-primary btn-block btn-fill"
+      >
+        Register
+      </button>
+    );
 
     return (
       <div
@@ -170,12 +140,12 @@ class LoginRegister extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Battlehack: Voyage</h1>
+        }}>Battlecode Turtle</h1>
         <p style={{
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Log in or register below to participate in Battlecode 2020!</p>
+        }}>Register below to participate in Battlecode 2020!</p>
         {errorDiv}
         {successDiv}
         <form onSubmit={this.formSubmit}>
@@ -199,7 +169,7 @@ class LoginRegister extends Component {
                     />
                   </div>
                 </div>
-                <div style={{ display: register ? 'block' : 'none' }}>
+                <div>
                   <div className="col-xs-6">
                     <div className="form-group">
                       <label>First Name</label>
@@ -259,13 +229,6 @@ class LoginRegister extends Component {
                 </div>
               </div>
               {buttons}
-              <br />
-              <a
-                href={`${process.env.PUBLIC_URL}/password_forgot`}
-                className="btn btn-secondary btn-block btn-fill"
-              >
-                Forgot Password
-              </a>
 
               <div className="clearfix" />
             </div>
@@ -276,4 +239,4 @@ class LoginRegister extends Component {
   }
 }
 
-export default LoginRegister;
+export default Register;
