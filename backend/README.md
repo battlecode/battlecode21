@@ -17,7 +17,7 @@ Create a virtual environment by following the instructions below.
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings.py`) with a database named `battlecode`. You must make migrations and migrate the first time you start the website, or whenever you change the models. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
+Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
 
 ```
 docker run -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
@@ -33,6 +33,8 @@ Run the following to set up the database:
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+You must make migrations and migrate the first time you start the website, or whenever you change the models.
 
 Then, create a new league (which currently has to be done manually, for example in Postico), with id 0. We don't currently use multiple leagues.
 
