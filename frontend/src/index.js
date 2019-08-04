@@ -14,6 +14,7 @@ import Search from './views/search';
 import Team from './views/team';
 //import IDE from './views/ide';
 import Account from './views/account';
+import Resources from './views/resources';
 //import ReplayViewer from './views/replay';
 import LoginRegister from './views/login';
 import Register from './views/register';
@@ -55,6 +56,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/account`} component={Account} />
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
+              <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />

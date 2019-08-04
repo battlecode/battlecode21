@@ -20,10 +20,10 @@ class GettingStarted extends Component {
                         <div className="col-md-12">
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Getting Started</h4>
-                                    <p className="category">Updated 8/4/19 5:08PM EST</p>
+                                    <h3 className="title">Getting Started</h3>
                                 </div>
                                 <div className="content">
+                                    <br/>
                                 <p>
                                 All of the world's turtles are dying, and it is up you to save them!
                                 Follow this short guide to get started with Battlecode 2020.
