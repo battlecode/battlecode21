@@ -86,7 +86,7 @@ class YesTeam extends Component {
                 <div className="col-md-8">
                     <div className="card">
                         <div className="header">
-                            <h4 className="title">Edit Team</h4>
+                            <h4 className="title">Team</h4>
                         </div>
                         <div className="content">
                             <div className="row">

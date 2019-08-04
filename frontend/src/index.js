@@ -6,6 +6,7 @@ import { Switch, Route } from 'react-router';
 import Home from './views/home';
 import NotFound from './views/not_found';
 //import Docs from './views/docs';
+import GettingStarted from './views/getting-started';
 import Scrimmaging from './views/scrimmaging';
 import Tournaments from './views/tournaments';
 import Updates from './views/updates';
@@ -52,6 +53,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/team`} component={Team} />
               <Route path={`${process.env.PUBLIC_URL}/account`} component={Account} />
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
+              <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />

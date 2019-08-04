@@ -60,7 +60,7 @@ button.close {
 }
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
-  font-weight: 300;
+  font-weight: 600;
   margin: 30px 0 15px;
 }
 
@@ -143,14 +143,15 @@ body,
   min-height: 100vh;
   position: relative;
 }
-
+/*
 a {
   color: #1DC7EA;
-}
+}*/
+/*
 a:hover, a:focus {
   color: #42d0ed;
   text-decoration: none;
-}
+}*/
 
 a:focus, a:active,
 button::-moz-focus-inner,
@@ -1387,7 +1388,7 @@ body > .navbar-collapse[data-color="purple"]:after {
   border-radius: 0;
 }
 .navbar .navbar-brand {
-  font-weight: 400;
+  font-weight: 600;
   margin: 5px 0px;
   padding: 15px 15px;
   font-size: 20px;
@@ -1907,7 +1908,7 @@ body > .navbar-collapse[data-color="purple"]:after {
 .card .title {
   margin: 0;
   color: #333333;
-  font-weight: 300;
+  font-weight: 600;
 }
 .card .avatar {
   width: 30px;
