@@ -14,6 +14,8 @@ npm install
 
 ### Running
 
+Make sure that the backend in `../backend` is running at `localhost:8000`.
+
 In this directory, run:
 
 ```
