@@ -147,11 +147,9 @@ body,
 a {
   color: #1DC7EA;
 }*/
-/*
 a:hover, a:focus {
-  color: #42d0ed;
   text-decoration: none;
-}*/
+}
 
 a:focus, a:active,
 button::-moz-focus-inner,

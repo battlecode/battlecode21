@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
 
 const He = styled.h5`
   font-weight: bold;
@@ -20,7 +21,7 @@ class GettingStarted extends Component {
                         <div className="col-md-12">
                             <div className="card">
                                 <div className="header">
-                                    <h3 className="title">Getting Started</h3>
+                                    <h4 className="title">Getting Started</h4>
                                 </div>
                                 <div className="content">
                                     <br/>
@@ -51,7 +52,7 @@ class GettingStarted extends Component {
                                     To participate in Battlecode, you need an account and a team. Each team can consist of 1 to 4 people.
                                 </p>
                                 <p>
-                                    Create an account on this website, and then go to the <a href='team'>team</a> section to either create
+                                    Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create
                                     or join a team.
                                 </p>
 

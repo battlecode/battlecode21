@@ -20,7 +20,7 @@ class NavBar extends Component {
                             <span className="icon-bar" />
                             <span className="icon-bar" />
                         </button>
-                        <a className="navbar-brand" href="https://2020.battlecode.org">Battlecode 2020</a>
+                        <NavLink className="navbar-brand" to={`${process.env.PUBLIC_URL}/home`}>Battlecode 2020</NavLink>
                     </div>
                     <div className="collapse navbar-collapse">
                         <NavBarAccount />
