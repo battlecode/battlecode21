@@ -1,9 +1,31 @@
 # Battlecode Frontend
 
-Fully static frontend in React, based on `battlecode19/app`.
+Fully static frontend in React, based on `battlecode19/app`, using modified template from http://creative-tim.com. 
 
-Built in react, using modified template from http://creative-tim.com. Install with `npm install`, dev with `npm run start`, and build for prod with `npm run build`.  Fully static frontend, and interfaces with backend API via AJAX calls in `api.js` (TODO). 
+## Local Development
+
+### First-Time Setup
+
+In this directory, run:
+
+```
+npm install
+```
+
+### Running
+
+In this directory, run:
+
+```
+npm run start
+```
+
+This automatically reloads the page on changes. To run the same thing without automatically opening a browser, run `npm run startx`, and then navigate to http://localhost:3000.
+
+### Notes
 
 When installing a new Node package, always `npm install --save <package>` or `npm install --save-dev <package>`, and commit `package.json` and `package-lock.json`.
 
-NOTE: Requires the `coldbrew` package to work, located in `..`.  You can set this up by running `npm link` in `../coldbrew`, then `npm link bhse19` in this directory.
+## Deployment
+
+For production, build with `npm run build`.
