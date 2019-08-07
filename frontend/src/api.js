@@ -239,6 +239,15 @@ class Api {
     });
   }
 
+  static getNextTournament(callback) {
+    // TODO: actually use real API for this
+    callback({
+      "est_date_str": '8 PM EST on January 14, 2020',
+      "seconds_until": (Date.parse(new Date('January 14, 2020 20:00:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "Sprint Tournament"
+    });
+  }
+
   static getTournaments(callback) {
     const tournaments = [
       { name: 'final', challonge: 'bc_19_finals' },

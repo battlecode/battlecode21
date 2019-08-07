@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import Api from '../api';
 import { NavLink, Link } from 'react-router-dom';
+import Countdown from './countdown';
 
 
 class UpdateCard extends Component {
@@ -176,6 +177,42 @@ class InstrCard extends UpdateCard {
     }
 }
 
+class LinksCard extends UpdateCard {
+    constructor() {
+        super();
+    }
+
+    componentDidMount() {
+        // meh
+    }
+      
+
+    render() {
+        return (
+            <div className="card ">
+                <div className="header">
+                    <h4 className="title">Useful Links</h4>
+                </div>
+                <div className="content">
+                    <p>
+                        <ul>
+                            <li>
+                                Discord
+                            </li>
+                            <li>
+                                <a href='https://github.com/battlecode/battlecode20'>GitHub</a>
+                            </li>
+                            <li>
+                                Twitch
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        );
+    }
+}
+
 class Home extends Component {
     constructor() {
         super();
@@ -199,6 +236,9 @@ class Home extends Component {
                                         <InstrCard />
                                 </div>
                                 <div className="row">
+                                        <Countdown />
+                                </div>
+                                <div className="row">
                                         <StatCard />
                                 </div>
                             </div>
@@ -207,6 +247,9 @@ class Home extends Component {
                             <div className="container-fluid">
                                 <div className="row">
                                         <DateCard />
+                                </div>
+                                <div className="row">
+                                        <LinksCard />
                                 </div>
                                 <div className="row">
                                         <PerfCard />
