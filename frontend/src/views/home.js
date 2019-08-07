@@ -194,10 +194,24 @@ class Home extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-6">
-                            <InstrCard />
+                            <div className="container-fluid">
+                                <div className="row">
+                                        <InstrCard />
+                                </div>
+                                <div className="row">
+                                        <StatCard />
+                                </div>
+                            </div>
                         </div>
                         <div className="col-md-6">
-                            <DateCard />
+                            <div className="container-fluid">
+                                <div className="row">
+                                        <DateCard />
+                                </div>
+                                <div className="row">
+                                        <PerfCard />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
