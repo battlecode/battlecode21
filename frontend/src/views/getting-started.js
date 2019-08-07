@@ -71,6 +71,15 @@ class GettingStarted extends Component {
                                     Follow these steps to run your first game using a sample bot, and upload it, and then scrimmage Teh Devs.
                                 </p>
 
+                                <h4>
+                                    The Community
+                                </h4>
+                                <p>
+                                    Join the Discord channel! A big part of competing in battlecode is discussing strategies with fellow
+                                    contestants. The Discord is also a place for you to get help, both from fellow contestants and
+                                    Battlecode devs. We look forward to chatting with you!
+                                </p>
+
                                 </div>
                             </div>
 
