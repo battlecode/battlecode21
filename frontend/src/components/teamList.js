@@ -84,7 +84,6 @@ class TeamList extends Component {
                 }
                 return (
                     <tr key={ team.id }>
-                        <td>{ team.ranking }</td>
                         <td>{ team.mu }</td>
                         <td>{ team.name }</td>
                         <td>{ team.users.join(", ") }</td>
@@ -106,7 +105,6 @@ class TeamList extends Component {
                             <table className="table table-hover table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Ranking</th>
                                     <th>Score</th>
                                     <th>Team</th>
                                     <th>Users</th>
