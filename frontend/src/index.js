@@ -76,6 +76,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
+              <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />
