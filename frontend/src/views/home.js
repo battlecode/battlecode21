@@ -177,6 +177,7 @@ class InstrCard extends UpdateCard {
     }
 }
 
+
 class LinksCard extends UpdateCard {
     constructor() {
         super();
@@ -204,6 +205,9 @@ class LinksCard extends UpdateCard {
                             </li>
                             <li>
                                 Twitch
+                            </li>
+                            <li>
+                                <a href='https://battlecode.org'>Battlecode.org</a>
                             </li>
                         </ul>
                     </p>
@@ -239,7 +243,7 @@ class Home extends Component {
                                         <Countdown />
                                 </div>
                                 <div className="row">
-                                        <StatCard />
+                                        {this.state.on_team && <StatCard />}
                                 </div>
                             </div>
                         </div>
@@ -252,7 +256,7 @@ class Home extends Component {
                                         <LinksCard />
                                 </div>
                                 <div className="row">
-                                        <PerfCard />
+                                        {this.state.on_team && <PerfCard />}
                                 </div>
                             </div>
                         </div>
