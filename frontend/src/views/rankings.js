@@ -48,7 +48,7 @@ class Rankings extends Component {
               <div className="card">
                 <div className="content">
                   <form className="input-group" onSubmit={this.search}>
-                    <input type="text" className="form-control" onChange={this.handleChange} placeholder="Search for a team..." />
+                    <input type="text" className="form-control" onChange={this.handleChange} placeholder="Search for a Team or User..." />
                     <span className="input-group-btn">
                       <button className="btn btn-default" type="submit" value="Submit">Go!</button>
                     </span>

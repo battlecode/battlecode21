@@ -165,7 +165,9 @@ class TeamViewSet(viewsets.GenericViewSet,
     pagination_class = SearchResultsPagination
     permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
     filter_backends = (filters.SearchFilter,filters.OrderingFilter)
-    search_fields = ('name',)
+    # NOTE: IF THE TEAM SEARCH IS EVER SLOW, REMOVE TEAM SEARCH BY USERNAME
+    # it is nice to have it, but will certainly take more time to evaluate
+    search_fields = ('name','users__username')
     ordering_fields = ('mu',)
 
     def get_queryset(self):
