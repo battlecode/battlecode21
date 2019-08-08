@@ -42,7 +42,7 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
-            'bio', 'divisions', 'code', 'auto_accept_ranked', 'auto_accept_unranked')
+            'bio', 'divisions', 'code', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma')
         extra_kwargs = {
             'code': {'write_only': True}
         }
