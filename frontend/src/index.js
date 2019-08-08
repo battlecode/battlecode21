@@ -12,6 +12,7 @@ import Tournaments from './views/tournaments';
 import Updates from './views/updates';
 import Search from './views/search';
 import Team from './views/team';
+import Rankings from './views/rankings';
 //import IDE from './views/ide';
 import Account from './views/account';
 import Resources from './views/resources';
@@ -57,6 +58,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
               <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
+              <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />
@@ -77,6 +79,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
               <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
+              <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />

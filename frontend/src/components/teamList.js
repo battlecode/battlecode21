@@ -69,6 +69,7 @@ class TeamList extends Component {
                 <div className="card">
                     <div className="header">
                         <h4 className="title">No Teams Found!</h4>
+                        <br/>
                     </div> 
                 </div>
             )
@@ -83,6 +84,8 @@ class TeamList extends Component {
                 }
                 return (
                     <tr key={ team.id }>
+                        <td>{ team.ranking }</td>
+                        <td>{ team.mu }</td>
                         <td>{ team.name }</td>
                         <td>{ team.users.join(", ") }</td>
                         <td>{ team.bio }</td>
@@ -97,12 +100,14 @@ class TeamList extends Component {
                 <div>
                     <div className="card">
                         <div className="header">
-                            <h4 className="title">Teams</h4>
+                            <h4 className="title">Rankings</h4>
                         </div>
                         <div className="content table-responsive table-full-width">
                             <table className="table table-hover table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Ranking</th>
+                                    <th>Score</th>
                                     <th>Team</th>
                                     <th>Users</th>
                                     <th>Bio</th>

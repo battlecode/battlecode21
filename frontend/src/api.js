@@ -68,6 +68,19 @@ class Api {
       });
     });
   }
+  static searchTeamRanking(query, page, callback) {
+    const encQuery = encodeURIComponent(query);
+    const teamUrl = `${URL}/api/${LEAGUE}/team/?ordering=-mu&search=${encQuery}&page=${page}`;
+    $.get(teamUrl, (teamData) => {
+      const teamLimit = parseInt(teamData.count / PAGE_LIMIT, 10) + !!(teamData.count % PAGE_LIMIT);
+      callback({
+        query,
+        teams: teamData.results,
+        teamLimit,
+        teamPage: page,
+      });
+    });
+  }
 
   static searchTeam(query, page, callback) {
     const encQuery = encodeURIComponent(query);
