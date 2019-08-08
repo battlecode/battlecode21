@@ -164,14 +164,16 @@ class TeamViewSet(viewsets.GenericViewSet,
     serializer_class = TeamSerializer
     pagination_class = SearchResultsPagination
     permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter)
     search_fields = ('name',)
+    ordering_fields = ('mu',)
 
     def get_queryset(self):
         """
         Only teams within the league are visible.
         """
         return super().get_queryset().filter(league_id=self.kwargs['league_id'])
+
 
     def list(self, request, *args, **kwargs):
         """
