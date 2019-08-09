@@ -15,6 +15,8 @@ Create a virtual environment by following the instructions below.
 - `source venv/bin/activate`
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
+The `pip install` might fail, since `psycopg2` requires a working build environmment for the included C code. On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`)
+
 #### Database
 
 Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
