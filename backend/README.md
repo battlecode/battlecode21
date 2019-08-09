@@ -58,6 +58,8 @@ python manage.py runserver
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
+You can also test with uWSGI (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+
 ### Testing
 
 `coverage run --source='.' manage.py test`
