@@ -76,3 +76,14 @@ When installing a new Python package:
 `pip freeze > requirements.txt`
 
 Always commit the most recent `requirements.txt`.
+
+
+## Deployment
+
+We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing.
+
+The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
+
+Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
+
+Ideally, we would like to move to Kubernetes for everything, as that would make everything much easier, but it doesn't currently support having a load balancer that also points to storage buckets. This is a deal-breaker, since the frontend is static.
