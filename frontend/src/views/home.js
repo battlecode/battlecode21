@@ -204,7 +204,7 @@ class LinksCard extends UpdateCard {
                                 <a href='https://github.com/battlecode/battlecode20'>GitHub</a>
                             </li>
                             <li>
-                                Twitch
+                                <a href='https://twitch.tv/mitbattlecode'>Twitch</a>
                             </li>
                             <li>
                                 <a href='https://battlecode.org'>Battlecode.org</a>
