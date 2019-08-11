@@ -38,6 +38,9 @@ class Api {
 
 
   static getUpdates(callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
     $.get(`${URL}/api/league/${LEAGUE}/`, (data, success) => {
       for (let i = 0; i < data.updates.length; i++) {
         const d = new Date(data.updates[i].time);
@@ -46,6 +49,9 @@ class Api {
       }
 
       callback(data.updates);
+    });
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
     });
   }
 
@@ -71,6 +77,9 @@ class Api {
   static searchTeamRanking(query, page, callback) {
     const encQuery = encodeURIComponent(query);
     const teamUrl = `${URL}/api/${LEAGUE}/team/?ordering=-mu&search=${encQuery}&page=${page}`;
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
     $.get(teamUrl, (teamData) => {
       const teamLimit = parseInt(teamData.count / PAGE_LIMIT, 10) + !!(teamData.count % PAGE_LIMIT);
       callback({
@@ -80,6 +89,9 @@ class Api {
         teamPage: page,
       });
     });
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    }); // re-add the authorization info
   }
 
   static searchTeam(query, page, callback) {
