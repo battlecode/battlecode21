@@ -1,13 +1,16 @@
 
 FROM node:8.3-alpine
 
-RUN mkdir /install
-COPY package.json /install
-RUN cd /install && npm install
+# RUN mkdir /install
+# COPY package.json /install
+# RUN cd /install && npm install
 
 RUN mkdir /code
 WORKDIR /code
 
 # start the app
 EXPOSE 3000
-CMD ["npm", "run", "startx"]
+# CMD ["npm", "run", "startx"]
+# the reason we're doing npm install here is because we then can use
+# the mounted node_modules and keep package_lock nicely in version control
+CMD npm install && npm run startx

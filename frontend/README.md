@@ -28,7 +28,7 @@ This automatically reloads the page on changes. To run the same thing without au
 
 ### Notes
 
-When installing a new Node package, always `npm install --save <package>` or `npm install --save-dev <package>`, and commit `package.json` and `package-lock.json`.
+When installing a new Node package, always `npm install --save <package>` or `npm install --save-dev <package>`, and commit `package.json` and `package-lock.json`. This should work even if we run it from Docker. If you don't have `npm` installed on your computer, you can `docker exec -it battlecode20_frontend_1 /bin/bash` and then run the commands above.
 
 ## Deployment
 

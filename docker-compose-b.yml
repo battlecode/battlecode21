@@ -2,16 +2,16 @@ version: '2'
 
 services:
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./frontend:/code
-    ports:
-      - 3000:3000
-    # environment:
-    #   - NODE_PATH=/install/node_modules
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - ./frontend:/code
+  #   ports:
+  #     - 3000:3000
+  #   # environment:
+  #   #   - NODE_PATH=/install/node_modules
 
   backend:
     build:
