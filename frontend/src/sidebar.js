@@ -15,10 +15,13 @@ class NLink extends Component {
 class SideBar extends Component {
     constructor() {
         super();
-        this.state = {on_team:null};
+        this.state = {on_team:null, logged_in: null};
     }
 
     componentDidMount() {
+        Api.loginCheck((logged_in) => {
+        this.setState({ logged_in });
+        });
         Api.getUserTeam(function(e) {
             this.setState({on_team:(e !== null)});
             $(document).ready(function() {
@@ -48,7 +51,7 @@ class SideBar extends Component {
                         
                         <br />
                         
-                        <NLink to={`${process.env.PUBLIC_URL}/team`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-users pe-fw" />Team</p></NLink>
+                        { this.state.logged_in && <NLink to={`${process.env.PUBLIC_URL}/team`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-users pe-fw" />Team</p></NLink>}
                         { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/submissions`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-up-arrow pe-fw" />Submissions</p></NLink> }
                         {/*{ this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/ide`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-pen pe-fw" />IDE</p></NLink> }*/}
                         { this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/scrimmaging`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-joy pe-fw" />Scrimmaging</p></NLink> }
