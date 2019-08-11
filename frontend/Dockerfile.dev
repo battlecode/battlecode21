@@ -1,5 +1,5 @@
 
-FROM node:8.3-alpine
+FROM node:10.16-alpine
 
 # RUN mkdir /install
 # COPY package.json /install
