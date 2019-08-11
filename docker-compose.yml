@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/code
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_PATH=/install/node_modules
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/code
+    ports:
+      - 8000:80
+    environment:
+      - DJANGO_SETTINGS_MODULE=dev_settings
+      - DB_HOST_BC_DEV=db
+    # command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && uwsgi --ini uwsgi.ini'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && python manage.py runserver 0.0.0.0:80'
+
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=battlecode
+      - POSTGRES_DB=battlecode
+      - POSTGRES_PASSWORD=mysecretpassword

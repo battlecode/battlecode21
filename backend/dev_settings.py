@@ -66,9 +66,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'battlecode',
-        'USER': 'postgres',
-        'PASSWORD': 'mysecretpassword',
-        'HOST': 'localhost',
+        'USER': 'battlecode',
+        'PASSWORD': os.getenv('DB_PASS_BC_DEV', 'mysecretpassword'),
+        'HOST': os.getenv('DB_HOST_BC_DEV', 'localhost'),
         'PORT': 5432,
     }
 }

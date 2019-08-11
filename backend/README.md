@@ -4,6 +4,10 @@ Written in Django Rest Framework. Based on `battlecode19/api`.
 
 ## Local Development
 
+You can run `docker-compose up --build` in the root directory of `battlecode20` to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions below.
+
+For a nice interface to test the backend, go to `localhost:8000/docs/`.
+
 ### First-Time Setup
 
 #### Virtual Environment
@@ -22,7 +26,7 @@ The `pip install` might fail, since `psycopg2` requires a working build environm
 Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
 
 ```
-docker run -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
+docker run -p 5432:5432 -e POSTGRES_USER=battlecode -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
 ```
 
 To stop or start the database container: `docker stop bc20db` `docker start bc20db`. [Postico](https://eggerapps.at/postico/) and [pgAdmin](https://www.pgadmin.org/) are two useful tools for managing the database.
@@ -32,13 +36,12 @@ To stop or start the database container: `docker stop bc20db` `docker start bc20
 Run the following to set up the database:
 
 ```
-python manage.py makemigrations
 python manage.py migrate
 ```
 
-You must make migrations and migrate the first time you start the website, or whenever you change the models.
+This must be run the first time the database is setup, or anytime models are changed. When models are changed, you also need to run `python manage.py makemigrations` and then commit the migrations. If run through docker-compose, you need to first `docker exec -it battlecode20_backend_1 /bin/bash` and then perform the `python manage.py makemigrations`.
 
-Then, create a new league (which currently has to be done manually, for example in Postico), with id 0. We don't currently use multiple leagues.
+This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.
 
 ### Running
 
@@ -47,6 +50,7 @@ Make sure you work in your virtual environment, make sure all packages are up to
 ```
 source venv/bin/activate
 pip install -r requirements.txt
+python manage.py migrate
 docker start bc20db
 export DJANGO_SETTINGS_MODULE="dev_settings"
 export EMAIL_PASS="passwordtobattlecodegmail"
@@ -82,7 +86,9 @@ Always commit the most recent `requirements.txt`.
 
 ## Deployment
 
-We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing.
+A database should be created.
+
+We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
 
 The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
 
