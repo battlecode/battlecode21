@@ -2,6 +2,8 @@
 
 Fully static frontend in React, based on `battlecode19/app`, using modified template from http://creative-tim.com. 
 
+![](screenshot.png)
+
 ## Local Development
 
 You can run `docker-compose up --build` in the root directory of `battlecode20` to run the entire website stack. If for some reason you want to run the frontend outside of Docker, follow the instructions below.
