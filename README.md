@@ -7,7 +7,9 @@
 - `/backend`: Backend API in Django Rest Framework
 - `/frontend`: Frontend dashboard in React
 - `/engine`: Game engine in Java
+- `/schema`: Game serialization schema (basically, an encoding of all units and events in a game)
 - `/client`: Game client (visualizer) in TypeScript
+- `/playback`: Helper library for the client. We might want to integrate this with the client at some point
 
 ## Development
 
