@@ -27,7 +27,21 @@ If you want to run each of the different components separately, natively, then f
 
 ### Engine
 
-To be updated.
+To run a game, run
+
+```
+gradle headless <-PteamA=(...)> <-PteamB=(...)> <-Pmaps=(...)>
+```
+
+(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows).
+
+To watch the game, run
+
+```
+gradle runClient --no-daemon
+```
+
+which will launch the client on http://localhost:8080 (if available).
 
 ## Notes for porting this to battlecode21
 
