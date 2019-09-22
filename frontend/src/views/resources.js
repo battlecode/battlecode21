@@ -92,6 +92,7 @@ class Resources extends Component {
                                     <p>
                                         <ul>
                                             <li>"don't die" — arvid.</li>
+                                            <li>"smh my head" — marco</li>
                                         </ul>
                                     </p>
                                 </div>
