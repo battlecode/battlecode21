@@ -1,5 +1,6 @@
 from RestrictedPython import compile_restricted, safe_builtins, Guards
-import threading, threader 
+import threading 
+import threader
 import sys
 from time import sleep
 import traceback
@@ -112,7 +113,6 @@ class RobotRunner():
 
             while True:
                 sleep(0.0001)
-        
         self.bytecode -= 1
 
     def import_call(self, name, globals=None, locals=None, fromlist=(), level=0, caller='robot'):
@@ -126,6 +126,10 @@ class RobotRunner():
         if not name in self.code:
             if self.debug and name == 'pdb':
                 return pdb
+            
+            if name == 'random':
+                import random
+                return random
 
             raise ImportError('Module "' + name + '" does not exist.')
 
@@ -164,7 +168,8 @@ class RobotRunner():
             exec(self.code['robot'], self.globals, self.locals)            
             self.globals.update(self.locals)
             self.initialized = True
-        
+        except RuntimeError:
+            threading.current_thread().end()
         except Exception:
             self.error_method(traceback.format_exc(limit=5))
 
@@ -174,6 +179,8 @@ class RobotRunner():
         if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda:1)):
             try:
                 exec(self.locals['turn'].__code__, self.globals, self.locals)
+            except RuntimeError:
+                threading.current_thread().end()
             except Exception:
                 self.error_method(traceback.format_exc(limit=5))
         else:

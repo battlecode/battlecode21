@@ -48,6 +48,8 @@ class Robot:
 	def turn(self):
 		self.logs.clear()
 		self.runner.run()
+		if self.debug:
+			print(f'[Robot {self.id} info] Remaining bytecode: {self.runner.bytecode}')
 
 class Game:
 	MAX_ROUNDS = 100
@@ -65,12 +67,14 @@ class Game:
 
 		self.board = [[None]*20 for _ in range(20)]
 
-		for i in range(20):
-			for j in range(5):
-				self.new_robot(j, i, RED)
-				self.new_robot(19-j, i, BLUE)
+		for _ in range(1):
+			for i in range(2):
+				for j in range(5):
+					self.new_robot(j, i, RED)
+					self.new_robot(19-j, i, BLUE)
 
 	def turn(self):
+		print(self.queue)
 		robot = self.queue[self.robin]
 
 		robot.turn()
