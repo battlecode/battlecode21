@@ -5,8 +5,8 @@ FROM node:10.16-alpine
 # COPY package.json /install
 # RUN cd /install && npm install
 
-RUN mkdir /code
-WORKDIR /code
+RUN mkdir /frontend
+WORKDIR /frontend
 
 # start the app
 EXPOSE 3000

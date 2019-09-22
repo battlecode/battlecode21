@@ -84,6 +84,18 @@ class Resources extends Component {
                                 </div>
                             </div>
 
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Inspirational Quotes</h4>
+                                </div>
+                                <div className="content">
+                                    <p>
+                                        <ul>
+                                            <li>"don't die" — arvid.</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
