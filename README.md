@@ -10,6 +10,7 @@
 - `/schema`: Game serialization schema (basically, an encoding of all units and events in a game)
 - `/client`: Game client (visualizer) in TypeScript
 - `/playback`: Helper library for the client. We might want to integrate this with the client at some point
+- `/example-bots`: A bunch of example bots for the game!
 
 ## Development
 
@@ -33,7 +34,7 @@ To run a game, run
 gradle headless <-PteamA=(...)> <-PteamB=(...)> <-Pmaps=(...)>
 ```
 
-(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows).
+(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). Note that you can run `gradle headless` only if you just want to run an example game. The replay file will be in `/matches`.
 
 To watch the game, run
 
