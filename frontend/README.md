@@ -34,4 +34,4 @@ When installing a new Node package, always `npm install --save <package>` or `np
 
 ## Deployment
 
-For production, build with `npm run build`.
+For production, build with `npm run build` for the full thing, and `npm run buildnogame` to build the site without any game specific information. This is handled automatically by calling `./deploy.sh deploy` or `./deploy.sh deploynogame`, respectively. Note that the former should ONLY be called after the release of the game, since it makes the game specs and the visualizer public.

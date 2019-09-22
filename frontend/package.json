@@ -27,6 +27,7 @@
     "startx": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && BROWSER=none react-scripts start",
     "start": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && react-scripts start",
     "build": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && react-scripts build",
+    "buildnogame": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
