@@ -2,7 +2,7 @@
   "name": "battlecode-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://se19.battlecode.org",
+  "homepage": "https://2020.battlecode.org",
   "devDependencies": {
     "react-scripts": "^3.1.0"
   },
@@ -24,9 +24,9 @@
     "vm2": "^3.6.3"
   },
   "scripts": {
-    "startx": "BROWSER=none react-scripts start",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "startx": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && BROWSER=none react-scripts start",
+    "start": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && react-scripts start",
+    "build": "cd ../client && npm run prod && cp -r bc20 ../frontend/public && cd ../frontend && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

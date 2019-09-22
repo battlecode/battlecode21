@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Battlecode Online Match Viewer</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="language" content="en" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Graduate">
+
+    <div id='client'/>
+    <script type="text/javascript" src="/bc20/bundle.js" charset="utf-8"></script>
+	<script type="text/javascript">
+
+		match_url = window.location.search.substr(1);
+
+		console.log(match_url);
+		
+		if (match_url === "") {
+			console.log('hej');
+			window.battleClient = window.battlecode.mount(
+				document.getElementById('client')/*,
+				{
+					matchFileURL: "{{ match_url }}",
+				}*/
+			);
+		} else {
+			window.battleClient = window.battlecode.mount(
+				document.getElementById('client'),
+				{
+					matchFileURL: match_url,
+				}
+			);
+		}
+			
+    </script>
+	
+	<style>
+		html, body { height:100%; overflow: hidden; }
+		body { margin:0; }
+	</style>
+</head>
+<body>
+	<div id="altContent">
+		<h1>Loading Battlecode client...</h1>
+	</div>
+</body>
+</html>

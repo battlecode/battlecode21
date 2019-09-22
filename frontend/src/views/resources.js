@@ -39,7 +39,7 @@ class Resources extends Component {
                                 <p className='text-center' style={{
                                     marginBottom: 20
                                 }}>
-                                    <a type="button" className="btn btn-info btn-fill text-center" href='/visualizer'>Go to the Visualizer</a>
+                                    <a type="button" className="btn btn-info btn-fill text-center" href='/visualizer.html'>Go to the Visualizer</a>
                                 </p>
                                 <p>
                                     You can also run the visualizer locally, which, for example, has the added benefit of automatically reloading replay files.
