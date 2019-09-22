@@ -15,17 +15,15 @@
 
 ### Website
 
-To run the website locally, run
+To get set up, make sure you have [Node](https://nodejs.org/en/download/) and [Docker](https://docs.docker.com/docker-for-mac/install/) installed. For Windows, you will need Docker Toolbox. If you have Windows, I'd also recommend installing [Cygwin](https://www.cygwin.com/), since we have some bash scripts that won't work with the standard Windows command prompt. (Docker is not strictly necessary, but it makes stuff easier, especially if you want to work on the backend of the website.)
 
-```
-docker-compose up --build
-```
+First, install all required packages: run `npm install` in each of the four folders `/schema`, `/playback`, `/client`, `/frontend`.
 
-in this directory, and go to http://localhost:3000. This will create containers for the frontend, backend and the database. The frontend and backend directories are mounted in the respective containers, so code updates should be automatically reflected, without needing to restart. The first time, this might take quite some time. If node packages are frequently updated, it might be more convenient to run the frontend outside of Docker.
+Then, you can start the frontend by running `npm run start` in the `/frontend` folder. (If this fails on Windows, make sure you are using Cygwin.) After this step, you should be able to view the website at http://localhost:3000.
 
-You can also run `docker-compose -f docker-compose-b.yml up --build` to run the backend only, and then run the frontend separately, which might be the best way to go about things.
+If you also want to run the backend (which will enable things like signing in to the website, and a rankings table, etc) then run `docker-compose -f docker-compose-b.yml up --build` in this folder. If you don't have Docker, you can try following the instructions in the `/backend` folder instead.
 
-If you want to run each of the different components separately, natively, then first start the backend by following the instructions in `/backend`, and then start the frontend by following the instructions in `/frontend`. The website should then be reachable at http://localhost:3000.
+You can also run both the backend and the frontend in a Docker container, by running `docker-compose up --build`, but that might be slower.
 
 ### Engine
 

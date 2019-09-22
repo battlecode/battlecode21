@@ -16,6 +16,8 @@ In this directory, run:
 npm install
 ```
 
+Also, run `npm install` in `../schema`, `../playback` and `../client`.
+
 ### Running
 
 Make sure that the backend in `../backend` is running at `localhost:8000`.
