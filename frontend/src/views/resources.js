@@ -92,7 +92,11 @@ class Resources extends Component {
                                     <p>
                                         <ul>
                                             <li>"don't die" — arvid.</li>
+
+                                            <li>"follow your dreams"</li>
+
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
+
                                         </ul>
                                     </p>
                                 </div>
