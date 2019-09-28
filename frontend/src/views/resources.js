@@ -97,6 +97,8 @@ class Resources extends Component {
 
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
 
+                                            <li>"keep trying"</li>
+
                                         </ul>
                                     </p>
                                 </div>
