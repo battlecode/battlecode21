@@ -90,13 +90,13 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>First Name</label>
-                                                    <input type="text" className="form-control" id="first" onChange={ this.changeHandler } value={ this.state.user.first_name } />
+                                                    <input type="text" className="form-control" id="first_name" onChange={ this.changeHandler } value={ this.state.user.first_name } />
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Last Name</label>
-                                                    <input type="text" className="form-control" id="last" onChange={ this.changeHandler } value={ this.state.user.last_name } />
+                                                    <input type="text" className="form-control" id="last_name" onChange={ this.changeHandler } value={ this.state.user.last_name } />
                                                 </div>
                                             </div>
                                         </div>
@@ -104,7 +104,7 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Date of Birth (YYYY-MM-DD)</label>
-                                                    <input type="text" className="form-control" id="dob" onChange={ this.changeHandler } value={ this.state.user.date_of_birth } />
+                                                    <input type="text" className="form-control" id="date_of_birth" onChange={ this.changeHandler } value={ this.state.user.date_of_birth } />
                                                 </div>
                                             </div>
 
