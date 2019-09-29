@@ -93,6 +93,8 @@ class Resources extends Component {
                                         <ul>
                                             <li>"don't die" — arvid.</li>
 
+                                            <li>"stay alive" - ivy</li>
+
                                             <li>"smh my head" — marco</li>
 
                                             <li>"read the readme" — Quinn.</li>
@@ -110,7 +112,6 @@ class Resources extends Component {
                                             <li>"keep trying"</li>
 
 					                                  <li>"The best way to realize your dreams is to wake up." -jett.</li>
-
 
                                         </ul>
                                     </p>
