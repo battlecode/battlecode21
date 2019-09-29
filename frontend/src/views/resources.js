@@ -103,11 +103,14 @@ class Resources extends Component {
 
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
 
+                                            <li>"Never give up" — Diuven.</li>
+
                                             <li>"we should get campbell's as a sponsor this year" - stephanie.</li>
 
                                             <li>"keep trying"</li>
 
-					    <li>"The best way to realize your dreams is to wake up." -jett.</li>
+					                                  <li>"The best way to realize your dreams is to wake up." -jett.</li>
+
 
                                         </ul>
                                     </p>
