@@ -99,7 +99,10 @@ class Resources extends Component {
 
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
 
+                                            <li>"we should get campbell's as a sponsor this year" - stephanie.</li>
+
                                             <li>"keep trying"</li>
+
                                         </ul>
                                     </p>
                                 </div>
