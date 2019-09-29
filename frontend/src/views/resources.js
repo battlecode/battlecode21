@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+﻿import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const He = styled.h5`
@@ -92,6 +92,17 @@ class Resources extends Component {
                                     <p>
                                         <ul>
                                             <li>"don't die" — arvid.</li>
+
+                                            <li>"donut give up; bee-leaf in yourself!" — darren.</li>
+
+                                            <li>"follow your dreams"</li>
+
+                                            <li>"All successful people started with nothing more than a goal." - ezou.</li>
+
+                                            <li>"we should get campbell's as a sponsor this year" - stephanie.</li>
+
+                                            <li>"keep trying"</li>
+
                                         </ul>
                                     </p>
                                 </div>
