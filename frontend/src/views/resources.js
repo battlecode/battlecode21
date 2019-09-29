@@ -103,6 +103,8 @@ class Resources extends Component {
 
                                             <li>"keep trying"</li>
 
+					    <li>"The best way to realize your dreams is to wake up." -jett.</li>
+
                                         </ul>
                                     </p>
                                 </div>
