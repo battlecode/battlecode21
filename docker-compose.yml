@@ -9,7 +9,6 @@ services:
     volumes:
       - ./frontend:/frontend
       - ./client:/client
-      - ./playback:/playback
       - ./schema:/schema
     ports:
       - 3000:3000
