@@ -1,6 +1,6 @@
-from code_container import CodeContainer
+from engine.container.code_container import CodeContainer
 from time import time
-from game import Game
+from engine.game.game import Game
 
 code = CodeContainer.from_directory('./examplefuncsplayer')
 

@@ -1,10 +1,11 @@
 from os import listdir
 from os.path import isfile, join
-from instrument import instrument
+from engine.container.instrument import instrument
 import marshal, pickle
 from RestrictedPython import compile_restricted
 
 RESTRICTED = True
+
 
 class CodeContainer:
     def __init__(self, code):
