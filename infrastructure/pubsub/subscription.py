@@ -58,9 +58,10 @@ def subscribe(subscription_name, worker):
             time.sleep(PUBSUB_SLEEP_TIME)
 
 
-def sigint_handler(signal, frame):
+def graceful_exit(signal, frame):
     global shutdown_requested
     shutdown_requested = True
-    logging.warning('SIGINT received; shutting down')
+    logging.warning('Requesting shutdown due to signal {}'.format(signal))
 
-signal.signal(signal.SIGINT, sigint_handler)
+signal.signal(signal.SIGINT, graceful_exit)
+signal.signal(signal.SIGTERM, graceful_exit)
