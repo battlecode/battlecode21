@@ -8,7 +8,10 @@ var navbar_initialized = false;
 var click_toggle = null;
 var init_right_menu = null;
 
+console.log("hello sjkdapowiqop")
+
 $(document).ready(function(){
+    console.log("bootstrap guy called")
     window_width = $(window).width();
     init_right_menu = lbd.initRightMenu;
              

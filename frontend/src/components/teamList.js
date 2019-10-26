@@ -10,6 +10,7 @@ class TeamList extends Component {
     state = {
         pendingRequests: {},
         successfulRequests: {},
+        showTeamID: null,
     }
 
     onTeamRequest = (teamId) => {

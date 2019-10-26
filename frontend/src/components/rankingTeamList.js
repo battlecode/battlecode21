@@ -4,12 +4,26 @@ import Api from '../api';
 import TeamList from './teamList';
 import PaginationControl from './paginationControl';
 
+import { Redirect, Link } from 'react-router-dom';
+
 const SUCCESS_TIMEOUT = 2000
 
 class RankingTeamList extends TeamList {
 
+    showTeamPage = (teamID) => {
+        //this.props.history.push(`${process.env.PUBLIC_URL}/rankings/${teamID}`)
+        //this.setState({showTeamID: teamID});
+        console.log(this)
+        this.props.history.push(`${process.env.PUBLIC_URL}/rankings/${teamID}`)
+        //this.router.transitionTo('/')
+    }
+
     render() {
         const { props, state }  = this;
+
+        // if(state.showTeamID !== null) {
+        //     return ( <Redirect to={`${process.env.PUBLIC_URL}/team/${state.showTeamID}`}/> );
+        // }
 
         if (!props.teams) {
             return null;
@@ -32,14 +46,14 @@ class RankingTeamList extends TeamList {
                     buttonContent = <i className="fa fa-check"></i>;
                 }
                 return (
-                    <tr key={ team.id }>
-                        <td>{ team.mu }</td>
-                        <td>{ team.name }</td>
-                        <td>{ team.users.join(", ") }</td>
-                        <td>{ team.bio }</td>
-                        {props.canRequest && (
-                            <td><button className="btn btn-xs" onClick={() => this.onTeamRequest(team.id)}>{buttonContent}</button>  </td>
-                        )}
+                    <tr key={ team.id } onClick={() => this.showTeamPage(team.id) }>
+                            <td>{ team.mu }</td>
+                            <td>{ team.name }</td>
+                            <td>{ team.users.join(", ") }</td>
+                            <td>{ team.bio }</td>
+                            {props.canRequest && (
+                                <td><button className="btn btn-xs" onClick={() => this.onTeamRequest(team.id)}>{buttonContent}</button>  </td>
+                            )}
                     </tr>
                 )
             })
