@@ -12,7 +12,7 @@ class TeamInfo extends Component {
 		const teamId = this.props.match.params.team_id;
 		//get team info by id
 		Api.getTeamById(teamId, this.setTeam)
-		//Api.getTeamRanking(teamId, this.setRanking)
+		Api.getTeamRanking(teamId, this.setRanking)
 	}
 
 	setTeam = (team_data) => {
@@ -21,8 +21,43 @@ class TeamInfo extends Component {
 	}
 
 	setRanking = (ranking_data) => {
-		console.log(ranking_data)
-		//this.setState({team: team_data})
+		console.log("hello there")
+		this.setState({ranking: ranking_data.ranking})
+	}
+
+	renderHelperRanking(ranking) {
+		console.log(ranking)
+		if (ranking !== undefined) {
+			return (
+				<div className="content" style={{minHeight: 'auto'}}>
+                    <div className="header text-center">
+           				<h3 className="title">
+           				    <small style={{paddingRight: '10px'}}>Rank</small> { ranking }
+           				</h3>				
+      				</div>
+		        </div>
+			)
+		} else {
+			return (
+				<div className="content" style={{minHeight: 'auto'}}>
+                    <div className="header text-center">
+           				<h3 className="title">
+           				    <small style={{paddingRight: '10px'}}> </small> 
+           				</h3>				
+      				</div>
+		        </div>
+			)
+		}
+	}
+
+	renderHelperDescription(team) {
+		if (team.bio !== "") {
+			return (
+				<p className="description text-center"><br/>{ team.bio }</p>
+			)
+		} else {
+			return ""
+		}
 	}
 
 	render() {
@@ -34,22 +69,16 @@ class TeamInfo extends Component {
 	                <div className="card card-user">
 	                    <div className="image">
 	                    </div>
-	                    <div className="content">
+	                    <div className="content" style={{minHeight: 'auto'}}>
 	                        <div className="author">
 	                        	{ team.avatar !== "" ? <img className="avatar border-gray" src={team.avatar } alt="Team Avatar" /> : '' }
 	                            <h4 className="title">{ team.name }<br />
 	                                <small>{ team.users.join(", ") }</small>
 	                            </h4>
 	                        </div>
-	                        <p className="description text-center"><br/>{ team.bio }</p>
-			                <div className="content" style={{minHeight: 'auto'}}>
-                                <div className="header text-center">
-                       				<h3 className="title">
-                       				    <small style={{paddingRight: '10px'}}>Rank</small>#1
-                       				</h3>
-                       				
-                  				</div>
-			                </div>
+	                        { this.renderHelperDescription(team) }
+			                
+			                { this.renderHelperRanking(this.state.ranking) }
 
 			                <div className="container-fluid">
 			                    <div style={{paddingBottom: '20px'}} className="row">

@@ -46,28 +46,10 @@ class Api {
   //calculates rank of given team, with tied teams receiving the same rank
   //i.e. if mu is 10,10,1 the ranks would be 1,1,3
   static getTeamRanking(team_id, callback) {
-    const requestUrl = `${URL}/api/${LEAGUE}/team/??ordering=-mu`
-    this.getRankingRecursive(team_id, callback, requestUrl, 1, null)
-  }
-
-  static getRankingRecursive(team_id, callback, requestUrl, curPlace, curMu) {
+    const requestUrl = `${URL}/api/${LEAGUE}/team/${team_id}/ranking/`
     $.get(requestUrl).done((data, status) => {
-        for (let i = 0; i < data['results'].length - 1; i++) {
-          let team = data['results'][i];
-          console.log(team['id'])
-
-          if (team['id'] === team_id) {
-            callback({'team': team, 'ranking': curPlace});
-          }
-
-          if (curMu === null || team['mu'] != curMu) {
-            curPlace++;
-            curMu = team['mu'];
-          }
-        }
-        
-        this.getRankingRecursive(team_id, callback, data['next'], curPlace, curMu)
-    });
+      callback(data);
+    })
   }
 
 
