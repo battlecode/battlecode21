@@ -93,15 +93,25 @@ class Resources extends Component {
                                         <ul>
                                             <li>"don't die" — arvid.</li>
 
+                                            <li>"stay alive" - ivy</li>
+
+                                            <li>"smh my head" — marco</li>
+
+                                            <li>"read the readme" — Quinn.</li>
+
                                             <li>"donut give up; bee-leaf in yourself!" — darren.</li>
 
                                             <li>"follow your dreams"</li>
 
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
 
+                                            <li>"Never give up" — Diuven.</li>
+
                                             <li>"we should get campbell's as a sponsor this year" - stephanie.</li>
 
                                             <li>"keep trying"</li>
+
+					                                  <li>"The best way to realize your dreams is to wake up." -jett.</li>
 
                                         </ul>
                                     </p>
