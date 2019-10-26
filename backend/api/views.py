@@ -12,6 +12,14 @@ from rest_framework.pagination import PageNumberPagination
 from api.serializers import *
 from api.permissions import *
 
+from google.cloud import storage
+
+import os
+
+GCLOUD_PROJECT = "battlecode18" #not nessecary???
+GCLOUD_BUCKET = "bc20-submissions"
+
+SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 
 class SearchResultsPagination(PageNumberPagination):
     page_size = 10
@@ -176,7 +184,6 @@ class TeamViewSet(viewsets.GenericViewSet,
         """
         return super().get_queryset().filter(league_id=self.kwargs['league_id'])
 
-
     def list(self, request, *args, **kwargs):
         """
         If used, do one of the following:
@@ -236,6 +243,21 @@ class TeamViewSet(viewsets.GenericViewSet,
 
         return super().partial_update(request)
 
+    @action(methods=['get'], detail=True)
+    def ranking(self, request, league_id, pk=None):
+        cur_place = 0
+        latest_mu = None
+        for team in self.get_queryset():
+            if latest_mu is None or team.mu != latest_mu:
+                cur_place += 1
+                latest_mu = team.mu
+
+            if team.id == int(pk):
+                return Response({'ranking': cur_place}, status.HTTP_200_OK)
+
+        return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
+
+
     @action(methods=['patch'], detail=True)
     def join(self, request, league_id, pk=None):
         try:
@@ -283,7 +305,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     create:
     Uploads a submission for the authenticated user's team in this league. The file contents
-    are uploaded to Google Cloud Storage in the format "/league_id/team_id/submission_id.zip".
+    are uploaded to Google Cloud Storage in the format given by the SUBMISSION_FILENAME function
     The relative filename is stored in the database and routed through the website.
 
     The league must be active in order to accept submissions.
@@ -296,7 +318,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     """
     queryset = Submission.objects.all().order_by('-submitted_at')
     serializer_class = SubmissionSerializer
-    permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
+    permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
+    #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
     def get_queryset(self):
         """
@@ -323,7 +346,26 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer.save()
 
         # TODO: Handle file upload
+        upload_to_gcloud("hello", "test")
         return Response(serializer.data, status.HTTP_201_CREATED)
+
+    @staticmethod
+    def upload_to_gcloud(file_text, submission_id):
+        """
+        helper method to upload file to gcloud buckets (using constants defined)
+        """
+        storage_client = storage.Client()
+        bucket = storage_client.get_bucket(GCLOUD_BUCKET)
+        blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
+
+        blob.upload_from_string(file_text)
+
+
+    @action(methods=['get'], detail=True)
+    def test(self, request, league_id, pk=None):
+        self.upload_to_gcloud("hello", "test2")
+        file = open(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"), 'r')
+        return Response(file.read(), status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False)
     def latest(self, request, league_id, team):

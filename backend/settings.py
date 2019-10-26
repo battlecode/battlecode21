@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'django_rest_passwordreset',
-    'api'
+    'api',
+    'google.cloud',
 ]
 
 MIDDLEWARE = [
