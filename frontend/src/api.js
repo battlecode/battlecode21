@@ -8,6 +8,16 @@ const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
+  static testSubmissions(callback){
+    console.log("hiii")
+    $.post(`${URL}/api/${LEAGUE}/submission/`, {
+      team_id: Cookies.get('team_id')
+    }).done((data, status) => {
+      console.log(status)
+      callback(data)
+    })
+  }
+
   static getUpcomingDates(callback) {
     const newState = [
       { id: 0, date: 'hi', data: 'message' },

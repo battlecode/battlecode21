@@ -296,9 +296,9 @@ class TeamViewSet(viewsets.GenericViewSet,
 
 
 class SubmissionViewSet(viewsets.GenericViewSet,
-                        mixins.ListModelMixin,
-                        mixins.CreateModelMixin,
-                        mixins.RetrieveModelMixin):
+                  mixins.CreateModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin):
     """
     list:
     Returns a list of submissions for the authenticated user's team in this league, in chronological order.
@@ -318,7 +318,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     """
     queryset = Submission.objects.all().order_by('-submitted_at')
     serializer_class = SubmissionSerializer
-    permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
+    permission_classes = (LeagueActiveOrSafeMethods,)
+   # permission_classes = (IsAuthenticatedOnTeam,)
     #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
     def get_queryset(self):
@@ -333,21 +334,41 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         context['league_id'] = self.kwargs.get('league_id', None)
         return context
 
-    def create(self, request, league_id, team):
-        submission_num = self.get_queryset().count() + 1
+
+    def create(self, request, league_id):
         data = {
-            'team': team.id,
-            'name': request.data.get('name'),
+            'team_id': request.data.get("team_id"),
+            'link': SUBMISSION_FILENAME("1234"),
         }
 
         serializer = self.get_serializer(data=data)
+
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        serializer.save()
 
-        # TODO: Handle file upload
-        upload_to_gcloud("hello", "test")
+        serializer.save()
+        #upload_to_gcloud("hello", "test")
+
         return Response(serializer.data, status.HTTP_201_CREATED)
+
+    def retrieve(self, request, league_id, pk=None):
+        return Response("hiiiiii", status.HTTP_400_BAD_REQUEST)
+
+    # def create(self, request, league_id, team):
+    #     submission_num = self.get_queryset().count() + 1
+    #     data = {
+    #         'team': team.id,
+    #         'name': request.data.get('name'),
+    #     }
+
+    #     serializer = self.get_serializer(data=data)
+    #     if not serializer.is_valid():
+    #         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    #     serializer.save()
+    #     upload_to_gcloud("hello", "test")
+
+    #     return Response(serializer.data, status.HTTP_201_CREATED)
 
     @staticmethod
     def upload_to_gcloud(file_text, submission_id):
@@ -376,6 +397,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer = self.get_serializer(submissions[0])
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @action(methods=['get'], detail=False)
+    def team_submissions(self, team, league_id):
+        submissions = self.get_queryset.filter(team)
 
 
 class ScrimmageViewSet(viewsets.GenericViewSet,
