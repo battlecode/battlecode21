@@ -1,7 +1,6 @@
 from config import *
 
 import subprocess, threading
-from contextlib import contextmanager
 
 def monitor_command(command, cwd, timeout=0):
     """
@@ -21,16 +20,3 @@ def monitor_command(command, cwd, timeout=0):
     else:
         proc_stdout, proc_stderr = subproc.communicate()
         return (subproc.returncode, proc_stdout, proc_stderr)
-
-@contextmanager
-def psql_connect():
-    try:
-        conn = psycopg2.connect(
-            host=PSQL_HOST,
-            user=PSQL_USERNAME,
-            password=PSQL_PASSWORD,
-            database=PSQL_DATABASE)
-        yield conn
-    finally:
-        if conn is not None:
-            conn.close()

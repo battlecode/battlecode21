@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 
-import subscription
-import util
+import subscription, util
 from config import *
 
-import sys
-import os
-import shutil
+import sys, os, shutil
 import logging
-
+import requests
 from google.cloud import storage
 
 
 def game_db_report(gameid, result):
-    """Sends the result of the run to the database"""
+    """Sends the result of the run to the database API endpoint"""
     try:
-        with util.psql_connect() as conn:
-            # TODO report to database
-            pass
+        response = requests.post(url=API_GAME, data={
+            'gameid': gameid,
+            'result': result})
+        response.raise_for_status()
     except:
-        logging.critical('Could not report to database')
+        logging.critical('Could not report to database API endpoint')
         sys.exit(1)
 
 def game_log_error(gameid, reason):

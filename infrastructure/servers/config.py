@@ -25,10 +25,8 @@ TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 90   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
-PSQL_HOST     = '35.227.72.43'
-PSQL_USERNAME = 'battlecode'
-PSQL_PASSWORD = '[redacted]'
-PSQL_DATABASE = 'battlecode'
+API_COMPILE = '???'
+API_GAME    = '???'
 
 PATH_DIST   = '/app/bc20-dist'
 PATH_ENGINE = os.path.join(PATH_DIST, 'engine.jar')

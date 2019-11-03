@@ -20,20 +20,25 @@ In GCloud > Storage:
 
 For a docker shell to do debugging in:
 ```
-make shell
-docker run -d bc20_shell
+make basic
+docker run -it bc20:basic
 ```
 
-For a compile server (the docker image is also written to a tarball in `bc20_compile.tar`)
+For a compile server
 ```
 make compile
-docker run -d bc20_compile
+docker run -d bc20:compile
 ```
 
-For a game runner server (the docker image is also written to a tarball in `bc20_game.tar`)
+For a game runner server
 ```
 make game
-docker run -d bc20_game
+docker run -d bc20:game
+```
+
+For docker image tarballs
+```
+make tarballs
 ```
 
 To publish a `helloworld` message to the Pub/Sub, obtain the private key, and then:

@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 
-import subscription
-import util
+import subscription, util
 from config import *
 
-import sys
-import os
-import shutil
+import sys, os, shutil
 import logging
-
+import requests
 from google.cloud import storage
 
 
 def compile_db_report(submissionid, result):
-    """Sends the result of the run to the database"""
+    """Sends the result of the run to the database API endpoint"""
     try:
-        with util.psql_connect() as conn:
-            # TODO report to database
-            pass
+        response = requests.post(url=API_COMPILE, data={
+            'submissionid': submissionid,
+            'result': result})
+        response.raise_for_status()
     except:
-        logging.critical('Could not report to database')
+        logging.critical('Could not report to database API endpoint')
         sys.exit(1)
 
 def compile_log_error(submissionid, reason):
@@ -29,7 +27,11 @@ def compile_log_error(submissionid, reason):
     sys.exit(1)
 
 def compile_worker(submissionid):
-    """Performs a compilation job as specified in submissionid"""
+    """
+    Performs a compilation job as specified in submissionid
+    Message format: {submissionid}
+    A single string containing the submissionid
+    """
 
     client = storage.Client()
     bucket = client.get_bucket(GCLOUD_BUCKET_ID)
@@ -60,9 +62,8 @@ def compile_worker(submissionid):
     if result[0] != 0:
         compile_log_error(submissionid, 'Could not decompress source file')
 
-    # TODO: Invoke compilation to produce executable jar
     result = util.monitor_command(
-        ['cp', os.path.join('..', 'source.zip'), os.path.join('..', 'player.jar')],
+        ['gradle', 'build'],
         cwd=sourcedir,
         timeout=TIMEOUT_COMPILE)
 
