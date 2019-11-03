@@ -1,3 +1,4 @@
+import os
 import logging, multiprocessing
 
 # Configure logging format
@@ -19,7 +20,8 @@ GCLOUD_BUCKET_ID        = 'bc20-submissions'
 PUBSUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 PUBSUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
-TIMEOUT_UNZIP   = 10   # Maximum execution time for unzipping submission archive
+TIMEOUT_UNZIP   = 30   # Maximum execution time for unzipping submission archive
+TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 90   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
@@ -27,3 +29,6 @@ PSQL_HOST     = '35.227.72.43'
 PSQL_USERNAME = 'battlecode'
 PSQL_PASSWORD = '[redacted]'
 PSQL_DATABASE = 'battlecode'
+
+PATH_DIST   = '/app/bc20-dist'
+PATH_ENGINE = os.path.join(PATH_DIST, 'engine.jar')

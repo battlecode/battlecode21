@@ -59,9 +59,16 @@ def game_worker(gameinfo):
     except:
         game_log_error(gameid, 'Could not retrieve executables from bucket')
 
+    result = util.monitor_command(
+        ['git', 'pull'],
+        cwd=PATH_DIST,
+        timeout=TIMEOUT_PULL)
+
     # TODO: Invoke game and interpret game result
     result = util.monitor_command(
-        ['true'],
+        ['java', '-jar', PATH_DIST,
+            '-Dbc.server.mode=headless'
+        ],
         cwd=sourcedir,
         timeout=TIMEOUT_GAME)
 
