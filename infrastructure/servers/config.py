@@ -25,8 +25,22 @@ TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 90   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
-API_COMPILE = '???'
-API_GAME    = '???'
-
 PATH_DIST   = '/app/bc20-dist'
 PATH_ENGINE = os.path.join(PATH_DIST, 'engine.jar')
+
+
+# Compilation API specifications
+
+def api_compile_update(submissionid):
+    return 'http://2020.battlecode.org/api/0/submission/{}/compilation_update/'
+COMPILE_SUCCESS = 1
+COMPILE_FAILED  = 2
+COMPILE_ERROR   = 3
+
+# Game running API specifications
+
+def api_game_update(gameid):
+    API_GAME    = '???'
+GAME_REDWON  = 1
+GAME_BLUEWON = 2
+GAME_ERROR   = 3

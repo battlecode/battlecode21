@@ -43,17 +43,17 @@ def game_worker(gameinfo):
 
     # Filesystem structure:
     # /tmp/bc20-game-{gameid}/
-    #     `-- player1.jar
-    #     `-- player2.jar
+    #     `-- player1.zip
+    #     `-- player2.zip
     rootdir = os.path.join('/', 'tmp', 'bc20-game-'+gameid)
 
     # Obtain player executables
     try:
         os.mkdir(rootdir)
-        with open(os.path.join(rootdir, 'player1.jar'), 'wb') as file_obj:
-            bucket.get_blob(os.path.join(player1, 'player.jar')).download_to_file(file_obj)
-        with open(os.path.join(rootdir, 'player2.jar'), 'wb') as file_obj:
-            bucket.get_blob(os.path.join(player2, 'player.jar')).download_to_file(file_obj)
+        with open(os.path.join(rootdir, 'player1.zip'), 'wb') as file_obj:
+            bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
+        with open(os.path.join(rootdir, 'player2.zip'), 'wb') as file_obj:
+            bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
     except:
         game_log_error(gameid, 'Could not retrieve executables from bucket')
 
@@ -62,9 +62,11 @@ def game_worker(gameinfo):
         cwd=PATH_DIST,
         timeout=TIMEOUT_PULL)
 
+    # TODO: unzip player zips
+
     # TODO: Invoke game and interpret game result
     result = util.monitor_command(
-        ['java', '-jar', PATH_DIST,
+        ['java', '-jar', PATH_ENGINE,
             '-Dbc.server.mode=headless'
         ],
         cwd=sourcedir,

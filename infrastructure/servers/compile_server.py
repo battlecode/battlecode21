@@ -12,9 +12,8 @@ from google.cloud import storage
 def compile_db_report(submissionid, result):
     """Sends the result of the run to the database API endpoint"""
     try:
-        response = requests.post(url=API_COMPILE, data={
-            'submissionid': submissionid,
-            'result': result})
+        response = requests.patch(url=api_compile_update(submissionid), data={
+            'compilation_status': result})
         response.raise_for_status()
     except:
         logging.critical('Could not report to database API endpoint')
@@ -23,7 +22,7 @@ def compile_db_report(submissionid, result):
 def compile_log_error(submissionid, reason):
     """Reports a server-side error to the database and terminates with failure"""
     logging.error(reason)
-    compile_db_report(submissionid, 'error')
+    compile_db_report(submissionid, COMPILE_ERROR)
     sys.exit(1)
 
 def compile_worker(submissionid):
@@ -41,7 +40,7 @@ def compile_worker(submissionid):
     #     `-- source.zip
     #     `-- source/
     #     |      `-- all contents of source.zip
-    #     `-- player.jar
+    #     `-- player.zip
     rootdir   = os.path.join('/', 'tmp', 'bc20-compile-'+submissionid)
     sourcedir = os.path.join(rootdir, 'source')
 
@@ -62,22 +61,25 @@ def compile_worker(submissionid):
     if result[0] != 0:
         compile_log_error(submissionid, 'Could not decompress source file')
 
+    # TODO: double check this command; ensure any dependencies are in the docker image
     result = util.monitor_command(
         ['gradle', 'build'],
         cwd=sourcedir,
         timeout=TIMEOUT_COMPILE)
 
+    # TODO: create a zip file with the necessary classes
+
     if result[0] == 0:
-        # The compilation succeeded; send the jar to the bucket for storage
+        # The compilation succeeded; send the classes to the bucket for storage
         try:
-            with open(os.path.join(rootdir, 'player.jar'), 'rb') as file_obj:
-                bucket.blob(os.path.join(submissionid, 'player.jar')).upload_from_file(file_obj)
+            with open(os.path.join(rootdir, 'player.zip'), 'rb') as file_obj:
+                bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
         except:
             compile_log_error(submissionid, 'Could not send executable to bucket')
-        compile_db_report(submissionid, 'success')
+        compile_db_report(submissionid, COMPILE_SUCCESS)
     else:
         # The compilation failed; report this to database
-        compile_db_report(submissionid, 'failed')
+        compile_db_report(submissionid, COMPILE_FAILED)
 
     # Clean up working directory
     try:
