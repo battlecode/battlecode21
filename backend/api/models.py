@@ -147,7 +147,7 @@ class Submission(models.Model):
     team                 = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name="team_id_sub")
     submitted_at         = models.DateTimeField(auto_now_add=True)
     link                 = models.TextField(null=True)
-    compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed
+    compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
 
     def save(self, *args, **kwargs):
         if self.id is not None:
