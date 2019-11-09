@@ -63,6 +63,7 @@ class League(models.Model):
     end_date            = models.DateField()
     active              = models.BooleanField(default=False)
     submissions_enabled = models.BooleanField(default=False)
+    game_released = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
