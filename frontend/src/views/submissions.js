@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import Api from '../api';
+
 
 
 class Submissions extends Component {
 
+    componentDidMount() {
+        Api.getCompilationStatus(this.compilationData)
+    }
+
     uploadData = (file) => {
         console.log("hiiii")
+    }
+
+    compilationData = (data) => {
+        console.log(data)
     }
 
 
@@ -15,8 +25,13 @@ class Submissions extends Component {
         if (enabled) {
             return (
                 <div className="card">
-                    <input type="file" accept=".zip" />
-                    <button onClick={this.uploadData}> Submit </button>
+                    <div className="header">
+                        <h4 className="title">Submit Code</h4>
+                    </div>
+                    <div className="content">
+                        <input type="file" accept=".zip" />
+                        <button onClick={this.uploadData} className="btn btn-info btn-fill"> Submit </button>
+                    </div>
                 </div>
             )
         } else {

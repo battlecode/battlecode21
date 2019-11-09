@@ -8,16 +8,6 @@ const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
-  static testSubmissions(callback){
-    console.log("hiii")
-    $.post(`${URL}/api/${LEAGUE}/submission/`, {
-      team_id: Cookies.get('team_id')
-    }).done((data, status) => {
-      console.log(status)
-      callback(data)
-    })
-  }
-
   static getUpcomingDates(callback) {
     const newState = [
       { id: 0, date: 'hi', data: 'message' },
@@ -44,6 +34,18 @@ class Api {
     Cookies.set('token', '');
     Cookies.set('refresh', '');
     callback();
+  }
+
+  // static getTeamSubmissions(callback) {
+  //   $.get(`${URL}/api/${LEAGUE}/team/${team_id}/`).done((data, status) => {
+  //       callback(data);
+  //   });
+  // }
+
+  static getCompilationStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
+        callback(data);
+    });
   }
 
   //get data for team with team_id

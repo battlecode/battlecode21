@@ -129,14 +129,14 @@ class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
 class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
     serializer_url_field = LeagueHyperlinkedIdentityField
     team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
-    compiling = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_1 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_2 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_3 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_sprint = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_seed = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_qual = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_final = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
+    compiling = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_1 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_2 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_3 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_sprint = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_seed = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
 
     class Meta:
         model = TeamSubmission
