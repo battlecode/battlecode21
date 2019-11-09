@@ -31,16 +31,22 @@ PATH_ENGINE = os.path.join(PATH_DIST, 'engine.jar')
 
 # Compilation API specifications
 
-def api_compile_update(submissionid):
-    return 'http://2020.battlecode.org/api/0/submission/{}/compilation_update/'
 COMPILE_SUCCESS = 1
 COMPILE_FAILED  = 2
 COMPILE_ERROR   = 3
+def api_compile_update(submissionid):
+    """
+    Returns the API link for reporting the compilation status
+    submissionid: the ID of the submission
+    """
+    return 'http://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
 
 # Game running API specifications
 
-def api_game_update(gameid):
-    API_GAME    = '???'
-GAME_REDWON  = 1
-GAME_BLUEWON = 2
-GAME_ERROR   = 3
+def api_game_update(gametype, gameid):
+    """
+    Returns the API link for reporting the compilation status
+    gametype: "scrimmage" or "tournament"
+    gameid: the ID of the game
+    """
+    return 'http://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)

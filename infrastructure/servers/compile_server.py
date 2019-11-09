@@ -41,7 +41,7 @@ def compile_worker(submissionid):
     #     `-- source/
     #     |      `-- all contents of source.zip
     #     `-- player.zip
-    rootdir   = os.path.join('/', 'tmp', 'bc20-compile-'+submissionid)
+    rootdir   = os.path.join('/', 'tmp', 'bc20-compile-{}'.format(submissionid))
     sourcedir = os.path.join(rootdir, 'source')
 
     # Obtain compressed archive of the submission
