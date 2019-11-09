@@ -342,11 +342,11 @@ class SubmissionViewSet(viewsets.GenericViewSet,
    # permission_classes = (IsAuthenticatedOnTeam,)
     #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
-    def get_queryset(self, team):
+    def get_queryset(self):
         """
         Only submissions belonging to the user's team in this league are visible.
         """
-        return super().get_queryset().filter(team)
+        return super().get_queryset()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -368,17 +368,18 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer.save() #save again, link automatically set
 
         
-        team_sub = TeamSubmission.objects.all().filter(team=request.data.get("team"))
-        team_sub.compiling = serializer.data['id']
-        serializer = self.get_serializer(team)
+        team_sub = TeamSubmission.objects.all().get(team=request.data.get("team"))
+        team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
+
+        # sub_serializer = TeamSubmissionSerializer(data=team_sub)
+        # if not sub_serializer.is_valid():
+        #     return Response(sub_serializer.errors, status.HTTP_400_BAD_REQUEST)
+        # sub_serializer.save()
 
         #TODO::: call to compile server
 
         return Response(serializer.data, status.HTTP_201_CREATED)
-
-    def retrieve(self, request, league_id, pk=None):
-        return Response("hiiiiii", status.HTTP_400_BAD_REQUEST)
 
     # def create(self, request, league_id, team):
     #     submission_num = self.get_queryset().count() + 1
@@ -434,12 +435,37 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         return Response(serializer.data, status.HTTP_200_OK)
 
     @action(methods=['patch'], detail=True)
-    def compilation_succeeded(self, request, league_id, pk=None):
-        self.update_compilation(request, pk, 0)
+    def compilation_update(self, request, league_id, pk=None):
+        submission = self.get_queryset().get(pk=pk)
+        if submission.compilation_status != 0:
+            return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+        comp_status = request.data.get('compilation_status')
 
-    def update_compilation(self, request, pk, status):
-        submission = self.get_queryset(request.data.get("team")).get(pk=pk)
-        print(submission)
+        if comp_status is None:
+            return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+        elif comp_status == 1 or comp_status == 2: #status provided in correct form
+            submission.compilation_status = comp_status
+
+            if comp_status == 1: #compilation failed
+                team_sub = TeamSubmission.objects.all().get(team=submission.team)
+                if submission.id != team_sub.compiling_id:
+                    return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_400_BAD_REQUEST)
+                team_sub.compiling_id = None
+                team_sub.last_3_id = team_sub.last_2_id
+                team_sub.last_2_id = team_sub.last_1_id
+                team_sub.last_1_id = submission
+                submission.compilation_status = 2
+
+                team_sub.save()
+
+            submission.save()
+
+            return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+        elif comp_status == 0: #trying to set to compiling
+            return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+
 
 class TeamSubmissionViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
@@ -497,20 +523,6 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet,
         else:
             # case where this team has no submission data stored
             return Response({'status': None}, status.HTTP_200_OK)
-        
-
-    @action(methods=['patch'], detail=True)
-    def compiled(self, league_id, pk=None):
-        team_data = self.get_queryset().filter(pk=pk)
-        if len(team_data) == 1:
-            comp_id = team_data[0].compiling_id
-            if comp_id is not None:
-                comp_submission = self.get_submissions(request.data.get("team_id")).get(pk=comp_id)
-                return Response({'message': 'Succesfully updated submissions'}, status.HTTP_200_OK)
-            else:
-                return Response({'message': 'Team did not have compiling submission'}, status.HTTP_404_NOT_FOUND)
-        else:
-            return Response({'message': 'Team does not have any submissions'}, status.HTTP_404_NOT_FOUND)
 
 # @api_view()
 # def compiled(self, leauge_id, request, )
