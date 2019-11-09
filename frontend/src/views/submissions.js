@@ -1,12 +1,29 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import Api from '../api';
 
 
 class Submissions extends Component {
 
-    uploadData = (file) => {
-        console.log("hiiii")
+    uploadData = () => {
+        Api.newSubmission(this.state.selectedFile, null)
+    }
+
+    onChangeHandler=event=>{
+
+        console.log(event.target.files[0])
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedFile: null
+        }
     }
 
 
@@ -15,7 +32,7 @@ class Submissions extends Component {
         if (enabled) {
             return (
                 <div className="card">
-                    <input type="file" accept=".zip" />
+                    <input type="file" accept=".zip" onChange={this.onChangeHandler}/>
                     <button onClick={this.uploadData}> Submit </button>
                 </div>
             )
