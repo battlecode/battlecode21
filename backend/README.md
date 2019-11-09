@@ -19,7 +19,7 @@ Create a virtual environment by following the instructions below.
 - `source venv/bin/activate`
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
-The `pip install` might fail, since `psycopg2` requires a working build environmment for the included C code. On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`)
+The `pip install` might fail, since `psycopg2` requires a working build environmment for the included C code. On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
 
 #### Database
 

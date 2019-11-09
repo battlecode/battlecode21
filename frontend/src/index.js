@@ -23,7 +23,7 @@ import VerifyUser from './views/VerifyUser';
 import PasswordForgot from './views/passwordForgot';
 import PasswordChange from './views/passwordChange';
 import Submissions from './views/submissions';
-
+import TeamInfo from './views/team_info';
 import Footer from './footer';
 import NavBar from './navbar';
 import SideBar from './sidebar';
@@ -59,8 +59,10 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
               <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
+              <Route path={`${process.env.PUBLIC_URL}/rankings/:team_id`} component={TeamInfo} />
               <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />
               <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+
               <Route path="*" component={NotFound} />
             </Switch>
             <Footer />
@@ -81,6 +83,7 @@ class App extends Component {
               <Route path={`${process.env.PUBLIC_URL}/tournaments`} component={Tournaments} />
               <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />
               <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />
+              <Route path={`${process.env.PUBLIC_URL}/rankings/:team_id`} component={TeamInfo} />
               <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />
               <Route path="*" component={NotFound} />
             </Switch>

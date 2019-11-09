@@ -4,7 +4,6 @@ import Api from '../api';
 import TeamList from '../components/teamList';
 import RankingTeamList from '../components/rankingTeamList';
 
-
 class Rankings extends Component {
     state = {
       teams: null,
@@ -24,6 +23,7 @@ class Rankings extends Component {
     }
 
     onDataLoad = (data) => {
+      //this.setState({teams: [{id: "hi", mu: 5, name: "Example Team", users: ["User #1", "User #2", "User #3"], bio: "dfghjkiuytregfdawsqA DKFODLKLASDKA sdadasdas"}]})
       this.setState(data);
     }
 
@@ -63,6 +63,7 @@ class Rankings extends Component {
                 page={state.teamPage}
                 pageLimit={state.teamLimit}
                 onPageClick={this.getTeamPage}
+                history={this.props.history}
               />
             </div>
           </div>

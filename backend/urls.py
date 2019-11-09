@@ -21,6 +21,7 @@ from rest_framework import routers, serializers
 from rest_framework.documentation import include_docs_urls
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from django.conf import settings
+import os
 
 
 urlpatterns = [
@@ -36,6 +37,8 @@ urlpatterns = [
          include('django_rest_passwordreset.urls',
                  namespace='password_reset')),
 ]
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gcloud-key.json"
 
 if settings.DEBUG:
     import debug_toolbar
