@@ -443,7 +443,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         if comp_status is None:
             return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
-        elif comp_status == 1 or comp_status == 2: #status provided in correct form
+        elif comp_status >= 1: #status provided in correct form
             submission.compilation_status = comp_status
 
             if comp_status == 1: #compilation failed
@@ -511,15 +511,18 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet,
 
     @action(methods=['get'], detail=True)
     def team_compilation_status(self, request, league_id, pk=None):
-        team_data = self.get_queryset().filter(pk=pk)
+        team_data = self.get_queryset().get(pk=pk)
         if len(team_data) == 1:
-            comp_id = team_data[0].compiling_id
+            comp_id = team_data.compiling_id
             if comp_id is not None:
                 comp_status = self.get_submissions(request.data.get("team_id")).get(pk=comp_id).compilation_status
                 return Response({'status': comp_status}, status.HTTP_200_OK)
             else:
-                # case where submission has been moved out of compilation cell
-                return Response({'status': '2'}, status.HTTP_200_OK)
+                if team_data.last_1_id is not None:
+                    # case where submission has been moved out of compilation cell
+                    return Response({'status': '2'}, status.HTTP_200_OK)
+                else:
+                    return Response({'status': None}, status.HTTP_200_OK)
         else:
             # case where this team has no submission data stored
             return Response({'status': None}, status.HTTP_200_OK)
@@ -679,6 +682,18 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
+    @action(methods=['patch'], detail=True)
+    def set_outcome(self, request, league_id, team, pk=None):
+        scrimmage = self.get_queryset().get(pk=pk)
+        sc_status = request.data['status'] 
+        if sc_status is not None:
+            if sc_status == "redwon" or sc_status == "bluewon":
+                scrimmage.status = sc_status
+                scrimmage.save()
+            else:
+                return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Status not specified.'}, status.HTTP_400_BAD_REQUEST)
 
 class TournamentViewSet(viewsets.GenericViewSet,
                         mixins.ListModelMixin,
