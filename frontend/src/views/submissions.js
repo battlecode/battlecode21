@@ -7,12 +7,26 @@ import Api from '../api';
 
 class Submissions extends Component {
 
-    componentDidMount() {
-        Api.getCompilationStatus(this.compilationData)
+    uploadData = () => {
+        Api.newSubmission(this.state.selectedFile, null)
     }
 
-    uploadData = (file) => {
-        console.log("hiiii")
+    onChangeHandler=event=>{
+
+        console.log(event.target.files[0])
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedFile: null
+        }
+    componentDidMount() {
+        Api.getCompilationStatus(this.compilationData)
     }
 
     compilationData = (data) => {
@@ -29,7 +43,7 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        <input type="file" accept=".zip" />
+                        <input type="file" accept=".zip" onChange={this.onChangeHandler}/>
                         <button onClick={this.uploadData} className="btn btn-info btn-fill"> Submit </button>
                     </div>
                 </div>

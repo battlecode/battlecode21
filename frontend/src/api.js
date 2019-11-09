@@ -8,6 +8,40 @@ const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
+  
+  static newSubmission(submissionfile, callback){
+    // submissionfile.append('_method', 'PUT');
+    console.log('newSubmission')
+    // $.ajax({
+    //   // url: data['upload_url'], 
+    //   url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UpTnhj7CvJOsYMfG6qHKX1DvXI1-hKEpj6OmNJV00G70A_5G2HJcu0YW6wPV8lxjGXXxTjkSm3aRKSiG_zr4A1Y2VpItA',
+    //   method: "PUT",
+    //   data: submissionfile,
+    //   processData: false,
+    //   contentType: false
+    // }).done((data, status) => {
+    //   callback('hi', true);
+    // }).fail(() => {
+    //   callback('hi', false);
+    // });
+    // get the url from the real api
+    $.post(`${URL}/api/${LEAGUE}/submission/`, {
+      team: Cookies.get('team_id')
+    }).done((data, status) => {
+      console.log(data['upload_url'])
+      $.ajax({
+        url: data['upload_url'], 
+        // url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UrcQ17LTnPagAWEjTiX--nS7HP_jtMoau0zcZ6zopi_YwWqJfNor1MizLIlxnX0HB0LnkhZ-6CgyCnfg4q3uVRtGBdXlg',
+        method: "PUT",
+        data: submissionfile,
+        processData: false,
+        contentType: false
+      })
+    }).fail((xhr, status, error) => {
+      callback('there was an error', false);
+    });
+  }
+
   static getUpcomingDates(callback) {
     const newState = [
       { id: 0, date: 'hi', data: 'message' },

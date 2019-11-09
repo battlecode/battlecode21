@@ -2,6 +2,7 @@
 The view that is returned in a request.
 """
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import permissions, status, mixins, viewsets, filters
@@ -14,6 +15,7 @@ from api.permissions import *
 from google.cloud import storage
 
 import os
+import tempfile
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_BUCKET = "bc20-submissions"
@@ -356,7 +358,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     def create(self, request, league_id):
         data = {
-            'team': request.data.get("team"),
+            'team': request.data.get("team")
         }
 
         serializer = self.get_serializer(data=data)
@@ -372,6 +374,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
+        upload_url = self.signed_url(serializer.data['id'])
+
         # sub_serializer = TeamSubmissionSerializer(data=team_sub)
         # if not sub_serializer.is_valid():
         #     return Response(sub_serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -379,45 +383,20 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         #TODO::: call to compile server
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
 
-    # def create(self, request, league_id, team):
-    #     submission_num = self.get_queryset().count() + 1
-    #     data = {
-    #         'team': team.id,
-    #         'name': request.data.get('name'),
-    #     }
-
-    #     serializer = self.get_serializer(data=data)
-    #     if not serializer.is_valid():
-    #         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-    #     serializer.save()
-    #     upload_to_gcloud("hello", "test")
-
-    #     return Response(serializer.data, status.HTTP_201_CREATED)
-
-
-    @staticmethod
-    def upload_to_gcloud(file_text, submission_id):
-        """
-        helper method to upload file to gcloud buckets (using constants defined)
-        """
-        storage_client = storage.Client()
-        bucket = storage_client.get_bucket(GCLOUD_BUCKET)
-        blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
-
-        blob.upload_from_string(file_text)
-
-
-    @action(methods=['get'], detail=True)
-    def signed_url(self, request, league_id, pk=None):
+    def signed_url(self, submission_id):
         """
         returns a pre-signed url for uploading the submission with given id to google cloud
+        this URL can be used with a PUT request to upload data; no authentication needed.
         """
-        example_file_path = "example.zip"
-        
-        return Response("hi", status.HTTP_200_OK)
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
+            temp.flush()
+            storage_client = storage.Client.from_service_account_json(temp.name)
+            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
+            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
+            return blob.create_resumable_upload_session()
 
     @action(methods=['get'], detail=True)
     def test(self, request, league_id, pk=None):
