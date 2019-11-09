@@ -144,13 +144,19 @@ class Submission(models.Model):
     submissions the team has ever made
     """
     #submission_id        = models.CharField(primary_key=True, max_length=20)
-    team_id              = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name="team_id_sub")
+    team                 = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name="team_id_sub")
     submitted_at         = models.DateTimeField(auto_now_add=True)
     link                 = models.TextField(null=True)
     compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed
 
+    def save(self, *args, **kwargs):
+        if self.id is not None:
+            SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
+            self.link = SUBMISSION_FILENAME(self.id)
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return '{}: {}'.format(self.submission_id, self.team_id)
+        return '{}: {}'.format(self.id, self.team)
 
 class TeamSubmission(models.Model):
     """
@@ -159,18 +165,18 @@ class TeamSubmission(models.Model):
     storing past n submissions where n = 3, and submissions to the four tournaments
     submissions are first placed in compiling until they are succesfully compiled
     """
-    team_id     = models.OneToOneField(Team, on_delete=models.PROTECT, primary_key=True, related_name="team_id")
-    compiling   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="compiling")
-    last_1      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="last_1")
-    last_2      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="last_2")
-    last_3      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="last_3")
-    tour_sprint = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="tour_sprint")
-    tour_seed   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="tour_seed")
-    tour_qual   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="tour_qual")
-    tour_final  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, related_name="tour_final")
+    team        = models.OneToOneField(Team, on_delete=models.PROTECT, primary_key=True, related_name="team_id")
+    compiling   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="compiling")
+    last_1      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_1")
+    last_2      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_2")
+    last_3      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_3")
+    tour_sprint = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_sprint")
+    tour_seed   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_seed")
+    tour_qual   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_qual")
+    tour_final  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_final")
 
     def __str__(self):
-        return '{}: {}'.format(self.team_id, self.last_1)
+        return '{}: {}'.format(self.team, self.last_1)
 
 
 class Scrimmage(models.Model):

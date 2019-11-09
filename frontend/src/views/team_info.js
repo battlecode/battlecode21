@@ -13,6 +13,11 @@ class TeamInfo extends Component {
 		//get team info by id
 		Api.getTeamById(teamId, this.setTeam)
 		Api.getTeamRanking(teamId, this.setRanking)
+		Api.testSubmissions(this.test)
+	}
+	test = (data) => {
+		console.log("hiiii")
+		console.log(data)
 	}
 
 	setTeam = (team_data) => {

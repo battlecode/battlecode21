@@ -48,18 +48,34 @@ class Api {
 
   //get data for team with team_id
   static getTeamById(team_id, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
     $.get(`${URL}/api/${LEAGUE}/team/${team_id}/`).done((data, status) => {
         callback(data);
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
     });
   }
 
   //calculates rank of given team, with tied teams receiving the same rank
   //i.e. if mu is 10,10,1 the ranks would be 1,1,3
   static getTeamRanking(team_id, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
     const requestUrl = `${URL}/api/${LEAGUE}/team/${team_id}/ranking/`
     $.get(requestUrl).done((data, status) => {
       callback(data);
     })
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
   }
 
 

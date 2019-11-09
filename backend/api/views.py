@@ -5,10 +5,9 @@ from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import permissions, status, mixins, viewsets, filters
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-
 from api.serializers import *
 from api.permissions import *
 
@@ -219,6 +218,26 @@ class TeamViewSet(viewsets.GenericViewSet,
             serializer = self.get_serializer(data=team)
             if serializer.is_valid():
                 serializer.save()
+
+                team_data = {
+                    'team': serializer.data['id'],
+                    'compiling': None,
+                    'last_1': None,
+                    'last_2': None,
+                    'last_3': None,
+                    'tour_sprint': None,
+                    'tour_seed': None,
+                    'tour_qual': None,
+                    'tour_final': None,
+                }
+
+                TeamSerializer = TeamSubmissionSerializer(data=team_data)
+
+                if not TeamSerializer.is_valid():
+                    return Response(TeamSerializer.errors, status.HTTP_400_BAD_REQUEST)
+
+                TeamSerializer.save()
+
                 return Response(serializer.data, status.HTTP_201_CREATED)
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -295,6 +314,7 @@ class TeamViewSet(viewsets.GenericViewSet,
         return Response(serializer.data, status.HTTP_200_OK)
 
 
+
 class SubmissionViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.ListModelMixin,
@@ -322,11 +342,11 @@ class SubmissionViewSet(viewsets.GenericViewSet,
    # permission_classes = (IsAuthenticatedOnTeam,)
     #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
-    def get_queryset(self):
+    def get_queryset(self, team):
         """
         Only submissions belonging to the user's team in this league are visible.
         """
-        return super().get_queryset().filter(team=self.kwargs['team'])
+        return super().get_queryset().filter(team)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -334,11 +354,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         context['league_id'] = self.kwargs.get('league_id', None)
         return context
 
-
     def create(self, request, league_id):
         data = {
-            'team_id': request.data.get("team_id"),
-            'link': SUBMISSION_FILENAME("1234"),
+            'team': request.data.get("team"),
         }
 
         serializer = self.get_serializer(data=data)
@@ -346,8 +364,16 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
-        #upload_to_gcloud("hello", "test")
+        serializer.save() #save it once, link will be undefined since we don't have anyway to know id
+        serializer.save() #save again, link automatically set
+
+        
+        team_sub = TeamSubmission.objects.all().filter(team=request.data.get("team"))
+        team_sub.compiling = serializer.data['id']
+        serializer = self.get_serializer(team)
+        team_sub.save()
+
+        #TODO::: call to compile server
 
         return Response(serializer.data, status.HTTP_201_CREATED)
 
@@ -370,6 +396,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     #     return Response(serializer.data, status.HTTP_201_CREATED)
 
+
     @staticmethod
     def upload_to_gcloud(file_text, submission_id):
         """
@@ -383,13 +410,22 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
 
     @action(methods=['get'], detail=True)
+    def signed_url(self, request, league_id, pk=None):
+        """
+        returns a pre-signed url for uploading the submission with given id to google cloud
+        """
+        example_file_path = "example.zip"
+        
+        return Response("hi", status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=True)
     def test(self, request, league_id, pk=None):
         self.upload_to_gcloud("hello", "test2")
         file = open(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"), 'r')
         return Response(file.read(), status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False)
-    def latest(self, request, league_id, team):
+    def latest(self, request, league_id):
         submissions = self.get_queryset()
         if submissions.count() == 0:
             return Response({'message': 'Team does not have any submissions'}, status.HTTP_404_NOT_FOUND)
@@ -397,11 +433,87 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer = self.get_serializer(submissions[0])
         return Response(serializer.data, status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=False)
-    def team_submissions(self, team, league_id):
-        submissions = self.get_queryset.filter(team)
+    @action(methods=['patch'], detail=True)
+    def compilation_succeeded(self, request, league_id, pk=None):
+        self.update_compilation(request, pk, 0)
+
+    def update_compilation(self, request, pk, status):
+        submission = self.get_queryset(request.data.get("team")).get(pk=pk)
+        print(submission)
+
+class TeamSubmissionViewSet(viewsets.GenericViewSet,
+                  mixins.CreateModelMixin,
+                  mixins.RetrieveModelMixin):
+    """
+    list:
+    Returns a list of submissions for the authenticated user's team in this league, in chronological order.
+
+    create:
+    Uploads a submission for the authenticated user's team in this league. The file contents
+    are uploaded to Google Cloud Storage in the format given by the SUBMISSION_FILENAME function
+    The relative filename is stored in the database and routed through the website.
+
+    The league must be active in order to accept submissions.
+
+    retrieve:
+    Returns a submission for the authenticated user's team in this league.
+
+    latest:
+    Returns the latest submission for the authenticated user's team in this league.
+    """
+    queryset = TeamSubmission.objects.all()
+    serializer_class = TeamSubmissionSerializer
+    permission_classes = (LeagueActiveOrSafeMethods,)
+    # permission_classes = (IsAuthenticatedOnTeam,)
+    # permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
+
+    def get_submissions(self, team_id):
+        return Submission.objects.all()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        context['league_id'] = self.kwargs.get('league_id', None)
+        return context
+
+    def create(self, request, league_id):
+        return super().create(request)
+
+    def retrieve(self, request, league_id, pk=None):
+        return super().retrieve(request, pk=pk)
 
 
+    @action(methods=['get'], detail=True)
+    def team_compilation_status(self, request, league_id, pk=None):
+        team_data = self.get_queryset().filter(pk=pk)
+        if len(team_data) == 1:
+            comp_id = team_data[0].compiling_id
+            if comp_id is not None:
+                comp_status = self.get_submissions(request.data.get("team_id")).get(pk=comp_id).compilation_status
+                return Response({'status': comp_status}, status.HTTP_200_OK)
+            else:
+                # case where submission has been moved out of compilation cell
+                return Response({'status': '2'}, status.HTTP_200_OK)
+        else:
+            # case where this team has no submission data stored
+            return Response({'status': None}, status.HTTP_200_OK)
+        
+
+    @action(methods=['patch'], detail=True)
+    def compiled(self, league_id, pk=None):
+        team_data = self.get_queryset().filter(pk=pk)
+        if len(team_data) == 1:
+            comp_id = team_data[0].compiling_id
+            if comp_id is not None:
+                comp_submission = self.get_submissions(request.data.get("team_id")).get(pk=comp_id)
+                return Response({'message': 'Succesfully updated submissions'}, status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Team did not have compiling submission'}, status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'message': 'Team does not have any submissions'}, status.HTTP_404_NOT_FOUND)
+
+# @api_view()
+# def compiled(self, leauge_id, request, )
 class ScrimmageViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
                        mixins.CreateModelMixin,

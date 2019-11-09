@@ -120,15 +120,15 @@ class LeagueSerializer(serializers.HyperlinkedModelSerializer):
 
 class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
     serializer_url_field = LeagueHyperlinkedIdentityField
-    team_id = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
+    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
 
     class Meta:
         model = Submission
-        fields = ('url', 'id', 'team_id', 'link', 'submitted_at', 'compilation_status')
+        fields = ('url', 'id', 'team', 'link', 'submitted_at', 'compilation_status')
 
 class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
     serializer_url_field = LeagueHyperlinkedIdentityField
-    team_id = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
+    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
     compiling = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
     last_1 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
     last_2 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
@@ -140,7 +140,7 @@ class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = TeamSubmission
-        fields = ('url', 'team_id', 'compiling', 'last_1', 'last_2', 'last_3', 'tour_sprint', 'tour_seed', 'tour_qual', 'tour_final')
+        fields = ('url', 'team', 'compiling', 'last_1', 'last_2', 'last_3', 'tour_sprint', 'tour_seed', 'tour_qual', 'tour_final')
 
 
 class ScrimmageSerializer(serializers.HyperlinkedModelSerializer):
