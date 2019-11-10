@@ -320,7 +320,6 @@ class TeamViewSet(viewsets.GenericViewSet,
 
 class SubmissionViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
-                  mixins.ListModelMixin,
                   mixins.RetrieveModelMixin):
     """
     list:
@@ -346,9 +345,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
     def get_queryset(self):
-        """
-        Only submissions belonging to the user's team in this league are visible.
-        """
         return super().get_queryset()
 
     def get_serializer_context(self):
@@ -357,9 +353,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         context['league_id'] = self.kwargs.get('league_id', None)
         return context
 
-    def create(self, request, league_id):
+    def create(self, request, team, league_id):
         data = {
-            'team': request.data.get("team")
+            'team': team
         }
 
         serializer = self.get_serializer(data=data)
@@ -371,20 +367,22 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer.save() #save again, link automatically set
 
         
-        team_sub = TeamSubmission.objects.all().get(team=request.data.get("team"))
+        team_sub = TeamSubmission.objects.all().get(team=team)
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
         upload_url = self.signed_url(serializer.data['id'])
 
-        # sub_serializer = TeamSubmissionSerializer(data=team_sub)
-        # if not sub_serializer.is_valid():
-        #     return Response(sub_serializer.errors, status.HTTP_400_BAD_REQUEST)
-        # sub_serializer.save()
-
         #TODO::: call to compile server
 
         return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
+
+
+    def retrieve(self, request, team, league_id, pk=None):
+        if team != pk:
+            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+
+        return super().retrieve(request, pk=pk)
 
     def signed_url(self, submission_id):
         """
@@ -399,57 +397,44 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
             return blob.create_resumable_upload_session()
 
-    @action(methods=['get'], detail=True)
-    def test(self, request, league_id, pk=None):
-        self.upload_to_gcloud("hello", "test2")
-        file = open(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"), 'r')
-        return Response(file.read(), status.HTTP_200_OK)
-
-    @action(methods=['get'], detail=False)
-    def latest(self, request, league_id):
-        submissions = self.get_queryset()
-        if submissions.count() == 0:
-            return Response({'message': 'Team does not have any submissions'}, status.HTTP_404_NOT_FOUND)
-
-        serializer = self.get_serializer(submissions[0])
-        return Response(serializer.data, status.HTTP_200_OK)
-
     @action(methods=['patch'], detail=True)
-    def compilation_update(self, request, league_id, pk=None):
-        submission = self.get_queryset().get(pk=pk)
-        if submission.compilation_status != 0:
-            return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
-        comp_status = request.data.get('compilation_status')
+    def compilation_update(self, request, team, league_id, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            submission = self.get_queryset().get(pk=pk)
+            if submission.compilation_status != 0:
+                return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+            comp_status = request.data.get('compilation_status')
 
-        if comp_status is None:
-            return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
-        elif comp_status >= 1: #status provided in correct form
-            submission.compilation_status = comp_status
+            if comp_status is None:
+                return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+            elif comp_status >= 1: #status provided in correct form
+                submission.compilation_status = comp_status
 
-            if comp_status == 1: #compilation failed
-                team_sub = TeamSubmission.objects.all().get(team=submission.team)
-                if submission.id != team_sub.compiling_id:
-                    return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_400_BAD_REQUEST)
-                team_sub.compiling_id = None
-                team_sub.last_3_id = team_sub.last_2_id
-                team_sub.last_2_id = team_sub.last_1_id
-                team_sub.last_1_id = submission
-                submission.compilation_status = 2
+                if comp_status == 1: #compilation failed
+                    team_sub = TeamSubmission.objects.all().get(team=submission.team)
+                    if submission.id != team_sub.compiling_id:
+                        return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_400_BAD_REQUEST)
+                    team_sub.compiling_id = None
+                    team_sub.last_3_id = team_sub.last_2_id
+                    team_sub.last_2_id = team_sub.last_1_id
+                    team_sub.last_1_id = submission
+                    submission.compilation_status = 2
 
-                team_sub.save()
+                    team_sub.save()
 
-            submission.save()
+                submission.save()
 
-            return Response({'message': 'Status updated'}, status.HTTP_200_OK)
-        elif comp_status == 0: #trying to set to compiling
-            return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+            elif comp_status == 0: #trying to set to compiling
+                return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Only superuser can update compilation status'}, status.HTTP_401_UNAUTHORIZED)
 
 
-class TeamSubmissionViewSet(viewsets.GenericViewSet,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin):
+class TeamSubmissionViewSet(viewsets.GenericViewSet):
     """
     list:
     Returns a list of submissions for the authenticated user's team in this league, in chronological order.
@@ -469,32 +454,23 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet,
     """
     queryset = TeamSubmission.objects.all()
     serializer_class = TeamSubmissionSerializer
-    permission_classes = (LeagueActiveOrSafeMethods,)
+    permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
     # permission_classes = (IsAuthenticatedOnTeam,)
     # permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
 
     def get_submissions(self, team_id):
         return Submission.objects.all()
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        context['league_id'] = self.kwargs.get('league_id', None)
-        return context
-
-    def create(self, request, league_id):
-        return super().create(request)
-
-    def retrieve(self, request, league_id, pk=None):
-        return super().retrieve(request, pk=pk)
-
     @action(methods=['get'], detail=True)
-    def team_compilation_status(self, request, league_id, pk=None):
+    def team_compilation_status(self, request, team, league_id, pk=None):
+        if pk != team:
+            return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
+
         try:
             team_data = self.get_queryset().get(pk=pk)
             comp_id = team_data.compiling_id
             if comp_id is not None:
-                comp_status = self.get_submissions(request.data.get("team_id")).get(pk=comp_id).compilation_status
+                comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
                 return Response({'status': comp_status}, status.HTTP_200_OK)
             else:
                 if team_data.last_1_id is not None:
