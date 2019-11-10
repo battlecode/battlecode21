@@ -38,11 +38,14 @@ def compile_worker(submissionid):
     # Filesystem structure:
     # /tmp/bc20-compile-{submissionid}/
     #     `-- source.zip
-    #     `-- source/
+    #     `-- src/
     #     |      `-- all contents of source.zip
+    #     |      `-- <robotname>
+    #            |      `-- RobotPlayer.java (or whatever the main class should be named)
+    #            |      `-- Other things
     #     `-- player.zip
     rootdir   = os.path.join('/', 'tmp', 'bc20-compile-{}'.format(submissionid))
-    sourcedir = os.path.join(rootdir, 'source')
+    sourcedir = os.path.join(rootdir, 'src')
 
     # Obtain compressed archive of the submission
     try:
@@ -63,8 +66,9 @@ def compile_worker(submissionid):
 
     # TODO: double check this command; ensure any dependencies are in the docker image
     result = util.monitor_command(
-        ['gradle', 'build'],
-        cwd=sourcedir,
+        ['./gradlew', 'build', '-Psource='.append(sourcedir)],
+        
+        cwd=os.path.dirname(os.path.realpath(__file__)), #this has to be the server file location for gradle reasons
         timeout=TIMEOUT_COMPILE)
 
     # TODO: create a zip file with the necessary classes
