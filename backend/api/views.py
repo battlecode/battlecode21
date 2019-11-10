@@ -355,7 +355,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     def create(self, request, team, league_id):
         data = {
-            'team': team
+            'team': team.id
         }
 
         serializer = self.get_serializer(data=data)
@@ -379,7 +379,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
 
     def retrieve(self, request, team, league_id, pk=None):
-        if team != pk:
+        if str(team.id) != pk:
             return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
 
         return super().retrieve(request, pk=pk)
@@ -434,7 +434,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             return Response({'message': 'Only superuser can update compilation status'}, status.HTTP_401_UNAUTHORIZED)
 
 
-class TeamSubmissionViewSet(viewsets.GenericViewSet):
+class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     """
     list:
     Returns a list of submissions for the authenticated user's team in this league, in chronological order.
@@ -461,9 +461,16 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet):
     def get_submissions(self, team_id):
         return Submission.objects.all()
 
+    def retrieve(self, request, team, league_id, pk=None):
+        if str(team.id) != pk:
+            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+
+        return super().retrieve(request, pk=pk)
+
     @action(methods=['get'], detail=True)
     def team_compilation_status(self, request, team, league_id, pk=None):
-        if pk != team:
+ 
+        if pk != str(team.id):
             return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
 
         try:
