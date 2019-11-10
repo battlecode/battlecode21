@@ -14,7 +14,7 @@ then
 elif [ "$1" == "clean" ]
 then
 	gsutil -m rm gs://battlecode20-frontend/**
-elif [ "$1" == "deploynogame"]
+elif [ "$1" == "deploynogame" ]
 then
 	npm run buildnogame
 	cd build
