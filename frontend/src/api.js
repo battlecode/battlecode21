@@ -1,13 +1,48 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-//const URL = 'https://se19.battlecode.org';
-const URL = 'http://localhost:8000'; // DEVELOPMENT
+const URL = 'https://2020.battlecode.org';
+//const URL = 'http://localhost:8000'; // DEVELOPMENT
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
+  
+  static newSubmission(submissionfile, callback){
+    // submissionfile.append('_method', 'PUT');
+    console.log('newSubmission')
+    // $.ajax({
+    //   // url: data['upload_url'], 
+    //   url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UpTnhj7CvJOsYMfG6qHKX1DvXI1-hKEpj6OmNJV00G70A_5G2HJcu0YW6wPV8lxjGXXxTjkSm3aRKSiG_zr4A1Y2VpItA',
+    //   method: "PUT",
+    //   data: submissionfile,
+    //   processData: false,
+    //   contentType: false
+    // }).done((data, status) => {
+    //   callback('hi', true);
+    // }).fail(() => {
+    //   callback('hi', false);
+    // });
+    // get the url from the real api
+    $.post(`${URL}/api/${LEAGUE}/submission/`, {
+      team: Cookies.get('team_id')
+    }).done((data, status) => {
+      console.log(data['upload_url'])
+      $.ajax({
+        url: data['upload_url'], 
+        // url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UrcQ17LTnPagAWEjTiX--nS7HP_jtMoau0zcZ6zopi_YwWqJfNor1MizLIlxnX0HB0LnkhZ-6CgyCnfg4q3uVRtGBdXlg',
+        method: "PUT",
+        data: submissionfile,
+        processData: false,
+        contentType: false
+      })
+    }).fail((xhr, status, error) => {
+      console.log(error)
+      callback('there was an error', false);
+    });
+  }
+
   static getUpcomingDates(callback) {
     const newState = [
       { id: 0, date: 'hi', data: 'message' },
@@ -18,9 +53,9 @@ class Api {
   }
 
   static getTeamMuHistory(callback) {
-    const data = [10, 12, 14, 10, 28, 32, 25, 32];
+   //const data = [10, 12, 14, 10, 28, 32, 25, 32];
 
-    callback(data);
+    callback([]);
   }
 
   static getTeamWinStats(callback) {
@@ -34,6 +69,69 @@ class Api {
     Cookies.set('token', '');
     Cookies.set('refresh', '');
     callback();
+  }
+
+  static getLeague(callback) {
+    $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
+      Cookies.set('league_url', data.url);
+      console.log((data.url));
+      $.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+    });
+  }
+
+  static getTeamSubmissions(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+    static getSubmission(id, callback, callback_data) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${id}/`).done((data, status) => {
+        callback(callback_data, data);
+    });
+  }
+
+
+  static getCompilationStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+  //get data for team with team_id
+  static getTeamById(team_id, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
+    $.get(`${URL}/api/${LEAGUE}/team/${team_id}/`).done((data, status) => {
+        callback(data);
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
+  }
+
+  //calculates rank of given team, with tied teams receiving the same rank
+  //i.e. if mu is 10,10,1 the ranks would be 1,1,3
+  static getTeamRanking(team_id, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
+    const requestUrl = `${URL}/api/${LEAGUE}/team/${team_id}/ranking/`
+    $.get(requestUrl).done((data, status) => {
+      callback(data);
+    })
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
   }
 
 

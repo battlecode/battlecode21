@@ -63,6 +63,7 @@ class League(models.Model):
     end_date            = models.DateField()
     active              = models.BooleanField(default=False)
     submissions_enabled = models.BooleanField(default=False)
+    game_released = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -72,7 +73,6 @@ class Update(models.Model):
     message = models.CharField(max_length=1000, blank=True)
     time = models.DateTimeField(auto_now_add=True)
     league = models.ForeignKey(League, related_name='updates', on_delete=models.PROTECT)
-
 
 
 class Tournament(models.Model):
@@ -127,14 +127,58 @@ class Team(models.Model):
         return '{}: (#{}) {}'.format(self.league, self.id, self.name)
 
 
+# Old submission table
+# class Submission(models.Model):
+#     team         = models.ForeignKey(Team, on_delete=models.PROTECT)
+#     name         = models.CharField(max_length=150)
+#     filename     = models.TextField(null=True, default=None)
+#     submitted_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return '{}: (#{}) {}'.format(self.team, self.id, self.name)
+
 class Submission(models.Model):
-    team         = models.ForeignKey(Team, on_delete=models.PROTECT)
-    name         = models.CharField(max_length=150)
-    filename     = models.TextField(null=True, default=None)
-    submitted_at = models.DateTimeField(auto_now_add=True)
+    """
+    Submission table stores every submission made
+    idea is that this will be slow to look through, so we can quickly get the submissions
+    stored in the team_submission table, but reserve possibility to get data for all the
+    submissions the team has ever made
+    """
+    #submission_id        = models.CharField(primary_key=True, max_length=20)
+    team                 = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name="team_id_sub")
+    submitted_at         = models.DateTimeField(auto_now_add=True)
+    link                 = models.TextField(null=True)
+    compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
+
+    def save(self, *args, **kwargs):
+        if self.id is not None:
+            SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
+            self.link = SUBMISSION_FILENAME(self.id)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return '{}: (#{}) {}'.format(self.team, self.id, self.name)
+        return '{}: {}'.format(self.id, self.team)
+
+class TeamSubmission(models.Model):
+    """
+    Team submissions table stores submission ids of select submissions 
+    with team_ids as pks
+    storing past n submissions where n = 3, and submissions to the four tournaments
+    submissions are first placed in compiling until they are succesfully compiled
+    """
+    team        = models.OneToOneField(Team, on_delete=models.PROTECT, primary_key=True, related_name="team_id")
+    compiling   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="compiling")
+    last_1      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_1")
+    last_2      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_2")
+    last_3      = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="last_3")
+    tour_sprint = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_sprint")
+    tour_seed   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_seed")
+    tour_qual   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_qual")
+    tour_final  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_final")
+
+    def __str__(self):
+        return '{}: {}'.format(self.team, self.last_1)
+
 
 class Scrimmage(models.Model):
     SCRIMMAGE_STATUS_CHOICES = (
@@ -159,6 +203,8 @@ class Scrimmage(models.Model):
     replay    = models.TextField(blank=True)
 
     # Metadata
+    red_mu        = models.IntegerField(null=True)
+    blue_mu       = models.IntegerField(null=True)
     requested_by = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='requested_by')
     requested_at = models.DateTimeField(auto_now_add=True)
     started_at   = models.DateTimeField(null=True)
@@ -216,17 +262,17 @@ def gen_team_key(sender, instance, raw, update_fields, **kwargs):
     if not raw and instance._state.adding:
         instance.team_key = uuid.uuid4().hex[:16]
 
-@receiver(post_save, sender=Submission)
-def gen_filename(sender, instance, created, **kwargs):
-    """
-    Saves the filename in the format "/league_id/team_id/submission_id.zip".
-    """
-    if created:
-        league_id = instance.team.league.id
-        team_id = instance.team.id
-        filename = '/{}/{}/{}.zip'.format(league_id, team_id, instance.id)
-        instance.filename = filename
-        instance.save()
+# @receiver(post_save, sender=Submission)
+# def gen_filename(sender, instance, created, **kwargs):
+#     """
+#     Saves the filename in the format "/league_id/team_id/submission_id.zip".
+#     """
+#     if created:
+#         league_id = instance.team.league.id
+#         team_id = instance.team.id
+#         filename = '/{}/{}/{}.zip'.format(league_id, team_id, instance.id)
+#         instance.filename = filename
+#         instance.save()
 
 
 @receiver(reset_password_token_created)

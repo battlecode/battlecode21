@@ -157,7 +157,7 @@ class YesTeam extends Component {
 class NoTeam extends Component {
     constructor() {
         super();
-        this.state = {team_name:"", secret_key:"", team_join_name:""};
+        this.state = {team_name:"", secret_key:"", team_join_name:"", joinTeamError:false, createTeamError:false};
 
         this.joinTeam = this.joinTeam.bind(this);
         this.createTeam = this.createTeam.bind(this);
@@ -174,15 +174,41 @@ class NoTeam extends Component {
     }
 
     joinTeam() {
-        Api.joinTeam(this.state.secret_key, this.state.team_join_name, function(success) {
-            if (success) window.location.reload();
-        });
+        Api.joinTeam(this.state.secret_key, this.state.team_join_name, this.joinCallback);
+    }
+
+    joinCallback=(success) => {
+        this.setState({joinTeamError: success});
+        if (success) {
+                window.location.reload();
+        }
     }
 
     createTeam() {
-        Api.createTeam(this.state.team_name, function(success) {
-            window.location.reload();
-        });
+        Api.createTeam(this.state.team_name, this.createCallback);
+    }
+
+    createCallback=(success) => {
+        console.log(success)
+        this.setState({createTeamError: !success});
+        if (success) {
+                window.location.reload();
+        }
+    }
+
+    renderError(type, data) {
+        if (data == true) {
+            let message = ""
+            if (type == "createTeamError") {
+                message = "Sorry, this team name is already being used."
+            } else if (type == "joinTeamError") {
+                message = "Sorry, that team name and secret key combination is not valid."
+            }
+
+            return(
+                <p style={{color: '#FF4A55'}}> { message } </p>
+            )
+        }
     }
 
     render() {
@@ -201,6 +227,7 @@ class NoTeam extends Component {
                                     </div>
                                 </div>
                             </div>
+                            { this.renderError("createTeamError", this.state.createTeamError) }
                             <button type="button" className="btn btn-info btn-fill pull-right" onClick={ this.createTeam }>Create</button>
                             <div className="clearfix" />
                         </div>
@@ -225,6 +252,7 @@ class NoTeam extends Component {
                                     </div>
                                 </div>
                             </div>
+                            { this.renderError("joinTeamError", this.state.joinTeamError) }
                             <button type="button" className="btn btn-info btn-fill pull-right" onClick={ this.joinTeam }>Join</button>
                             <div className="clearfix" />
                         </div>

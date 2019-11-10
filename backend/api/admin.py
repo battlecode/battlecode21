@@ -41,14 +41,20 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'team', 'name', 'filename', 'submitted_at')
-    list_display_links = ('id', 'name')
-    list_filter = ('team',)
+    list_display = ('id', 'team_id', 'submitted_at', 'link', 'compilation_status')
+    list_display_links = ('id', 'team_id')
+    list_filter = ('id',)
+
+@admin.register(TeamSubmission)
+class TeamSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('team_id', 'compiling', 'last_1', 'last_2', 'last_3', 'tour_sprint', 'tour_seed', 'tour_qual', 'tour_final')
+    list_display_links = ('team_id',)
+    list_filter = ('team_id',)
 
 
 @admin.register(Scrimmage)
 class ScrimmageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'league', 'red_team', 'blue_team', 'ranked', 'status',
+    list_display = ('id', 'league', 'red_team', 'red_mu', 'blue_team', 'blue_mu', 'ranked', 'status',
         'requested_by', 'requested_at', 'started_at', 'updated_at')
     list_filter = ('league', 'red_team', 'blue_team')
 

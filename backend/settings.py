@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'django_rest_passwordreset',
-    'api'
+    'api',
+    'google.cloud',
 ]
 
 MIDDLEWARE = [
@@ -191,3 +192,5 @@ STATICFILES_DIRS = [
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 
+# google cloud
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
