@@ -104,9 +104,12 @@ build.dependsOn('updateDistribution')
 if (!project.hasProperty("classLocation")) {
     ext.classLocation = sourceSets.main.output.classesDir
 }
+if (!project.hasProperty("replay")) {
+    ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc17'
+}
+
 
 task run(type: JavaExec, dependsOn: 'build') {
-    println(project.property('classLocation'))
     description 'Runs a match without starting the client.'
     group 'battlecode'
 
@@ -123,7 +126,7 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.game.team-a.url='+project.property('classLocation'),
         '-Dbc.game.team-b.url='+project.property('classLocation'),
         '-Dbc.game.maps='+project.property('maps'),
-        '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc17'
+        '-Dbc.server.save-file=' + project.property('replay')
     ]
 }
 
