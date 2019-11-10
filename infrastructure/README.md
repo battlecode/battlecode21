@@ -16,29 +16,34 @@ In GCloud > Storage:
 - Create new bucket. Call it `bc20-submissions`.
 - Grant permissions to the service account: Storage Legacy Bucket Writer, Storage Object Viewer.
 
+In GCloud > Compute Engine > Instance templates:
+- Create new instance template.
+- Check "Deploy a container image to this VM instance". This enables docker images to be deployed.
+
 ## How to use
 
 For a docker shell to do debugging in:
 ```
 make basic
-docker run -it bc20:basic
+docker run -it bc20-basic
 ```
 
 For a compile server
 ```
 make compile
-docker run -d bc20:compile
+docker run -d bc20-compile
 ```
 
 For a game runner server
 ```
 make game
-docker run -d bc20:game
+docker run -d bc20-game
 ```
 
-For docker image tarballs
+To push docker images to the container registry
 ```
-make tarballs
+gcloud auth configure-docker # Only needs to be run once to configure settings
+make push
 ```
 
 To publish a `helloworld` message to the Pub/Sub, obtain the private key, and then:
