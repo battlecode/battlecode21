@@ -44,7 +44,7 @@ class Submissions extends Component {
             'seed': data['tour_seed'],
             'sprint': data['tour_sprint']
         }
-        this.setState({"teamSubmissions": data})
+        this.setState({teamSubmissions: data})
     }
 
 
