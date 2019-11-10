@@ -7,16 +7,16 @@ class Account extends Component {
 
         this.state = {
             user: {
-                username:'',
-                email:'',
-                first_name:'',
-                last_name:'',
-                date_of_birth:'',
-                bio:'',
-                avatar:'',
-                country:''
+                username: '',
+                email: '',
+                first_name: '',
+                last_name: '',
+                date_of_birth: '',
+                bio: '',
+                avatar: '',
+                country: ''
             },
-            'up':'Update Info'
+            'up': 'Update Info'
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -27,26 +27,26 @@ class Account extends Component {
     changeHandler(e) {
         var id = e.target.id;
         var val = e.target.value;
-        this.setState(function(prevState, props) {
+        this.setState(function (prevState, props) {
             prevState.user[id] = val;
             return prevState;
         });
     }
 
     updateUser() {
-        this.setState({'up':'<i class="fa fa-circle-o-notch fa-spin"></i>'});
-        Api.updateUser(this.state.user, function(response) {
-            if (response) this.setState({'up':'<i class="fa fa-check"></i>'});
-            else this.setState({'up':'<i class="fa fa-times"></i>'});
-            setTimeout(function() {
-                this.setState({'up':'Update Info'});
-            }.bind(this),2000);
+        this.setState({ 'up': '<i class="fa fa-circle-o-notch fa-spin"></i>' });
+        Api.updateUser(this.state.user, function (response) {
+            if (response) this.setState({ 'up': '<i class="fa fa-check"></i>' });
+            else this.setState({ 'up': '<i class="fa fa-times"></i>' });
+            setTimeout(function () {
+                this.setState({ 'up': 'Update Info' });
+            }.bind(this), 2000);
         }.bind(this));
     }
 
     uploadProfile(e) {
         var reader = new FileReader();
-        reader.onloadend = () => this.setState(function(prevState, props) {
+        reader.onloadend = () => this.setState(function (prevState, props) {
             prevState.user.avatar = reader.result;
             return prevState;
         });
@@ -54,9 +54,15 @@ class Account extends Component {
     }
 
     componentDidMount() {
-        Api.getUserProfile(function(u) {
+        Api.getUserProfile(function (u) {
             console.log(u);
-            this.setState({user: u});
+            this.setState({ user: u });
+            if (this.state.user.is_staff == true)
+            {
+                console.log("user is staff");
+                var is_staff_msg = document.getElementById("is_staff_msg");
+                is_staff_msg.innerHTML = "Staff";
+            }
         }.bind(this));
     }
 
@@ -76,13 +82,13 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Username</label>
-                                                    <input type="text" className="form-control" id="username" onChange={ this.changeHandler } value={ this.state.user.username } />
+                                                    <input type="text" className="form-control" id="username" onChange={this.changeHandler} value={this.state.user.username} />
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Email</label>
-                                                    <input type="email" className="form-control" id="email" onChange={ this.changeHandler } value={ this.state.user.email } />
+                                                    <input type="email" className="form-control" id="email" onChange={this.changeHandler} value={this.state.user.email} />
                                                 </div>
                                             </div>
                                         </div>
@@ -90,13 +96,13 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>First Name</label>
-                                                    <input type="text" className="form-control" id="first_name" onChange={ this.changeHandler } value={ this.state.user.first_name } />
+                                                    <input type="text" className="form-control" id="first_name" onChange={this.changeHandler} value={this.state.user.first_name} />
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Last Name</label>
-                                                    <input type="text" className="form-control" id="last_name" onChange={ this.changeHandler } value={ this.state.user.last_name } />
+                                                    <input type="text" className="form-control" id="last_name" onChange={this.changeHandler} value={this.state.user.last_name} />
                                                 </div>
                                             </div>
                                         </div>
@@ -104,14 +110,14 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Date of Birth (YYYY-MM-DD)</label>
-                                                    <input type="text" className="form-control" id="date_of_birth" onChange={ this.changeHandler } value={ this.state.user.date_of_birth } />
+                                                    <input type="text" className="form-control" id="date_of_birth" onChange={this.changeHandler} value={this.state.user.date_of_birth} />
                                                 </div>
                                             </div>
 
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Country</label>
-                                                    <select className="form-control" id="country" value={ this.state.user.country } onChange={ this.changeHandler }>
+                                                    <select className="form-control" id="country" value={this.state.user.country} onChange={this.changeHandler}>
                                                         <option value=""></option>
                                                         <option value="Afghanistan">Afghanistan</option>
                                                         <option value="Albania">Albania</option>
@@ -318,7 +324,7 @@ class Account extends Component {
                                             <div className="col-md-12">
                                                 <div className="form-group">
                                                     <label>User Avatar URL</label>
-                                                    <input type="text" id="avatar" className="form-control" onChange={this.changeHandler} value={ this.state.user.avatar } />
+                                                    <input type="text" id="avatar" className="form-control" onChange={this.changeHandler} value={this.state.user.avatar} />
                                                 </div>
                                             </div>
                                         </div>
@@ -326,11 +332,11 @@ class Account extends Component {
                                             <div className="col-md-12">
                                                 <div className="form-group">
                                                     <label>User Bio</label>
-                                                    <textarea rows={5} className="form-control" placeholder="Put your bio here." onChange={this.changeHandler} id="bio" value={ this.state.user.bio } />
+                                                    <textarea rows={5} className="form-control" placeholder="Put your bio here." onChange={this.changeHandler} id="bio" value={this.state.user.bio} />
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="button" onClick={ this.updateUser } className="btn btn-info btn-fill pull-right" dangerouslySetInnerHTML={{__html:this.state.up }}></button>
+                                        <button type="button" onClick={this.updateUser} className="btn btn-info btn-fill pull-right" dangerouslySetInnerHTML={{ __html: this.state.up }}></button>
                                         <div className="clearfix" />
                                     </div>
                                 </div>
@@ -341,10 +347,11 @@ class Account extends Component {
                                     </div>
                                     <div className="content">
                                         <div className="author">
-                                            <img className="avatar border-gray" src={ this.state.user.avatar===''?'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==':this.state.user.avatar } alt="User Avatar" />
-                                            <h4 className="title">{ this.state.user.first_name + " " + this.state.user.last_name }<br /><small>{ this.state.user.username }</small></h4>
+                                            <img className="avatar border-gray" src={this.state.user.avatar === '' ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==' : this.state.user.avatar} alt="User Avatar" />
+                                            <h4 className="title">{this.state.user.first_name + " " + this.state.user.last_name}<br /><small>{this.state.user.username}</small></h4>
+                                            <h5 id="is_staff_msg"></h5>
                                         </div>
-                                        <p className="description text-center">{ this.state.user.bio }</p>
+                                        <p className="description text-center">{this.state.user.bio}</p>
                                     </div>
                                 </div>
                             </div>
