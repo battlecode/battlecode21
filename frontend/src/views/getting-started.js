@@ -26,7 +26,7 @@ class GettingStarted extends Component {
                                 <div className="content">
                                     <br/>
                                 <p>
-                                All of the world's turtles are dying, and it is up you to save them!
+                                SOUP SOUP SOUP
                                 Follow this short guide to get started with Battlecode 2020.
                                 </p>
 
@@ -40,7 +40,7 @@ class GettingStarted extends Component {
 
                                 </p>
                                 <p>
-                                    This year's game is about turtles. You can read the <a href='battlecode20-game-specs'>full game specifications here</a>.
+                                    This year's game is about soup. You can read the <a href='battlecode20-game-specs'>full game specifications here</a>.
                                     Before you start developing your bot, it is highly recommended to read the full game specifications carefully.
                                     To simply get up and running, however, it is sufficient to skim the document.
                                 </p>
