@@ -71,6 +71,18 @@ class Api {
     callback();
   }
 
+  static getLeague(callback) {
+    $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
+      Cookies.set('league_url', data.url);
+      console.log((data.url));
+      $.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+    });
+  }
+
   static getTeamSubmissions(callback) {
     $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
         callback(data);

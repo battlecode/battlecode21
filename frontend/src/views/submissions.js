@@ -12,7 +12,6 @@ class Submissions extends Component {
     }
 
     onChangeHandler=event=>{
-
         console.log(event.target.files[0])
         this.setState({
             selectedFile: event.target.files[0],
@@ -30,12 +29,29 @@ class Submissions extends Component {
             numLastLoaded: 0,
             numTourSubmissions: 0,
             numTourLoaded: 0,
-        }
+            user: {},
+            league: {}
+        };
+        Api.getUserProfile(function (u) {
+            console.log(u);
+            this.setState({ user: u });
+            if (this.state.user.is_staff == true)
+            {
+                console.log("user is staff");
+                // var is_staff_msg = document.getElementById("is_staff_msg");
+                // is_staff_msg.innerHTML = "Staff";
+            }
+        }.bind(this));
+
     }
 
     componentDidMount() {
-        Api.getCompilationStatus(this.gotStatus)
-        Api.getTeamSubmissions(this.gotSubmissions)
+        Api.getCompilationStatus(this.gotStatus);
+        Api.getTeamSubmissions(this.gotSubmissions);
+        Api.getLeague(function (l) {
+            console.log(l);
+            this.setState({ league: l});
+        }.bind(this));
     }
 
     gotStatus = (data) => {
@@ -110,9 +126,21 @@ class Submissions extends Component {
         }
     }
 
+    // enable iff game active or user is staff
+    isSubmissionEnabled()
+    {
+        if (this.state.user.is_staff == true) {
+            return true;
+        }
+        if (this.state.league.game_released == true) {
+            return true;
+        }
+        return false;
+    }
+
     // return div for submitting files, should be able to disable this when submissions are not being accepts
-    renderHelperSubmissionForm(enabled) {
-        if (enabled) {
+    renderHelperSubmissionForm() {
+        if (this.isSubmissionEnabled()) {
             let status_str = ""
             switch (this.state.status) {
                 case 0:
@@ -131,7 +159,6 @@ class Submissions extends Component {
                     status_str = ""
                     break
             }
-
             return (
                 <div className="card">
                     <div className="header">
@@ -144,7 +171,8 @@ class Submissions extends Component {
                     </div>
                 </div>
             )
-        } else {
+        }
+        else {
             return ""
         }
     }
@@ -243,7 +271,7 @@ class Submissions extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
-                            { this.renderHelperSubmissionForm(true) }
+                            { this.renderHelperSubmissionForm() }
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Latest Submission</h4>
