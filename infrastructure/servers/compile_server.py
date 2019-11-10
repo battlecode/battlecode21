@@ -33,7 +33,7 @@ def compile_worker(submissionid):
     """
 
     client = storage.Client()
-    bucket = client.get_bucket(GCLOUD_BUCKET_ID)
+    bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
 
     # Filesystem structure:
     # /tmp/bc20-compile-{submissionid}/

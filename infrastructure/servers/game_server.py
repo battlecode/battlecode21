@@ -34,11 +34,12 @@ def game_worker(gameinfo):
         gameid:   string, id of the game
         player1:  string, id of red player submission
         player2:  string, id of blue player submission
+        maps:     string, comma separated list of maps
     Components delimited by semicolons
     """
 
     client = storage.Client()
-    bucket = client.get_bucket(GCLOUD_BUCKET_ID)
+    bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
 
     try:
         gameinfo = json.loads(gameinfo)
@@ -46,6 +47,7 @@ def game_worker(gameinfo):
         gameid   = gameinfo['gameid']
         player1  = gameinfo['player1']
         player2  = gameinfo['player2']
+        maps     = gameinfo['maps']
     except:
         game_log_error(gametype, gameid, 'Game information in incorrect format')
 
@@ -74,14 +76,25 @@ def game_worker(gameinfo):
 
     # TODO: Invoke game and interpret game result
     result = util.monitor_command(
-        ['java', '-jar', PATH_ENGINE,
-            '-Dbc.server.mode=headless'
-        ],
-        cwd=sourcedir,
+        ['./gradlew', 'run',
+            '-PteamA={}'.format(player1),
+            '-PteamB={}'.format(player2),
+            '-Pmaps={}'.format(maps),
+            '-PclassLocation={}'.format(classDir)
+        ]
+        cwd=rootdir,
         timeout=TIMEOUT_GAME)
 
     if result[0] != 0:
         game_log_error(gametype, gameid, 'Game execution had non-zero return code')
+
+    # TODO: Check replay file path
+    bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
+    try:
+        with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
+            bucket.blob('{}-{}.bc20'.format(gametype, gameid)).upload_from_file(file_obj)
+    except:
+        game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
     # TODO: Interpret game result to send to database
     if True:
