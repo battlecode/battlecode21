@@ -53,3 +53,25 @@ class IsAuthenticatedOnTeam(LeagueActiveOrSafeMethods):
             raise InternalError
         view.kwargs['team'] = teams[0]
         return True
+
+class IsStaffOrGameReleased(permissions.BasePermission):
+    message = 'Game not released yet; only staff users are allowed to do this.'
+
+    def has_permission(self, request, view):
+        if request.user.is_staff == True:
+            return True
+
+        try:
+            league = League.objects.get(pk=view.kwargs.get('league_id'))
+        except League.DoesNotExist:
+            raise PermissionDenied
+        if league.game_released == True:
+            return True
+
+        raise PermissionDenied
+
+class NeverPermitted(permissions.BasePermission):
+    message = 'A negative person cannot crack the code of a positive person unless access is granted. Access Denied. - Joseph Mercado'
+
+    def has_permission(self, request, view):
+        raise PermissionDenied
