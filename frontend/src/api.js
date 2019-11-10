@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-const URL = 'https://se19.battlecode.org';
+const URL = 'https://2020.battlecode.org';
 //const URL = 'http://localhost:8000'; // DEVELOPMENT
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
