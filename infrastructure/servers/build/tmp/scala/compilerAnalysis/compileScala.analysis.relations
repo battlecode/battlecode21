@@ -1,0 +1,12 @@
+products:
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\build\classes\examplefuncsplayer\RobotPlayer$1.class
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\build\classes\examplefuncsplayer\RobotPlayer.class
+binary dependencies:
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> C:\Program Files\Java\jdk1.8.0_231\jre\lib\rt.jar
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\dist\battlecode-engine.jar
+source dependencies:
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java
+external dependencies:
+class names:
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> examplefuncsplayer.RobotPlayer
+   C:\Users\qbowe\Documents\Projects\BattleCode\battlecode20\infrastructure\servers\src\examplefuncsplayer\RobotPlayer.java -> examplefuncsplayer.RobotPlayer$1
