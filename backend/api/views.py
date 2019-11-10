@@ -377,7 +377,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
 
     def retrieve(self, request, team, league_id, pk=None):
-        if str(team.id) != pk:
+        submission = self.get_queryset().get(pk=pk)
+
+        if team != submission.team:
             return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
 
         return super().retrieve(request, pk=pk)
@@ -456,6 +458,12 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
     def get_submissions(self, team_id):
         return Submission.objects.all()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        context['league_id'] = self.kwargs.get('league_id', None)
+        return context
 
     def retrieve(self, request, team, league_id, pk=None):
         if str(team.id) != pk:
