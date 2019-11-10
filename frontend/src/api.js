@@ -38,6 +38,7 @@ class Api {
         contentType: false
       })
     }).fail((xhr, status, error) => {
+      console.log(error)
       callback('there was an error', false);
     });
   }
@@ -70,11 +71,11 @@ class Api {
     callback();
   }
 
-  // static getTeamSubmissions(callback) {
-  //   $.get(`${URL}/api/${LEAGUE}/team/${team_id}/`).done((data, status) => {
-  //       callback(data);
-  //   });
-  // }
+  static getTeamSubmissions(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
+        callback(data);
+    });
+  }
 
   static getCompilationStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {

@@ -208,6 +208,7 @@ class TeamViewSet(viewsets.GenericViewSet,
 
         if len(self.get_queryset().filter(users__username=request.user.username)) > 0:
             return Response({'message': 'Already on a team in this league'}, status.HTTP_400_BAD_REQUEST)
+        print(self.get_queryset())
         if len(self.get_queryset().filter(name=name)) > 0:
             return Response({'message': 'Team with this name already exists'}, status.HTTP_400_BAD_REQUEST)
 

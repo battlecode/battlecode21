@@ -25,13 +25,29 @@ class Submissions extends Component {
         this.state = {
             selectedFile: null
         }
-    componentDidMount() {
-        Api.getCompilationStatus(this.compilationData)
     }
 
-    compilationData = (data) => {
-        console.log(data)
+    componentDidMount() {
+        Api.getCompilationStatus(this.gotStatus)
+        Api.getTeamSubmissions(this.gotSubmissions)
     }
+
+    gotStatus = (data) => {
+        this.setState(data)
+    }
+
+    gotSubmissions = (data) => {
+        let lastSubmissions = [data['last_1'], data['last_2'], data['last_3']]
+        let tourSubmissions = {
+            'final': data['tour_final'],
+            'qual': data['tour_qual'],
+            'seed': data['tour_seed'],
+            'sprint': data['tour_sprint']
+        }
+        this.setState({"teamSubmissions": data})
+    }
+
+
 
 
     // return div for submitting files, should be able to disable this when submissions are not being accepts
@@ -51,6 +67,10 @@ class Submissions extends Component {
         } else {
             return ""
         }
+    }
+
+    renderHelperSubmissionRow(submission) {
+
     }
 
     render() {
