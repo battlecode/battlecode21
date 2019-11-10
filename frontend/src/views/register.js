@@ -140,7 +140,7 @@ class Register extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Battlecode Turtle</h1>
+        }}>Battlecode Soup</h1>
         <p style={{
           textAlign: 'center',
           fontWeight: 'bold',
