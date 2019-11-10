@@ -340,9 +340,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     """
     queryset = Submission.objects.all().order_by('-submitted_at')
     serializer_class = SubmissionSerializer
-    permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
-   # permission_classes = (IsAuthenticatedOnTeam,)
-    #permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
+    permission_classes = (LeagueActiveOrSafeMethods, SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
     def get_queryset(self):
         return super().get_queryset()
@@ -454,9 +452,7 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     """
     queryset = TeamSubmission.objects.all()
     serializer_class = TeamSubmissionSerializer
-    permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
-    # permission_classes = (IsAuthenticatedOnTeam,)
-    # permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
+    permission_classes = (LeagueActiveOrSafeMethods, SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
     def get_submissions(self, team_id):
         return Submission.objects.all()
@@ -524,7 +520,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     """
     queryset = Scrimmage.objects.all().order_by('-requested_at')
     serializer_class = ScrimmageSerializer
-    permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam)
+    permission_classes = (SubmissionsEnabledOrSafeMethods, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
     def get_team(self, league_id, team_id):
         teams = Team.objects.filter(league_id=league_id, id=team_id)
