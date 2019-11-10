@@ -38,7 +38,7 @@ class SideBar extends Component {
             <div className="sidebar" data-color="space"> {/* data-color is defined in light-bootstrap-dashboard.css */}
                 <div className="sidebar-wrapper">
                     <div className="logo">
-                        <a href="#" className="simple-text">VOYAGE</a>
+                        <a href="#" className="simple-text">SOUP</a>
                     </div>
                     <ul className="nav nav-pills nav-stacked">
                         <NLink to={`${process.env.PUBLIC_URL}/home`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-home pe-fw" />Home</p></NLink>
