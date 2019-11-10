@@ -73,8 +73,9 @@ class App extends Component {
     if (this.state.logged_in) {
       let scrimmage_string = "";
       if (this.isSubmissionEnabled()) {
-        scrimmage_string = "<Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />"
-      };
+        scrimmage_string = <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />
+      }
+
       return (
         <div className="wrapper">
           <SideBar />
@@ -83,7 +84,7 @@ class App extends Component {
             <Switch>
               <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
               <Route path={`${process.env.PUBLIC_URL}/home`} component={Home} />
-              {scrimmage_string}
+              { scrimmage_string }
               <Route path={`${process.env.PUBLIC_URL}/updates`} component={Updates} />
               <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
               <Route path={`${process.env.PUBLIC_URL}/team`} component={Team} />
