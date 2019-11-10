@@ -173,7 +173,16 @@ class Submissions extends Component {
             )
         }
         else {
-            return ""
+            return (
+                <div className="card">
+                    <div className="header">
+                        <h4 className="title">Submit Code</h4>
+                    </div>
+                    <div className="content">
+                        <p>Game not released; check back in January!</p>
+                    </div>
+                </div>
+            )
         }
     }
 
