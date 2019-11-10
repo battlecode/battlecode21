@@ -53,9 +53,9 @@ class Api {
   }
 
   static getTeamMuHistory(callback) {
-    const data = [10, 12, 14, 10, 28, 32, 25, 32];
+   //const data = [10, 12, 14, 10, 28, 32, 25, 32];
 
-    callback(data);
+    callback([]);
   }
 
   static getTeamWinStats(callback) {
@@ -76,6 +76,13 @@ class Api {
         callback(data);
     });
   }
+
+    static getSubmission(id, callback, callback_data) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${id}/`).done((data, status) => {
+        callback(callback_data, data);
+    });
+  }
+
 
   static getCompilationStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
