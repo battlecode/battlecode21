@@ -7,6 +7,7 @@ then
 			No ) exit;;
 		esac
 	done
+    npm install
 	npm run build
 	cd build
 	gsutil -m cp -r * gs://battlecode20-frontend
@@ -16,6 +17,7 @@ then
 	gsutil -m rm gs://battlecode20-frontend/**
 elif [ "$1" == "deploynogame" ]
 then
+    npm install
 	npm run buildnogame
 	cd build
 	gsutil -m cp -r * gs://battlecode20-frontend
