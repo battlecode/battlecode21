@@ -8,7 +8,7 @@ class Footer extends Component {
                     <nav className="pull-left">
                         <ul>
                             <li>
-                                <a href="https://se19.battlecode.org/">
+                                <a href="https://2020.battlecode.org/">
                                     Home
                                 </a>
                             </li>

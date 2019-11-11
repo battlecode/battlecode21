@@ -26,7 +26,7 @@ class Resources extends Component {
                                 <p className='text-center'>
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/battlecode20-game-specs.html'>Read the Game Specifications</a>
                                 </p>
-
+                                The game specifications will be released on January 6.
 
                                 </div>
                             </div>
@@ -43,7 +43,7 @@ class Resources extends Component {
                                 </p>
                                 <p>
                                     You can also run the visualizer locally, which, for example, has the added benefit of automatically reloading replay files.
-                                    Go to the GitHub.
+                                    The visualizer will not be released until the game is released.
                                 </p>
 
 
@@ -71,13 +71,13 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Starter pack.
+                                    We will have a starter pack containing all code that you need to get started.
                                 </p>
                                 <p>
-                                    All of the code powering Battlecode 2020 will be open source on GitHub, in the <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
+                                    All of the code powering Battlecode 2020 will be open source on GitHub, in the (currently private) <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
                                 </p>
                                 <p>
-                                    Third-party tools.
+                                    We will also list helpful third-party tools here, as they start popping up.
                                 </p>
 
 
