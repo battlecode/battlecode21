@@ -39,7 +39,7 @@ class GettingStarted extends Component {
 
                                 </p>
                                 <p>
-                                    This year's game is about soup. When the game is released, you will be able to read the <a href='battlecode20-game-specs'>full game specifications here</a>.
+                                    This year's game is about <i>[redacted]</i>. When the game is released, you will be able to read the <a href='battlecode20-game-specs'>full game specifications here</a>.
                                     Before you start developing your bot, it is highly recommended to read the full game specifications carefully.
                                     To simply get up and running, however, it is sufficient to skim the document.
                                 </p>
