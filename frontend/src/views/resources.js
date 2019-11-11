@@ -26,8 +26,9 @@ class Resources extends Component {
                                 <p className='text-center'>
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/battlecode20-game-specs.html'>Read the Game Specifications</a>
                                 </p>
+                                <p>
                                 The game specifications will be released on January 6.
-
+                                </p>
                                 </div>
                             </div>
 
