@@ -16,7 +16,7 @@ In this directory, run:
 npm install
 ```
 
-Also, run `npm install` in `../schema`, `../playback` and `../client`.
+Also, run `npm install` in `../schema`, `../client/playback` and `../client/visualizer`.
 
 ### Running
 

@@ -15,15 +15,11 @@
 
 		match_url = window.location.search.substr(1);
 
-		console.log(match_url);
+		console.log(!match_url ? `No provided URL` : `Provided URL : ${match_url}`)
 		
 		if (match_url === "") {
-			console.log('hej');
 			window.battleClient = window.battlecode.mount(
-				document.getElementById('client')/*,
-				{
-					matchFileURL: "{{ match_url }}",
-				}*/
+				document.getElementById('client')
 			);
 		} else {
 			window.battleClient = window.battlecode.mount(
