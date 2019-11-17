@@ -20,3 +20,14 @@ def monitor_command(command, cwd, timeout=0):
     else:
         proc_stdout, proc_stderr = subproc.communicate()
         return (subproc.returncode, proc_stdout, proc_stderr)
+
+def pull_distribution(cwd, onerror):
+    try:
+        result = monitor_command(
+            ['./pull_dist.sh'],
+            cwd=cwd,
+            timeout=TIMEOUT_PULL)
+        if result[0] != 0:
+            raise RuntimeError
+    except:
+        onerror()

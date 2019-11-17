@@ -23,7 +23,7 @@ def game_db_report(gametype, gameid, result):
 def game_log_error(gametype, gameid, reason):
     """Reports a server-side error to the database and terminates with failure"""
     logging.error(reason)
-    game_db_report(gametype, gameid, 'error')
+    game_db_report(gametype, gameid, GAME_ERROR)
     sys.exit(1)
 
 def game_worker(gameinfo):
@@ -35,7 +35,6 @@ def game_worker(gameinfo):
         player1:  string, id of red player submission
         player2:  string, id of blue player submission
         maps:     string, comma separated list of maps
-    Components delimited by semicolons
     """
 
     client = storage.Client()
@@ -52,10 +51,10 @@ def game_worker(gameinfo):
         game_log_error(gametype, gameid, 'Game information in incorrect format')
 
     # Filesystem structure:
-    # /tmp/bc20-game-{gameid}/
+    # /box/
     #     `-- player1.zip
     #     `-- player2.zip
-    rootdir = os.path.join('/', 'tmp', 'bc20-game-{}-{}'.format(gametype, gameid))
+    rootdir = os.path.join('/', 'box')
 
     # Obtain player executables
     try:
@@ -65,22 +64,41 @@ def game_worker(gameinfo):
         with open(os.path.join(rootdir, 'player2.zip'), 'wb') as file_obj:
             bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
     except:
-        game_log_error(gametype, gameid, 'Could not retrieve executables from bucket')
+        game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
 
     result = util.monitor_command(
         ['git', 'pull'],
         cwd=PATH_DIST,
         timeout=TIMEOUT_PULL)
 
-    # TODO: unzip player zips
+    # Decompress zip archives of player classes
+    try:
+        result = util.monitor_command(
+            ['unzip', 'player1.zip', '-d', player1],
+            cwd=rootdir,
+            timeout=TIMEOUT_UNZIP)
+        if result[0] != 0:
+            raise RuntimeError
+        result = util.monitor_command(
+            ['unzip', 'player2.zip', '-d', player2],
+            cwd=rootdir,
+            timeout=TIMEOUT_UNZIP)
+        if result[0] != 0:
+            raise RuntimeError
+    except:
+        game_log_error(gametype, gameid, 'Could not decompress player zips')
 
-    # TODO: Invoke game and interpret game result
+    util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+
+    # TODO: Check command args
+    # TODO: do we need to install gradle in the image?
     result = util.monitor_command(
         ['./gradlew', 'run',
             '-PteamA={}'.format(player1),
             '-PteamB={}'.format(player2),
             '-Pmaps={}'.format(maps),
-            '-PclassLocation={}'.format(classDir)
+            '-PclassLocation={}'.format(classDir),
+            '-Preplay=replay.bc20'
         ]
         cwd=rootdir,
         timeout=TIMEOUT_GAME)
@@ -98,15 +116,16 @@ def game_worker(gameinfo):
 
     # TODO: Interpret game result to send to database
     if True:
-        game_db_report(gametype, gameid, 'redwon')
+        game_db_report(gametype, gameid, GAME_REDWON)
     else:
-        game_db_report(gametype, gameid, 'bluewon')
+        game_db_report(gametype, gameid, GAME_BLUEWON)
 
     # Clean up working directory
     try:
         shutil.rmtree(rootdir)
     except:
         logging.warning('Could not clean up game execution directory')
+
 
 if __name__ == '__main__':
     subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker)

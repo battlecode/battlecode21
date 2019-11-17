@@ -44,6 +44,9 @@ def api_compile_update(submissionid):
 
 # Game running API specifications
 
+GAME_REDWON  = 'redwon'
+GAME_BLUEWON = 'bluewon'
+GAME_ERROR   = 'error'
 def api_game_update(gametype, gameid):
     """
     Returns the API link for reporting the compilation status

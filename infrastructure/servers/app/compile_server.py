@@ -36,20 +36,20 @@ def compile_worker(submissionid):
     bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
 
     # Filesystem structure:
-    # /tmp/bc20-compile-{submissionid}/
+    # /box/
     #     `-- source.zip
     #     `-- src/
     #     |      `-- all contents of source.zip
     #     |      `-- <robotname>
-    #            |      `-- RobotPlayer.java (or whatever the main class should be named)
-    #            |      `-- Other things
+    #     |      |      `-- RobotPlayer.java (or whatever the main class should be named)
+    #     |      |      `-- Other things
     #     `-- player.zip
-    rootdir   = os.path.join('/', 'tmp', 'bc20-compile-{}'.format(submissionid))
+    rootdir   = os.path.join('/', 'box')
     sourcedir = os.path.join(rootdir, 'src')
+    builddir  = os.path.join(rootdir, 'build')
 
     # Obtain compressed archive of the submission
     try:
-        os.mkdir(rootdir)
         os.mkdir(sourcedir)
         with open(os.path.join(rootdir, 'source.zip'), 'wb') as file_obj:
             bucket.get_blob(os.path.join(submissionid, 'source.zip')).download_to_file(file_obj)
@@ -64,32 +64,39 @@ def compile_worker(submissionid):
     if result[0] != 0:
         compile_log_error(submissionid, 'Could not decompress source file')
 
-    # TODO: double check this command; ensure any dependencies are in the docker image
+    util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
+
     result = util.monitor_command(
-        ['./gradlew', 'build', '-Psource='.append(sourcedir)],
-        
-        cwd=os.path.dirname(os.path.realpath(__file__)), #this has to be the server file location for gradle reasons
+        ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
+        cwd=rootdir,
         timeout=TIMEOUT_COMPILE)
 
-    # TODO: create a zip file with the necessary classes
-
     if result[0] == 0:
+        result = util.monitor_command(
+            ['zip', '-r', 'player.zip', 'classes'],
+            cwd=builddir,
+            timeout=TIMEOUT_COMPILE)
+
         # The compilation succeeded; send the classes to the bucket for storage
-        try:
-            with open(os.path.join(rootdir, 'player.zip'), 'rb') as file_obj:
-                bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
-        except:
-            compile_log_error(submissionid, 'Could not send executable to bucket')
-        compile_db_report(submissionid, COMPILE_SUCCESS)
+        if result[0] == 0:
+            try:
+                with open(os.path.join(builddir, 'player.zip'), 'rb') as file_obj:
+                    bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
+            except:
+                compile_log_error(submissionid, 'Could not send executable to bucket')
+            compile_db_report(submissionid, COMPILE_SUCCESS)
+        else:
+            compile_log_error(submissionid, 'Could not compress compiled classes')
     else:
-        # The compilation failed; report this to database
         compile_db_report(submissionid, COMPILE_FAILED)
 
     # Clean up working directory
     try:
-        shutil.rmtree(rootdir)
+        shutil.rmtree(sourcedir)
+        shutil.rmtree(builddir)
     except:
         logging.warning('Could not clean up compilation directory')
+
 
 if __name__ == '__main__':
     subscription.subscribe(GCLOUD_SUB_COMPILE_NAME, compile_worker)
