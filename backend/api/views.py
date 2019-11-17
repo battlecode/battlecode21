@@ -13,6 +13,7 @@ from api.serializers import *
 from api.permissions import *
 
 from google.cloud import storage
+import trueskill
 
 import os
 import tempfile
@@ -659,6 +660,36 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 sc_status = request.data['status'] 
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
+
+                    # update rankings based on trueskill algoirthm
+                    # get team info
+                    rteam = self.get_team(leauge_id, scrimmage.red_team_id)
+                    bteam = self.get_team(leauge_id, scrimmage.blue_team_id)
+                    won = rteam if sc_status == "redwon" else bteam
+                    lost = rteam if sc_status == "bluewon" else bteam
+                    
+                    # store previous mu in scrimmage
+                    scrimmage.blue_mu = bteam.mu
+                    scrimmage.red_mu = rteam.mu
+
+                    # get mu and sigma
+                    muW = won.mu
+                    sdW = won.sigma
+                    muL = lost.mu
+                    sdL = lost.sigma
+
+                    winner = trueskill.rating(mu=muW, sigma=sdW)
+                    loser = trueskill.rating(mu=muL, sigma=sdL)
+
+                    # applies trueskill algorithm & update teams with new scores
+                    wScore, lScore = trueskill.rate_1vs1(winner, loser)
+                    won.mu = wScore.mu
+                    won.sigma = wScore.sigma
+                    won.mu = wScore.mu
+                    won.sigma = wScore.sigma
+
+                    won.save()
+                    lost.save()
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
