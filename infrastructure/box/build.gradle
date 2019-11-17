@@ -38,8 +38,11 @@ sourceSets {
 
 //Setting default output directories for compiled classes and generated replay files
 //For other default properties, see gradle.properties
-if (!project.hasProperty("classLocation")) {
-    ext.classLocation = sourceSets.main.output.classesDir
+if (!project.hasProperty("classLocationA")) {
+    ext.classLocationA = sourceSets.main.output.classesDir
+}
+if (!project.hasProperty("classLocationB")) {
+    ext.classLocationB = sourceSets.main.output.classesDir
 }
 if (!project.hasProperty("replay")) {
     ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc17'
@@ -118,8 +121,8 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.engine.debug-methods=true',
         '-Dbc.game.team-a='+project.property('teamA'),
         '-Dbc.game.team-b='+project.property('teamB'),
-        '-Dbc.game.team-a.url='+project.property('classLocation'),
-        '-Dbc.game.team-b.url='+project.property('classLocation'),
+        '-Dbc.game.team-a.url='+project.property('classLocationA'),
+        '-Dbc.game.team-b.url='+project.property('classLocationB'),
         '-Dbc.game.maps='+project.property('maps'),
         '-Dbc.server.save-file='+project.property('replay')
     ]

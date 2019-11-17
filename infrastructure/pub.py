@@ -45,7 +45,7 @@ def pub(project_id, topic_name):
 
     # Data sent to Cloud Pub/Sub must be a bytestring.
     #data = b"helloworld"
-    data = b"{\"gametype\":\"scrimmage\",\"gameid\":\"1\",\"player1\":\"helloworld\",\"player2\":\"helloworld\"}"
+    data = b"{\"gametype\":\"scrimmage\",\"gameid\":\"1\",\"player1\":\"helloworld\",\"player2\":\"helloworld\",\"maps\":\"maptest\",\"replay\":\"abcdefg\"}"
 
     # Keep track of the number of published messages.
     ref = dict({"num_messages": 0})

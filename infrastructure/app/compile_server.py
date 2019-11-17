@@ -69,8 +69,10 @@ def compile_worker(submissionid):
         if result[0] != 0:
             compile_log_error(submissionid, 'Could not decompress source file')
 
+        # Update distribution
         util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
 
+        # Execute compilation
         result = util.monitor_command(
             ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
             cwd=rootdir,
@@ -79,17 +81,9 @@ def compile_worker(submissionid):
 
         # Only one package allowed per submission
         if result[0] == 0 and len(packages) == 1:
-
-            # The compilation succeeded; rename package to submission id
-            try:
-                if packages[0] != submissionid:
-                    os.rename(os.path.join(classdir, packages[0]), os.path.join(classdir, submissionid))
-            except:
-                compile_log_error(submissionid, 'Could not rename package after compilation')
-
             # Compress compiled classes
             result = util.monitor_command(
-                ['zip', '-r', 'player.zip', submissionid],
+                ['zip', '-r', 'player.zip', packages[0]],
                 cwd=classdir,
                 timeout=TIMEOUT_COMPILE)
 
@@ -109,8 +103,8 @@ def compile_worker(submissionid):
         # Clean up working directory
         try:
             shutil.rmtree(sourcedir)
-            shutil.rmtree(builddir)
             os.remove(os.path.join(rootdir, 'source.zip'))
+            shutil.rmtree(builddir)
         except:
             logging.warning('Could not clean up compilation directory')
 

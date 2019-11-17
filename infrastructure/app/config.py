@@ -26,8 +26,7 @@ TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 90   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
-PATH_DIST   = '/app/bc20-dist'
-PATH_ENGINE = os.path.join(PATH_DIST, 'engine.jar')
+GAME_WINNER = "^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$"
 
 
 # Compilation API specifications

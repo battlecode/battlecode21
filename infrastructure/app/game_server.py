@@ -6,7 +6,7 @@ from config import *
 import sys, os, shutil
 import logging
 import requests
-import json
+import json, re
 from google.cloud import storage
 
 
@@ -35,6 +35,22 @@ def game_worker(gameinfo):
         player1:  string, id of red player submission
         player2:  string, id of blue player submission
         maps:     string, comma separated list of maps
+        replay:   string, a unique identifier for the name of the replay
+
+    Filesystem structure:
+    /box/
+        `-- classes/
+        |   `-- player1.zip
+        |   `-- player2.zip
+        |   `-- player1/
+        |   |   `-- <player1 package>/
+        |   |       `-- all compiled .class files in player1.zip
+        |   `-- player2/
+        |       `-- <player2 package>/
+        |           `-- all compiled .class files in player2.zip
+        `-- build/
+        |   `-- some nonsense that gradle creates
+        `-- replay.bc20
     """
 
     client = storage.Client()
@@ -47,84 +63,110 @@ def game_worker(gameinfo):
         player1  = gameinfo['player1']
         player2  = gameinfo['player2']
         maps     = gameinfo['maps']
+        replay   = gameinfo['replay']
     except:
         game_log_error(gametype, gameid, 'Game information in incorrect format')
 
-    # Filesystem structure:
-    # /box/
-    #     `-- player1.zip
-    #     `-- player2.zip
-    rootdir = os.path.join('/', 'box')
+    rootdir  = os.path.join('/', 'box')
+    classdir = os.path.join(rootdir, 'classes')
+    builddir = os.path.join(rootdir, 'build')
 
-    # Obtain player executables
     try:
-        os.mkdir(rootdir)
-        with open(os.path.join(rootdir, 'player1.zip'), 'wb') as file_obj:
-            bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
-        with open(os.path.join(rootdir, 'player2.zip'), 'wb') as file_obj:
-            bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
-    except:
-        game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
+        # Obtain player executables
+        try:
+            os.mkdir(classdir)
+            with open(os.path.join(classdir, 'player1.zip'), 'wb') as file_obj:
+                bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
+            with open(os.path.join(classdir, 'player2.zip'), 'wb') as file_obj:
+                bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
+        except:
+            game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
 
-    result = util.monitor_command(
-        ['git', 'pull'],
-        cwd=PATH_DIST,
-        timeout=TIMEOUT_PULL)
+        # Decompress zip archives of player classes
+        try:
+            # Unzip player 1
+            result = util.monitor_command(
+                ['unzip', 'player1.zip', '-d', 'player1'],
+                cwd=classdir,
+                timeout=TIMEOUT_UNZIP)
+            if result[0] != 0:
+                raise RuntimeError
+            # Unzip player 2
+            result = util.monitor_command(
+                ['unzip', 'player2.zip', '-d', 'player2'],
+                cwd=classdir,
+                timeout=TIMEOUT_UNZIP)
+            if result[0] != 0:
+                raise RuntimeError
+        except:
+            game_log_error(gametype, gameid, 'Could not decompress player zips')
 
-    # Decompress zip archives of player classes
-    try:
+        # Determine player packages
+        try:
+            package1 = os.listdir(os.path.join(classdir, 'player1'))
+            assert (len(package1) == 1)
+            package1 = package1[0]
+            package2 = os.listdir(os.path.join(classdir, 'player2'))
+            assert (len(package2) == 1)
+            package2 = package2[0]
+        except:
+            game_log_error(gametype, gameid, 'Could not determine player packages')
+
+        # Update distribution
+        util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+
+        # Execute game
         result = util.monitor_command(
-            ['unzip', 'player1.zip', '-d', player1],
+            ['./gradlew', 'run',
+                '-PteamA={}'.format(package1),
+                '-PteamB={}'.format(package2),
+                '-Pmaps={}'.format(maps),
+                '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
+                '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
+                '-Preplay=replay.bc20'
+            ],
             cwd=rootdir,
-            timeout=TIMEOUT_UNZIP)
+            timeout=TIMEOUT_GAME)
+
         if result[0] != 0:
-            raise RuntimeError
-        result = util.monitor_command(
-            ['unzip', 'player2.zip', '-d', player2],
-            cwd=rootdir,
-            timeout=TIMEOUT_UNZIP)
-        if result[0] != 0:
-            raise RuntimeError
-    except:
-        game_log_error(gametype, gameid, 'Could not decompress player zips')
+            game_log_error(gametype, gameid, 'Game execution had non-zero return code')
 
-    util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+        # Upload replay file
+        bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
+        try:
+            with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
+                bucket.blob('{}.bc20'.format(replay)).upload_from_file(file_obj)
+        except:
+            game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
-    # TODO: Check command args
-    # TODO: do we need to install gradle in the image?
-    result = util.monitor_command(
-        ['./gradlew', 'run',
-            '-PteamA={}'.format(player1),
-            '-PteamB={}'.format(player2),
-            '-Pmaps={}'.format(maps),
-            '-PclassLocation={}'.format(classDir),
-            '-Preplay=replay.bc20'
-        ]
-        cwd=rootdir,
-        timeout=TIMEOUT_GAME)
+        # Interpret game result to send to database
+        server_output = result[1].decode().split('\n')
 
-    if result[0] != 0:
-        game_log_error(gametype, gameid, 'Game execution had non-zero return code')
+        winner = None
+        try:
+            while True:
+                if re.fullmatch(GAME_WINNER, server_output[-1]):
+                    winner = server_output[-1][server_output[-1].rfind('wins')-3]
+                    break
+                server_output.pop()
+        except:
+            game_log_error(gametype, gameid, 'Could not determine winner')
+        finally:
+            if winner == 'A':
+                game_db_report(gametype, gameid, GAME_REDWON)
+            elif winner == 'B':
+                game_db_report(gametype, gameid, GAME_BLUEWON)
+            else:
+                raise RuntimeError
 
-    # TODO: Check replay file path
-    bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
-    try:
-        with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
-            bucket.blob('{}-{}.bc20'.format(gametype, gameid)).upload_from_file(file_obj)
-    except:
-        game_log_error(gametype, gameid, 'Could not send replay file to bucket')
-
-    # TODO: Interpret game result to send to database
-    if True:
-        game_db_report(gametype, gameid, GAME_REDWON)
-    else:
-        game_db_report(gametype, gameid, GAME_BLUEWON)
-
-    # Clean up working directory
-    try:
-        shutil.rmtree(rootdir)
-    except:
-        logging.warning('Could not clean up game execution directory')
+    finally:
+        # Clean up working directory
+        try:
+            shutil.rmtree(classdir)
+            shutil.rmtree(builddir)
+            os.remove(os.path.join(rootdir, 'replay.bc20'))
+        except:
+            logging.warning('Could not clean up game execution directory')
 
 
 if __name__ == '__main__':
