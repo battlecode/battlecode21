@@ -30,23 +30,27 @@ def compile_worker(submissionid):
     Performs a compilation job as specified in submissionid
     Message format: {submissionid}
     A single string containing the submissionid
+
+    Filesystem structure:
+    /box/
+        `-- source.zip
+        `-- src/
+        |   `-- <package name>/
+        |       `-- all .java sources
+        `-- build/
+            `-- classes/
+                `-- <package-name>/
+                |   `-- all compiled .class files
+                `-- player.zip
     """
 
     client = storage.Client()
     bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
 
-    # Filesystem structure:
-    # /box/
-    #     `-- source.zip
-    #     `-- src/
-    #     |      `-- all contents of source.zip
-    #     |      `-- <robotname>
-    #     |      |      `-- RobotPlayer.java (or whatever the main class should be named)
-    #     |      |      `-- Other things
-    #     `-- player.zip
     rootdir   = os.path.join('/', 'box')
     sourcedir = os.path.join(rootdir, 'src')
     builddir  = os.path.join(rootdir, 'build')
+    classdir  = os.path.join(builddir, 'classes')
 
     try:
         # Obtain compressed archive of the submission
@@ -71,17 +75,28 @@ def compile_worker(submissionid):
             ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
             cwd=rootdir,
             timeout=TIMEOUT_COMPILE)
+        packages = os.listdir(classdir)
 
-        if result[0] == 0:
+        # Only one package allowed per submission
+        if result[0] == 0 and len(packages) == 1:
+
+            # The compilation succeeded; rename package to submission id
+            try:
+                if packages[0] != submissionid:
+                    os.rename(os.path.join(classdir, packages[0]), os.path.join(classdir, submissionid))
+            except:
+                compile_log_error(submissionid, 'Could not rename package after compilation')
+
+            # Compress compiled classes
             result = util.monitor_command(
-                ['zip', '-r', 'player.zip', 'classes'],
-                cwd=builddir,
+                ['zip', '-r', 'player.zip', submissionid],
+                cwd=classdir,
                 timeout=TIMEOUT_COMPILE)
 
-            # The compilation succeeded; send the classes to the bucket for storage
+            # Send package to bucket for storage
             if result[0] == 0:
                 try:
-                    with open(os.path.join(builddir, 'player.zip'), 'rb') as file_obj:
+                    with open(os.path.join(classdir, 'player.zip'), 'rb') as file_obj:
                         bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
                 except:
                     compile_log_error(submissionid, 'Could not send executable to bucket')
