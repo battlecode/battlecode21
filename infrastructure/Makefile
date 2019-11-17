@@ -3,8 +3,8 @@
 # Basic Dockerfile configuration
 basic:
 	>  Dockerfile echo "FROM ubuntu:18.04"
-	>> Dockerfile echo "COPY servers/app /app"
-	>> Dockerfile echo "COPY servers/box /box"
+	>> Dockerfile echo "COPY app /app"
+	>> Dockerfile echo "COPY box /box"
 	>> Dockerfile echo "ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json"
 	>> Dockerfile echo "RUN apt-get update && apt-get -y install python3 python3-pip openjdk-8-jdk git zip"
 	>> Dockerfile echo "RUN pip3 install --upgrade requests google-cloud-pubsub google-cloud-storage"
