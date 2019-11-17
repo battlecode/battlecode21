@@ -270,7 +270,7 @@ class TeamViewSet(viewsets.GenericViewSet,
     def ranking(self, request, league_id, pk=None):
         cur_place = 0
         latest_mu = None
-        for team in self.get_queryset():
+        for team in Team.objects.order_by('-mu'):
             if latest_mu is None or team.mu != latest_mu:
                 cur_place += 1
                 latest_mu = team.mu
@@ -663,8 +663,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
                     # update rankings based on trueskill algoirthm
                     # get team info
-                    rteam = self.get_team(leauge_id, scrimmage.red_team_id)
-                    bteam = self.get_team(leauge_id, scrimmage.blue_team_id)
+                    rteam = self.get_team(league_id, scrimmage.red_team_id)
+                    bteam = self.get_team(league_id, scrimmage.blue_team_id)
                     won = rteam if sc_status == "redwon" else bteam
                     lost = rteam if sc_status == "bluewon" else bteam
                     
@@ -678,15 +678,15 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     muL = lost.mu
                     sdL = lost.sigma
 
-                    winner = trueskill.rating(mu=muW, sigma=sdW)
-                    loser = trueskill.rating(mu=muL, sigma=sdL)
+                    winner = trueskill.Rating(mu=muW, sigma=sdW)
+                    loser = trueskill.Rating(mu=muL, sigma=sdL)
 
                     # applies trueskill algorithm & update teams with new scores
                     wScore, lScore = trueskill.rate_1vs1(winner, loser)
                     won.mu = wScore.mu
                     won.sigma = wScore.sigma
-                    won.mu = wScore.mu
-                    won.sigma = wScore.sigma
+                    lost.mu = lScore.mu
+                    lost.sigma = lScore.sigma
 
                     won.save()
                     lost.save()
