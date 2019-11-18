@@ -23,7 +23,7 @@ PUBSUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
 TIMEOUT_UNZIP   = 30   # Maximum execution time for unzipping submission archive
 TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
-TIMEOUT_COMPILE = 90   # Maximum execution time for submission compilation
+TIMEOUT_COMPILE = 300  # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
 GAME_WINNER = "^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$"
