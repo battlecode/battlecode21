@@ -144,7 +144,7 @@ class Submissions extends Component {
             let status_str = ""
             switch (this.state.status) {
                 case 0:
-                    status_str = "Compiling!"
+                    status_str = "Currently compiling..."
                     break
                 case 1:
                     status_str = "Successfully compiled!"
@@ -159,15 +159,28 @@ class Submissions extends Component {
                     status_str = ""
                     break
             }
+            let btn_class = "btn btn" 
+            let file_label = "No file chosen."
+            let button = <button disabled style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+            if (this.state.selectedFile !== null) {
+                btn_class += " btn-info btn-fill" 
+                file_label = this.state.selectedFile["name"]
+                button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+            }
+
+
             return (
                 <div className="card">
                     <div className="header">
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        <input type="file" accept=".zip" onChange={this.onChangeHandler}/>
-                        <button onClick={this.uploadData} className="btn btn-info btn-fill"> Submit </button>
-                        <p> {status_str} </p>
+                        <label for="file_upload">
+                            <div class="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
+                        </label>
+                        <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
+                        {button}
+                        <p class="text-center category"> {status_str} </p>
                     </div>
                 </div>
             )
