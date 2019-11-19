@@ -7,18 +7,7 @@ import Api from '../api';
 
 class Submissions extends Component {
 
-    uploadData = () => {
-        Api.newSubmission(this.state.selectedFile, null)
-    }
-
-    onChangeHandler=event=>{
-        console.log(event.target.files[0])
-        this.setState({
-            selectedFile: event.target.files[0],
-            loaded: 0,
-        })
-    }
-
+    //----INITIALIZATION----
     constructor(props) {
         super(props);
         this.state = {
@@ -54,10 +43,34 @@ class Submissions extends Component {
         }.bind(this));
     }
 
+    //----UPLOADING FILES----
+
+    // makes an api call to upload the selected file
+    uploadData = () => {
+        Api.newSubmission(this.state.selectedFile, null)
+    }
+
+    // change handler called when file is selected
+    onChangeHandler = event => {
+        console.log(event.target.files[0])
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+
+    //---GETTING TEAMS SUBMISSION DATA----
+
+    // called when status of teams compilation request is received 
+    // 0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
     gotStatus = (data) => {
         this.setState(data)
     }
 
+    // called when submission data is initially received
+    // this will be maps of the label of type of submission to submission id
+    // this function then makes calles to get the specific data for each submission
     gotSubmissions = (data) => {
         let keys_last = ['last_1', 'last_2', 'last_3']
         let keys_tour = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint']
@@ -66,7 +79,8 @@ class Submissions extends Component {
         this.setState({numTourSubmissions: this.submissionHelper(keys_tour, data)})
     }
 
-    //makes api call for submission with each key in data, returns number not null
+    // makes api call for submission with each key in data, returns the number of submissions 
+    // that actually exist in the data
     submissionHelper(keys, data) {
         let null_count = 0
         for (var i = 0; i < keys.length; i++) {
@@ -79,6 +93,7 @@ class Submissions extends Component {
         return null_count
     }
 
+    // sets submission data for the given key, if all submissions have been found force updates state
     setSubmissionData = (key, data) => {
         if (key.substring(0, 4) == "last") {
             if (this.state.lastSubmissions === null){
@@ -126,9 +141,14 @@ class Submissions extends Component {
         }
     }
 
+    // Downloads the file for given submission id
+    onSubFileRequest = (subId, fileNameAddendum) => {
+        Api.downloadSubmission(subId, fileNameAddendum, null)
+    }
+
+    //----PERMISSIONS----
     // enable iff game active or user is staff
-    isSubmissionEnabled()
-    {
+    isSubmissionEnabled() {
         if (this.state.user.is_staff == true) {
             return true;
         }
@@ -137,6 +157,8 @@ class Submissions extends Component {
         }
         return false;
     }
+
+    //----RENDERING----
 
     // return div for submitting files, should be able to disable this when submissions are not being accepts
     renderHelperSubmissionForm() {
@@ -175,8 +197,8 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        <label for="file_upload">
-                            <div class="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
+                        <label htmlFor="file_upload">
+                            <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
                         </label>
                         <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
                         {button}
@@ -199,6 +221,7 @@ class Submissions extends Component {
         }
     }
 
+    //reder helper for table containing the team's latest submissions
     renderHelperLastTable() {
         if (this.state.numLastSubmissions == 0) {
             if (this.state.status == 0) {
@@ -215,10 +238,11 @@ class Submissions extends Component {
                 )  
             }
         } else if (this.state.lastSubmissions !== null) {
-            const submissionRows = this.state.lastSubmissions.map(submission => {
+            const submissionRows = this.state.lastSubmissions.map((submission, index) => {
                 return (
                     <tr key={ submission.id }>
                         <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
+                        <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button> </td>                        
                     </tr>
                 )
             })
@@ -247,6 +271,7 @@ class Submissions extends Component {
         
     }
 
+    //reder helper for table containing the team's tournament submissions
     renderHelperTourTable() {
         if (this.state.numLastSubmissions == 0) {
             return (
@@ -260,6 +285,7 @@ class Submissions extends Component {
                     <tr key={ submission[1].id }>
                         <td>{ (submission[0]) }</td>
                         <td>{ (new Date(submission[1].submitted_at)).toLocaleString() }</td>
+                        <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission[1].id, submission[0])}>Download</button> </td>
                     </tr>
                 )
             })

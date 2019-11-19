@@ -33,8 +33,25 @@ class Api {
     });
   }
 
-  static downloadSubmission(submissionId, callback) {
-
+  static downloadSubmission(submissionId, fileNameAddendum, callback) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${submissionId}/retrieve_file/`).done((data, status) => {
+      // have to use fetch instead of ajax here since we want to download file
+      fetch(data['download_url']).then(resp => resp.blob())
+      .then(blob => {
+        //code to download the file given by the url
+        const objUrl = window.URL.createObjectURL(blob);
+        const aHelper = document.createElement('a');
+        aHelper.style.display = 'none';
+        aHelper.href = objUrl;
+        aHelper.download = `${fileNameAddendum}_battlecode_source.zip`;
+        document.body.appendChild(aHelper);
+        aHelper.click();
+        window.URL.revokeObjectURL(objUrl);
+      })
+    }).fail((xhr, status, error) => {
+      console.log(error)
+      callback('there was an error', false);
+    });
   }
 
   static getTeamSubmissions(callback) {
