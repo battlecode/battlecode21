@@ -48,7 +48,7 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Battlecode 2020 will consist of six tournaments, all in January. Exact dates and eligibility TBD.
+                                        Battlecode 2020 will consist of six tournaments, all in January. Exact dates and eligibility TBD. It will likely consist of the following six tournaments.
                                     </p>
                                     <p>
                                         <ul>
@@ -71,7 +71,6 @@ class Tournaments extends Component {
                                                 <b>Final Tournament.</b>
                                             </li>
                                         </ul>
-
                                         This page will be updated with the brackets for each of the tournaments.
                                        </p> 
 
@@ -110,7 +109,7 @@ Each match within a tournament will consist of 3 games on 3 different maps, and 
                                 </div>
                                 <div className="content">
                                     <p>
-TBD
+TBD.
 
 
 

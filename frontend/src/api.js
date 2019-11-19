@@ -456,9 +456,10 @@ class Api {
   }
 
   static getTournaments(callback) {
-    const tournaments = [
-      { name: 'final', challonge: 'bc_19_finals' },
-    ];
+    // const tournaments = [
+    //   { name: 'final', challonge: 'bc_19_finals' },
+    // ];
+    const tournaments = [];
 
     callback(tournaments);
   }
