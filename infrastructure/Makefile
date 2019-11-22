@@ -6,18 +6,13 @@ basic:
 
 # Compilation server
 compile: basic
-	>  compile.dockerfile echo "FROM bc20-basic"
-	>> compile.dockerfile echo "CMD ./app/compile_server.py"
-	docker build -f compile.dockerfile -t bc20-compile .
-	rm compile.dockerfile
+	docker build -f compile.Dockerfile -t bc20-compile .
 
 # Game runner server
 game: basic
-	>  game.dockerfile echo "FROM bc20-basic"
-	>> game.dockerfile echo "CMD ./app/game_server.py"
-	docker build -f game.dockerfile -t bc20-game .
-	rm game.dockerfile
+	docker build -f game.Dockerfile -t bc20-game .
 
+# Push to google container registry
 push: compile game
 	docker tag bc20-compile gcr.io/battlecode18/bc20-compile
 	docker tag bc20-game    gcr.io/battlecode18/bc20-game

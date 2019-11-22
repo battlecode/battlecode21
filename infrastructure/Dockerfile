@@ -1,8 +1,10 @@
 FROM ubuntu:18.04
 
+# Insert codebase
 COPY . /
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
 
+# Install software dependencies
 RUN apt-get update \
   && apt-get install -y \
     git \
@@ -17,13 +19,14 @@ RUN pip3 install --upgrade \
 
 WORKDIR box
 
-RUN chmod 600 .ssh/id_rsa
-RUN mkdir -p ~/.ssh
-RUN ["/bin/bash", "-c", "set -o pipefail \
-  && ssh-keyscan github.com > githubKey \
-  && ssh-keygen -lf githubKey | grep \"SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8\" \
+# Configure SSH to GitHub
+RUN chmod 600 .ssh/id_rsa && mkdir -p ~/.ssh
+RUN ssh-keyscan github.com > githubKey \
+  && ssh-keygen -lf githubKey | grep "SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8" \
   && cat githubKey >> ~/.ssh/known_hosts \
-  && rm githubKey"]
-RUN ./gradlew
+  && rm githubKey
+
+# Initialise gradle
+RUN ./gradlew build && rm -rf build src
 
 WORKDIR /

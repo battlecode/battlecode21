@@ -1,4 +1,6 @@
-Dockerfile
+*Dockerfile
 Makefile
 README.md
 pub.py
+.dockerignore
+.gitignore
