@@ -54,7 +54,7 @@ class TeamSubmissionAdmin(admin.ModelAdmin):
 
 @admin.register(Scrimmage)
 class ScrimmageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'league', 'red_team', 'blue_team', 'ranked', 'status',
+    list_display = ('id', 'league', 'red_team', 'red_mu', 'blue_team', 'blue_mu', 'ranked', 'status',
         'requested_by', 'requested_at', 'started_at', 'updated_at')
     list_filter = ('league', 'red_team', 'blue_team')
 

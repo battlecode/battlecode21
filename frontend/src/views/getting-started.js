@@ -26,8 +26,7 @@ class GettingStarted extends Component {
                                 <div className="content">
                                     <br/>
                                 <p>
-                                All of the world's turtles are dying, and it is up you to save them!
-                                Follow this short guide to get started with Battlecode 2020.
+                                    The Battlecode 2020 game will be released on January 6, 2020! Stay tuned for further details.
                                 </p>
 
                                 <h4>
@@ -40,7 +39,7 @@ class GettingStarted extends Component {
 
                                 </p>
                                 <p>
-                                    This year's game is about turtles. You can read the <a href='battlecode20-game-specs'>full game specifications here</a>.
+                                    This year's game is about <i>[redacted]</i>. When the game is released, you will be able to read the <a href='battlecode20-game-specs'>full game specifications here</a>.
                                     Before you start developing your bot, it is highly recommended to read the full game specifications carefully.
                                     To simply get up and running, however, it is sufficient to skim the document.
                                 </p>
@@ -60,25 +59,9 @@ class GettingStarted extends Component {
                                     Installation
                                 </h4>
                                 <p>
-                                    In Battlecode 2020, you will write the code for your bots on your local computer, and to be able to
-                                    run and view games, you need to install the developer tools.
+                                    Once the 2020 game is released, we will have detailed installation instructions here! In the meantime, you can install Java 8, which will be the official language of Battlecode 2020.
                                 </p>
 
-                                <h4>
-                                    Your First Bot and Scrimmage
-                                </h4>
-                                <p>
-                                    Follow these steps to run your first game using a sample bot, and upload it, and then scrimmage Teh Devs.
-                                </p>
-
-                                <h4>
-                                    The Community
-                                </h4>
-                                <p>
-                                    Join the Discord channel! A big part of competing in battlecode is discussing strategies with fellow
-                                    contestants. The Discord is also a place for you to get help, both from fellow contestants and
-                                    Battlecode devs. We look forward to chatting with you!
-                                </p>
 
                                 </div>
                             </div>

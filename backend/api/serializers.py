@@ -75,8 +75,8 @@ class FullUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
-            'username', 'avatar', 'bio', 'country')
-        read_only_fields = ('url', 'registration_key')
+            'username', 'avatar', 'bio', 'country', 'is_staff')
+        read_only_fields = ('url', 'registration_key', 'is_staff')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -129,14 +129,14 @@ class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
 class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
     serializer_url_field = LeagueHyperlinkedIdentityField
     team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field='id')
-    compiling = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_1 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_2 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    last_3 = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_sprint = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_seed = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_qual = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
-    tour_final = serializers.SlugRelatedField(queryset=Submission.objects.all(), slug_field='id')
+    compiling = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_1 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_2 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    last_3 = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_sprint = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_seed = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
 
     class Meta:
         model = TeamSubmission
@@ -152,7 +152,7 @@ class ScrimmageSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Scrimmage
-        fields = ('url', 'id', 'league', 'red_team', 'blue_team', 'ranked',
+        fields = ('url', 'id', 'league', 'red_team', 'red_mu', 'blue_team', 'blue_mu', 'ranked',
             'status', 'replay', 'requested_by', 'requested_at', 'started_at', 'updated_at')
         read_only_fields = ('url', 'replay', 'requested_at', 'started_at', 'updated_at')
 

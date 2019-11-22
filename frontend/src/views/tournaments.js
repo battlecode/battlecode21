@@ -48,30 +48,29 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Battlecode 2020 will consist of six tournaments:
+                                        Battlecode 2020 will consist of six tournaments, all in January. Exact dates and eligibility TBD. It will likely consist of the following six tournaments.
                                     </p>
                                     <p>
                                         <ul>
                                             <li>
-                                                <b>Sprint Tournament.</b> January smth. Everyone is eligible. Deadline to submit code: 8pm smth.
+                                                <b>Sprint Tournament.</b>
                                             </li>
                                             <li>
-                                                <b>Seeding Tournament.</b> January smth. Everyone is eligible. Deadline to submit code: 8pm smth.
+                                                <b>Seeding Tournament.</b> 
                                             </li>
                                             <li>
-                                                <b>Qualifying Tournament.</b> January smth. Everyone is eligible. 
+                                                <b>Qualifying Tournament.</b>
                                             </li>
                                             <li>
-                                                <b>Newbie Tournament.</b> January smth. Everyone is eligible.
+                                                <b>Newbie Tournament.</b>
                                             </li>
                                             <li>
-                                                <b>High School Tournament.</b> January smth. Everyone is eligible.
+                                                <b>High School Tournament.</b>
                                             </li>
                                             <li>
-                                                <b>Final Tournament.</b> January smth. Everyone is eligible.
+                                                <b>Final Tournament.</b>
                                             </li>
                                         </ul>
-
                                         This page will be updated with the brackets for each of the tournaments.
                                        </p> 
 
@@ -82,10 +81,10 @@ This includes the Qualifying Tournament - you can participate even if you miss e
 
                                 </div>
                             </div>
-
+{/* 
                             { this.state.tournaments.map(t => 
                                 <Tournament name={ t.name } challonge={ t.challonge } />
-                            )}
+                            )} */}
 
                             <div className="card">
                                 <div className="header">
@@ -110,15 +109,7 @@ Each match within a tournament will consist of 3 games on 3 different maps, and 
                                 </div>
                                 <div className="content">
                                     <p>
-Teams must consist entirely of active students to be eligible for the Seeding, Qualifying, and Final Tournaments. An active student is a person who is currently enrolled as a full-time student in an eligible degree or certificate program. As an exception, we consider those transitioning immediately after high school and formally committed to such a program to be active students, including those taking gap years or in compulsory military service.
-</p><p>
-Active students also include those who are currently in high school (or some equivalent of secondary education or lower). Active MIT students who have never competed in Battlecode before (submitted a bot) are eligible for the Newbie Tournament. U.S. high school students and earlier are eligible for the High School Tournament.
-
-</p><p>
-Teams consisting entirely of US students compete in the US Qualifying Tournament. If your team has at least one non-US competitor, your team will compete in the International Qualifying Tournament. A US student is a student who attends a school in the United States.
-
-</p><p>
-If your team does not consist of active students, you may still compete in Battlecode for fun! All teams are allowed to scrimmage, and compete in the Sprint Tournament or any other bonus tournaments we may decide to hold. Contact us if you are unsure of your eligibility.
+TBD.
 
 
 

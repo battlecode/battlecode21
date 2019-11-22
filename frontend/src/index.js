@@ -32,17 +32,50 @@ import Api from './api';
 class App extends Component {
   constructor() {
     super();
-    this.state = { logged_in: null };
+    this.state = { logged_in: null ,
+      user: {},
+      league: {}};
+    
   }
 
   componentDidMount() {
     Api.loginCheck((logged_in) => {
       this.setState({ logged_in });
+      Api.getUserProfile(function (u) {
+        console.log(u);
+        this.setState({ user: u });
+        if (this.state.user.is_staff == true)
+        {
+            console.log("user is staff");
+            // var is_staff_msg = document.getElementById("is_staff_msg");
+            // is_staff_msg.innerHTML = "Staff";
+        }
+    }.bind(this));
+    Api.getLeague(function (l) {
+      console.log(l);
+      this.setState({ league: l});
+  }.bind(this));
     });
+  }
+
+  isSubmissionEnabled()
+  {
+      if (this.state.user.is_staff == true) {
+          return true;
+      }
+      if (this.state.league.game_released == true) {
+          return true;
+      }
+      return false;
   }
 
   render() {
     if (this.state.logged_in) {
+      let scrimmage_string = "";
+      if (this.isSubmissionEnabled()) {
+        scrimmage_string = <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />
+      }
+
       return (
         <div className="wrapper">
           <SideBar />
@@ -51,7 +84,7 @@ class App extends Component {
             <Switch>
               <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
               <Route path={`${process.env.PUBLIC_URL}/home`} component={Home} />
-              <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />
+              { scrimmage_string }
               <Route path={`${process.env.PUBLIC_URL}/updates`} component={Updates} />
               <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
               <Route path={`${process.env.PUBLIC_URL}/team`} component={Team} />
@@ -69,7 +102,9 @@ class App extends Component {
           </div>
         </div>
       );
-    } if (this.state.logged_in === false) {
+    
+  }
+  if (this.state.logged_in === false) {
       return (
         <div className="wrapper">
           <SideBar />

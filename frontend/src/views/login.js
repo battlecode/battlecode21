@@ -117,7 +117,7 @@ class LoginRegister extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Battlecode Turtle</h1>
+        }}>Battlecode 2020</h1>
         <p style={{
           textAlign: 'center',
           fontWeight: 'bold',

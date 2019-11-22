@@ -26,8 +26,9 @@ class Resources extends Component {
                                 <p className='text-center'>
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/battlecode20-game-specs.html'>Read the Game Specifications</a>
                                 </p>
-
-
+                                <p>
+                                The game specifications will be released on January 6.
+                                </p>
                                 </div>
                             </div>
 
@@ -43,7 +44,7 @@ class Resources extends Component {
                                 </p>
                                 <p>
                                     You can also run the visualizer locally, which, for example, has the added benefit of automatically reloading replay files.
-                                    Go to the GitHub.
+                                    The visualizer will not be released until the game is released.
                                 </p>
 
 
@@ -55,7 +56,7 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Lectures are held at MIT in 26-100 between 7 and 9 pm every weekday the first two weeks of IAP.
+                                    Lectures are held at MIT every weekday the first two weeks of IAP, exact time and location to be determined.
                                 </p>
                                 <p>
                                     All lectures are streamed live on <a href='https://twitch.tv/mitbattlecode'>our Twitch account</a>, and
@@ -71,13 +72,13 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Starter pack.
+                                    We will have a starter pack containing all code that you need to get started.
                                 </p>
                                 <p>
-                                    All of the code powering Battlecode 2020 is open source on GitHub, in the <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
+                                    All of the code powering Battlecode 2020 will be open source on GitHub, in the (currently private) <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
                                 </p>
                                 <p>
-                                    Third-party tools.
+                                    We will also list helpful third-party tools here, as they start popping up.
                                 </p>
 
 
@@ -99,8 +100,6 @@ class Resources extends Component {
 
                                             <li>"read the readme" — Quinn.</li>
 
-                                            <li>"donut give up; bee-leaf in yourself!" — darren.</li>
-
                                             <li>"follow your dreams"</li>
 
                                             <li>"All successful people started with nothing more than a goal." - ezou.</li>
@@ -111,7 +110,7 @@ class Resources extends Component {
 
                                             <li>"keep trying"</li>
 
-					                                  <li>"The best way to realize your dreams is to wake up." -jett.</li>
+					                        <li>"The best way to realize your dreams is to wake up." -jett.</li>
 
                                         </ul>
                                     </p>

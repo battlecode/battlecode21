@@ -169,7 +169,7 @@ class InstrCard extends UpdateCard {
                 </div>
                 <div className="content">
                     <p>
-                        🐢
+                        🍜
                     </p>
                 </div>
             </div>

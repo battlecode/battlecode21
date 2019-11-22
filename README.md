@@ -8,8 +8,7 @@
 - `/frontend`: Frontend dashboard in React
 - `/engine`: Game engine in Java
 - `/schema`: Game serialization schema (basically, an encoding of all units and events in a game)
-- `/client`: Game client (visualizer) in TypeScript
-- `/playback`: Helper library for the client. We might want to integrate this with the client at some point
+- `/client`: Game client (visualizer and playback) in TypeScript
 - `/example-bots`: A bunch of example bots for the game!
 
 ## Development
@@ -18,7 +17,7 @@
 
 To get set up, make sure you have [Node](https://nodejs.org/en/download/) and [Docker](https://docs.docker.com/docker-for-mac/install/) installed. For Windows, you will need Docker Toolbox. If you have Windows, I'd also recommend installing [Cygwin](https://www.cygwin.com/), since we have some bash scripts that won't work with the standard Windows command prompt. (Docker is not strictly necessary, but it makes stuff easier, especially if you want to work on the backend of the website.)
 
-First, install all required packages: run `npm install` in each of the four folders `/schema`, `/playback`, `/client`, `/frontend`.
+First, install all required packages: run `npm install` in each of the four folders `/schema`, `/client/playback`, `/client/visualizer`, `/frontend`.
 
 Then, you can start the frontend by running `npm run start` in the `/frontend` folder. (If this fails on Windows, make sure you are using Cygwin.) After this step, you should be able to view the website at http://localhost:3000.
 

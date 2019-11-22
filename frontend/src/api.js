@@ -1,22 +1,79 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-//const URL = 'https://se19.battlecode.org';
+//const URL = 'https://2020.battlecode.org';
 const URL = 'http://localhost:8000'; // DEVELOPMENT
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
-  static testSubmissions(callback){
-    console.log("hiii")
+  
+  //----SUBMISSIONS----
+
+  //uploads a new submission to the google cloud bucket
+  static newSubmission(submissionfile, callback){
+    // submissionfile.append('_method', 'PUT');
+    console.log('newSubmission')
+    // get the url from the real api
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
-      team_id: Cookies.get('team_id')
+      team: Cookies.get('team_id')
     }).done((data, status) => {
-      console.log(status)
-      callback(data)
-    })
+      console.log(data['upload_url'])
+      $.ajax({
+        url: data['upload_url'], 
+        method: "PUT",
+        data: submissionfile,
+        processData: false,
+        contentType: false
+      })
+    }).fail((xhr, status, error) => {
+      console.log(error)
+      callback('there was an error', false);
+    });
   }
+
+  static downloadSubmission(submissionId, fileNameAddendum, callback) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${submissionId}/retrieve_file/`).done((data, status) => {
+      // have to use fetch instead of ajax here since we want to download file
+      fetch(data['download_url']).then(resp => resp.blob())
+      .then(blob => {
+        //code to download the file given by the url
+        const objUrl = window.URL.createObjectURL(blob);
+        const aHelper = document.createElement('a');
+        aHelper.style.display = 'none';
+        aHelper.href = objUrl;
+        aHelper.download = `${fileNameAddendum}_battlecode_source.zip`;
+        document.body.appendChild(aHelper);
+        aHelper.click();
+        window.URL.revokeObjectURL(objUrl);
+      })
+    }).fail((xhr, status, error) => {
+      console.log(error)
+      callback('there was an error', false);
+    });
+  }
+
+  static getTeamSubmissions(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+    static getSubmission(id, callback, callback_data) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${id}/`).done((data, status) => {
+        callback(callback_data, data);
+    });
+  }
+
+
+  static getCompilationStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+  //----TEAM STATS---
 
   static getUpcomingDates(callback) {
     const newState = [
@@ -28,9 +85,9 @@ class Api {
   }
 
   static getTeamMuHistory(callback) {
-    const data = [10, 12, 14, 10, 28, 32, 25, 32];
+   //const data = [10, 12, 14, 10, 28, 32, 25, 32];
 
-    callback(data);
+    callback([]);
   }
 
   static getTeamWinStats(callback) {
@@ -40,11 +97,6 @@ class Api {
     });
   }
 
-  static logout(callback) {
-    Cookies.set('token', '');
-    Cookies.set('refresh', '');
-    callback();
-  }
 
   //get data for team with team_id
   static getTeamById(team_id, callback) {
@@ -78,6 +130,19 @@ class Api {
     });
   }
 
+  //----GENERAL INFO----
+
+  static getLeague(callback) {
+    $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
+      Cookies.set('league_url', data.url);
+      console.log((data.url));
+      $.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+    });
+  }
 
   static getUpdates(callback) {
     if ($.ajaxSettings && $.ajaxSettings.headers) {
@@ -96,6 +161,8 @@ class Api {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
     });
   }
+
+  //----SEARCHING----
 
   static search(query, callback) {
     const encodedQuery = encodeURIComponent(query);
@@ -161,6 +228,8 @@ class Api {
     });
   }
 
+  //---TEAM INFO---
+
   static getUserTeam(callback) {
     $.get(`${URL}/api/userteam/${encodeURIComponent(Cookies.get('username'))}/${LEAGUE}/`).done((data, status) => {
       Cookies.set('team_id', data.id);
@@ -175,7 +244,7 @@ class Api {
     });
   }
 
-    // updates team
+  // updates team
   static updateTeam(params, callback) {
     $.ajax({
       url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/`,
@@ -189,6 +258,73 @@ class Api {
       callback(false);
     });
   }
+
+  //----USER FUNCTIONS----
+
+  static createTeam(team_name, callback) {
+    $.post(`${URL}/api/${LEAGUE}/team/`, { name: team_name }).done((data, status) => {
+      Cookies.set('team_id', data.id);
+      Cookies.set('team_name', data.name);
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  static joinTeam(secret_key, team_name, callback) {
+    $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
+      if (team_data.results.length === 0) return callback(false);
+      $.ajax({
+        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
+        type: 'PATCH',
+        data: { team_key: secret_key },
+      }).done((data, status) => {
+        Cookies.set('team_id', data.id);
+        Cookies.set('team_name', data.name);
+        callback(true);
+      }).fail((xhr, status, error) => {
+        callback(false);
+      });
+    });
+  }
+
+  static leaveTeam(callback) {
+    $.ajax({
+      url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/leave/`,
+      type: 'PATCH',
+    }).done((data, status) => {
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  static getUserProfile(callback) {
+    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
+      Cookies.set('user_url', data.url);
+      $.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+    });
+  }
+
+  static updateUser(profile, callback) {
+    $.ajax({
+      url: Cookies.get('user_url'),
+      data: JSON.stringify(profile),
+      type: 'PATCH',
+      contentType: 'application/json',
+      dataType: 'json',
+    }).done((data, status) => {
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  //----SCRIMMAGING----
 
   static acceptScrimmage(scrimmage_id, callback) {
     $.ajax({
@@ -252,37 +388,6 @@ class Api {
     });
   }
 
-  static getReplayFromURL(url, callback) {
-    // If `https` not in current url, replace `https` with `http` in above
-    if (window.location.href.indexOf('http://') > -1) {
-      url = url.replace('https://', 'http://');
-    }
-
-    const oReq = new XMLHttpRequest();
-    oReq.open('GET', url, true);
-    oReq.responseType = 'arraybuffer';
-
-    oReq.onload = function (oEvent) {
-      callback(new Uint8Array(oReq.response));
-    };
-
-    oReq.send();
-
-
-    // If `https` not in current url, replace `https` with `http` in above
-    if (window.location.href.indexOf('http://') > -1) {
-      url = url.replace('https://', 'http://');
-    }
-
-    $.get(url, (replay, super_sucess) => {
-      $.ajaxSetup({
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-      });
-
-      callback(replay);
-    });
-  }
-
   static getScrimmageHistory(callback) {
     const my_id = parseInt(Cookies.get('team_id'), 10);
     this.getAllTeamScrimmages((s) => {
@@ -306,6 +411,41 @@ class Api {
     });
   }
 
+
+  //----REPLAYS?-----
+
+  static getReplayFromURL(url, callback) {
+    // If `https` not in current url, replace `https` with `http` in above
+    if (window.location.href.indexOf('http://') > -1) {
+      url = url.replace('https://', 'http://');
+    }
+
+    const oReq = new XMLHttpRequest();
+    oReq.open('GET', url, true);
+    oReq.responseType = 'arraybuffer';
+
+    oReq.onload = function (oEvent) {
+      callback(new Uint8Array(oReq.response));
+    };
+
+    oReq.send();
+
+    // If `https` not in current url, replace `https` with `http` in above
+    if (window.location.href.indexOf('http://') > -1) {
+      url = url.replace('https://', 'http://');
+    }
+
+    $.get(url, (replay, super_sucess) => {
+      $.ajaxSetup({
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      });
+
+      callback(replay);
+    });
+  }
+
+  //----TOURNAMENTS----
+
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
@@ -316,74 +456,20 @@ class Api {
   }
 
   static getTournaments(callback) {
-    const tournaments = [
-      { name: 'final', challonge: 'bc_19_finals' },
-    ];
+    // const tournaments = [
+    //   { name: 'final', challonge: 'bc_19_finals' },
+    // ];
+    const tournaments = [];
 
     callback(tournaments);
   }
 
-  static createTeam(team_name, callback) {
-    $.post(`${URL}/api/${LEAGUE}/team/`, { name: team_name }).done((data, status) => {
-      Cookies.set('team_id', data.id);
-      Cookies.set('team_name', data.name);
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
-  }
+  //----AUTHENTICATION----
 
-  static joinTeam(secret_key, team_name, callback) {
-    $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
-      if (team_data.results.length === 0) return callback(false);
-      $.ajax({
-        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
-        type: 'PATCH',
-        data: { team_key: secret_key },
-      }).done((data, status) => {
-        Cookies.set('team_id', data.id);
-        Cookies.set('team_name', data.name);
-        callback(true);
-      }).fail((xhr, status, error) => {
-        callback(false);
-      });
-    });
-  }
-
-  static leaveTeam(callback) {
-    $.ajax({
-      url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/leave/`,
-      type: 'PATCH',
-    }).done((data, status) => {
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
-  }
-
-  static getUserProfile(callback) {
-    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
-      Cookies.set('user_url', data.url);
-      $.get(data.url).done((data, success) => {
-        callback(data);
-      }).fail((xhr, status, error) => {
-        console.log(error);
-      });
-    });
-  }
-
-  static updateUser(profile, callback) {
-    $.ajax({
-      url: Cookies.get('user_url'),
-      data: JSON.stringify(profile),
-      type: 'PATCH',
-      contentType: 'application/json',
-      dataType: 'json',
-    }).done((data, status) => {
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
+  static logout(callback) {
+    Cookies.set('token', '');
+    Cookies.set('refresh', '');
+    callback();
   }
 
   static loginCheck(callback) {
