@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
+import Avatar from '../components/avatar';
 import { Link } from 'react-router-dom';
 
 class TeamInfo extends Component {
@@ -14,23 +15,16 @@ class TeamInfo extends Component {
 		Api.getTeamById(teamId, this.setTeam)
 		Api.getTeamRanking(teamId, this.setRanking)
 	}
-	test = (data) => {
-		console.log("hiiii")
-		console.log(data)
-	}
 
 	setTeam = (team_data) => {
-		console.log(team_data)
 		this.setState({team: team_data})
 	}
 
 	setRanking = (ranking_data) => {
-		console.log("hello there")
 		this.setState({ranking: ranking_data.ranking})
 	}
 
 	renderHelperRanking(ranking) {
-		console.log(ranking)
 		if (ranking !== undefined) {
 			return (
 				<div className="content" style={{minHeight: 'auto'}}>
@@ -75,7 +69,7 @@ class TeamInfo extends Component {
 	                    </div>
 	                    <div className="content" style={{minHeight: 'auto'}}>
 	                        <div className="author">
-	                        	{ team.avatar !== "" ? <img className="avatar border-gray" src={team.avatar } alt="Team Avatar" /> : '' }
+	                        	<Avatar data={team}/>
 	                            <h4 className="title">{ team.name }<br />
 	                                <small>{ team.users.join(", ") }</small>
 	                            </h4>

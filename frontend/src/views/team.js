@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
+import Avatar from '../components/avatar';
+
 class YesTeam extends Component {
 
     constructor(props) {
@@ -140,7 +142,7 @@ class YesTeam extends Component {
                         </div>
                         <div className="content">
                             <div className="author">
-                                <img className="avatar border-gray" src={ this.state.team.avatar===''?'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==':this.state.team.avatar } alt="Team Avatar" />
+                                <Avatar data={this.state.team}/>
                                 <h4 className="title">{ this.state.team.name }<br />
                                     <small>{ this.state.team.users.join(", ") }</small>
                                 </h4>

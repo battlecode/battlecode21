@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
+import Avatar from '../components/avatar';
+
 class Account extends Component {
     constructor() {
         super();
@@ -14,7 +16,8 @@ class Account extends Component {
                 date_of_birth: '',
                 bio: '',
                 avatar: '',
-                country: ''
+                country: '',
+                id: ''
             },
             'up': 'Update Info'
         };
@@ -347,9 +350,9 @@ class Account extends Component {
                                     </div>
                                     <div className="content">
                                         <div className="author">
-                                            <img className="avatar border-gray" src={this.state.user.avatar === '' ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==' : this.state.user.avatar} alt="User Avatar" />
+                                            <Avatar data={this.state.user} />
                                             <h4 className="title">{this.state.user.first_name + " " + this.state.user.last_name}<br /><small>{this.state.user.username}</small></h4>
-                                            <h5 id="is_staff_msg"></h5>
+                                            <label id="is_staff_msg"></label>
                                         </div>
                                         <p className="description text-center">{this.state.user.bio}</p>
                                     </div>
