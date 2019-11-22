@@ -27,8 +27,8 @@
     "startx": "cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && BROWSER=none react-scripts start",
     "start": "cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && react-scripts start",
     "build": "cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && react-scripts build",
-    "startxnogame": "BROWSER=none react-scripts start",
-    "buildnogame": "react-scripts build",
+    "startxnogame": "rm -rf bc20 && BROWSER=none react-scripts start",
+    "buildnogame": "rm -rf bc20 && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
