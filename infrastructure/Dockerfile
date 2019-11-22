@@ -27,6 +27,6 @@ RUN ssh-keyscan github.com > githubKey \
   && rm githubKey
 
 # Initialise gradle
-RUN ./gradlew build && rm -rf build src
+RUN ./gradlew --no-daemon build && rm -rf build src
 
 WORKDIR /
