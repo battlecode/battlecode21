@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
-import Avatar from '../components/avatar';
+import UserCard from '../components/userCard';
 
 class Account extends Component {
     constructor() {
@@ -17,6 +17,7 @@ class Account extends Component {
                 bio: '',
                 avatar: '',
                 country: '',
+                is_staff: '',
                 id: ''
             },
             'up': 'Update Info'
@@ -60,12 +61,6 @@ class Account extends Component {
         Api.getUserProfile(function (u) {
             console.log(u);
             this.setState({ user: u });
-            if (this.state.user.is_staff == true)
-            {
-                console.log("user is staff");
-                var is_staff_msg = document.getElementById("is_staff_msg");
-                is_staff_msg.innerHTML = "Staff";
-            }
         }.bind(this));
     }
 
@@ -345,18 +340,7 @@ class Account extends Component {
                                 </div>
                             </div>
                             <div className="col-md-4">
-                                <div className="card card-user">
-                                    <div className="image">
-                                    </div>
-                                    <div className="content">
-                                        <div className="author">
-                                            <Avatar data={this.state.user} />
-                                            <h4 className="title">{this.state.user.first_name + " " + this.state.user.last_name}<br /><small>{this.state.user.username}</small></h4>
-                                            <label id="is_staff_msg"></label>
-                                        </div>
-                                        <p className="description text-center">{this.state.user.bio}</p>
-                                    </div>
-                                </div>
+                                <UserCard user={this.state.user} />
                             </div>
                         </div>
                     </div>

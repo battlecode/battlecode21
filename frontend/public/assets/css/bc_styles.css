@@ -1,0 +1,12 @@
+.center-row {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.center-row-start {
+	width: auto;
+	/* these have to be important because bootstrap's js means its margin styles will always take precedence*/
+	margin-top: 0px !important;
+	margin-right: 5px !important;
+}

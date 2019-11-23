@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
 
 /* a component for displaying a user or teams avatar (used on team and user pages)
- * props: data — either user or team, used to get avatar or seed for random generation
- *		  small — default false, makes avatar small to be used in detail views */
+ * props: data — either user or team, used to get avatar or seed for random generation.
+ *				 if data does not have either name or username defined, empty avatar will be returned */
 class Avatar extends Component {
 
 	// seeded random numbers bc this isn't part of math.random in js
-	seededRNG(seed, min = 0, max = 1) {
+	seededRNG(seed, min = 0, max = 1, depth = 0) {
+		//hashing seed to try to remove correlation
 		const hashSeed = (seed * 2654435761) % Math.pow(2,32)
 		// see softwareengineering.stackexchange.com/questions/260969
 		const modSeed = (hashSeed * 9301 + 49297) % 233280
 		const rand = modSeed / 233280
-		return min + rand * (max - min)
+		const randBound = min + rand * (max - min)
+		
+		// run this 3 times to remove correlation!
+		if (depth == 2) {
+			return min + rand * (max - min)
+		} else {
+			return this.seededRNG(randBound, min, max, depth + 1)
+		}
 	}
 
 	// converts colors from HSV to RGB encoding
@@ -48,17 +56,18 @@ class Avatar extends Component {
 			}
 
 			// no avatar, create a random one. which must always be same for this entity
-			// random number defines HSV color (rand°, 100%, 100%)
-			// second random number is transparent "accent color" derived from seed of 
-
-			const num = Math.floor(this.seededRNG(data.id, 0, 361))
-			const colorStr = this.RGBtoHex(this.HSVtoRGB([num, 1, 1]))
+			// random number derived from hash of str defines HSV color (rand°, 100%, 100%)
+			// second random number is transparent "accent color"
+			
 			const seedStr = this.stringHash(data.name ? data.name : data.username)
-			const num2 = Math.floor(this.seededRNG(seedStr, 0, 361))
+			const num = Math.floor(this.seededRNG(seedStr, 0, 361))
+			console.log(num)
+			const colorStr = this.RGBtoHex(this.HSVtoRGB([num, 1, 1]))
+			const num2 = Math.floor(this.seededRNG(data.id, 0, 361))
 			const colorStr2 = this.RGBtoHex(this.HSVtoRGB([num2, 1, 1])) + "50"
 
 			const gradStr = `linear-gradient(45deg, ${colorStr}, ${colorStr2})`
-			
+
 			return ( <div className="avatar border-gray" style={ {background: gradStr, display: 'inline-block'} }></div> )
 		}
 
@@ -76,7 +85,7 @@ class Avatar extends Component {
 			hash |= 0 // Convert to 32bit integer
 		}
 
-		return hash
+		return Math.abs(hash)
 	}
 }
 

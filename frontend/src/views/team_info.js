@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
-import Avatar from '../components/avatar';
+import TeamCard from '../components/teamCard';
 import { Link } from 'react-router-dom';
 
 class TeamInfo extends Component {
@@ -28,22 +28,22 @@ class TeamInfo extends Component {
 		if (ranking !== undefined) {
 			return (
 				<div className="content" style={{minHeight: 'auto'}}>
-                    <div className="header text-center">
-           				<h3 className="title">
-           				    <small style={{paddingRight: '10px'}}>Rank</small> { ranking }
-           				</h3>				
-      				</div>
-		        </div>
+					<div className="header text-center">
+						<h3 className="title">
+							<small style={{paddingRight: '10px'}}>Rank</small> { ranking }
+						</h3>				
+					</div>
+				</div>
 			)
 		} else {
 			return (
 				<div className="content" style={{minHeight: 'auto'}}>
-                    <div className="header text-center">
-           				<h3 className="title">
-           				    <small style={{paddingRight: '10px'}}> </small> 
-           				</h3>				
-      				</div>
-		        </div>
+					<div className="header text-center">
+						<h3 className="title">
+							<small style={{paddingRight: '10px'}}> </small> 
+						</h3>				
+					</div>
+				</div>
 			)
 		}
 	}
@@ -61,58 +61,47 @@ class TeamInfo extends Component {
 	render() {
 		const team = this.state.team;
 		if (team !== null) {
-			const avatar_image_str = team.avatar === "" ? '<img className="avatar border-gray" src={team.avatar } alt="Team Avatar" />' : ''
 			return(
-	            <div className="content">
-	                <div className="card card-user">
-	                    <div className="image">
-	                    </div>
-	                    <div className="content" style={{minHeight: 'auto'}}>
-	                        <div className="author">
-	                        	<Avatar data={team}/>
-	                            <h4 className="title">{ team.name }<br />
-	                                <small>{ team.users.join(", ") }</small>
-	                            </h4>
-	                        </div>
-	                        { this.renderHelperDescription(team) }
-			                
-			                { this.renderHelperRanking(this.state.ranking) }
+				<div className="content">
+					<TeamCard team={ this.state.team } />
 
-			                <div className="container-fluid">
-			                    <div style={{paddingBottom: '20px'}} className="row">
-			                        
-			                        <div className="col-md-4">
-			                        	<div className="">
-			                                <div className="header">
-			                       				<h4 className="title">{ team.wins } 
-			                       					<small style={{paddingLeft: '20px'}}>Wins</small>
-			                       				</h4>
-			                  				</div>
-		                  				</div>
-			                        </div>
-			                        <div className="col-md-4">
-			                        	<div className="">
-			                                <div className="header">
-			                       				<h4 className="title">{ team.draws } 
-			                       					<small style={{paddingLeft: '20px'}}>Draws</small>
-			                       				</h4>
-			                  				</div>
-		                  				</div>
-			                        </div>
-			                        <div className="col-md-4">
-			                        	<div className="">
-			                                <div className="header">
-			                       				<h4 className="title">{ team.losses } 
-			                       					<small style={{paddingLeft: '20px'}}>Losses</small>
-			                       				</h4>
-			                  				</div>
-		                  				</div>
-			                        </div>
-			                    </div>
-			                </div>
-						</div>                    
-	                </div>
-	            </div>
+					<div className="card">
+						{ this.renderHelperRanking(this.state.ranking) }
+
+						<div className="container-fluid">
+							<div style={{paddingBottom: '20px'}} className="row">
+								
+								<div className="col-md-4">
+									<div className="">
+										<div className="header">
+											<h4 className="title">{ team.wins } 
+												<small style={{paddingLeft: '20px'}}>Wins</small>
+											</h4>
+										</div>
+									</div>
+								</div>
+								<div className="col-md-4">
+									<div className="">
+										<div className="header">
+											<h4 className="title">{ team.draws } 
+												<small style={{paddingLeft: '20px'}}>Draws</small>
+											</h4>
+										</div>
+									</div>
+								</div>
+								<div className="col-md-4">
+									<div className="">
+										<div className="header">
+											<h4 className="title">{ team.losses } 
+												<small style={{paddingLeft: '20px'}}>Losses</small>
+											</h4>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			)
 		} else {
 			return null

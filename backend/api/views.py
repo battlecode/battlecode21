@@ -23,6 +23,7 @@ GCLOUD_SUB_BUCKET = "bc20-submissions"
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
+    
 
 class GCloudUploadDownload():
     """
@@ -98,10 +99,10 @@ class UserViewSet(viewsets.GenericViewSet,
     destroy:
     Destroys a user.
     """
+
     queryset = get_user_model().objects.all()
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
-
 
 class ResumeUpload(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedAsRequestedUser,)

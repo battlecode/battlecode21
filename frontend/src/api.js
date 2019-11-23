@@ -302,7 +302,11 @@ class Api {
   }
 
   static getUserProfile(callback) {
-    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
+    Api.getProfileByUser(Cookies.get('username'), callback)
+  }
+
+  static getProfileByUser(username, callback) {
+    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
       Cookies.set('user_url', data.url);
       $.get(data.url).done((data, success) => {
         callback(data);
