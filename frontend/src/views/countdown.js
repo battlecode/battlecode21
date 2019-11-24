@@ -11,7 +11,7 @@ class Countdown extends Component {
       hours: 0,
       min: 0,
       sec: 0,
-      end_date: new Date('January 14, 2020 20:00:00'),
+      end_date: new Date('January 12, 2020 19:00:00'),
       tournament_name: 'hej',
       est_date: 'somedate'
     }
@@ -91,10 +91,18 @@ class Countdown extends Component {
 
     render() {
         const countDown = this.state;
+        let title = 'Next Submission Deadline in';
+        if (this.state.tournament_name == 'START') {
+          title = 'Game Specs Released in';
+        }
+        let explanatoryText = <div>The submission deadline for the <b>{this.state.tournament_name}</b> is at <b>{this.state.est_date}</b>.</div>;
+        if (this.state.tournament_name == 'START') {
+          explanatoryText = <div>Battlecode 2020 will start at <b>{this.state.est_date}</b>.</div>;
+        }
         return (
             <div className="card ">
                 <div className="header">
-                    <h4 className="title">Next Tournament in</h4>
+                    <h4 className="title">{title}</h4>
                 </div>
                 <div className="content">
                 <div className='countdown-container'>
@@ -129,7 +137,7 @@ class Countdown extends Component {
                   </span>
                 </div>
                 </div>
-                The submission deadline for the <b>{this.state.tournament_name}</b> is at <b>{this.state.est_date}</b>.
+                {explanatoryText}
                 </div>
             </div>
         );
