@@ -302,18 +302,29 @@ class Api {
   }
 
   static getUserProfile(callback) {
-    Api.getProfileByUser(Cookies.get('username'), callback)
+    Api.getProfileByUser(Cookies.get('username'), Api.setUserUrl(callback))
   }
 
-  static getProfileByUser(username, callback) {
-    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
-      Cookies.set('user_url', data.url);
-      $.get(data.url).done((data, success) => {
+  // essentially like python decorator, wraps 
+  // sets user url before making call to that endpoint and passing on to callback
+  static setUserUrl(callback) {
+  	return function (data) {
+  		Cookies.set('user_url', data.url);
+  		$.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
         console.log(error);
       });
-    });
+  	}
+  }
+
+  static getProfileByUser(username, callback) {
+  	console.log("update called")
+    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
+    	callback(data);
+    }).fail((xhr, status, error) => {
+        console.log(error);
+     });
   }
 
   static updateUser(profile, callback) {

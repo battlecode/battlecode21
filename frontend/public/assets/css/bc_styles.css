@@ -10,3 +10,33 @@
 	margin-top: 0px !important;
 	margin-right: 5px !important;
 }
+
+.small-user-list {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.small-user-list .avatar {
+	width: 20px;
+    height: 20px;
+    margin-bottom: 0px;
+}
+
+.small-user-list .border-gray {
+	border-width: 2px;
+}
+
+.users-box {
+	display: flex;
+	justify-content: center;
+}
+
+.users-box > div {
+	margin-right: 15px;
+}
+
+.small-user-list:last-child {
+	margin-right: 0px;
+}

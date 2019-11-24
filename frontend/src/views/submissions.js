@@ -22,14 +22,7 @@ class Submissions extends Component {
             league: {}
         };
         Api.getUserProfile(function (u) {
-            console.log(u);
             this.setState({ user: u });
-            if (this.state.user.is_staff == true)
-            {
-                console.log("user is staff");
-                // var is_staff_msg = document.getElementById("is_staff_msg");
-                // is_staff_msg.innerHTML = "Staff";
-            }
         }.bind(this));
 
     }
@@ -38,7 +31,6 @@ class Submissions extends Component {
         Api.getCompilationStatus(this.gotStatus);
         Api.getTeamSubmissions(this.gotSubmissions);
         Api.getLeague(function (l) {
-            console.log(l);
             this.setState({ league: l});
         }.bind(this));
     }

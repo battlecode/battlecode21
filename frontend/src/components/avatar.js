@@ -50,7 +50,7 @@ class Avatar extends Component {
 			// avatar is defined
 			return ( <img className="avatar border-gray" src={ avatar } alt="Avatar" /> )
 		} else {
-			if (!data.name && !data.username){
+			if (!data.name && !data.username && !data.id){
 				// data not fully loaded, return placeholder
 				return ( <div className="avatar border-gray" style={ {display: 'inline-block'} }></div> )
 			}
@@ -61,7 +61,6 @@ class Avatar extends Component {
 			
 			const seedStr = this.stringHash(data.name ? data.name : data.username)
 			const num = Math.floor(this.seededRNG(seedStr, 0, 361))
-			console.log(num)
 			const colorStr = this.RGBtoHex(this.HSVtoRGB([num, 1, 1]))
 			const num2 = Math.floor(this.seededRNG(data.id, 0, 361))
 			const colorStr2 = this.RGBtoHex(this.HSVtoRGB([num2, 1, 1])) + "50"

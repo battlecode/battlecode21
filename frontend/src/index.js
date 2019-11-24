@@ -23,7 +23,7 @@ import VerifyUser from './views/VerifyUser';
 import PasswordForgot from './views/passwordForgot';
 import PasswordChange from './views/passwordChange';
 import Submissions from './views/submissions';
-import TeamInfo from './views/team_info';
+import TeamInfo from './views/teamInfo';
 import Footer from './footer';
 import NavBar from './navbar';
 import SideBar from './sidebar';
