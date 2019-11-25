@@ -28,15 +28,15 @@
 	border-width: 2px;
 }
 
-.users-box {
+.row-items-box {
 	display: flex;
 	justify-content: center;
 }
 
-.users-box > div {
+.row-items-box > div {
 	margin-right: 15px;
 }
 
-.small-user-list:last-child {
+.row-items-box-item:last-child {
 	margin-right: 0px;
 }

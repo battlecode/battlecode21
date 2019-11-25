@@ -47,16 +47,18 @@ class TeamCard extends Component {
 		this.setState({users: newUsers})
 	} 
 
-	render() {
+	componentDidUpdate() {
 		if (this.state.users.length === 0 && this.props.team.users) {
 			this.setupUsers()
 			this.getUserData()
 		}
+	}
 
+	render() {
 		const team = this.props.team
 		
 		const userDivs = this.state.users.map((user) => {
-			return (<div className="small-user-list"> <Avatar data={user} /> <small>{user.username}</small></div>)
+			return (<div className="small-user-list row-items-box-item" key={user.username}> <Avatar data={user} /> <small>{user.username}</small></div>)
 		})
 
 		return (
@@ -67,7 +69,7 @@ class TeamCard extends Component {
 			        <div className="author">
 			            <Avatar data={team}/>
 			            <h4 className="title">{ team.name }<br />
-			                <div className="users-box">{userDivs}</div>
+			                <div className="row-items-box">{userDivs}</div>
 			            </h4>
 			        </div>
 			        <br />

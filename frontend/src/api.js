@@ -320,11 +320,20 @@ class Api {
 
   static getProfileByUser(username, callback) {
   	console.log("update called")
+  	if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    
     $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
     	callback(data);
     }).fail((xhr, status, error) => {
         console.log(error);
-     });
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
+
   }
 
   static updateUser(profile, callback) {
