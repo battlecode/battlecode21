@@ -13,14 +13,58 @@ from api.serializers import *
 from api.permissions import *
 
 from google.cloud import storage
+import trueskill
 
 import os
-import tempfile
+import tempfile, datetime
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
-GCLOUD_BUCKET = "bc20-submissions"
-
+GCLOUD_SUB_BUCKET = "bc20-submissions"
+GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
+RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
+
+class GCloudUploadDownload():
+    """
+    a class containing helper functions for creating signed urls for uploading and downloading
+    files from our google cloud. Assumes that the credentials for gcloud service account are 
+    stored in an env variable "GOOGLE_APPLICATION_CREDENTIALS"
+    """
+
+    @staticmethod
+    def get_blob(file_path, bucket):
+        """
+        gets the blob (gcloud representation of file path) for the given file path inside bucket
+        """
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
+            temp.flush()
+            storage_client = storage.Client.from_service_account_json(temp.name)
+            bucket = storage_client.get_bucket(bucket)
+            blob = bucket.blob(file_path)
+            return blob
+
+    @staticmethod
+    def signed_upload_url(file_path, bucket):
+        """
+        returns a pre-signed url for uploading the submission with given id to google cloud
+        this URL can be used with a PUT request to upload data; no authentication needed.
+        """
+
+        blob = GCloudUploadDownload.get_blob(file_path, bucket)
+        return blob.create_resumable_upload_session()
+
+    @staticmethod
+    def signed_download_url(file_path, bucket):
+        """
+        returns a pre-signed url for downloading the zip of the submission from
+        google cloud, this URL can be used with a GET request to dowload the file
+        with no additional authentication needed.
+        """
+
+        blob = GCloudUploadDownload.get_blob(file_path, bucket)
+        return blob.generate_signed_url(expiration=datetime.timedelta(hours=1), method='GET')
+
 
 class SearchResultsPagination(PageNumberPagination):
     page_size = 10
@@ -269,7 +313,7 @@ class TeamViewSet(viewsets.GenericViewSet,
     def ranking(self, request, league_id, pk=None):
         cur_place = 0
         latest_mu = None
-        for team in self.get_queryset():
+        for team in Team.objects.order_by('-mu'):
             if latest_mu is None or team.mu != latest_mu:
                 cur_place += 1
                 latest_mu = team.mu
@@ -369,7 +413,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
-        upload_url = self.signed_url(serializer.data['id'])
+        upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
         #TODO::: call to compile server
 
@@ -384,6 +428,17 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         return super().retrieve(request, pk=pk)
 
+    @action(methods=['get'], detail=True)
+    def retrieve_file(self, request, team, league_id, pk=None):
+        submission = self.get_queryset().get(pk=pk)
+
+        if team != submission.team:
+            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+
+        download_url = GCloudUploadDownload.signed_download_url(SUBMISSION_FILENAME(pk), GCLOUD_SUB_BUCKET)
+        return Response({'download_url': download_url}, status.HTTP_200_OK)
+
+
     def signed_url(self, submission_id):
         """
         returns a pre-signed url for uploading the submission with given id to google cloud
@@ -396,6 +451,20 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             bucket = storage_client.get_bucket(GCLOUD_BUCKET)
             blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
             return blob.create_resumable_upload_session()
+
+    def signed_download_url(self, submisison_id):
+        """
+        returns a pre-signed url for downloading the zip of the submission from
+        google cloud, this URL can be used with a GET request to dowload the file
+        with no additional authentication needed.
+        """
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
+            temp.flush()
+            storage_client = storage.Client.from_service_account_json(temp.name)
+            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
+            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
+
 
     @action(methods=['patch'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
@@ -659,6 +728,36 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 sc_status = request.data['status'] 
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
+
+                    # update rankings based on trueskill algoirthm
+                    # get team info
+                    rteam = self.get_team(league_id, scrimmage.red_team_id)
+                    bteam = self.get_team(league_id, scrimmage.blue_team_id)
+                    won = rteam if sc_status == "redwon" else bteam
+                    lost = rteam if sc_status == "bluewon" else bteam
+                    
+                    # store previous mu in scrimmage
+                    scrimmage.blue_mu = bteam.mu
+                    scrimmage.red_mu = rteam.mu
+
+                    # get mu and sigma
+                    muW = won.mu
+                    sdW = won.sigma
+                    muL = lost.mu
+                    sdL = lost.sigma
+
+                    winner = trueskill.Rating(mu=muW, sigma=sdW)
+                    loser = trueskill.Rating(mu=muL, sigma=sdL)
+
+                    # applies trueskill algorithm & update teams with new scores
+                    wScore, lScore = trueskill.rate_1vs1(winner, loser)
+                    won.mu = wScore.mu
+                    won.sigma = wScore.sigma
+                    lost.mu = lScore.mu
+                    lost.sigma = lScore.sigma
+
+                    won.save()
+                    lost.save()
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:

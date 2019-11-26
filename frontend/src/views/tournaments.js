@@ -81,10 +81,10 @@ This includes the Qualifying Tournament - you can participate even if you miss e
 
                                 </div>
                             </div>
-
+{/* 
                             { this.state.tournaments.map(t => 
                                 <Tournament name={ t.name } challonge={ t.challonge } />
-                            )}
+                            )} */}
 
                             <div className="card">
                                 <div className="header">
