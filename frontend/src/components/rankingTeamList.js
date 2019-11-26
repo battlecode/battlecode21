@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import Api from '../api';
+import React from 'react';
 
 import TeamList from './teamList';
 import PaginationControl from './paginationControl';

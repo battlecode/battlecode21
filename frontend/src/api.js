@@ -16,12 +16,10 @@ class Api {
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
-    console.log('newSubmission')
     // get the url from the real api
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
-      console.log(data['upload_url'])
       $.ajax({
         url: data['upload_url'], 
         method: "PUT",
@@ -137,7 +135,6 @@ class Api {
   static getLeague(callback) {
     $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
       Cookies.set('league_url', data.url);
-      console.log((data.url));
       $.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
@@ -302,14 +299,37 @@ class Api {
   }
 
   static getUserProfile(callback) {
-    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
-      Cookies.set('user_url', data.url);
-      $.get(data.url).done((data, success) => {
+    Api.getProfileByUser(Cookies.get('username'), Api.setUserUrl(callback))
+  }
+
+  // essentially like python decorator, wraps 
+  // sets user url before making call to that endpoint and passing on to callback
+  static setUserUrl(callback) {
+  	return function (data) {
+  		Cookies.set('user_url', data.url);
+  		$.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
         console.log(error);
       });
+  	}
+  }
+
+  static getProfileByUser(username, callback) {
+  	if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    
+    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
+    	callback(data);
+    }).fail((xhr, status, error) => {
+        console.log(error);
     });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
+
   }
 
   static updateUser(profile, callback) {
@@ -524,7 +544,7 @@ class Api {
       console.log(xhr);
       // if responseJSON is undefined, it is probably because the API is not configured
       // check that the API is indeed running on URL (localhost:8000 if local development)
-      callback(xhr.responseJSON.non_field_errors, false);
+      callback(xhr.responseJSON.detail, false);
     });
   }
 
