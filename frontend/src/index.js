@@ -53,10 +53,10 @@ class App extends Component {
 
   isSubmissionEnabled()
   {
-      if (this.state.user.is_staff == true) {
+      if (this.state.user.is_staff === true) {
           return true;
       }
-      if (this.state.league.game_released == true) {
+      if (this.state.league.game_released === true) {
           return true;
       }
       return false;

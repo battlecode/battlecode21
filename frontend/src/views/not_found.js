@@ -26,9 +26,9 @@ class NotFound extends Component {
 				case 1:
 					soup_emoji = "🥘"
 					break
-				case 2:
+				default:
 					soup_emoji = "🍜"
-					break               
+       
 			}
 
 			this.setState({soup: soup_emoji})

@@ -187,11 +187,11 @@ class NoTeam extends Component {
     }
 
     renderError(type, data) {
-        if (data == true) {
+        if (data === true) {
             let message = ""
-            if (type == "createTeamError") {
+            if (type === "createTeamError") {
                 message = "Sorry, this team name is already being used."
-            } else if (type == "joinTeamError") {
+            } else if (type === "joinTeamError") {
                 message = "Sorry, that team name and secret key combination is not valid."
             }
 

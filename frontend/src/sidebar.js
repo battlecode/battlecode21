@@ -29,7 +29,6 @@ class SideBar extends Component {
         Api.getUserTeam(function(e) {
             this.setState({on_team:(e !== null)});
             $(document).ready(function() {
-                console.log("sidebar guy called")
                 window.init_right_menu();
             });
         }.bind(this));

@@ -15,7 +15,7 @@ class Avatar extends Component {
 		const randBound = min + rand * (max - min)
 		
 		// run this 3 times to remove correlation!
-		if (depth == 2) {
+		if (depth === 2) {
 			return min + rand * (max - min)
 		} else {
 			return this.seededRNG(randBound, min, max, depth + 1)
@@ -38,7 +38,7 @@ class Avatar extends Component {
 	RGBtoHex(rgb) {
 		const hex = (comp) => {
 			var str = comp.toString(16)
-			return str.length == 1 ? '0' + str : str
+			return (str.length === 1) ? '0' + str : str
 		}
 		return `#${hex(rgb[0])}${hex(rgb[1])}${hex(rgb[2])}`
 	}

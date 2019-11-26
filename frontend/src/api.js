@@ -16,12 +16,10 @@ class Api {
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
-    console.log('newSubmission')
     // get the url from the real api
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
-      console.log(data['upload_url'])
       $.ajax({
         url: data['upload_url'], 
         method: "PUT",
@@ -137,7 +135,6 @@ class Api {
   static getLeague(callback) {
     $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
       Cookies.set('league_url', data.url);
-      console.log((data.url));
       $.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
@@ -319,7 +316,6 @@ class Api {
   }
 
   static getProfileByUser(username, callback) {
-  	console.log("update called")
   	if ($.ajaxSettings && $.ajaxSettings.headers) {
       delete $.ajaxSettings.headers.Authorization;
     } // we should not require valid login for this. 
