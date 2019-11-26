@@ -168,8 +168,8 @@ class Register extends Component {
                       onChange={this.changeHandler}
                     />
                   </div>
+                <div class="clearfix"></div>
                 </div>
-                <div>
                   <div className="col-xs-6">
                     <div className="form-group">
                       <label>First Name</label>
@@ -215,7 +215,7 @@ class Register extends Component {
                       />
                     </div>
                   </div>
-                </div>
+                <div class="clearfix"></div>
                 <div className="col-md-12">
                   <div className="form-group">
                     <label>Password</label>

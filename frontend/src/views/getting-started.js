@@ -24,14 +24,17 @@ class GettingStarted extends Component {
                                     <h4 className="title">Getting Started</h4>
                                 </div>
                                 <div className="content">
-                                    <br/>
                                 <p>
                                     The Battlecode 2020 game will be released on January 6, 2020! Stay tuned for further details.
                                 </p>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Overview</h4>
+                                </div>
+                                <div className="content">
 
-                                <h4>
-                                    Overview
-                                </h4>
                                 <p>
                                     This is the Battlecode 2020 contest website, which will be your main hub for all Battlecode-related things
                                     for the duration of the contest. For a general overview of what Battlecode is, visit <a href='https://battlecode.org'>
@@ -43,10 +46,13 @@ class GettingStarted extends Component {
                                     Before you start developing your bot, it is highly recommended to read the full game specifications carefully.
                                     To simply get up and running, however, it is sufficient to skim the document.
                                 </p>
-
-                                <h4>
-                                    Account and Team Creation
-                                </h4>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Account and Team Creation</h4>
+                                </div>
+                                <div className="content">
                                 <p>
                                     To participate in Battlecode, you need an account and a team. Each team can consist of 1 to 4 people.
                                 </p>
@@ -54,12 +60,27 @@ class GettingStarted extends Component {
                                     Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create
                                     or join a team.
                                 </p>
-
-                                <h4>
-                                    Installation
-                                </h4>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Installation</h4>
+                                </div>
+                                <div className="content">
                                 <p>
                                     Once the 2020 game is released, we will have detailed installation instructions here! In the meantime, you can install Java 8, which will be the official language of Battlecode 2020.
+                                </p>
+
+
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Join the Community!</h4>
+                                </div>
+                                <div className="content">
+                                <p>
+                                    Battlecode has a Discord server! Everyone is encouraged to join. Announcements, strategy discussions, bug fixes and ~memes~ all happen on Discord. (Link will be up shortly.)
                                 </p>
 
 
