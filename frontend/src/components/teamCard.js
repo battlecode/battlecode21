@@ -58,7 +58,7 @@ class TeamCard extends Component {
 		const team = this.props.team
 		
 		const userDivs = this.state.users.map((user) => {
-			return (<div className="small-user-list row-items-box-item" key={user.username}> <Avatar data={user} /> <small>{user.username}</small></div>)
+			return (<div className="small-user-list" key={user.username}> <Avatar data={user} /> <small>{user.username}</small></div>)
 		})
 
 		return (

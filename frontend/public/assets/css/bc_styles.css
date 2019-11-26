@@ -1,3 +1,4 @@
+/* a centered row of things used in team page for checkboxes */
 .center-row {
 	display: flex;
 	justify-content: flex-start;
@@ -6,11 +7,12 @@
 
 .center-row-start {
 	width: auto;
-	/* these have to be important because bootstrap's js means its margin styles will always take precedence*/
+	/* these have to be important because bootstrap's js means its margin styles will always take precedence */
 	margin-top: 0px !important;
 	margin-right: 5px !important;
 }
 
+/* used to display little user icons on team page */
 .small-user-list {
 	display: flex;
     justify-content: center;
@@ -28,15 +30,69 @@
 	border-width: 2px;
 }
 
+/* flex box to display elements in a row with spacing, used in team card */
 .row-items-box {
 	display: flex;
 	justify-content: center;
 }
 
-.row-items-box > div {
+.row-items-box > * {
 	margin-right: 15px;
 }
 
-.row-items-box-item:last-child {
+.items-box-skinny > * {
+	margin-right: 10px;
+}
+
+.row-items-box > *:last-child {
 	margin-right: 0px;
+}
+
+.items-box-center {
+	align-items: center;
+}
+
+.items-box-center > * {
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+/* a container that displays its children as a centered column in desktop site 
+   and as a single row in mobile site 
+   margins need to be important because otherwise bootstrap will override */
+.col-2-row {
+	display: flex;
+
+	flex-direction: row;
+	align-items: center;
+	
+	justify-content: center;
+}
+
+.col-2-row > * {
+	margin: 0px 19px 0px 0px !important;
+}
+
+.col-2-row-skinny > * {
+	margin: 0px 10px 0px 0px !important;
+}
+
+
+.col-2-row > *:last-child {
+	margin: 0px !important;
+}
+
+@media (min-width: 992px) {
+	.col-2-row {
+		flex-direction: column;
+	}
+
+	.col-2-row > * {
+		margin: 0px 0px 15px 0px !important;
+	}
+
+	.col-2-row > *:last-child {
+		margin: 0px !important;
+	}
+
 }

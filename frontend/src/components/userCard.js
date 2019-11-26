@@ -14,7 +14,6 @@ class UserCard extends Component {
                     <div className="author">
                         <Avatar data={user} />
                         <h4 className="title">{user.first_name + " " + user.last_name}<br /><small>{user.username}</small> { staff_msg } </h4>
-                        
                     </div>
                     <br />
                     <p className="description text-center">{user.bio}</p>
