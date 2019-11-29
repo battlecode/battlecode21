@@ -80,7 +80,10 @@ class GettingStarted extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Battlecode has a Discord server! Everyone is encouraged to join. Announcements, strategy discussions, bug fixes and ~memes~ all happen on Discord. (Link will be up shortly.)
+                                    Battlecode has a Discord server! 
+                                    Everyone is encouraged to join. 
+                                    Announcements, strategy discussions, bug fixes and ~memes~ all 
+                                    happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
                                 </p>
 
 
