@@ -40,7 +40,7 @@ class PasswordChange extends Component {
         if (success) {
             this.setState({success: true});
             const redirect = () => {
-                this.props.router.push('/dash/')
+                this.props.history.push('/login')
             }
             setTimeout(redirect.bind(this), 3000);
         } else {
