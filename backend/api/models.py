@@ -296,3 +296,4 @@ def password_reset_token_created(sender, reset_password_token, *args, **kwargs):
     }
     content = render_to_string('email/password_reset.html', context)
     send_email(email, 'Password Reset Token', content, True)
+    
