@@ -27,6 +27,8 @@ You can also run both the backend and the frontend in a Docker container, by run
 
 ### Engine
 
+(whenever Gradle has problems with something, run `gradle clean` and see if it helps)
+
 To run a game, run
 
 ```
