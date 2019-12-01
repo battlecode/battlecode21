@@ -47,6 +47,16 @@ npm run watch
 
 which will launch the client on http://localhost:8080 (if available).
 
+### Docs
+
+You can generate javadocs as follows:
+
+```
+gradle release_docs_zip -Prelease_version=2020.0.0.0.0.1
+```
+
+This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
+
 ## Notes for porting this to battlecode21
 
 When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Mainting git history is nice, but not trivial. The following steps were taken to port `battlecode19` to this repo and maintain history (assuming we start in this repo):
