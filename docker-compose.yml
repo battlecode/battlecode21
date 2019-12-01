@@ -9,6 +9,9 @@ services:
     volumes:
       - ./frontend:/frontend
       - ./client:/client
+      #issue with which node_modules folder docker sees (see https://github.com/barrysteyn/node-scrypt/issues/148)
+      - ./client/visualizer/node_modules
+      - ./client/playback/node_modules
       - ./schema:/schema
     ports:
       - 3000:3000

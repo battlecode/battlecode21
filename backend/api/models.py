@@ -203,8 +203,8 @@ class Scrimmage(models.Model):
     replay    = models.TextField(blank=True)
 
     # Metadata
-    red_mu        = models.IntegerField(null=True)
-    blue_mu       = models.IntegerField(null=True)
+    red_mu       = models.IntegerField(null=True)
+    blue_mu      = models.IntegerField(null=True)
     requested_by = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='requested_by')
     requested_at = models.DateTimeField(auto_now_add=True)
     started_at   = models.DateTimeField(null=True)
@@ -296,3 +296,4 @@ def password_reset_token_created(sender, reset_password_token, *args, **kwargs):
     }
     content = render_to_string('email/password_reset.html', context)
     send_email(email, 'Password Reset Token', content, True)
+    

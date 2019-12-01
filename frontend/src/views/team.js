@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
+import TeamCard from '../components/teamCard';
+
 class YesTeam extends Component {
 
     constructor(props) {
@@ -11,8 +13,8 @@ class YesTeam extends Component {
                 name:'',
                 id:0,
                 team_key:'',
-                auto_accept_ranked:true,
-                auto_accept_unranked:true,
+                auto_accept_ranked:false,
+                auto_accept_unranked:false,
                 bio:'',
                 avatar:'',
                 users:[]
@@ -105,10 +107,10 @@ class YesTeam extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-md-6">
-                                    <label id="auto_accept_unranked"><input type="checkbox" checked={ this.state.team.auto_accept_unranked } onChange={this.changeHandler} className="form-control" /> Auto-accept scrimmages.</label>
+                                    <label id="auto_accept_unranked" className="center-row"><input type="checkbox" checked={ this.state.team.auto_accept_unranked } onChange={this.changeHandler} className="form-control center-row-start" /> Auto-accept scrimmages.</label>
                                 </div>
                                 <div className="col-md-6">
-                                    <label id="auto_accept_ranked"><input type="checkbox" checked={ this.state.team.auto_accept_ranked } onChange={this.changeHandler} className="form-control" /> Auto-run ranking scrimmages.</label>
+                                    <label id="auto_accept_ranked" className="center-row"><input type="checkbox" checked={ this.state.team.auto_accept_ranked} onChange={this.changeHandler} className="form-control center-row-start" /> Auto-run ranking scrimmages.</label>
                                 </div>
                             </div>
                             <div className="row">
@@ -135,19 +137,7 @@ class YesTeam extends Component {
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="card card-user">
-                        <div className="image">
-                        </div>
-                        <div className="content">
-                            <div className="author">
-                                <img className="avatar border-gray" src={ this.state.team.avatar===''?'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==':this.state.team.avatar } alt="Team Avatar" />
-                                <h4 className="title">{ this.state.team.name }<br />
-                                    <small>{ this.state.team.users.join(", ") }</small>
-                                </h4>
-                            </div>
-                            <p className="description text-center">{ this.state.team.bio }</p>
-                        </div>
-                    </div>
+                    <TeamCard team={ this.state.team } />
                 </div>
             </div>
         );
@@ -197,11 +187,11 @@ class NoTeam extends Component {
     }
 
     renderError(type, data) {
-        if (data == true) {
+        if (data === true) {
             let message = ""
-            if (type == "createTeamError") {
+            if (type === "createTeamError") {
                 message = "Sorry, this team name is already being used."
-            } else if (type == "joinTeamError") {
+            } else if (type === "joinTeamError") {
                 message = "Sorry, that team name and secret key combination is not valid."
             }
 

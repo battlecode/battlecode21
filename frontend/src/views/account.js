@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Api from '../api';
 
+import UserCard from '../components/userCard';
+
 class Account extends Component {
     constructor() {
         super();
@@ -14,7 +16,9 @@ class Account extends Component {
                 date_of_birth: '',
                 bio: '',
                 avatar: '',
-                country: ''
+                country: '',
+                is_staff: '',
+                id: ''
             },
             'up': 'Update Info'
         };
@@ -57,12 +61,6 @@ class Account extends Component {
         Api.getUserProfile(function (u) {
             console.log(u);
             this.setState({ user: u });
-            if (this.state.user.is_staff == true)
-            {
-                console.log("user is staff");
-                var is_staff_msg = document.getElementById("is_staff_msg");
-                is_staff_msg.innerHTML = "Staff";
-            }
         }.bind(this));
     }
 
@@ -342,18 +340,7 @@ class Account extends Component {
                                 </div>
                             </div>
                             <div className="col-md-4">
-                                <div className="card card-user">
-                                    <div className="image">
-                                    </div>
-                                    <div className="content">
-                                        <div className="author">
-                                            <img className="avatar border-gray" src={this.state.user.avatar === '' ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==' : this.state.user.avatar} alt="User Avatar" />
-                                            <h4 className="title">{this.state.user.first_name + " " + this.state.user.last_name}<br /><small>{this.state.user.username}</small></h4>
-                                            <h5 id="is_staff_msg"></h5>
-                                        </div>
-                                        <p className="description text-center">{this.state.user.bio}</p>
-                                    </div>
-                                </div>
+                                <UserCard user={this.state.user} />
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import Api from '../api';
+import React from 'react';
 
 import TeamList from './teamList';
 import PaginationControl from './paginationControl';
@@ -47,7 +46,7 @@ class RankingTeamList extends TeamList {
                 }
                 return (
                     <tr key={ team.id } onClick={() => this.showTeamPage(team.id) }>
-                            <td>{ team.mu }</td>
+                            <td>{ Math.round(team.mu * 1000) / 1000 }</td>
                             <td>{ team.name }</td>
                             <td>{ team.users.join(", ") }</td>
                             <td>{ team.bio }</td>

@@ -8,10 +8,7 @@ var navbar_initialized = false;
 var click_toggle = null;
 var init_right_menu = null;
 
-console.log("hello sjkdapowiqop")
-
 $(document).ready(function(){
-    console.log("bootstrap guy called")
     window_width = $(window).width();
     init_right_menu = lbd.initRightMenu;
              
@@ -73,7 +70,6 @@ lbd = {
              $navbar.find('button').removeClass('btn-round btn-fill btn-info btn-primary btn-success btn-danger btn-warning btn-neutral');
              $navbar.find('button').addClass('btn-simple btn-block');
              click_toggle = function () {    
-                console.log("CLICKED");
                 if(lbd.misc.navbar_menu_visible == 1) {
                     $('html').removeClass('nav-open'); 
                     lbd.misc.navbar_menu_visible = 0;

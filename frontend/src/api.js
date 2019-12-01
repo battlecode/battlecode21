@@ -1,37 +1,27 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
-const URL = 'https://2020.battlecode.org';
+//const URL = 'https://2020.battlecode.org';
 //const URL = 'http://localhost:8000'; // DEVELOPMENT
+// do not change URL here!! rather, for development, change it in ../.env.development
+const URL = process.env.REACT_APP_BACKEND_URL;
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
 
 class Api {
   
+  //----SUBMISSIONS----
+
+  //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
-    console.log('newSubmission')
-    // $.ajax({
-    //   // url: data['upload_url'], 
-    //   url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UpTnhj7CvJOsYMfG6qHKX1DvXI1-hKEpj6OmNJV00G70A_5G2HJcu0YW6wPV8lxjGXXxTjkSm3aRKSiG_zr4A1Y2VpItA',
-    //   method: "PUT",
-    //   data: submissionfile,
-    //   processData: false,
-    //   contentType: false
-    // }).done((data, status) => {
-    //   callback('hi', true);
-    // }).fail(() => {
-    //   callback('hi', false);
-    // });
     // get the url from the real api
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
-      console.log(data['upload_url'])
       $.ajax({
         url: data['upload_url'], 
-        // url: 'https://www.googleapis.com/upload/storage/v1/b/bc20-submissions/o?uploadType=resumable&upload_id=AEnB2UrcQ17LTnPagAWEjTiX--nS7HP_jtMoau0zcZ6zopi_YwWqJfNor1MizLIlxnX0HB0LnkhZ-6CgyCnfg4q3uVRtGBdXlg',
         method: "PUT",
         data: submissionfile,
         processData: false,
@@ -42,6 +32,48 @@ class Api {
       callback('there was an error', false);
     });
   }
+
+  static downloadSubmission(submissionId, fileNameAddendum, callback) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${submissionId}/retrieve_file/`).done((data, status) => {
+      // have to use fetch instead of ajax here since we want to download file
+      fetch(data['download_url']).then(resp => resp.blob())
+      .then(blob => {
+        //code to download the file given by the url
+        const objUrl = window.URL.createObjectURL(blob);
+        const aHelper = document.createElement('a');
+        aHelper.style.display = 'none';
+        aHelper.href = objUrl;
+        aHelper.download = `${fileNameAddendum}_battlecode_source.zip`;
+        document.body.appendChild(aHelper);
+        aHelper.click();
+        window.URL.revokeObjectURL(objUrl);
+      })
+    }).fail((xhr, status, error) => {
+      console.log(error)
+      callback('there was an error', false);
+    });
+  }
+
+  static getTeamSubmissions(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+    static getSubmission(id, callback, callback_data) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${id}/`).done((data, status) => {
+        callback(callback_data, data);
+    });
+  }
+
+
+  static getCompilationStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
+        callback(data);
+    });
+  }
+
+  //----TEAM STATS---
 
   static getUpcomingDates(callback) {
     const newState = [
@@ -65,42 +97,6 @@ class Api {
     });
   }
 
-  static logout(callback) {
-    Cookies.set('token', '');
-    Cookies.set('refresh', '');
-    callback();
-  }
-
-  static getLeague(callback) {
-    $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
-      Cookies.set('league_url', data.url);
-      console.log((data.url));
-      $.get(data.url).done((data, success) => {
-        callback(data);
-      }).fail((xhr, status, error) => {
-        console.log(error);
-      });
-    });
-  }
-
-  static getTeamSubmissions(callback) {
-    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/`).done((data, status) => {
-        callback(data);
-    });
-  }
-
-    static getSubmission(id, callback, callback_data) {
-    $.get(`${URL}/api/${LEAGUE}/submission/${id}/`).done((data, status) => {
-        callback(callback_data, data);
-    });
-  }
-
-
-  static getCompilationStatus(callback) {
-    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
-        callback(data);
-    });
-  }
 
   //get data for team with team_id
   static getTeamById(team_id, callback) {
@@ -134,6 +130,18 @@ class Api {
     });
   }
 
+  //----GENERAL INFO----
+
+  static getLeague(callback) {
+    $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
+      Cookies.set('league_url', data.url);
+      $.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+    });
+  }
 
   static getUpdates(callback) {
     if ($.ajaxSettings && $.ajaxSettings.headers) {
@@ -152,6 +160,8 @@ class Api {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
     });
   }
+
+  //----SEARCHING----
 
   static search(query, callback) {
     const encodedQuery = encodeURIComponent(query);
@@ -217,6 +227,8 @@ class Api {
     });
   }
 
+  //---TEAM INFO---
+
   static getUserTeam(callback) {
     $.get(`${URL}/api/userteam/${encodeURIComponent(Cookies.get('username'))}/${LEAGUE}/`).done((data, status) => {
       Cookies.set('team_id', data.id);
@@ -231,7 +243,7 @@ class Api {
     });
   }
 
-    // updates team
+  // updates team
   static updateTeam(params, callback) {
     $.ajax({
       url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/`,
@@ -245,6 +257,96 @@ class Api {
       callback(false);
     });
   }
+
+  //----USER FUNCTIONS----
+
+  static createTeam(team_name, callback) {
+    $.post(`${URL}/api/${LEAGUE}/team/`, { name: team_name }).done((data, status) => {
+      Cookies.set('team_id', data.id);
+      Cookies.set('team_name', data.name);
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  static joinTeam(secret_key, team_name, callback) {
+    $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
+      if (team_data.results.length === 0) return callback(false);
+      $.ajax({
+        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
+        type: 'PATCH',
+        data: { team_key: secret_key },
+      }).done((data, status) => {
+        Cookies.set('team_id', data.id);
+        Cookies.set('team_name', data.name);
+        callback(true);
+      }).fail((xhr, status, error) => {
+        callback(false);
+      });
+    });
+  }
+
+  static leaveTeam(callback) {
+    $.ajax({
+      url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/leave/`,
+      type: 'PATCH',
+    }).done((data, status) => {
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  static getUserProfile(callback) {
+    Api.getProfileByUser(Cookies.get('username'), Api.setUserUrl(callback))
+  }
+
+  // essentially like python decorator, wraps 
+  // sets user url before making call to that endpoint and passing on to callback
+  static setUserUrl(callback) {
+  	return function (data) {
+  		Cookies.set('user_url', data.url);
+  		$.get(data.url).done((data, success) => {
+        callback(data);
+      }).fail((xhr, status, error) => {
+        console.log(error);
+      });
+  	}
+  }
+
+  static getProfileByUser(username, callback) {
+  	if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    
+    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
+    	callback(data);
+    }).fail((xhr, status, error) => {
+        console.log(error);
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
+
+  }
+
+  static updateUser(profile, callback) {
+    $.ajax({
+      url: Cookies.get('user_url'),
+      data: JSON.stringify(profile),
+      type: 'PATCH',
+      contentType: 'application/json',
+      dataType: 'json',
+    }).done((data, status) => {
+      callback(true);
+    }).fail((xhr, status, error) => {
+      callback(false);
+    });
+  }
+
+  //----SCRIMMAGING----
 
   static acceptScrimmage(scrimmage_id, callback) {
     $.ajax({
@@ -308,37 +410,6 @@ class Api {
     });
   }
 
-  static getReplayFromURL(url, callback) {
-    // If `https` not in current url, replace `https` with `http` in above
-    if (window.location.href.indexOf('http://') > -1) {
-      url = url.replace('https://', 'http://');
-    }
-
-    const oReq = new XMLHttpRequest();
-    oReq.open('GET', url, true);
-    oReq.responseType = 'arraybuffer';
-
-    oReq.onload = function (oEvent) {
-      callback(new Uint8Array(oReq.response));
-    };
-
-    oReq.send();
-
-
-    // If `https` not in current url, replace `https` with `http` in above
-    if (window.location.href.indexOf('http://') > -1) {
-      url = url.replace('https://', 'http://');
-    }
-
-    $.get(url, (replay, super_sucess) => {
-      $.ajaxSetup({
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-      });
-
-      callback(replay);
-    });
-  }
-
   static getScrimmageHistory(callback) {
     const my_id = parseInt(Cookies.get('team_id'), 10);
     this.getAllTeamScrimmages((s) => {
@@ -362,12 +433,52 @@ class Api {
     });
   }
 
+
+  //----REPLAYS?-----
+
+  static getReplayFromURL(url, callback) {
+    // If `https` not in current url, replace `https` with `http` in above
+    if (window.location.href.indexOf('http://') > -1) {
+      url = url.replace('https://', 'http://');
+    }
+
+    const oReq = new XMLHttpRequest();
+    oReq.open('GET', url, true);
+    oReq.responseType = 'arraybuffer';
+
+    oReq.onload = function (oEvent) {
+      callback(new Uint8Array(oReq.response));
+    };
+
+    oReq.send();
+
+    // If `https` not in current url, replace `https` with `http` in above
+    if (window.location.href.indexOf('http://') > -1) {
+      url = url.replace('https://', 'http://');
+    }
+
+    $.get(url, (replay, super_sucess) => {
+      $.ajaxSetup({
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      });
+
+      callback(replay);
+    });
+  }
+
+  //----TOURNAMENTS----
+
   static getNextTournament(callback) {
     // TODO: actually use real API for this
+    // callback({
+    //   "est_date_str": '7 PM EST on January 12, 2020',
+    //   "seconds_until": (Date.parse(new Date('January 12, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+    //   "tournament_name": "Sprint Tournament"
+    // });
     callback({
-      "est_date_str": '8 PM EST on January 14, 2020',
-      "seconds_until": (Date.parse(new Date('January 14, 2020 20:00:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Sprint Tournament"
+      "est_date_str": '7 PM EST on January 6, 2020',
+      "seconds_until": (Date.parse(new Date('January 6, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "START"
     });
   }
 
@@ -380,67 +491,12 @@ class Api {
     callback(tournaments);
   }
 
-  static createTeam(team_name, callback) {
-    $.post(`${URL}/api/${LEAGUE}/team/`, { name: team_name }).done((data, status) => {
-      Cookies.set('team_id', data.id);
-      Cookies.set('team_name', data.name);
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
-  }
+  //----AUTHENTICATION----
 
-  static joinTeam(secret_key, team_name, callback) {
-    $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
-      if (team_data.results.length === 0) return callback(false);
-      $.ajax({
-        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
-        type: 'PATCH',
-        data: { team_key: secret_key },
-      }).done((data, status) => {
-        Cookies.set('team_id', data.id);
-        Cookies.set('team_name', data.name);
-        callback(true);
-      }).fail((xhr, status, error) => {
-        callback(false);
-      });
-    });
-  }
-
-  static leaveTeam(callback) {
-    $.ajax({
-      url: `${URL}/api/${LEAGUE}/team/${Cookies.get('team_id')}/leave/`,
-      type: 'PATCH',
-    }).done((data, status) => {
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
-  }
-
-  static getUserProfile(callback) {
-    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
-      Cookies.set('user_url', data.url);
-      $.get(data.url).done((data, success) => {
-        callback(data);
-      }).fail((xhr, status, error) => {
-        console.log(error);
-      });
-    });
-  }
-
-  static updateUser(profile, callback) {
-    $.ajax({
-      url: Cookies.get('user_url'),
-      data: JSON.stringify(profile),
-      type: 'PATCH',
-      contentType: 'application/json',
-      dataType: 'json',
-    }).done((data, status) => {
-      callback(true);
-    }).fail((xhr, status, error) => {
-      callback(false);
-    });
+  static logout(callback) {
+    Cookies.set('token', '');
+    Cookies.set('refresh', '');
+    callback();
   }
 
   static loginCheck(callback) {
@@ -488,7 +544,7 @@ class Api {
       console.log(xhr);
       // if responseJSON is undefined, it is probably because the API is not configured
       // check that the API is indeed running on URL (localhost:8000 if local development)
-      callback(xhr.responseJSON.non_field_errors, false);
+      callback(xhr.responseJSON.detail, false);
     });
   }
 
@@ -518,11 +574,19 @@ class Api {
       delete $.ajaxSettings.headers.Authorization;
     }
 
-    $.post(`${URL}/api/password_reset/confirm/`,
-      {
-        password,
-        token,
-      }, (data, success) => { callback(data, success); });
+    // console.log("calling api/password_reset/reset_password/confirm");
+    console.log("calling api/password_reset/confirm");
+    console.log("with pass", password, "token", token);
+    
+    var req = {
+      password: password,
+      token: token,
+    };
+    console.log(req);
+    // $.post(`${URL}/api/password_reset/reset_password/confirm/`, req, 
+    // (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
+    $.post(`${URL}/api/password_reset/confirm/`, req, 
+    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
   }
 
   static forgotPassword(email, callback) {
