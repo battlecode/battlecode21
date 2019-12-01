@@ -32,10 +32,10 @@ You can also run both the backend and the frontend in a Docker container, by run
 To run a game, run
 
 ```
-gradle headless <-PteamA=(...)> <-PteamB=(...)> <-Pmaps=(...)>
+gradle headless
 ```
 
-(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). Note that you can run `gradle headless` only if you just want to run an example game. The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`.
+(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `gradle headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
 
 ### Client
 
