@@ -23,7 +23,7 @@ import VerifyUser from './views/VerifyUser';
 import PasswordForgot from './views/passwordForgot';
 import PasswordChange from './views/passwordChange';
 import Submissions from './views/submissions';
-import TeamInfo from './views/team_info';
+import TeamInfo from './views/teamInfo';
 import Footer from './footer';
 import NavBar from './navbar';
 import SideBar from './sidebar';
@@ -42,14 +42,7 @@ class App extends Component {
     Api.loginCheck((logged_in) => {
       this.setState({ logged_in });
       Api.getUserProfile(function (u) {
-        console.log(u);
         this.setState({ user: u });
-        if (this.state.user.is_staff == true)
-        {
-            console.log("user is staff");
-            // var is_staff_msg = document.getElementById("is_staff_msg");
-            // is_staff_msg.innerHTML = "Staff";
-        }
     }.bind(this));
     Api.getLeague(function (l) {
       console.log(l);
@@ -60,10 +53,10 @@ class App extends Component {
 
   isSubmissionEnabled()
   {
-      if (this.state.user.is_staff == true) {
+      if (this.state.user.is_staff === true) {
           return true;
       }
-      if (this.state.league.game_released == true) {
+      if (this.state.league.game_released === true) {
           return true;
       }
       return false;

@@ -48,8 +48,9 @@ class LoginRegister extends Component {
   render() {
     const { error, success, register } = this.state;
 
-    const errorDiv = error && (
-      <div
+    let errorDiv = null
+    if (error) {
+      errorDiv = (<div
         className="card"
         style={{
           padding: '20px',
@@ -59,13 +60,14 @@ class LoginRegister extends Component {
           fontSize: '1.1em',
         }}
       >
-        <b>Error. </b>
+        <b>Error: </b>
         {error}
-      </div>
-    );
+      </div>)
+    }
 
-    const successDiv = success && (
-      <div
+    let successDiv = null
+    if (success) {
+      successDiv = <div
         className="card"
         style={{
           padding: '20px',
@@ -79,7 +81,7 @@ class LoginRegister extends Component {
         {' '}
         {success}
       </div>
-    );
+    }
 
     let buttons = (
         <button

@@ -62,8 +62,8 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
 class BasicUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('url', 'username', 'avatar', 'bio', 'country')
-        read_only_fields = ('url', 'username', 'avatar', 'bio', 'country')
+        fields = ('url', 'id', 'username', 'avatar', 'bio', 'country')
+        read_only_fields = ('url', 'id', 'username', 'avatar', 'bio', 'country')
 
 class VerifyUserSerializer(serializers.Serializer):
     registration_key = serializers.CharField(allow_null=True, max_length=32,
@@ -74,9 +74,9 @@ class VerifyUserSerializer(serializers.Serializer):
 class FullUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
+        fields = ('id', 'url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
             'username', 'avatar', 'bio', 'country', 'is_staff')
-        read_only_fields = ('url', 'registration_key', 'is_staff')
+        read_only_fields = ('id', 'url', 'registration_key', 'is_staff')
         extra_kwargs = {
             'password': {'write_only': True}
         }

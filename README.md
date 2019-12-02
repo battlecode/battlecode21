@@ -1,6 +1,6 @@
 # Battlecode 2020
 
-🐢
+🍜
 
 ## Repository Structure
 
@@ -27,21 +27,35 @@ You can also run both the backend and the frontend in a Docker container, by run
 
 ### Engine
 
+(whenever Gradle has problems with something, run `gradle clean` and see if it helps)
+
 To run a game, run
 
 ```
-gradle headless <-PteamA=(...)> <-PteamB=(...)> <-Pmaps=(...)>
+gradle headless
 ```
 
-(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). Note that you can run `gradle headless` only if you just want to run an example game. The replay file will be in `/matches`.
+(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `gradle headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
 
-To watch the game, run
+### Client
+
+First run `npm install` in the `schema` folder, followed by `npm run install_all` in the `client` folder. You can then run
 
 ```
-gradle runClient --no-daemon
+npm run watch
 ```
 
 which will launch the client on http://localhost:8080 (if available).
+
+### Docs
+
+You can generate javadocs as follows:
+
+```
+gradle release_docs_zip -Prelease_version=2020.0.0.0.0.1
+```
+
+This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
 
 ## Notes for porting this to battlecode21
 

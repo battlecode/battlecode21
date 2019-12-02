@@ -18,7 +18,7 @@ class PasswordForgot extends Component {
 
   callback = (data, success) => {
     if (success) {
-      this.setState({ success: 'Email sent! Please wait a few minutes to receive.' });
+      this.setState({ success: 'Email sent! Please wait a few minutes to receive. Don\'t forget to check your spam folder.'});
     } else {
       this.setState({ error: 'Email not found' });
     }
