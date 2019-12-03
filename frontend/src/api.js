@@ -576,17 +576,15 @@ class Api {
 
     // console.log("calling api/password_reset/reset_password/confirm");
     console.log("calling api/password_reset/confirm");
-    console.log("with pass", password, "token", token);
+    // console.log("with pass", password, "token", token);
     
     var req = {
       password: password,
       token: token,
     };
-    console.log(req);
-    // $.post(`${URL}/api/password_reset/reset_password/confirm/`, req, 
-    // (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
+
     $.post(`${URL}/api/password_reset/confirm/`, req, 
-    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
+    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed")});
   }
 
   static forgotPassword(email, callback) {
