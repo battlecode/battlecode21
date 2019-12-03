@@ -130,7 +130,7 @@ class LinksCard extends Component {
                     <p>
                         <ul>
                             <li>
-                                Discord
+                                <a href="https://discordapp.com/channels/386965718572466197/650084292982079539">Discord</a> (<a href="https://discord.gg/N86mxkH">invite</a>)
                             </li>
                             <li>
                                 <a href='https://github.com/battlecode/battlecode20'>GitHub</a>

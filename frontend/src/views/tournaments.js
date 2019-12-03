@@ -146,7 +146,7 @@ Teams of only active MIT students who have never competed in Battlecode (that is
 Teams consisting entirely of US students compete in the US Qualifying Tournament. If a team has at least one non-US competitor, it will compete in the International Qualifying Tournament. A US student is a student who attends a school in the United States.
 
 </p><p>
-Contact us on Discord or at <a href='mailto:battlecode@mit.edu'>battlecode@mit.edu</a> if you are unsure of your eligibility.
+Contact us on <a href='https://discordapp.com/channels/386965718572466197/650097270804709436'>Discord</a> or at <a href='mailto:battlecode@mit.edu'>battlecode@mit.edu</a> if you are unsure of your eligibility.
                                     </p>
 
                                 </div>

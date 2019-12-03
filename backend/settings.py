@@ -67,13 +67,16 @@ CORS_ALLOW_CREDENTIALS = True
 APPEND_SLASH = True
 
 # Email
+# Gmail:
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mitbattlecode@gmail.com'
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASS")
-
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASS", "dyna-lando-t")
 ROOT_URLCONF = 'urls'
+
+# Sendgrid:
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "dyna-lando-t")
 
 TEMPLATES = [
     {

@@ -588,11 +588,17 @@ class Api {
       delete $.ajaxSettings.headers.Authorization;
     }
 
-    $.post(`${URL}/api/password_reset/confirm/`,
-      {
-        password,
-        token,
-      }, (data, success) => { callback(data, success); });
+    // console.log("calling api/password_reset/reset_password/confirm");
+    console.log("calling api/password_reset/confirm");
+    // console.log("with pass", password, "token", token);
+    
+    var req = {
+      password: password,
+      token: token,
+    };
+
+    $.post(`${URL}/api/password_reset/confirm/`, req, 
+    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed")});
   }
 
   static forgotPassword(email, callback) {
