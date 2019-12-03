@@ -324,6 +324,26 @@ class TeamViewSet(viewsets.GenericViewSet,
 
         return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
 
+    @action(methods=['get'], detail=True)
+    def history(self, request, league_id, pk=None):
+        try:
+            team_id = self.get_queryset().get(pk=pk).id
+        except Team.DoesNotExist:
+            return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
+
+        scrimmages = Scrimmage.objects.filter(Q(blue_team_id=pk) | Q(red_team_id=pk))
+
+        return_data = []
+
+        # loop through all scrimmages involving this team
+        # add entry to result array defining whether or not this team won and time of scrimmage
+        for scrimmage in scrimmages:
+            won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
+            won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
+            team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
+            return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
+
+        return Response(return_data, status.HTTP_200_OK)
 
     @action(methods=['patch'], detail=True)
     def join(self, request, league_id, pk=None):
