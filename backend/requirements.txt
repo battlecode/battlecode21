@@ -37,4 +37,4 @@ requests==2.22.0
 rsa==4.0
 urllib3==1.25.6
 trueskill==0.4.5    
-
+sendgrid==6.1.0
