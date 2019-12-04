@@ -8,15 +8,15 @@ class PerfCard extends UpdateCard {
         $().ready(function() {
             Api.getOwnTeamMuHistory(function(perf) {
                 console.log(perf)
-                data = perf.map(scrimRes => {
-                    if (data.mu !== null) {
-                        return {
-                            x: new Date(scrimRes.date),
-                            y: data.mu
-                        }
-                    }
+                // let data = perf.map(scrimRes => {
+                //     if (data.mu !== null) {
+                //         return {
+                //             x: new Date(scrimRes.date),
+                //             y: data.mu
+                //         }
+                //     }
                     
-                })
+                // })
                 // perf = [1,2,3,4,5,6]
                 // var dataSales = {'series':[perf], 'labels':[]};
                 // console.log(dataSales)
