@@ -21,8 +21,11 @@ class RankCard extends Component {
 	}
 
 	setRanking = (ranking_data) => {
-		console.log("hiiii")
 		this.setState({ranking: ranking_data.ranking})
+	}
+
+	hi = (data) => {
+		console.log(data)
 	}
 
 	render() {
@@ -135,37 +138,3 @@ class TeamInfo extends Component {
 }
 
 export default TeamInfo;
-
-
-// <div className="content">
-//                 <div className="container-fluid">
-//                     <div className="row">
-//                         <div className="col-md-6">
-//                             <div className="container-fluid">
-//                                 <div className="row">
-//                                         <InstrCard />
-//                                 </div>
-//                                 <div className="row">
-//                                         <Countdown />
-//                                 </div>
-//                                 <div className="row">
-//                                         {this.state.on_team && <StatCard />}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                         <div className="col-md-6">
-//                             <div className="container-fluid">
-//                                 <div className="row">
-//                                         <DateCard />
-//                                 </div>
-//                                 <div className="row">
-//                                         <LinksCard />
-//                                 </div>
-//                                 <div className="row">
-//                                         {this.state.on_team && <PerfCard />}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
