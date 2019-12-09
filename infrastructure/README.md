@@ -10,7 +10,7 @@ In GCloud > PubSub:
 In GCloud > IAM > Service accounts:
 - Create new service account.
 - Add roles: PubSub publisher, PubSub subscriber.
-- Download JSON key; call it `pubsub/gcloud-key.json`.
+- Download JSON key; call it `app/gcloud-key.json`.
 
 In GCloud > Storage:
 - Create new bucket. Call it `bc20-submissions`.
@@ -22,32 +22,25 @@ In GCloud > Compute Engine > Instance templates:
 
 ## How to use
 
-For a docker shell to do debugging in:
-```
-make basic
-docker run -it bc20-basic
-```
-
-For a compile server
-```
-make compile
-docker run -d bc20-compile
-```
-
-For a game runner server
-```
-make game
-docker run -d bc20-game
-```
-
-To push docker images to the container registry
-```
-gcloud auth configure-docker # Only needs to be run once to configure settings
-make push
-```
-
-To publish a `helloworld` message to the Pub/Sub, obtain the private key, and then:
-```
-export GOOGLE_APPLICATION_CREDENTIALS=pubsub/gcloud-key.json
-./pub.py battlecode18 bc20-compile
-```
+- For a docker shell to do debugging in, run the following,
+  where `X` is either `worker` or `matcher`:
+  ```
+  make X
+  docker run -it bc20-X
+  ```
+- For an actual server, run the following,
+  where X is one of `compile`, `game`, `scrimmage` or `tournament`:
+  ```
+  make X
+  docker run -d bc20-X
+  ```
+- To push docker images to the container registry:
+  ```
+  gcloud auth configure-docker # Only needs to be run once to configure settings
+  make push
+  ```
+- To publish a `helloworld` message to the Pub/Sub, obtain the private key, and then:
+  ```
+  export GOOGLE_APPLICATION_CREDENTIALS=app/gcloud-key.json
+  ./pub.py battlecode18 bc20-compile
+  ```
