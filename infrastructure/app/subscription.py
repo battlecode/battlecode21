@@ -10,7 +10,7 @@ import signal
 from google.cloud import pubsub_v1
 
 
-shutdown_requested = False # Whether the process should shut down due to SIGINT
+shutdown_requested = False # Whether the process should shut down due to SIGINT/SIGTERM
 
 def subscribe(subscription_name, worker):
     """Receives and spawns threads to handle jobs received in Pub/Sub"""
@@ -25,7 +25,7 @@ def subscribe(subscription_name, worker):
 
         if not response.received_messages:
             logging.info('Job queue is empty')
-            time.sleep(PUBSUB_SLEEP_TIME)
+            time.sleep(SUB_SLEEP_TIME)
             continue
 
         if len(response.received_messages) > 1:
@@ -44,9 +44,9 @@ def subscribe(subscription_name, worker):
                 client.modify_ack_deadline(
                     subscription_path,
                     [message.ack_id],
-                    ack_deadline_seconds=PUBSUB_ACK_DEADLINE)
+                    ack_deadline_seconds=SUB_ACK_DEADLINE)
                 logging.debug('Reset ack deadline for {} for {}s'.format(
-                    message.message.data, PUBSUB_ACK_DEADLINE))
+                    message.message.data, SUB_ACK_DEADLINE))
 
             # If the process is finished, acknowledge it
             else:
@@ -55,7 +55,7 @@ def subscribe(subscription_name, worker):
                 break
 
             # Sleep the thread before checking again
-            time.sleep(PUBSUB_SLEEP_TIME)
+            time.sleep(SUB_SLEEP_TIME)
 
 
 def graceful_exit(signal, frame):

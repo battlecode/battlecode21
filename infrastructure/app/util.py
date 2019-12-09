@@ -31,3 +31,16 @@ def pull_distribution(cwd, onerror):
             raise RuntimeError
     except:
         onerror()
+
+def publish_match(player1, player2):
+    data = {
+        'player1': player1,
+        'player2': player2
+    }
+    logging.info('Sending game to API endpoint: {} vs {}'.format(player1, player2))
+    try:
+        response = requests.post(url=API_SCRIMMAGE, data=data)
+        response.raise_for_status()
+        logging.info('Game sent')
+    except:
+        logging.error('Could not send game to API endpoint')

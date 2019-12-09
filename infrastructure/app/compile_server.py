@@ -9,20 +9,20 @@ import requests
 from google.cloud import storage
 
 
-def compile_db_report(submissionid, result):
-    """Sends the result of the run to the database API endpoint"""
+def compile_report_result(submissionid, result):
+    """Sends the result of the run to the API endpoint"""
     try:
         response = requests.patch(url=api_compile_update(submissionid), data={
             'compilation_status': result})
         response.raise_for_status()
     except:
-        logging.critical('Could not report to database API endpoint')
+        logging.critical('Could not report result to API endpoint')
         sys.exit(1)
 
 def compile_log_error(submissionid, reason):
-    """Reports a server-side error to the database and terminates with failure"""
+    """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    compile_db_report(submissionid, COMPILE_ERROR)
+    compile_report_result(submissionid, COMPILE_ERROR)
     sys.exit(1)
 
 def compile_worker(submissionid):
@@ -94,11 +94,11 @@ def compile_worker(submissionid):
                         bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
                 except:
                     compile_log_error(submissionid, 'Could not send executable to bucket')
-                compile_db_report(submissionid, COMPILE_SUCCESS)
+                compile_report_result(submissionid, COMPILE_SUCCESS)
             else:
                 compile_log_error(submissionid, 'Could not compress compiled classes')
         else:
-            compile_db_report(submissionid, COMPILE_FAILED)
+            compile_report_result(submissionid, COMPILE_FAILED)
     finally:
         # Clean up working directory
         try:

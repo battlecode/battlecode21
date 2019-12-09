@@ -1,3 +1,3 @@
-FROM bc20-basic
+FROM bc20-worker
 
 CMD ./app/compile_server.py

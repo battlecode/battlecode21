@@ -1,7 +1,6 @@
 FROM ubuntu:18.04
 
-# Insert codebase
-COPY . /
+# Private key for gcloud authentication
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
 
 # Install software dependencies
@@ -16,6 +15,9 @@ RUN pip3 install --upgrade \
     google-cloud-pubsub \
     google-cloud-storage \
     requests
+
+# Insert codebase
+COPY app box /
 
 WORKDIR box
 

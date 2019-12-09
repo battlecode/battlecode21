@@ -13,20 +13,25 @@ logging.getLogger().setLevel(logging.INFO)
 # Constants, parameters and configurations
 
 GCLOUD_PROJECT_ID        = 'battlecode18'
+GCLOUD_PUB_GAME_NAME     = 'bc20-game'
 GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
 GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
 GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
 GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
 
-PUBSUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
-PUBSUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
+SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
+SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
 TIMEOUT_UNZIP   = 30   # Maximum execution time for unzipping submission archive
 TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300  # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
+SCRIMMAGE_GENERATE_INTERVAL = 7200
+
 GAME_WINNER = "^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$"
+
+API_SCRIMMAGE = '???'
 
 
 # Compilation API specifications

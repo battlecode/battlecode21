@@ -10,20 +10,20 @@ import json, re
 from google.cloud import storage
 
 
-def game_db_report(gametype, gameid, result):
-    """Sends the result of the run to the database API endpoint"""
+def game_report_result(gametype, gameid, result):
+    """Sends the result of the run to the API endpoint"""
     try:
         response = requests.post(url=api_game_update(gametype, gameid), data={
             'status': result})
         response.raise_for_status()
     except:
-        logging.critical('Could not report to database API endpoint')
+        logging.critical('Could not report result to API endpoint')
         sys.exit(1)
 
 def game_log_error(gametype, gameid, reason):
-    """Reports a server-side error to the database and terminates with failure"""
+    """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    game_db_report(gametype, gameid, GAME_ERROR)
+    game_report_result(gametype, gameid, GAME_ERROR)
     sys.exit(1)
 
 def game_worker(gameinfo):
@@ -139,7 +139,7 @@ def game_worker(gameinfo):
         except:
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
-        # Interpret game result to send to database
+        # Interpret game result
         server_output = result[1].decode().split('\n')
 
         winner = None
@@ -153,9 +153,9 @@ def game_worker(gameinfo):
             game_log_error(gametype, gameid, 'Could not determine winner')
         finally:
             if winner == 'A':
-                game_db_report(gametype, gameid, GAME_REDWON)
+                game_report_result(gametype, gameid, GAME_REDWON)
             elif winner == 'B':
-                game_db_report(gametype, gameid, GAME_BLUEWON)
+                game_report_result(gametype, gameid, GAME_BLUEWON)
             else:
                 raise RuntimeError
 
