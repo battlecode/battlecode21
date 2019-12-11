@@ -299,7 +299,7 @@ class DoubleEliminationTournament(Tournament):
                     match.player1.match_idx += offset_match_idx
                 if isinstance(match.player2, MatchResultPlayer):
                     match.player2.match_idx += offset_match_idx
-                match.round += "   W"
+                match.round = (match.round + "   W").rjust(6)
                 self.matches += [match]
 
         num_matches_in_round = self.num_players // 2
@@ -307,7 +307,7 @@ class DoubleEliminationTournament(Tournament):
         add_matches(winner_bracket[:num_matches_in_round])
         # Round 1 Losers
         for i in range(0, num_matches_in_round, 2):
-            self.matches += [Match(Loser(i), Loser(i + 1), "1   L")]
+            self.matches += [Match(Loser(i), Loser(i + 1), "1 L-A".rjust(6))]
 
         # Challonge seems to have the following protocol for generating the losers bracket
         # Starting from Round 2 Losers (both A and B), it cycles between four protocols:
@@ -344,23 +344,25 @@ class DoubleEliminationTournament(Tournament):
             for i, j in enumerate(protocols[0](num_matches_in_round)):
                 self.matches += [Match(Loser(current_winners_start + i),
                                        Winner(previous_losers_start + j),
-                                       "{} L-A".format(round_num))]
+                                       "{} L-A".format(round_num).rjust(6))]
             # Round N Losers B
             for i in protocols[0](num_matches_in_round // 2):
+                # Under certain conditions, the two players in a match are reversed
                 if protocols[0] == DoubleEliminationTournament.protocol_increasing_full or \
-                    protocols[0] == DoubleEliminationTournament.protocol_increasing_half:
+                    protocols[0] == DoubleEliminationTournament.protocol_increasing_half or \
+                    num_matches_in_round == 2:
                     self.matches += [Match(Winner(current_losers_start + 2 * i),
                                            Winner(current_losers_start + 2 * i + 1),
-                                           "{} L-B".format(round_num))]
+                                           "{} L-B".format(round_num).rjust(6))]
                 else:
                     self.matches += [Match(Winner(current_losers_start + 2 * i + 1),
                                            Winner(current_losers_start + 2 * i),
-                                           "{} L-B".format(round_num))]
+                                           "{} L-B".format(round_num).rjust(6))]
 
             if offset_match_idx == 0:
                 offset_match_idx += num_matches_in_round
             else:
-                offset_match_idx += 3 * num_matches_in_round // 2
+                offset_match_idx += 3 * num_matches_in_round
 
         # Final #1
         winner_bracket_top = len(self.matches) - 2
