@@ -65,8 +65,6 @@ class Match:
     def __init__(self, player1, player2, round):
         self.player1 = player1
         self.player2 = player2
-        self.scores1 = []
-        self.scores2 = []
         self.winner = None
         self.loser = None
         self.round = round
@@ -75,7 +73,7 @@ class Match:
         return '[Round %s]  %s -vs- %s' % \
             (self.round.rjust(6), self.player1, self.player2)
 
-    def report_scores(self, winner):
+    def report_winner(self, winner):
         if winner == self.player1:
             self.winner, self.loser = self.player1, self.player2
         elif winner == self.player2:
