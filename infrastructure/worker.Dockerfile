@@ -16,9 +16,9 @@ RUN pip3 install --upgrade \
     google-cloud-storage \
     requests
 
-# Insert codebase
-COPY app /app
-COPY box /box
+# Insert shared codebase
+COPY box box/
+COPY app/config.py app/subscription.py app/util.py app/gcloud-key.json app/
 
 WORKDIR box
 
