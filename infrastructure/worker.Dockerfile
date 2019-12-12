@@ -17,7 +17,8 @@ RUN pip3 install --upgrade \
     requests
 
 # Insert codebase
-COPY app box /
+COPY app /app
+COPY box /box
 
 WORKDIR box
 

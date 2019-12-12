@@ -12,4 +12,4 @@ RUN pip3 install --upgrade \
     requests
 
 # Insert codebase
-COPY app /
+COPY app /app
