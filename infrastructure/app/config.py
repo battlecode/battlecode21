@@ -29,6 +29,8 @@ TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
 SCRIMMAGE_GENERATE_INTERVAL = 7200
 
+TOURNAMENT_SLEEP_TIME = 15 # Interval between checks on tournament match statuses
+
 GAME_WINNER = "^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$"
 
 API_SCRIMMAGE = '???'
