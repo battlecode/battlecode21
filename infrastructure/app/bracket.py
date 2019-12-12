@@ -3,16 +3,16 @@ A double-elimination bracket generator
 Reverse-engineering Challonge is, like, work
 """
 
+from config import *
+
 import sys
+import logging
 import heapq
 
 class Entity:
     """A class for a generic team-like entity"""
 
     def __init__(self):
-        raise NotImplementedError
-
-    def get_team_id(self, matches):
         raise NotImplementedError
 
 class Team(Entity):
@@ -24,12 +24,6 @@ class Team(Entity):
     def __str__(self):
         return 'Team #{}'.format(self.team_id + 1).ljust(16)
 
-    def get_team_id(self):
-        return self.team_id
-
-    def get_team_id(self, matches):
-        return self.team_id
-
 class MatchResultPlayer(Entity):
     """A class that represents the winner or loser of a particular match"""
 
@@ -39,6 +33,9 @@ class MatchResultPlayer(Entity):
     def __str__(self):
         return 'Player in [{}]'.format(self.match_idx + 1).ljust(16)
 
+    def get_team_id(self, matches):
+        raise NotImplementedError
+
 class Winner(MatchResultPlayer):
     """A class that represents the winner of a particular match"""
 
@@ -47,7 +44,7 @@ class Winner(MatchResultPlayer):
 
     def get_team_id(self, matches):
         """Retrieve the actual team represented by this object"""
-        return matches[self.match_idx].winner
+        return matches[self.match_idx].winner.team_id
 
 class Loser(MatchResultPlayer):
     """A class that represents the loser of a particular match"""
@@ -57,7 +54,7 @@ class Loser(MatchResultPlayer):
 
     def get_team_id(self, matches):
         """Retrieve the actual team represented by this object"""
-        return matches[self.match_idx].loser
+        return matches[self.match_idx].loser.team_id
 
 class Match:
     """A class that holds information about a match"""
@@ -70,16 +67,20 @@ class Match:
         self.round = round
 
     def __str__(self):
-        return '[Round %s]  %s -vs- %s' % \
-            (self.round.rjust(6), self.player1, self.player2)
+        return '[Round {}]  {} -vs- {}'.format(
+            self.round.rjust(6), self.player1, self.player2)
 
     def report_winner(self, winner):
-        if winner == self.player1:
+        """
+        Reports the winner of this match. The parameter must be either of
+        1 or 2.
+        """
+        if winner == 1:
             self.winner, self.loser = self.player1, self.player2
-        elif winner == self.player2:
+        elif winner == 2:
             self.winner, self.loser = self.player2, self.player1
         else:
-            assert(winner == self.player1 or winner == self.player2)
+            raise ValueError("winner is not 1 or 2")
 
 
 class Tournament:
@@ -92,10 +93,10 @@ class Tournament:
 
     def __init__(self, num_players):
         """Initialise with number of players and round up to power of 2"""
-        self.actual_num_players = num_players
         self.num_players = num_players
-        while self.num_players != (self.num_players & (-self.num_players)):
-            self.num_players += (self.num_players & (-self.num_players))
+        self.bracket_size = num_players
+        while self.bracket_size != (self.bracket_size & (-self.bracket_size)):
+            self.bracket_size += (self.bracket_size & (-self.bracket_size))
 
     def generate_bracket(self):
         """Entrypoint for generating a new bracket"""
@@ -104,6 +105,10 @@ class Tournament:
         self.prune_extra_players()
         self.reorder_matches()
         return self.matches
+
+    def print(self):
+        for idx, match in enumerate(self.matches):
+            print ('[{0:>4}]: {1}'.format(idx + 1, match).rjust(50))
 
     def generate_complete_bracket(self):
         raise NotImplementedError
@@ -127,7 +132,7 @@ class Tournament:
             MatchResultPlayers to be redundant.
             """
             if isinstance(player, Team):
-                if player.team_id < self.actual_num_players:
+                if player.team_id < self.num_players:
                     return player # The player exists
                 else:
                     return None # The player is an auxiliary player
@@ -227,7 +232,6 @@ class Tournament:
             new_idx += 1
         self.matches = new_matches
 
-
 class SingleEliminationTournament(Tournament):
     """A single elimination tournament generator"""
 
@@ -248,7 +252,7 @@ class SingleEliminationTournament(Tournament):
         works backwards.
         """
         cur_players = len(player_ids)
-        if cur_players == self.num_players:
+        if cur_players == self.bracket_size:
             return # No more players to be added
         new_players = []
         new_matches = []
@@ -270,7 +274,7 @@ class SingleEliminationTournament(Tournament):
         replaces Teams with MatchResultPlayers as appropriate in the
         bracket.
         """
-        last_match = [None] * (self.num_players) # Last match that this player was seen in
+        last_match = [None] * (self.bracket_size) # Last match that this player was seen in
         for idx, match in enumerate(self.matches):
             player1_id = match.player1.team_id
             player2_id = match.player2.team_id
@@ -289,7 +293,7 @@ class DoubleEliminationTournament(Tournament):
         Generates the complete bracket, consistent with a Challonge
         bracket. Assumes that number of players is a power of 2.
         """
-        winner_bracket = SingleEliminationTournament(self.num_players).generate_bracket()
+        winner_bracket = SingleEliminationTournament(self.bracket_size).generate_bracket()
         offset_match_idx = 0 # An offset for the match indexes, as new matches are added
 
         def add_matches(matches):
@@ -302,7 +306,7 @@ class DoubleEliminationTournament(Tournament):
                 match.round = (match.round + "   W").rjust(6)
                 self.matches += [match]
 
-        num_matches_in_round = self.num_players // 2
+        num_matches_in_round = self.bracket_size // 2
         # Round 1 Winners
         add_matches(winner_bracket[:num_matches_in_round])
         # Round 1 Losers
@@ -342,22 +346,14 @@ class DoubleEliminationTournament(Tournament):
             # Round N Losers A
             current_losers_start = len(self.matches)
             for i, j in enumerate(protocols[0](num_matches_in_round)):
-                self.matches += [Match(Loser(current_winners_start + i),
-                                       Winner(previous_losers_start + j),
+                self.matches += [Match(Loser(current_winners_start + j),
+                                       Winner(previous_losers_start + i),
                                        "{} L-A".format(round_num).rjust(6))]
             # Round N Losers B
-            for i in protocols[0](num_matches_in_round // 2):
-                # Under certain conditions, the two players in a match are reversed
-                if protocols[0] == DoubleEliminationTournament.protocol_increasing_full or \
-                    protocols[0] == DoubleEliminationTournament.protocol_increasing_half or \
-                    num_matches_in_round == 2:
-                    self.matches += [Match(Winner(current_losers_start + 2 * i),
-                                           Winner(current_losers_start + 2 * i + 1),
-                                           "{} L-B".format(round_num).rjust(6))]
-                else:
-                    self.matches += [Match(Winner(current_losers_start + 2 * i + 1),
-                                           Winner(current_losers_start + 2 * i),
-                                           "{} L-B".format(round_num).rjust(6))]
+            for i in range(0, num_matches_in_round // 2):
+                self.matches += [Match(Winner(current_losers_start + 2 * i),
+                                       Winner(current_losers_start + 2 * i + 1),
+                                       "{} L-B".format(round_num).rjust(6))]
 
             if offset_match_idx == 0:
                 offset_match_idx += num_matches_in_round
@@ -399,10 +395,153 @@ class DoubleEliminationTournament(Tournament):
             yield i
 
 
+class TournamentManager:
+    """
+    A utility that manages a tournament queue using a tournament bracket.
+    Accepts and processes match results, and produces lists of ongoing
+    matches to monitor and lists of matches ready to be queued.
+    """
+
+    class MatchInfo:
+        def __init__(self, match_idx, player1_key, player2_key, player1_name, player2_name):
+            self.match_idx = match_idx
+            self.player1_key = player1_key
+            self.player2_key = player2_key
+            self.player1_name = player1_name
+            self.player2_name = player2_name
+
+        def __str__(self):
+            return '[{0:>4}]: {1} ({2}) -vs- {3} ({4})'.format(
+                self.match_idx,
+                self.player1_key, self.player1_name,
+                self.player2_key, self.player2_name)
+
+    def __init__(self, bracket, team_keys, team_names):
+        """
+        Initialises this tournament bracket. Requires the following
+        parameters:
+         - bracket:    a Tournament instance containing the bracket to be
+                       used for running this tournament
+         - team_keys:  a list of unique identifying keys for each team,
+                       which may be useful in tournament starter procedures
+         - team_names: a list of team names, used in human-readable log
+                       outputs
+        """
+        if not isinstance(bracket, Tournament):
+            raise TypeError("bracket must be a Tournament")
+
+        self.bracket = bracket
+        self.team_keys = team_keys
+        self.team_names = team_names
+
+        self.ready = set()
+        self.running = set()
+        self.match_is_prerequisite_of = []
+        for idx, match in enumerate(self.bracket.matches):
+            self.match_is_prerequisite_of += [[]]
+            if isinstance(match.player1, MatchResultPlayer):
+                self.match_is_prerequisite_of[match.player1.match_idx] += [(idx, 1)]
+            if isinstance(match.player2, MatchResultPlayer):
+                self.match_is_prerequisite_of[match.player2.match_idx] += [(idx, 2)]
+            # If this match is ready to be played, add it to the game queue
+            if isinstance(match.player1, Team) and isinstance(match.player2, Team):
+                self.ready.add(TournamentManager.MatchInfo(idx,
+                    self.team_keys[match.player1.team_id],
+                    self.team_keys[match.player2.team_id],
+                    self.team_names[match.player1.team_id],
+                    self.team_names[match.player2.team_id]))
+
+    def match_enqueue(self, match, starter):
+        """
+        Enqueues a ready match by calling the provided starter function.
+        Updates the tournament manager's internal state to reflect this.
+        """
+        if match not in self.ready:
+            raise ValueError("this match is not marked as ready")
+
+        logging.info("Adding match [{}] to queue: {} vs {}".format(match.match_idx,
+            match.player1_name, match.player2_name))
+        self.ready.remove(match)
+        starter(match)
+        self.running.add(match)
+
+    def match_report_winner(self, match, winner):
+        """
+        Reports the outcome of a game, updating the tournament manager's
+        internal state. Parameters:
+         - match must be a MatchInfo instance
+         - winner must be either 1 or 2
+        """
+        if match not in self.running:
+            raise ValueError("this match is not currently running")
+
+        logging.info("Match [{}] won by {}".format(
+            match.match_idx,
+            match.player1_name if winner == 1 else match.player2_name))
+        self.running.remove(match)
+        self.bracket.matches[match.match_idx].report_winner(winner)
+
+        # Check if new matches are now ready to be played
+        for next_match, playernum in self.match_is_prerequisite_of[match.match_idx]:
+            if playernum == 1:
+                self.bracket.matches[next_match].player1 = Team(self.bracket.matches[next_match].player1.get_team_id(self.bracket.matches))
+            else:
+                self.bracket.matches[next_match].player2 = Team(self.bracket.matches[next_match].player2.get_team_id(self.bracket.matches))
+            if isinstance(self.bracket.matches[next_match].player1, Team) and isinstance(self.bracket.matches[next_match].player2, Team):
+                self.ready.add(TournamentManager.MatchInfo(next_match,
+                    self.team_keys[self.bracket.matches[next_match].player1.team_id],
+                    self.team_keys[self.bracket.matches[next_match].player2.team_id],
+                    self.team_names[self.bracket.matches[next_match].player1.team_id],
+                    self.team_names[self.bracket.matches[next_match].player2.team_id]))
+
+    def is_complete(self):
+        return (not self.ready) and (not self.running)
+
+
 if __name__ == '__main__':
     n = int(sys.argv[1])
 
-    tourney = DoubleEliminationTournament(n)
-    matches = tourney.generate_bracket()
-    for idx, match in enumerate(matches):
-        print ('[{0:>4}]: {1}'.format(idx + 1, match).rjust(50))
+    tournament = DoubleEliminationTournament(n)
+    tournament.generate_bracket()
+    tournament.print()
+
+    manager = TournamentManager(tournament,
+        ["Key {}".format(i+1) for i in range(n)],
+        ["Name {}".format(i+1) for i in range(n)])
+
+    def print_status():
+        for match in manager.ready:
+            print ('Ready:   {}'.format(match).rjust(60))
+        for match in manager.running:
+            print ('Running: {}'.format(match).rjust(60))
+
+    def input_match(match_list):
+        while True:
+            match_idx = input('Match index: ')
+            for match in match_list:
+                if str(match.match_idx) == match_idx:
+                    return match
+            print ('Invalid match. ', end='')
+
+    while not manager.is_complete():
+        print_status()
+
+        action = None
+        while True:
+            action = input('Action [enqueue / result]: ')
+            if action in ['enqueue', 'result']:
+                break
+            print ('Invalid action. ', end='')
+
+        if action == 'enqueue':
+            manager.match_enqueue(input_match(manager.ready),
+                lambda x: print ('Starter: {}'.format(x)))
+        else:
+            match = input_match(manager.running)
+            winner = None
+            while True:
+                winner = input('Winner [1 / 2]: ')
+                if winner in ['1', '2']:
+                    break
+                print ('Invalid winner. ', end='')
+            manager.match_report_winner(match, int(winner))
