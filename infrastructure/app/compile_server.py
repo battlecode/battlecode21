@@ -12,8 +12,12 @@ from google.cloud import storage
 def compile_report_result(submissionid, result):
     """Sends the result of the run to the API endpoint"""
     try:
+        auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_compile_update(submissionid), data={
-            'compilation_status': result})
+            'compilation_status': result
+        }, headers={
+            'Authorization': 'Bearer {}'.format(auth_token)
+        })
         response.raise_for_status()
     except:
         logging.critical('Could not report result to API endpoint')

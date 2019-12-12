@@ -9,6 +9,19 @@ import requests
 import copy
 
 
+def publish_match(player1, player2):
+    try:
+        auth_token = util.get_api_auth_token()
+        response = requests.post(url=API_SCRIMMAGE_ENQUEUE, data={
+            'player1': player1,
+            'player2': player2
+        }, headers={
+            'Authorization': 'Bearer {}'.format(auth_token)
+        })
+        response.raise_for_status()
+    except:
+        logging.error('Could not send game to API endpoint')
+
 def get_match_winner(match):
     """Checks the status of a match, returning either 1, 2 or None"""
     # TODO

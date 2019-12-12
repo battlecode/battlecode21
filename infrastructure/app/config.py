@@ -31,9 +31,13 @@ SCRIMMAGE_GENERATE_INTERVAL = 7200
 
 TOURNAMENT_SLEEP_TIME = 15 # Interval between checks on tournament match statuses
 
-GAME_WINNER = "^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$"
+GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
-API_SCRIMMAGE = '???'
+API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
+API_USERNAME = 'database_admin'
+API_PASSWORD = '???'
+API_SCRIMMAGE_ENQUEUE = '???'
+API_SCRIMMAGE_MATCHMAKE = '???'
 
 
 # Compilation API specifications
@@ -46,7 +50,7 @@ def api_compile_update(submissionid):
     Returns the API link for reporting the compilation status
     submissionid: the ID of the submission
     """
-    return 'http://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
+    return 'https://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
 
 # Game running API specifications
 
@@ -56,7 +60,7 @@ GAME_ERROR   = 'error'
 def api_game_update(gametype, gameid):
     """
     Returns the API link for reporting the compilation status
-    gametype: "scrimmage" or "tournament"
+    gametype: 'scrimmage' or 'tournament'
     gameid: the ID of the game
     """
-    return 'http://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)
+    return 'https://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)

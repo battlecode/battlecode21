@@ -13,8 +13,12 @@ from google.cloud import storage
 def game_report_result(gametype, gameid, result):
     """Sends the result of the run to the API endpoint"""
     try:
+        auth_token = util.get_api_auth_token()
         response = requests.post(url=api_game_update(gametype, gameid), data={
-            'status': result})
+            'status': result
+        }, headers={
+            'Authorization': 'Bearer {}'.format(auth_token)
+        })
         response.raise_for_status()
     except:
         logging.critical('Could not report result to API endpoint')

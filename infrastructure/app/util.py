@@ -1,6 +1,7 @@
 from config import *
 
 import subprocess, threading
+import requests, json
 
 def monitor_command(command, cwd, timeout=0):
     """
@@ -32,15 +33,13 @@ def pull_distribution(cwd, onerror):
     except:
         onerror()
 
-def publish_match(player1, player2):
-    data = {
-        'player1': player1,
-        'player2': player2
-    }
-    logging.info('Sending game to API endpoint: {} vs {}'.format(player1, player2))
+def get_api_auth_token():
     try:
-        response = requests.post(url=API_SCRIMMAGE, data=data)
+        response = requests.post(url=API_AUTHENTICATE, data={
+            'username': API_USERNAME,
+            'password': API_PASSWORD
+        })
         response.raise_for_status()
-        logging.info('Game sent')
+        return json.loads(response.text)['access']
     except:
-        logging.error('Could not send game to API endpoint')
+        logging.error('Could not obtain API authentication token')
