@@ -27,17 +27,21 @@ You can also run both the backend and the frontend in a Docker container, by run
 
 ### Engine
 
-(whenever Gradle has problems with something, run `gradle clean` and see if it helps)
+Windows users: Instead of `./gradlew`, use `gradlew` for all commands.
+
+(whenever Gradle has problems with something, run `./gradlew clean` and see if it helps)
 
 To run a game, run
 
 ```
-gradle headless
+./gradlew headless
 ```
 
-(where `gradle` can be substituted for `./gradlew` on Mac/Linux and `gradlew` on Windows). The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `gradle headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
+The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `./gradlew headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
 
 ### Client
+
+(Make sure you have a recent version of `npm`: `sudo npm cache clean -f && sudo npm install -g n && sudo n stable && PATH="$PATH"`.)
 
 First run `npm install` in the `schema` folder, followed by `npm run install_all` in the `client` folder. You can then run
 
@@ -52,7 +56,7 @@ which will launch the client on http://localhost:8080 (if available).
 You can generate javadocs as follows:
 
 ```
-gradle release_docs_zip -Prelease_version=2020.0.0.0.0.1
+./gradlew release_docs_zip -Prelease_version=2020.0.0.0.0.1
 ```
 
 This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
