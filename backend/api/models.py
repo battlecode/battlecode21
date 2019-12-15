@@ -114,7 +114,7 @@ class Team(models.Model):
     team_key  = models.CharField(max_length=16, unique=True)
     avatar    = models.TextField(blank=True)
     users     = models.ManyToManyField(User, default=list)
-
+    staff_team = models.BooleanField(default=False)
     # team profile
     bio       = models.CharField(max_length=1000, blank=True)
     divisions = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), default=list)
@@ -127,9 +127,7 @@ class Team(models.Model):
     wins                 = models.IntegerField(default=0)
     losses               = models.IntegerField(default=0)
     draws                = models.IntegerField(default=0)
-
-    code                 = models.TextField(default="// Get started by reading the docs!")
-
+    
     # metadata
     deleted = models.BooleanField(default=False)
 
