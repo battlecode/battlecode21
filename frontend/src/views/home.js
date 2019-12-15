@@ -34,9 +34,7 @@ class StatCard extends UpdateCard {
                             <i className="fa fa-circle text-danger" /> Loss
                         </div>
                         <hr />
-                        <div className="stats">
-                            <i className="fa fa-clock-o" /> { this.timeSince() }
-                        </div>
+                        { this.getFooter() }
                     </div>
                 </div>
             </div>
@@ -53,6 +51,10 @@ class DateCard extends UpdateCard {
     componentDidMount() {
         Api.getUpdates(function(dates) {
             this.setState({ dates: (dates.length > 5)?dates.slice(0,5):dates  });
+            if (dates[0]) {
+                console.log(dates[0].dateObj)
+                this.setState({update_date: dates[0].dateObj})
+            }
         }.bind(this));
     }
 
@@ -74,12 +76,7 @@ class DateCard extends UpdateCard {
                             </tbody>
                         </table>
                     </div>
-                    <div className="footer">
-                        <hr />
-                        <div className="stats">
-                            <i className="fa fa-history" /> { this.timeSince() }
-                        </div>
-                    </div>
+                    { this.getFooter() }
                 </div>
             </div>
         );
@@ -113,7 +110,7 @@ class InstrCard extends UpdateCard {
 }
 
 
-class LinksCard extends UpdateCard {
+class LinksCard extends Component {
     constructor() {
         super();
     }

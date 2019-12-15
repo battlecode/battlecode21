@@ -84,10 +84,23 @@ class Api {
     callback(newState);
   }
 
-  static getTeamMuHistory(callback) {
-   //const data = [10, 12, 14, 10, 28, 32, 25, 32];
+  // data from scrimmaging
+  static getOwnTeamMuHistory(callback) {
+    return Api.getTeamMuHistory(Cookies.get('team_id'), callback)
+  }
 
-    callback([]);
+  static getTeamMuHistory(team, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
+    $.get(`${URL}/api/${LEAGUE}/team/${team}/history/`).done((data, status) => {
+        callback(data);
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
   }
 
   static getTeamWinStats(callback) {
@@ -150,6 +163,7 @@ class Api {
     $.get(`${URL}/api/league/${LEAGUE}/`, (data, success) => {
       for (let i = 0; i < data.updates.length; i++) {
         const d = new Date(data.updates[i].time);
+        data.updates[i].dateObj = d
         data.updates[i].date = d.toLocaleDateString();
         data.updates[i].time = d.toLocaleTimeString();
       }
@@ -576,17 +590,15 @@ class Api {
 
     // console.log("calling api/password_reset/reset_password/confirm");
     console.log("calling api/password_reset/confirm");
-    console.log("with pass", password, "token", token);
+    // console.log("with pass", password, "token", token);
     
     var req = {
       password: password,
       token: token,
     };
-    console.log(req);
-    // $.post(`${URL}/api/password_reset/reset_password/confirm/`, req, 
-    // (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
+
     $.post(`${URL}/api/password_reset/confirm/`, req, 
-    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed", xhr, status, error)});
+    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed")});
   }
 
   static forgotPassword(email, callback) {
