@@ -296,7 +296,6 @@ class TeamViewSet(viewsets.GenericViewSet,
         res = super().retrieve(request, pk=pk)
         if res.status_code == status.HTTP_200_OK and request.user.username in res.data.get('users'):
             res.data['team_key'] = self.get_queryset().get(pk=pk).team_key
-            res.data['code'] = self.get_queryset().get(pk=pk).code
         return res
 
     def partial_update(self, request, league_id, pk=None):

@@ -28,9 +28,6 @@ class BasicTeamSerializer(serializers.HyperlinkedModelSerializer):
         model = Team
         fields = ('id', 'league', 'name', 'avatar', 'wins', 'losses', 'draws',
             'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked')
-        extra_kwargs = {
-            'code': {'write_only': True}
-        }
         read_only_fields = ('id',)
 
 
@@ -43,9 +40,6 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         model = Team
         fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
             'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma')
-        extra_kwargs = {
-            'code': {'write_only': True}
-        }
         read_only_fields = ('id',)
 
     def update(self, instance, validated_data):
@@ -54,7 +48,6 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         instance.divisions = validated_data.get('divisions', instance.divisions)
         instance.auto_accept_ranked = validated_data.get('auto_accept_ranked', instance.auto_accept_ranked)
         instance.auto_accept_unranked = validated_data.get('auto_accept_unranked', instance.auto_accept_unranked)
-        instance.code = validated_data.get('code', instance.code)
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.save()
         return instance
