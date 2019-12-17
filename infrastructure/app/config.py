@@ -39,6 +39,8 @@ API_PASSWORD = '???'
 API_SCRIMMAGE_ENQUEUE = '???'
 API_SCRIMMAGE_MATCHMAKE = '???'
 
+FILE_TEAMNAMES = 'team_names'
+
 
 # Compilation API specifications
 

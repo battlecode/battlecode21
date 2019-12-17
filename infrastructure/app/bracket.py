@@ -8,6 +8,7 @@ from config import *
 import sys
 import logging
 import heapq
+import json
 
 class Entity:
     """A class for a generic team-like entity"""
@@ -22,7 +23,7 @@ class Team(Entity):
         self.team_id = team_id
 
     def __str__(self):
-        return 'Team #{}'.format(self.team_id + 1).ljust(16)
+        return 'Team #{}'.format(self.team_id + 1)
 
 class MatchResultPlayer(Entity):
     """A class that represents the winner or loser of a particular match"""
@@ -31,7 +32,7 @@ class MatchResultPlayer(Entity):
         self.match_idx = match_idx
 
     def __str__(self):
-        return 'Player in [{}]'.format(self.match_idx + 1).ljust(16)
+        return 'Player in [{}]'.format(self.match_idx + 1)
 
     def get_team_id(self, matches):
         raise NotImplementedError
@@ -40,7 +41,7 @@ class Winner(MatchResultPlayer):
     """A class that represents the winner of a particular match"""
 
     def __str__(self):
-        return 'Winner of [{}]'.format(self.match_idx + 1).ljust(16)
+        return 'Winner of [{}]'.format(self.match_idx + 1)
 
     def get_team_id(self, matches):
         """Retrieve the actual team represented by this object"""
@@ -50,7 +51,7 @@ class Loser(MatchResultPlayer):
     """A class that represents the loser of a particular match"""
 
     def __str__(self):
-        return 'Loser  of [{}]'.format(self.match_idx + 1).ljust(16)
+        return 'Loser of [{}]'.format(self.match_idx + 1)
 
     def get_team_id(self, matches):
         """Retrieve the actual team represented by this object"""
@@ -59,16 +60,17 @@ class Loser(MatchResultPlayer):
 class Match:
     """A class that holds information about a match"""
 
-    def __init__(self, player1, player2, round):
+    def __init__(self, player1, player2, round_id, round_str):
         self.player1 = player1
         self.player2 = player2
         self.winner = None
         self.loser = None
-        self.round = round
+        self.round_id = round_id
+        self.round_str = round_str
 
     def __str__(self):
-        return '[Round {}]  {} -vs- {}'.format(
-            self.round.rjust(6), self.player1, self.player2)
+        return '[{}]  {} -vs- {}'.format(
+            self.round_str, self.player1, self.player2)
 
     def report_winner(self, winner):
         """
@@ -108,7 +110,7 @@ class Tournament:
 
     def print(self):
         for idx, match in enumerate(self.matches):
-            print ('[{0:>4}]: {1}'.format(idx + 1, match).rjust(50))
+            print ('[{0:>4}]: {1}'.format(idx + 1, match))
 
     def generate_complete_bracket(self):
         raise NotImplementedError
@@ -169,7 +171,7 @@ class Tournament:
             # Resolve this match according to the possible cases
             if player1_entity != None and player2_entity != None:
                 # This match is played
-                new_matches += [Match(player1_entity, player2_entity, match.round)]
+                new_matches += [Match(player1_entity, player2_entity, match.round_id, match.round_str)]
                 match_entities += [MatchResultPlayer(cur_match_idx)]
                 cur_match_idx += 1
             elif player1_entity != None and player2_entity == None:
@@ -211,7 +213,7 @@ class Tournament:
                 match_prerequisites_satisfied[idx] += 1
             # If this match is ready to be played, add it to the game queue
             if match_prerequisites_satisfied[idx] == 2:
-                heapq.heappush(queue, (match.round, push_idx, idx))
+                heapq.heappush(queue, (match.round_id, push_idx, idx))
                 push_idx += 1
         # Repeatedly add queued matches to the reordered list of matches
         new_matches = []
@@ -227,7 +229,7 @@ class Tournament:
                     self.matches[next_match].player2.match_idx = new_idx
                 match_prerequisites_satisfied[next_match] += 1
                 if match_prerequisites_satisfied[next_match] == 2:
-                    heapq.heappush(queue, (self.matches[next_match].round, push_idx, next_match))
+                    heapq.heappush(queue, (self.matches[next_match].round_id, push_idx, next_match))
                     push_idx += 1
             new_idx += 1
         self.matches = new_matches
@@ -258,14 +260,15 @@ class SingleEliminationTournament(Tournament):
         new_matches = []
         for player in player_ids:
             opponent = cur_players * 2 - player - 1
-            new_matches += [Match(Team(player), Team(opponent), None)]
+            new_matches += [Match(Team(player), Team(opponent), None, None)]
             new_players += [player, opponent]
         # Recursive call to get the previous round
         self.generate_recursive_bracket(new_players)
         # Update the actual round number for this round
-        my_round = str(int(self.matches[-1].round) + 1) if self.matches else "1"
+        my_round = (self.matches[-1].round_id + 1) if self.matches else 1
         for match in new_matches:
-            match.round = my_round
+            match.round_id = my_round
+            match.round_str = 'Round {}'.format(my_round)
         self.matches += new_matches
 
     def postprocess(self):
@@ -303,7 +306,7 @@ class DoubleEliminationTournament(Tournament):
                     match.player1.match_idx += offset_match_idx
                 if isinstance(match.player2, MatchResultPlayer):
                     match.player2.match_idx += offset_match_idx
-                match.round = (match.round + "   W").rjust(6)
+                match.round_str = match.round_str + " (Winners)"
                 self.matches += [match]
 
         num_matches_in_round = self.bracket_size // 2
@@ -311,7 +314,7 @@ class DoubleEliminationTournament(Tournament):
         add_matches(winner_bracket[:num_matches_in_round])
         # Round 1 Losers
         for i in range(0, num_matches_in_round, 2):
-            self.matches += [Match(Loser(i), Loser(i + 1), "1 L-A".rjust(6))]
+            self.matches += [Match(Loser(i), Loser(i + 1), 1.1, "Round 1 (Losers)")]
 
         # Challonge seems to have the following protocol for generating the losers bracket
         # Starting from Round 2 Losers (both A and B), it cycles between four protocols:
@@ -348,12 +351,14 @@ class DoubleEliminationTournament(Tournament):
             for i, j in enumerate(protocols[0](num_matches_in_round)):
                 self.matches += [Match(Loser(current_winners_start + j),
                                        Winner(previous_losers_start + i),
-                                       "{} L-A".format(round_num).rjust(6))]
+                                       round_num + 0.1,
+                                       "Round {} (Losers A)".format(round_num))]
             # Round N Losers B
             for i in range(0, num_matches_in_round // 2):
                 self.matches += [Match(Winner(current_losers_start + 2 * i),
                                        Winner(current_losers_start + 2 * i + 1),
-                                       "{} L-B".format(round_num).rjust(6))]
+                                       round_num + 0.2,
+                                       "Round {} (Losers B)".format(round_num))]
 
             if offset_match_idx == 0:
                 offset_match_idx += num_matches_in_round
@@ -362,9 +367,10 @@ class DoubleEliminationTournament(Tournament):
 
         # Final #1
         winner_bracket_top = len(self.matches) - 2
-        self.matches += [Match(Winner(winner_bracket_top), Winner(winner_bracket_top + 1), "Fin-1")]
+        self.matches += [Match(Winner(winner_bracket_top), Winner(winner_bracket_top + 1), round_num, "Round {}".format(round_num))]
+        round_num += 1
         # Optional final #2
-        self.matches += [Match(Winner(winner_bracket_top + 2), Loser(winner_bracket_top + 2), "Fin-2")]
+        self.matches += [Match(Winner(winner_bracket_top + 2), Loser(winner_bracket_top + 2), round_num, "Round {} (if needed)".format(round_num))]
 
     """
     Below are the four ordering protocols observed in Challonge's losers
@@ -498,50 +504,46 @@ class TournamentManager:
         return (not self.ready) and (not self.running)
 
 
-if __name__ == '__main__':
-    n = int(sys.argv[1])
+def dump_json(n, ouf):
+    """Dumps the tournament bracket as JSON for use by bracket viewer"""
 
     tournament = DoubleEliminationTournament(n)
     tournament.generate_bracket()
-    tournament.print()
+    data = { }
+    data['tournament_name'] = input('Name of tournament: ')
+    data['rounds'] = []
+    data['matches'] = []
 
-    manager = TournamentManager(tournament,
-        ["Key {}".format(i+1) for i in range(n)],
-        ["Name {}".format(i+1) for i in range(n)])
+    with open(FILE_TEAMNAMES, 'r') as f:
+        team_names = f.read().split('\n')
 
-    def print_status():
-        for match in manager.ready:
-            print ('Ready:   {}'.format(match).rjust(60))
-        for match in manager.running:
-            print ('Running: {}'.format(match).rjust(60))
-
-    def input_match(match_list):
-        while True:
-            match_idx = input('Match index: ')
-            for match in match_list:
-                if str(match.match_idx) == match_idx:
-                    return match
-            print ('Invalid match. ', end='')
-
-    while not manager.is_complete():
-        print_status()
-
-        action = None
-        while True:
-            action = input('Action [enqueue / result]: ')
-            if action in ['enqueue', 'result']:
-                break
-            print ('Invalid action. ', end='')
-
-        if action == 'enqueue':
-            manager.match_enqueue(input_match(manager.ready),
-                lambda x: print ('Starter: {}'.format(x)))
+    def to_json_object(entity):
+        if isinstance(entity, Team):
+            return { 'seed': entity.team_id+1, 'name': team_names[entity.team_id] }
+        elif isinstance(entity, Winner):
+            return { 'depends_on': entity.match_idx, 'type': 'Winner' }
+        elif isinstance(entity, Loser):
+            return { 'depends_on': entity.match_idx, 'type': 'Loser' }
         else:
-            match = input_match(manager.running)
-            winner = None
-            while True:
-                winner = input('Winner [1 / 2]: ')
-                if winner in ['1', '2']:
-                    break
-                print ('Invalid winner. ', end='')
-            manager.match_report_winner(match, int(winner))
+            raise ValueError('unknown entity')
+
+    for match in tournament.matches:
+        if not data['rounds'] or data['rounds'][-1]['name'] != match.round_str:
+            data['rounds'] += [{
+                'name': match.round_str,
+                'num_games': 0
+            }]
+        data['rounds'][-1]['num_games'] += 1
+        data['matches'] += [{
+            'player1': to_json_object(match.player1),
+            'player2': to_json_object(match.player2),
+            'complete': False
+        }]
+
+    with open(ouf, 'w') as f:
+        f.write(json.dumps(data))
+
+if __name__ == '__main__':
+    n = int(sys.argv[1])
+    ouf = sys.argv[2]
+    dump_json(n, ouf)
