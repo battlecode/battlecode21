@@ -27,10 +27,7 @@ class BasicTeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ('id', 'league', 'name', 'avatar', 'wins', 'losses', 'draws',
-            'bio', 'divisions', 'code', 'auto_accept_ranked', 'auto_accept_unranked')
-        extra_kwargs = {
-            'code': {'write_only': True}
-        }
+            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked')
         read_only_fields = ('id',)
 
 
@@ -42,10 +39,7 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
-            'bio', 'divisions', 'code', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma')
-        extra_kwargs = {
-            'code': {'write_only': True}
-        }
+            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma')
         read_only_fields = ('id',)
 
     def update(self, instance, validated_data):
@@ -54,7 +48,6 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         instance.divisions = validated_data.get('divisions', instance.divisions)
         instance.auto_accept_ranked = validated_data.get('auto_accept_ranked', instance.auto_accept_ranked)
         instance.auto_accept_unranked = validated_data.get('auto_accept_unranked', instance.auto_accept_unranked)
-        instance.code = validated_data.get('code', instance.code)
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.save()
         return instance
@@ -62,8 +55,8 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
 class BasicUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('url', 'username', 'avatar', 'bio', 'country')
-        read_only_fields = ('url', 'username', 'avatar', 'bio', 'country')
+        fields = ('url', 'id', 'username', 'avatar', 'bio', 'country')
+        read_only_fields = ('url', 'id', 'username', 'avatar', 'bio', 'country')
 
 class VerifyUserSerializer(serializers.Serializer):
     registration_key = serializers.CharField(allow_null=True, max_length=32,
@@ -74,9 +67,9 @@ class VerifyUserSerializer(serializers.Serializer):
 class FullUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
+        fields = ('id', 'url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
             'username', 'avatar', 'bio', 'country', 'is_staff')
-        read_only_fields = ('url', 'registration_key', 'is_staff')
+        read_only_fields = ('id', 'url', 'registration_key', 'is_staff')
         extra_kwargs = {
             'password': {'write_only': True}
         }

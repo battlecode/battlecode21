@@ -10,14 +10,14 @@ class PasswordChange extends Component {
     }
 
     changePassword = (e) => {
-        const { state, props } = this;
+        const { state } = this;
         e.preventDefault();
 
         if (!state.password) {
             this.setState({ error: "Please enter a password"});
         }
 
-        if (state.password != state.passwordVerify) {
+        if (state.password !== state.passwordVerify) {
             this.setState({ error: "Passwords do not match. "});
             return;
         }
@@ -40,7 +40,7 @@ class PasswordChange extends Component {
         if (success) {
             this.setState({success: true});
             const redirect = () => {
-                this.props.router.push('/dash/')
+                this.props.history.push('/login')
             }
             setTimeout(redirect.bind(this), 3000);
         } else {

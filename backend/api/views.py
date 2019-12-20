@@ -23,6 +23,7 @@ GCLOUD_SUB_BUCKET = "bc20-submissions"
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
+    
 
 class GCloudUploadDownload():
     """
@@ -98,10 +99,10 @@ class UserViewSet(viewsets.GenericViewSet,
     destroy:
     Destroys a user.
     """
+
     queryset = get_user_model().objects.all()
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
-
 
 class ResumeUpload(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedAsRequestedUser,)
@@ -295,7 +296,6 @@ class TeamViewSet(viewsets.GenericViewSet,
         res = super().retrieve(request, pk=pk)
         if res.status_code == status.HTTP_200_OK and request.user.username in res.data.get('users'):
             res.data['team_key'] = self.get_queryset().get(pk=pk).team_key
-            res.data['code'] = self.get_queryset().get(pk=pk).code
         return res
 
     def partial_update(self, request, league_id, pk=None):
@@ -323,6 +323,26 @@ class TeamViewSet(viewsets.GenericViewSet,
 
         return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
 
+    @action(methods=['get'], detail=True)
+    def history(self, request, league_id, pk=None):
+        try:
+            team_id = self.get_queryset().get(pk=pk).id
+        except Team.DoesNotExist:
+            return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
+
+        scrimmages = Scrimmage.objects.filter(Q(blue_team_id=pk) | Q(red_team_id=pk))
+
+        return_data = []
+
+        # loop through all scrimmages involving this team
+        # add entry to result array defining whether or not this team won and time of scrimmage
+        for scrimmage in scrimmages:
+            won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
+            won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
+            team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
+            return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
+
+        return Response(return_data, status.HTTP_200_OK)
 
     @action(methods=['patch'], detail=True)
     def join(self, request, league_id, pk=None):

@@ -2,7 +2,9 @@ import $ from 'jquery';
 import * as Cookies from 'js-cookie';
 
 //const URL = 'https://2020.battlecode.org';
-const URL = 'http://localhost:8000'; // DEVELOPMENT
+//const URL = 'http://localhost:8000'; // DEVELOPMENT
+// do not change URL here!! rather, for development, change it in ../.env.development
+const URL = process.env.REACT_APP_BACKEND_URL;
 const DONOTREQUIRELOGIN = false; // set to true for DEVELOPMENT
 const LEAGUE = 0;
 const PAGE_LIMIT = 10;
@@ -14,12 +16,10 @@ class Api {
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
-    console.log('newSubmission')
     // get the url from the real api
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
-      console.log(data['upload_url'])
       $.ajax({
         url: data['upload_url'], 
         method: "PUT",
@@ -84,10 +84,23 @@ class Api {
     callback(newState);
   }
 
-  static getTeamMuHistory(callback) {
-   //const data = [10, 12, 14, 10, 28, 32, 25, 32];
+  // data from scrimmaging
+  static getOwnTeamMuHistory(callback) {
+    return Api.getTeamMuHistory(Cookies.get('team_id'), callback)
+  }
 
-    callback([]);
+  static getTeamMuHistory(team, callback) {
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+
+    $.get(`${URL}/api/${LEAGUE}/team/${team}/history/`).done((data, status) => {
+        callback(data);
+    });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
   }
 
   static getTeamWinStats(callback) {
@@ -135,7 +148,6 @@ class Api {
   static getLeague(callback) {
     $.get(`${URL}/api/league/${LEAGUE}/`).done((data, status) => {
       Cookies.set('league_url', data.url);
-      console.log((data.url));
       $.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
@@ -151,6 +163,7 @@ class Api {
     $.get(`${URL}/api/league/${LEAGUE}/`, (data, success) => {
       for (let i = 0; i < data.updates.length; i++) {
         const d = new Date(data.updates[i].time);
+        data.updates[i].dateObj = d
         data.updates[i].date = d.toLocaleDateString();
         data.updates[i].time = d.toLocaleTimeString();
       }
@@ -300,14 +313,37 @@ class Api {
   }
 
   static getUserProfile(callback) {
-    $.get(`${URL}/api/user/profile/${encodeURIComponent(Cookies.get('username'))}/`).done((data, status) => {
-      Cookies.set('user_url', data.url);
-      $.get(data.url).done((data, success) => {
+    Api.getProfileByUser(Cookies.get('username'), Api.setUserUrl(callback))
+  }
+
+  // essentially like python decorator, wraps 
+  // sets user url before making call to that endpoint and passing on to callback
+  static setUserUrl(callback) {
+  	return function (data) {
+  		Cookies.set('user_url', data.url);
+  		$.get(data.url).done((data, success) => {
         callback(data);
       }).fail((xhr, status, error) => {
         console.log(error);
       });
+  	}
+  }
+
+  static getProfileByUser(username, callback) {
+  	if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    
+    $.get(`${URL}/api/user/profile/${username}/`).done((data, status) => {
+    	callback(data);
+    }).fail((xhr, status, error) => {
+        console.log(error);
     });
+
+    $.ajaxSetup({
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+    });
+
   }
 
   static updateUser(profile, callback) {
@@ -448,10 +484,15 @@ class Api {
 
   static getNextTournament(callback) {
     // TODO: actually use real API for this
+    // callback({
+    //   "est_date_str": '7 PM EST on January 12, 2020',
+    //   "seconds_until": (Date.parse(new Date('January 12, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+    //   "tournament_name": "Sprint Tournament"
+    // });
     callback({
-      "est_date_str": '8 PM EST on January 14, 2020',
-      "seconds_until": (Date.parse(new Date('January 14, 2020 20:00:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Sprint Tournament"
+      "est_date_str": '7 PM EST on January 6, 2020',
+      "seconds_until": (Date.parse(new Date('January 6, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "START"
     });
   }
 
@@ -517,7 +558,7 @@ class Api {
       console.log(xhr);
       // if responseJSON is undefined, it is probably because the API is not configured
       // check that the API is indeed running on URL (localhost:8000 if local development)
-      callback(xhr.responseJSON.non_field_errors, false);
+      callback(xhr.responseJSON.detail, false);
     });
   }
 
@@ -547,11 +588,17 @@ class Api {
       delete $.ajaxSettings.headers.Authorization;
     }
 
-    $.post(`${URL}/api/password_reset/confirm/`,
-      {
-        password,
-        token,
-      }, (data, success) => { callback(data, success); });
+    // console.log("calling api/password_reset/reset_password/confirm");
+    console.log("calling api/password_reset/confirm");
+    // console.log("with pass", password, "token", token);
+    
+    var req = {
+      password: password,
+      token: token,
+    };
+
+    $.post(`${URL}/api/password_reset/confirm/`, req, 
+    (data, success) => { callback(data, success); }).fail((xhr, status, error) => {console.log("call to api/password_reset/reset_password/confirm failed")});
   }
 
   static forgotPassword(email, callback) {
