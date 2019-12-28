@@ -1,4 +1,4 @@
-.PHONY: worker compile game matcher scrimmage tournament push clean
+.PHONY: worker compile game matcher scrimmage tournament images push clean
 
 # Worker servers: compilation server and game runner server
 worker:
@@ -16,8 +16,10 @@ scrimmage: matcher
 tournament: matcher
 	docker build -f tournament.Dockerfile -t bc20-tournament .
 
+images: compile game scrimmage tournament
+
 # Push to google container registry
-push: compile game scrimmage tournament
+push: images
 	docker tag bc20-compile    gcr.io/battlecode18/bc20-compile
 	docker tag bc20-game       gcr.io/battlecode18/bc20-game
 	docker tag bc20-scrimmage  gcr.io/battlecode18/bc20-scrimmage
