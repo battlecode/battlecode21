@@ -73,9 +73,6 @@ def compile_worker(submissionid):
         if result[0] != 0:
             compile_log_error(submissionid, 'Could not decompress source file')
 
-        # Update distribution
-        util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
-
         # Execute compilation
         result = util.monitor_command(
             ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],

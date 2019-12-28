@@ -12,9 +12,7 @@ import json
 
 class Entity:
     """A class for a generic team-like entity"""
-
-    def __init__(self):
-        raise NotImplementedError
+    pass
 
 class Team(Entity):
     """A class that represents a specific team"""
