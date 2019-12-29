@@ -22,17 +22,6 @@ def monitor_command(command, cwd, timeout=0):
         proc_stdout, proc_stderr = subproc.communicate()
         return (subproc.returncode, proc_stdout, proc_stderr)
 
-def pull_distribution(cwd, onerror):
-    try:
-        result = monitor_command(
-            ['./pull_dist.sh'],
-            cwd=cwd,
-            timeout=TIMEOUT_PULL)
-        if result[0] != 0:
-            raise RuntimeError
-    except:
-        onerror()
-
 def get_api_auth_token():
     try:
         response = requests.post(url=API_AUTHENTICATE, data={
