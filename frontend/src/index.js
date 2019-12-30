@@ -12,6 +12,7 @@ import Tournaments from './views/tournaments';
 import Updates from './views/updates';
 import Search from './views/search';
 import Team from './views/team';
+import Staff from './views/staff';
 import Rankings from './views/rankings';
 //import IDE from './views/ide';
 import Account from './views/account';
@@ -41,13 +42,15 @@ class App extends Component {
   componentDidMount() {
     Api.loginCheck((logged_in) => {
       this.setState({ logged_in });
+      
       Api.getUserProfile(function (u) {
         this.setState({ user: u });
-    }.bind(this));
-    Api.getLeague(function (l) {
-      console.log(l);
-      this.setState({ league: l});
-  }.bind(this));
+      }.bind(this));
+      
+      Api.getLeague(function (l) {
+        console.log(l);
+        this.setState({ league: l});
+      }.bind(this));
     });
   }
 
@@ -62,12 +65,19 @@ class App extends Component {
       return false;
   }
 
+  userIsStaff() {
+    return (this.state.user.is_staff === true)
+  }
+
   render() {
+
+    // direct to home page, should always be visible
     let homeElems = [
       <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />,
       <Route path={`${process.env.PUBLIC_URL}/home`} component={Home} />
     ]
 
+    // should only be visible to logged in users
     let loggedInElems = []
     if (this.state.logged_in) {
       loggedInElems = [
@@ -80,6 +90,7 @@ class App extends Component {
       ]
     }
 
+    // should be visible to all users
     let nonLoggedInElems = [
       <Route path={`${process.env.PUBLIC_URL}/updates`} component={Updates} />,
       <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />,
@@ -91,10 +102,21 @@ class App extends Component {
       <Route path="*" component={NotFound} />
     ]
 
-    let scrimmageElem = null
-      if (this.isSubmissionEnabled()) {
-        scrimmageElem = <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />
-      }
+    let staffElems = []
+    if (this.userIsStaff()) {
+      staffElems = [
+        <Route path={`${process.env.PUBLIC_URL}/staff`} component={Staff} />,
+      ]
+    }
+
+    // should only be visible if user is staff or submissions are enabled
+    let gameElems = []
+    if (this.isSubmissionEnabled()) {
+      gameElems = [
+        <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
+        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+      ]
+    }
 
     return (
       <div className="wrapper">
@@ -103,7 +125,8 @@ class App extends Component {
             <NavBar />
             <Switch>
               { homeElems }
-              { scrimmageElem }
+              { gameElems }
+              { staffElems }
               { loggedInElems }
               { nonLoggedInElems }
             </Switch>

@@ -62,7 +62,9 @@ class SideBar extends Component {
                         <NLink to={`${process.env.PUBLIC_URL}/getting-started`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-sun pe-fw" />Getting Started</p></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/resources`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-note2 pe-fw" />Resources</p></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/updates`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-bell pe-fw" />Updates</p></NLink>
+                        
                         <br />
+                        
                         <NLink to={`${process.env.PUBLIC_URL}/tournaments`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-medal pe-fw" />Tournaments</p></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/rankings`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-graph1 pe-fw" />Rankings</p></NLink>
                         {/*<NLink to={`${process.env.PUBLIC_URL}/search`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-search pe-fw" />Search</p></NLink>*/}
@@ -74,6 +76,11 @@ class SideBar extends Component {
                         {/*{ this.state.on_team && <NLink to={`${process.env.PUBLIC_URL}/ide`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-pen pe-fw" />IDE</p></NLink> }*/}
                         { (this.state.on_team && this.isSubmissionEnabled()) && <NLink to={`${process.env.PUBLIC_URL}/scrimmaging`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-joy pe-fw" />Scrimmaging</p></NLink> }
                         {/*<NLink to={`${process.env.PUBLIC_URL}/replay`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-monitor pe-fw" />Replay</p></NLink>*/}
+
+                        <br />
+
+                        { this.state.user.is_staff && <NLink to={`${process.env.PUBLIC_URL}/staff`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-tools pe-fw" />Staff</p></NLink> }
+
                         <br />
                     </ul>
                 </div>
