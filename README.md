@@ -17,7 +17,7 @@
 
 To get set up, make sure you have [Node](https://nodejs.org/en/download/) and [Docker](https://docs.docker.com/docker-for-mac/install/) installed. For Windows, you will need Docker Toolbox. If you have Windows, I'd also recommend installing [Cygwin](https://www.cygwin.com/), since we have some bash scripts that won't work with the standard Windows command prompt. (Docker is not strictly necessary, but it makes stuff easier, especially if you want to work on the backend of the website.)
 
-First, install all required packages: run `npm install` in each of the four folders `/schema`, `/client/playback`, `/client/visualizer`, `/frontend`.
+First, install all required packages: run `./install_frontend.sh` in the main folder. (If this fails, run `npm install` in each of the four folders `/schema`, `/client/playback`, `/client/visualizer`, `/frontend`.)
 
 Then, you can start the frontend by running `npm run start` in the `/frontend` folder. (If this fails on Windows, make sure you are using Cygwin.) After this step, you should be able to view the website at http://localhost:3000.
 
