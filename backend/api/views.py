@@ -14,23 +14,17 @@ from api.permissions import *
 
 from google.cloud import storage
 from google.cloud import pubsub_v1
+from google.oauth2 import service_account
 import trueskill
 
-import os
-import tempfile, datetime
-import argparse
-import time
-
-# from pub import * # doesn't work, i think django is strange
+import os, tempfile, datetime, argparse, time, json
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
-GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
+GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
-
-
 
 # pub sub commands (from pub.py)
 def get_callback(api_future, data, ref):
@@ -46,13 +40,18 @@ def get_callback(api_future, data, ref):
             raise
     return callback
 
-
 def pub(project_id, topic_name, data=""):
     """Publishes a message to a Pub/Sub topic."""
-    # [START pubsub_quickstart_pub_client]
+
     # Initialize a Publisher client.
-    client = pubsub_v1.PublisherClient()
-    # [END pubsub_quickstart_pub_client]
+    # credentials must be loaded from a file, so we temporarily create ibe 
+    with open('gcloud-key.json', 'w') as outfile:
+        outfile.write(settings.GOOGLE_APPLICATION_CREDENTIALS)
+        outfile.close()
+    credentials = service_account.Credentials. from_service_account_file('gcloud-key.json')
+    client = pubsub_v1.PublisherClient(credentials=credentials)
+    os.remove('gcloud-key.json') # important!!!
+
     # Create a fully qualified identifier in the form of
     # `projects/{project_id}/topics/{topic_name}`
     topic_path = client.topic_path(project_id, topic_name)
@@ -73,7 +72,7 @@ def pub(project_id, topic_name, data=""):
     # gets resolved in the background.
     while api_future.running():
         time.sleep(0.5)
-        print("Published {} message(s).".format(ref["num_messages"]))
+        # print("Published {} message(s).".format(ref["num_messages"]))
 
 class GCloudUploadDownload():
     """
@@ -489,7 +488,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         print('attempting call to compile server')
         data = "{\"submissionid\":" + str(team_sub.compiling_id) + "}"
         data_bytestring = data.encode('utf-8')
-        pub.pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data)
+        print(type(data_bytestring))
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
 
