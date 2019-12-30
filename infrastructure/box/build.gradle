@@ -14,7 +14,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 ext.versions = [
-    battlecode: project.property('version')
+    battlecode: new URL("https://battlecode.org/version.txt").text
     //scala: '2.11.7'
 ]
 
@@ -116,6 +116,7 @@ build.group = 'battlecode'
 //   `./gradlew -PteamA=<team A bot> -PteamB=<team B bot> -Pmaps=<comma
 //   separated list of maps>`
 task run(type: JavaExec, dependsOn: 'build') {
+    print(versions.battlecode)
     description 'Runs a match without starting the client.'
     group 'battlecode'
 
