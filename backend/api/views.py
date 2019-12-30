@@ -231,8 +231,6 @@ class LeagueViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LeagueSerializer
     permission_classes = (permissions.AllowAny,)
 
-
-
 class TeamViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.ListModelMixin,
@@ -264,21 +262,22 @@ class TeamViewSet(viewsets.GenericViewSet,
     Leaves the team. The authenticated user must be on the team, and the league must be active.
     Deletes the team if this is the last user to leave the team.
     """
-    queryset = Team.objects.all().order_by('name').exclude(deleted=True)
+    model = Team
     serializer_class = TeamSerializer
     pagination_class = SearchResultsPagination
     permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
-    filter_backends = (filters.SearchFilter,filters.OrderingFilter)
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     # NOTE: IF THE TEAM SEARCH IS EVER SLOW, REMOVE TEAM SEARCH BY USERNAME
     # it is nice to have it, but will certainly take more time to evaluate
     search_fields = ('name','users__username')
-    ordering_fields = ('mu',)
+    ordering_fields = ('mu', 'name')
+    ordering = ('name', 'id')
 
     def get_queryset(self):
         """
         Only teams within the league are visible.
         """
-        return super().get_queryset().filter(league_id=self.kwargs['league_id'])
+        return Team.objects.all().exclude(deleted=True).order_by('name', 'id').filter(league_id=self.kwargs['league_id'])
 
     def list(self, request, *args, **kwargs):
         """
