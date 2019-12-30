@@ -25,7 +25,7 @@ GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
-    
+
 # pub sub commands (from pub.py)
 def get_callback(api_future, data, ref):
     """Wrap message data in the context of the callback function."""
@@ -52,7 +52,6 @@ def pub(project_id, topic_name, data=""):
     client = pubsub_v1.PublisherClient(credentials=credentials)
     os.remove('gcloud-key.json') # important!!!
 
-
     # Create a fully qualified identifier in the form of
     # `projects/{project_id}/topics/{topic_name}`
     topic_path = client.topic_path(project_id, topic_name)
@@ -74,7 +73,6 @@ def pub(project_id, topic_name, data=""):
     while api_future.running():
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
-
 
 class GCloudUploadDownload():
     """

@@ -1,0 +1,211 @@
+// This is the build file we use to compile and run Battlecode players.
+// We're using Gradle: https://gradle.org/
+
+// Gradle's plugins allow it to automatically generate build scripts
+// for different types of code. Here we apply the Java plugin, which provides
+// all the tools needed to build player code!
+apply plugin: 'java'
+
+// The Scala plugin expands upon the Java plugin, allowing us to compile
+// Scala source files.
+//apply plugin: 'scala'
+
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+ext.versions = [
+    battlecode: project.property('version')
+    //scala: '2.11.7'
+]
+
+// TODO: DELETE CREDENTIALS AFTER PUBLIC RELEASE
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.pkg.github.com/battlecode/battlecode20"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("BC20_GITUSERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("BC20_GITKEY")
+        }
+    }
+    // Use the JCenter repo to resolve Scala dependencies.
+    jcenter()
+}
+
+// Battlecode updates a lot.
+// We should make sure to check for new dependencies frequently.
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 60, 'seconds'
+}
+
+
+// Tell gradle that we want Java 8.
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// We override Gradle's defaults for project directory layout.
+sourceSets {
+    main {
+        java.srcDirs = [ project.property('source') ]
+        //scala.srcDirs = [ project.property('source') ]
+
+        java.outputDir = file("$buildDir/classes")
+        //scala.outputDir = file("$buildDir/classes")
+    }
+
+    test {
+        java.srcDirs = ["test"]
+        //scala.srcDirs = ["test"]
+
+        java.outputDir = file("$buildDir/tests")
+        //scala.outputDir = file("$buildDir/tests")
+    }
+}
+
+//Setting default output directories for compiled classes and generated replay files
+//For other default properties, see gradle.properties
+if (!project.hasProperty("classLocationA")) {
+    ext.classLocationA = sourceSets.main.output.classesDirs
+}
+if (!project.hasProperty("classLocationB")) {
+    ext.classLocationB = sourceSets.main.output.classesDirs
+}
+if (!project.hasProperty("replay")) {
+    ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+}
+
+// The dependencies of this project.
+dependencies {
+    // The Battlecode engine.
+    implementation group: 'org.battlecode', name: 'battlecode', version: versions.battlecode
+
+    // Scala!
+    // implementation 'org.scala-lang:scala-library:2.11.7'
+    // testImplementation 'org.scalatest:scalatest_2.11:3.0.0'
+    // testImplementation 'junit:junit:4.12'
+}
+
+// Eclipse specific setup to enable docs and sources, and configure layout.
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+
+        defaultOutputDir = new File(project.buildDir, 'classes-eclipse')
+    }
+}
+
+// IntelliJ settings.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+
+build.group = 'battlecode'
+
+// Another task. This one accepts three optional parameters, or "properties",
+// corresponding to the bots used by the two teams, and the map(s) used in this
+// game. These properties can be set in the command line with:
+// On windows:
+//   `gradlew -PteamA=<team A bot> -PteamB=<team B bot> -Pmaps=<comma
+//   separated list of maps>`
+// On OS X and Linux:
+//   `./gradlew -PteamA=<team A bot> -PteamB=<team B bot> -Pmaps=<comma
+//   separated list of maps>`
+task run(type: JavaExec, dependsOn: 'build') {
+    description 'Runs a match without starting the client.'
+    group 'battlecode'
+
+    main = 'battlecode.server.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['-c=-']
+    jvmArgs = [
+        '-Dbc.server.mode=headless',
+        '-Dbc.server.map-path=maps',
+        '-Dbc.server.debug=true',
+        '-Dbc.engine.debug-methods=true',
+        '-Dbc.game.team-a='+project.property('teamA'),
+        '-Dbc.game.team-b='+project.property('teamB'),
+        '-Dbc.game.team-a.url='+project.property('classLocationA'),
+        '-Dbc.game.team-b.url='+project.property('classLocationB'),
+        '-Dbc.game.maps='+project.property('maps'),
+        '-Dbc.server.save-file=' + project.property('replay')
+    ]
+}
+
+// This task prints out all available players, in the format that the `run`
+// task expects them to be given as.
+task listPlayers {
+    description 'Lists all available players.'
+    group 'battlecode'
+
+    doLast {
+        sourceSets.main.allSource.each {
+            println it.name
+            if (it.getName().equals('RobotPlayer.java')
+                //|| it.getName().equals('RobotPlayer.scala')
+                ) {
+                URI base = new File(project.projectDir, 'src').toURI()
+                URI full = it.toURI()
+                String path = base.relativize(full).toString()
+                println 'PLAYER: '+path.substring(0, path.lastIndexOf('/')).replaceAll('/', '.')
+            }
+        }
+    }
+}
+
+// This task prints out all available maps, in the format that the `run` task
+// expects them to be given as.
+task listMaps {
+    description 'Lists all available maps.'
+    group 'battlecode'
+
+    doLast {
+        sourceSets.main.compileClasspath.each {
+            if (it.toString().contains('battlecode-2020')) {
+                FileCollection fc = zipTree(it)
+                fc += fileTree(new File(project.projectDir, 'maps'))
+                fc.each {
+                    String fn = it.getName()
+                    if (fn.endsWith('.map20')) {
+                        println 'MAP: '+fn.substring(0, fn.indexOf('.map20'))
+                    }
+                }
+            }
+        }
+    }
+}
+
+// This task prepares player code for upload, assembling it into a Java archive.
+// This archive can be uploaded at `2020.battlecode.org`.
+task jarForUpload(type: Jar) {
+    description 'Assembles source code into an archive, ready to be uploaded to the Battlecode site.'
+    group 'battlecode'
+
+    from 'src'
+    destinationDir = project.projectDir
+    archiveName = 'battlecode-player-upload.jar'
+}
+
+task runDebug(type: JavaExec, dependsOn: 'build') {
+    main = 'battlecode.server.Main'
+    classpath = project.sourceSets.main.runtimeClasspath
+    args = ['-c=-']
+    jvmArgs = [
+            '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005',
+            '-Dbc.server.mode=headless',
+            '-Dbc.server.map-path=maps',
+            '-Dbc.server.debug=false',
+            '-Dbc.server.robot-player-to-system-out=true',
+            '-Dbc.engine.debug-methods=true',
+            '-Dbc.game.team-a='+project.property('teamA'),
+            '-Dbc.game.team-b='+project.property('teamB'),
+            '-Dbc.game.team-a.url='+project.property('classLocationA'),
+            '-Dbc.game.team-b.url='+project.property('classLocationB'),
+            '-Dbc.game.maps='+project.property('maps'),
+            '-Dbc.server.save-file=' + project.property('replay')
+    ]
+}
