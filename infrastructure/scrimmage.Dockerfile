@@ -1,9 +1,8 @@
 FROM bc20-env
 
 # Install software dependencies
-RUN apt-get update \
-  && apt-get install -y \
-    cron \
+RUN apk --update --no-cache add \
+    apk-cron \
     curl \
     jq
 

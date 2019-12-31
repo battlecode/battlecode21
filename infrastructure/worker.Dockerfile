@@ -4,11 +4,9 @@ FROM bc20-env
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
 
 # Install software dependencies
-RUN apt-get update \
-  && apt-get install -y \
-    openjdk-8-jdk \
-    python3 \
-    python3-pip \
+RUN apk --update --no-cache add \
+    g++ \
+    openjdk8 \
     zip
 RUN pip3 install --upgrade \
     google-cloud-pubsub \

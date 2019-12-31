@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 scriptPath=$(dirname "$(readlink -f "$0")")
 source "${scriptPath}/.env.sh"

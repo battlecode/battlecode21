@@ -1,1 +1,1 @@
-00 00,12 * * * /bin/bash /app/matchmake.sh
+00 00,12 * * * /app/matchmake.sh
