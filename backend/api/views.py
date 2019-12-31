@@ -59,7 +59,7 @@ def pub(project_id, topic_name, data=""):
     # Data sent to Cloud Pub/Sub must be a bytestring.
     #data = b"examplefuncs"
     if data == "":
-        data = b"{\"gametype\":\"scrimmage\",\"gameid\":\"1\",\"player1\":\"examplefuncs\",\"player2\":\"examplefuncs\",\"maps\":\"maptestsmall\",\"replay\":\"abcdefg\"}"
+        data = b"sample pub/sub message"
 
     # Keep track of the number of published messages.
     ref = dict({"num_messages": 0})
@@ -484,9 +484,10 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
-        #TODO::: call to compile server
+        #TODO: call to compile server
         print('attempting call to compile server')
-        data = "{\"submissionid\":" + str(team_sub.compiling_id) + "}"
+        print('id:', serializer.data['id'])
+        data = str(serializer.data['id'])
         data_bytestring = data.encode('utf-8')
         print(type(data_bytestring))
         pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
@@ -547,7 +548,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             submission = self.get_queryset().get(pk=pk)
             if submission.compilation_status != 0:
                 return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
-            comp_status = request.data.get('compilation_status')
+            comp_status = int(request.data.get('compilation_status'))
 
             if comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
