@@ -20,8 +20,8 @@ def game_report_result(gametype, gameid, result):
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
-    except:
-        logging.critical('Could not report result to API endpoint')
+    except Exception as e:
+        logging.critical('Could not report result to API endpoint', exc_info=e)
         sys.exit(1)
 
 def game_log_error(gametype, gameid, reason):
