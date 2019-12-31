@@ -14,7 +14,7 @@ def game_report_result(gametype, gameid, result):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
-        response = requests.post(url=api_game_update(gametype, gameid), data={
+        response = requests.patch(url=api_game_update(gametype, gameid), data={
             'status': result
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
@@ -33,7 +33,7 @@ def game_log_error(gametype, gameid, reason):
 def game_worker(gameinfo):
     """
     Runs a game as specified by the message
-    Message contains JSON data, with 4 string parameters:
+    Message contains JSON data, with string parameters:
         gametype: string, either "scrimmage" or "tournament"
         gameid:   string, id of the game
         player1:  string, id of red player submission

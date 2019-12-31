@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM bc20-env
 
 # Private key for gcloud authentication
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json

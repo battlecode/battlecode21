@@ -13,7 +13,6 @@ logging.getLogger().setLevel(logging.INFO)
 # Constants, parameters and configurations
 
 GCLOUD_PROJECT_ID        = 'battlecode18'
-GCLOUD_PUB_GAME_NAME     = 'bc20-game'
 GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
 GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
 GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
@@ -27,19 +26,11 @@ TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300  # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
-SCRIMMAGE_GENERATE_INTERVAL = 7200
-
-TOURNAMENT_SLEEP_TIME = 15 # Interval between checks on tournament match statuses
-
 GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
 API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
-API_USERNAME = 'database_admin'
-API_PASSWORD = '???'
-API_SCRIMMAGE_ENQUEUE = '???'
-API_SCRIMMAGE_MATCHMAKE = '???'
-
-FILE_TEAMNAMES = 'team_names'
+API_USERNAME = os.getenv('BC20_DB_USERNAME')
+API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
 
 
 # Compilation API specifications
