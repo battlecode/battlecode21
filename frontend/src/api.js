@@ -11,6 +11,10 @@ const PAGE_LIMIT = 10;
 
 class Api {
   
+  static testSetOutcome() {
+    
+  }
+
   //----SUBMISSIONS----
 
   //uploads a new submission to the google cloud bucket
@@ -197,8 +201,16 @@ class Api {
     });
   }
   static searchTeamRanking(query, page, callback) {
+    Api.searchRanking(`${URL}/api/${LEAGUE}/team`, query, page, callback)
+  }
+
+  static searchStaffOnlyRanking(query, page, callback) {
+    Api.searchRanking(`${URL}/api/${LEAGUE}/team`, query, page, callback)
+  }
+
+  static searchRanking(apiURL, query, page, callback) {
     const encQuery = encodeURIComponent(query);
-    const teamUrl = `${URL}/api/${LEAGUE}/team/?ordering=-mu&search=${encQuery}&page=${page}`;
+    const teamUrl = `${apiURL}/?ordering=-mu,name&search=${encQuery}&page=${page}`;
     if ($.ajaxSettings && $.ajaxSettings.headers) {
       delete $.ajaxSettings.headers.Authorization;
     } // we should not require valid login for this. 
