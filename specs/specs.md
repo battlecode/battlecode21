@@ -1,6 +1,6 @@
 # Battlecode 2020
 
-_The formal specification of this year's game_
+_The formal specification of this year's game, version 2020.0.1.2._
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -373,4 +373,4 @@ String strategy = System.getProperty("bc.testing.team-a-strategy");
 
 ## Changelog
 
-- 1.0.0 (1/6/20) - Initial release.
+- 2020.0.1.2 (1/2/20) - Prerelease.
