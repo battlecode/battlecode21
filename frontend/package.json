@@ -27,7 +27,7 @@
     "startx": "BROWSER=none react-scripts start",
     "start": "react-scripts start",
     "build": "rm -rf build && react-scripts build",
-    "buildnogame": "rm -rf build && rm -rf public/bc20 && rm -rf public/javadoc && react-scripts build",
+    "buildnogame": "rm -rf build && rm -rf public/bc20 && rm -rf public/javadoc && rm -rf public/specs.html && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
