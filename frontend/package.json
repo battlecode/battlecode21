@@ -24,11 +24,10 @@
     "vm2": "^3.6.3"
   },
   "scripts": {
-    "startx": "cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && BROWSER=none react-scripts start",
-    "start": "cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && react-scripts start",
-    "build": "rm -rf build && cd ../client/visualizer && npm run prod && cp -r bc20 ../../frontend/public && cd ../../frontend && react-scripts build",
-    "startxnogame": "rm -rf public/bc20 && BROWSER=none react-scripts start",
-    "buildnogame": "rm -rf build && rm -rf public/bc20 && react-scripts build",
+    "startx": "BROWSER=none react-scripts start",
+    "start": "react-scripts start",
+    "build": "rm -rf build && react-scripts build",
+    "buildnogame": "rm -rf build && rm -rf public/bc20 && rm -rf public/javadoc && rm -rf public/specs.html && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="generator" content="pandoc">
+    <meta name="description" content="">
+
+    <title>Battlecode 2020 Specs</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">.sidebar ul{padding-left: 10px;}</style>
+    <style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
+  </head>
+
+  <body>
+
+    <div>
+        <div id="sidebar" class="sidebar">
+          <ul>
+          <li><a href="#battlecode-2020">Battlecode 2020</a><ul>
+          <li><a href="#background">Background</a></li>
+          <li><a href="#the-game-environment">The Game Environment</a></li>
+          <li><a href="#soup">Soup</a></li>
+          <li><a href="#disclaimer-distance-squared">Disclaimer: Distance Squared</a></li>
+          <li><a href="#robots">Robots</a><ul>
+          <li><a href="#units">Units</a></li>
+          <li><a href="#buildings">Buildings</a></li>
+          <li><a href="#bytecodes">Bytecodes</a></li>
+          </ul></li>
+          <li><a href="#communication">Communication</a></li>
+          <li><a href="#lingering-questionsclarifications">Lingering Questions/Clarifications</a></li>
+          <li><a href="#appendix-a-javadocs-and-other-references">Appendix A: Javadocs and Other References</a><ul>
+          <li><a href="#sample-player">Sample Player</a></li>
+          </ul></li>
+          <li><a href="#appendix-b-more-in-depth-mechanics">Appendix B: More In-depth Mechanics</a><ul>
+          <li><a href="#timing">Timing</a></li>
+          <li><a href="#monitoring">Monitoring</a></li>
+          <li><a href="#gameactionexceptions">GameActionExceptions</a></li>
+          <li><a href="#java-language-usage">Java Language Usage</a></li>
+          <li><a href="#bytecode-costs">Bytecode costs</a></li>
+          <li><a href="#memory-usage">Memory Usage</a></li>
+          <li><a href="#debugging">Debugging</a></li>
+          </ul></li>
+          <li><a href="#changelog">Changelog</a></li>
+          </ul></li>
+          </ul>
+        </div>
+        <div class="main">
+        
+<h1 id="battlecode-2020">Battlecode 2020</h1>
+<p><em>The formal specification of this year’s game, version 2020.0.1.2.</em></p>
+<p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
+<h2 id="background">Background</h2>
+<p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
+<h2 id="the-game-environment">The Game Environment</h2>
+<p>Battlecode 2020 is played by controlling <strong>robots</strong> on a rectangular grid called the <strong>map</strong>. Two teams of robots, <strong>red</strong> and <strong>blue</strong>, roam the map. Every <strong>round</strong>, each robot will get to take one <strong>turn</strong> in [TODO: what order?]. More on what they can do with that turn later.</p>
+<p>At the beginning of a match, at least one map tile will be <strong>flooded</strong>. On every turn, each tile adjacent to a <strong>flooded</strong> tile whose <strong>elevation</strong> is below the <strong>water level</strong> will become <strong>flooded</strong>. Any robot on a flooded tile is destroyed, except <strong>delivery drones</strong>. If your <strong>HQ</strong> is destroyed, you lose. As the match goes on, the <strong>water level</strong> will increase at an increasing rate, flooding adjacent tiles if their <strong>elevation</strong> is too low. The water level at a given round is provided via the function <br /><span class="math display"><em>e</em><sup>0.0028<em>x</em> − 1.38sin (0.00157<em>x</em> − 1.73) + 1.38sin ( − 1.73)</sup> − 1,</span><br /> where <span class="math inline"><em>x</em></span> is the current round. That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:</p>
+<table>
+<thead>
+<tr class="header">
+<th>elevation</th>
+<th>round flooded</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>25</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>50</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>100</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>1000</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>[TODO: complete table]</p>
+<p><strong>Pollution</strong> is the other environmental factor your robots must contend with. The presence of pollution on a map tile will slow down any robot on that tile by an amount proportional to the amount of pollution (see <strong>cooldown</strong> section for details). There is a <strong>global pollution</strong> level which starts at 0, is affected by both teams, and is applied to every map tile, plus <strong>local pollution</strong> from <strong>refineries</strong>, <strong>cows</strong>, and <strong>vaporators</strong> which can affect the pollution level near them. (More details on the individual effects below.)</p>
+<p>Map tiles may also contain some amount of <strong>soup</strong>, which can be extracted by <strong>miners</strong>, as we’ll see below.</p>
+<p>These four important characteristics of each map tile, elevation, flood status, pollution, and soup content, are only visible to robots which are nearby. A robot can <strong>sense</strong> these characteristics if the tile is within its <strong>vision radius</strong> (a trait which varies by robot type), using the functions [TODO], [TODO], [TODO], and [TODO], respectively.</p>
+<p>At the beginning of the game, these characteristics and the two starting <strong>HQ</strong>s are guaranteed to be horizontally, vertically, or rotationally symmetric.</p>
+<h2 id="soup">Soup</h2>
+<p><strong>Soup</strong> is the main resource in Battlecode 2020. Each team has a pool of soup shared by all robots, which is spent to build more robots and pay blockchain transaction fees. It actually comes in two forms; the soup distributed around the map can only be gathered by <strong>miners</strong> and is NOT added to the team pool until it has been <strong>refined</strong> in a <strong>refinery</strong>. Miners must bring unrefined soup from around the map to a <strong>refinery</strong>, where it is processed and added to the team pool, at which point it may be spent.</p>
+<p>Each team starts with [TODO: gameconstant and value] soup in the pool. There is also a base soup income of [TODO: gameconstant name], currently set at 1, automatically added to the team pool each turn.</p>
+<h2 id="disclaimer-distance-squared">Disclaimer: Distance Squared</h2>
+<p>All distances, vision radii, etc are given as the Euclidean distance squared (equal to <span class="math inline"><em>d</em><em>x</em><sup>2</sup> + <em>d</em><em>y</em><sup>2</sup></span>, the x-offset squared plus y-offset squared). There are two main benefits of doing this: - everything is an integer, which makes life better - taking square roots is a waste of bytecode</p>
+<p>Intuitions for this are best gained through a few examples: [TODO: make a nice graphic of different distances squared, including 1, 2, 3, 4, and the vision radii of each unit]</p>
+<h2 id="robots">Robots</h2>
+<p>Each robot runs an independent copy of your code. It acts given only its own nearby surroundings and the contents of the <strong>blockchain</strong>, which is described at length below. Actions (such as <strong>moving</strong> or <strong>mining</strong>) incur a <strong>cooldown</strong> penalty, which varies by action, robot, and <strong>pollution</strong> level. Robots can only perform actions when their cooldown is less than 1, and performing an action adds the corresponding cooldown to the robot’s [TODO: what’s the name of the field], which can be checked with [TODO].</p>
+<p>Every action has a <strong>base cooldown</strong> cost, but the actual <strong>cooldown</strong> incurred is a function of the <strong>pollution</strong> <span class="math inline"><em>P</em></span> on the current tile as well. The actual <strong>cooldown</strong> is equal to <strong>base_cooldown</strong> times <span class="math inline">(1 + <em>P</em>/2000)</span>. E.g. a total pollution level of 2000 (between global and local effects) makes everything take twice as long.</p>
+<p>All robots can <strong>sense</strong> their surroundings within their vision radius using: [TODO: table of functions and what they tell you]</p>
+<p>Now, there are two types of robots, <strong>buildings</strong> and <strong>units</strong>.</p>
+<h3 id="units">Units</h3>
+<p><strong>Units</strong> are <strong>robots</strong> which can move. A unit can move to a tile given all of the following constraints are met:</p>
+<ul>
+<li>the unit’s cooldown must be less than 1</li>
+<li>the destination tile must be adjacent to the current location (the square of 8 tiles around the robot)</li>
+<li>the destination tile must have elevation within +/- 3 of the current location</li>
+<li>the destination tile must not be occupied by another robot</li>
+</ul>
+<p>We provide the <code>canMove(TODO: what args? also does it check cooldown?)</code> function to check all of these at once for a given tile.</p>
+<p>The three producible unit types are:</p>
+<p><strong>Miner</strong>: builds buildings and extracts raw soup.</p>
+<ul>
+<li>Produced by the <strong>HQ</strong></li>
+<li>Can [TODO: mine_soup function name] to take ? units of soup from the map and add it to its inventory (up to [TODO: inventory limit])</li>
+<li>Can use [TODO: func] to transfer soup from its inventory to an adjacent <strong>refinery</strong>.</li>
+<li>Can build <strong>design schools</strong> and <strong>fulfillment centers</strong></li>
+</ul>
+<p><strong>Landscaper</strong>: moves <strong>dirt</strong> around the map to adjust <strong>elevation</strong> and destroy buildings.</p>
+<ul>
+<li>Produced by the <strong>design school</strong></li>
+<li>Can perform the action [TODO: ‘dig’ func] to remove one unit of dirt from an adjacent tile, reducing its elevation by 1 and increasing its stored dirt by 1 up to a max of [TODO]. This can be done if the tile is empty, flooded, or contains another <strong>unit</strong>, but NOT if the tile contains a <strong>building</strong>.</li>
+<li>Can perform the action [TODO: ‘place’ func] to place one unit of dirt onto an adjacent tile. If the tile contains a <strong>building</strong>, the dirt partially buries it–the <strong>health</strong> of a building is how much dirt can be placed on it before it is destroyed. If the tile is empty, flooded, or contains another <strong>unit</strong>, the only effect is that the elevation of that tile increases by 1.</li>
+<li>Note: this implies that buildings may never change elevation, so be careful to contain that water level.</li>
+<li>If enough dirt is placed on a flooded tile to raise its <strong>elevation</strong> above the <strong>water level</strong>, it becomes not flooded.</li>
+</ul>
+<p><strong>Delivery drone</strong>: picks up and moves units around the map.</p>
+<ul>
+<li>Produced by the <strong>fulfillment center</strong></li>
+<li>Can move into flooded tiles without dying, but not onto other <strong>robots</strong>.</li>
+<li>Can perform the action [TODO] to pick up a single <strong>unit</strong> from an adjacent tile, removing it from the map, to be placed later.</li>
+<li>Can perform the action [TODO] to place the currently held <strong>unit</strong> on an adjacent empty or flooded tile, but not onto another <strong>robot</strong>.</li>
+<li>When a <strong>delivery drone</strong> is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.</li>
+<li>If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.</li>
+</ul>
+<p>[TODO: fill in this big table]</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>unit</th>
+<th>cost (soup)</th>
+<th>vision radius (squared distance)</th>
+<th>base move cooldown</th>
+<th>base action cooldown(s)</th>
+<th>produced by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Miner</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Landscaper</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Delivery Drone</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="buildings">Buildings</h3>
+<p><strong>Buildings</strong> are <strong>robots</strong> which cannot move, and produce <strong>units</strong> (incurring a <strong>cooldown</strong> penalty as with any action). If the team has enough <strong>soup</strong> to build the unit, you can use the function [TODO] to produce it on any adjacent tile within an elevation of +/-3 of the building. <strong>Buildings</strong> are completely stationary and cannot change in elevation once built. Any dirt placed on a tile with a <strong>building</strong> will accumulate on that building and eventually bury it, destroying the building. Dirt can also be removed from buildings, until there is none left, but after that dirt cannot be taken from that tile. The net amount of dirt that must be added to a building before it is destroyed is called the building’s <strong>health</strong>.</p>
+<p><strong>Refinery</strong>: takes soup from miners and adds it to the team shared pool, producing pollution.</p>
+<ul>
+<li>Built by <strong>miners</strong></li>
+<li>Can store an unlimited amount of unrefined soup, inserted by miners, and refines <code>min([TODO: constant], [TODO: soup held])</code> per turn, adding that amount to the team pool.</li>
+<li>Each time a nonzero amount of soup is refined, the <strong>global pollution</strong> level increases by 1 and the pollution in tiles within radius squared [TODO] temporarily increases by [TODO]. The temporary local increase in pollution starts immediately and is in effect for exactly one round total (it ends at the beginning of this <strong>refinery’s</strong> next turn, next round).</li>
+</ul>
+<p><strong>Vaporator</strong>: condenses soup from the air, reducing pollution. Clean energy!</p>
+<ul>
+<li>Built by <strong>miners</strong></li>
+<li>Produces [TODO] soup per turn for free</li>
+<li>Reduces <strong>global pollution</strong> by 1 per turn</li>
+<li>Reduces pollution on tiles within radius squared [TODO] by [TODO]</li>
+</ul>
+<p><strong>Design School</strong>: a creative institution for training talented <strong>landscapers</strong>.</p>
+<ul>
+<li>Built by <strong>miners</strong></li>
+<li>Produces <strong>landscapers</strong>.</li>
+</ul>
+<p><strong>Fulfillment Center</strong>: produces <strong>drones</strong> and, as a byproduct of successful deliveries, fulfillment.</p>
+<ul>
+<li>Built by <strong>miners</strong></li>
+<li>Produces <strong>delivery drones</strong>.</li>
+</ul>
+<p><strong>Net Gun</strong>: for defense against <strong>drones</strong></p>
+<ul>
+<li>Built by <strong>miners</strong></li>
+<li>Can perform the [TODO] action to destroy a drone within its attack radius squared of [TODO: attack radius constant]</li>
+</ul>
+<p><strong>HQ</strong>: the most important building</p>
+<ul>
+<li>Cannot be built</li>
+<li>Game ends when either team’s HQ is destroyed</li>
+<li>Produces <strong>miners</strong></li>
+<li>Has a built-in <strong>net gun</strong> (can shoot <strong>drones</strong> with [TODO])</li>
+<li>Has a built-in <strong>refinery</strong> (automatically refines soup deposited by miners)</li>
+</ul>
+<p>[TODO: fill in this big table]</p>
+<table>
+<thead>
+<tr class="header">
+<th>building</th>
+<th>cost (soup)</th>
+<th>health</th>
+<th>vision radius (squared distance)</th>
+<th>produces</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>HQ</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Refinery</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Vaporator</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Design School</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Fulfillment Center</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Net Gun</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bytecodes">Bytecodes</h3>
+<p>Robots are also very limited in the amount of computation they are allowed to perform per <strong>turn</strong>. <strong>Bytecodes</strong> are a convenient measure of computation in languages like Java, where one Java bytecode corresponds roughly to one basic operation. Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs. This is great, because it allows us to avoid using <em>time</em> as a measure of computation, which leads to problems such as nondeterminism. With bytecode cutoffs, running the same match between the same bots twice produces exactly the same results–a feature you will find very useful for debugging.</p>
+<p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. This can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, use the <code>rc.yield()</code> function to end a robot’s turn. This will pause computation where you choose, and resume on the next line next turn.</p>
+<p>The per-turn bytecode limits for various robots are as follows:</p>
+<ul>
+<li>HQ: 20,000</li>
+<li>Net Gun: 7,000</li>
+<li>Other buildings: 5,000</li>
+<li>All units: 10,000</li>
+</ul>
+<p>Some standard functions such as the math library, blockchain API, and sensing functions have fixed bytecode costs, available at [TODO].</p>
+<h2 id="communication">Communication</h2>
+<p>Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging. Thus, we provide a global, append-only, immutable ledger any robot can read and write to, which we call the <strong>blockchain</strong>*.</p>
+<p>The <strong>blockchain</strong> is a series of <strong>blocks</strong>, one per round, each with at most 7 <strong>transactions</strong>. Each <strong>transaction</strong> is 7 integers, a message chosen by the sender of the transaction. Every robot can read <em>all</em> transactions, which are not labeled by sender or team. (So you will need to find a way to distinguish them.) Any robot can submit a transaction to the <strong>transaction pool</strong> with the function [TODO] and by paying, in <strong>soup</strong>, a <strong>transaction fee</strong> (think of it as a bid). At the end of each round, the 7 transactions in the <strong>transaction pool</strong> with the highest <strong>transaction fee</strong> are removed from the pool and added to that round’s <strong>block</strong>. For every round thereafter, those 7 transactions are visible to all robots at all times. Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.</p>
+<p>*(Ok technically it’s not a blockchain because it’s not hash-linked, it’s just a series of blocks, but otherwise it’s pretty similar.)</p>
+<h2 id="lingering-questionsclarifications">Lingering Questions/Clarifications</h2>
+<p>If something is unclear, direct your questions to our <a href="TODO:%20invite%20link">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
+<h2 id="appendix-a-javadocs-and-other-references">Appendix A: Javadocs and Other References</h2>
+<p>Javadocs can be found <a href="https://www.battlecode.org/contestants/releases/">here</a>, included in the software distribution. Here, you’ll find everything you need, as well as some helpful methods that might not be mentioned above.</p>
+<p>The javadocs include the values of the game constants and robot attributes. Look in <code>GameConstants</code> for specific constants related to the whole game (such as the part generation per round) and look in <code>RobotType</code> for stats relating to a specific robot type.</p>
+<p>For instructions on installation and how to use the client (keyboard shortcuts, etc.), please visit <a href="https://github.com/battlecode/battlecode-scaffold-2017/blob/master/README.md">this page</a>.</p>
+<p>MethodCosts.txt, AllowedPackages.txt, and DisallowedPackages.txt can be found <a href="https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources">here</a>.</p>
+<h3 id="sample-player">Sample Player</h3>
+<p>Examplefuncsplayer, a very simple player that performs various game actions, is included with battlecode. It includes helpful comments and is a template by which a new player can figure out what RobotPlayer files should look like.</p>
+<h2 id="appendix-b-more-in-depth-mechanics">Appendix B: More In-depth Mechanics</h2>
+<h3 id="timing">Timing</h3>
+<p>Each robot is allowed a certain amount of computation each round. Computation is measured in terms of Java bytecodes, the atomic instructions of compiled Java code. Individual bytecodes are simple instructions such as “subtract” or “get field”, and a single line of code generally contains several bytecodes. (For details see http://en.wikipedia.org/wiki/Java_bytecode) Each round, every player runs a number of bytecodes determined by the robot’s individual properties. When a robot hits the bytecode limit, its computation is paused while other robots get to do their computation for the same round or the next round. On the next round, the robot’s computation is resumed exactly where it left off. Thus, to the robot’s code, the round change is invisible. Nothing will jump out and shout at the robot when a round ends.</p>
+<h3 id="monitoring">Monitoring</h3>
+<p>The Clock class provides a way to identify the current round ( <code>rc.getRoundNum()</code> ), and how many bytecodes have been executed during the current round ( <code>Clock.getBytecodeNum()</code> ).</p>
+<h3 id="gameactionexceptions">GameActionExceptions</h3>
+<p>GameActionExceptions are thrown when something cannot be done. It is often the result of uncertainty about the game world, or an unexpected round change in your code. Thus, you must write your player defensively and handle GameActionExceptions judiciously. You should also be prepared for any ability to fail and make sure that this has as little effect as possible on the control flow of your program.</p>
+<p>Exceptions cause a bytecode penalty of 500 bytecodes. Unhandled exceptions cause your robot to explode.</p>
+<h3 id="java-language-usage">Java Language Usage</h3>
+<p>The next few sections deal with some of the mechanics of how your players are run in the game engine, including bytecode-counting, library restrictions, etc.</p>
+<p>Players may use classes from any of the packages listed in AllowedPackages.txt, except for classes listed in DisallowedPackages.txt. These files can be found <a href="https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources">here</a>.</p>
+<p>Furthermore, the following restrictions apply:</p>
+<p><code>Object.wait</code>, <code>Object.notify</code>, <code>Object.notifyAll</code>, <code>Class.forName</code>, and <code>String.intern</code> are not allowed. <code>java.lang.System</code> only supports <code>out</code>, <code>arraycopy</code>, and <code>getProperty</code>. Furthermore, <code>getProperty</code> can only be used to get properties with names beginning with “bc.testing.” <code>java.io.PrintStream</code> may not be used to open files.</p>
+<p>Note that violating any of the above restrictions will cause the robots to self-destruct when run, even if the source files compile without problems.</p>
+<h3 id="bytecode-costs">Bytecode costs</h3>
+<p>Classes in <code>java.util</code>, <code>java.math</code>, and scala and their subpackages are bytecode counted as if they were your own code. The following functions in <code>java.lang</code> are also bytecode counted as if they were your own code.</p>
+<pre><code>Math.random
+StrictMath.random
+String.matches
+String.replaceAll
+String.replaceFirst
+String.split</code></pre>
+<p>The function <code>System.arraycopy</code> costs one bytecode for each element copied. All other functions have a fixed bytecode cost. These costs are listed in the <a href="https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources"><code>MethodCosts.txt</code> file</a>. Methods not listed are free. The bytecode costs of battlecode.common functions are also listed in the javadoc.</p>
+<p>Basic operations like integer comparison and array indexing cost small numbers of bytecodes each.</p>
+<p>Bytecodes relating to the creation of arrays (specifically NEWARRAY, ANEWARRAY, and MULTIANEWARRAY; see <a href="https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings"> here </a> for reference) have an effective cost greater than a single bytecode. This is because these instructions, although they are represented as a single bytecode, can be vastly more expensive than other instructions in terms of computational cost. To remedy this, these instructions now have a bytecode cost equal to the total length of the instantiated array. Note that this change should have minimal impact on the typical team, and is only intended to prevent teams from repeatedly instantiating excessively large arrays.</p>
+<h3 id="memory-usage">Memory Usage</h3>
+<p>Robots must keep their memory usage reasonable. If a robot uses more than 8 Mb of heap space during a tournament or scrimmage match, the robot may explode.</p>
+<h3 id="debugging">Debugging</h3>
+<p>This section describes some of the features of the game engine intended to make debugging somewhat less painful. Debug mode reveals valuable information about robots at development time but will be turned off for scrimmages and real tournaments.</p>
+<h4 id="system.out">System.out</h4>
+<p>Any output that your robots print to System.out is directed to the output stream of the Battlecode engine, prefixed with information about the robot.</p>
+<h4 id="indicator-items">Indicator Items</h4>
+<p>There exist <code>setIndicatorDot()</code> and <code>setIndicatorLine()</code>, which draw visuals on the map when the robot is selected.</p>
+<h4 id="debug-methods">Debug Methods</h4>
+<p>The game engine has a feature that allows you to separate out debugging code that is unimportant to your player’s performance in the tournament. Methods that have names beginning with <code>debug_</code> and that have a void return type are given special status. During tournaments and scrimmages, these methods are skipped during execution of the player. When <code>bc.engine.debug-methods</code> is set to true, however, these methods are executed normally except that they do not count against your robot’s bytecode limit. Code that prepares the arguments to such a method may consume bytecodes, but the body of the method and any methods that it invokes are not counted.</p>
+<p>To turn on debug methods (and have debug methods execute normally but with no bytecode cost), include a line in <code>build.gradle</code> within <code>jvmArgs</code> like this:</p>
+<pre><code>&quot;-Dbc.engine.debug-methods=true&quot;,</code></pre>
+<p>By default, debug methods are already turned on and the property is set to true. During tournaments and scrimmages, debug methods will always be turned off and debug methods will never execute.</p>
+<h4 id="system-properties">System Properties</h4>
+<p>Your robot can read system properties whose names begin with “bc.testing.”. You can set a property by adding a line in <code>build.gradle</code> like this within <code>jvmArgs</code>:</p>
+<pre><code>&quot;-Dbc.testing.team-a-strategy=experimental&quot;,</code></pre>
+<p>You can check the value of the property like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1"></a><span class="bu">String</span> strategy = <span class="bu">System</span>.<span class="fu">getProperty</span>(<span class="st">&quot;bc.testing.team-a-strategy&quot;</span>);</span></code></pre></div>
+<h2 id="changelog">Changelog</h2>
+<ul>
+<li>2020.0.1.2 (1/2/20) - Prerelease.</li>
+</ul>
+        </div>
+    </div>
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script>
+        //document.getElementById('sidebar').getElementsByTagName('ul')[0].className += "nav nav-sidebar";
+        
+        /* ajust the height when click the toc
+           the code is from https://github.com/twbs/bootstrap/issues/1768
+        */
+        var shiftWindow = function() { scrollBy(0, -40) };
+        window.addEventListener("hashchange", shiftWindow);
+        function load() { if (window.location.hash) shiftWindow(); }
+        
+        /*add Bootstrap styles to tables*/
+        var tables = document.getElementsByTagName("table");
+        for(var i = 0; i < tables.length; ++i){
+            tables[i].className += "table table-striped table-bordered table-condensed";
+        }
+    </script>
+  </body>
+</html>
