@@ -243,11 +243,25 @@ View instructions for:
                                     <h4 className="title">Run a Match</h4>
                                 </div>
                                 <div className="content">
+                                    <p>
+                                        Player code is in the <code>src</code> directory of the scaffold: each package inside <code>src</code> corresponds to one distinct player.
+                                        We have provided <code>examplefuncsplayer</code>, and you can create your own player by either modifying it or copying and renaming it.
+                                <Floater content={
+                                    <div>
+                                    <p>
+                                        The only restriction is that each player must have a file named <code>RobotPlayer.java</code> which implements a <code>run(RobotController rc)</code> method.
+</p></div>
+} showCloseButton={true}>
+                                    <i className="pe-7s-info pe-fw" />
+</Floater>
+                                    </p>
                                 <p>
-                                    Battlecode has a Discord server! 
-                                    Everyone is encouraged to join. 
-                                    Announcements, strategy discussions, bug fixes and ~memes~ all 
-                                    happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
+                                    You should have a client application in the <code>client</code> folder. Launch it, and go to the <code>Runner</code> section. 
+                                    There, you can specify which players to run against each other, and on which map, and you can view the match as it is running.
+                                </p>
+                                <p>
+                                    You can also run a match without the client, by invoking the Gradle task <code>run</code>. 
+                                    For example, <code>gradle run -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer -Pmaps=FourLakeLand</code> runs <code>examplefuncsplayer</code> against itself on the <code>FourLakeLand</code> map. This produces a replay file in the <code>matches</code> directory of the scaffold, which you can upload to the client to view.
                                 </p>
 
 
@@ -255,17 +269,29 @@ View instructions for:
                             </div>
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Scrimmage</h4>
+                                    <h4 className="title">Upload Your Bot and Scrimmage</h4>
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Battlecode has a Discord server! 
-                                    Everyone is encouraged to join. 
-                                    Announcements, strategy discussions, bug fixes and ~memes~ all 
-                                    happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
+                                    Run the Gradle task <code>jarForUpload</code> to produce a jar that can be uploaded to the <NavLink to='submissions'>submissions</NavLink> page.
+                                </p>
+                                <p>
+                                    Your bot will automatically be ran against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
                                 </p>
 
-
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Good Luck!</h4>
+                                </div>
+                                <div className="content">
+                                <p>
+                                    Now, read the <a href='specs.html'>game specs</a> carefully and consult the <a href='javadoc/index.html'>javadocs</a> to learn about the API.
+                                </p>
+                                <p>
+                                    Bugs will happen eventually; read about our <a href='404'>debugging tools here</a>.
+                                </p>
                                 </div>
                             </div>
                             <div className="card">
