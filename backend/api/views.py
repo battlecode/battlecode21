@@ -13,17 +13,66 @@ from api.serializers import *
 from api.permissions import *
 
 from google.cloud import storage
+from google.cloud import pubsub_v1
+from google.oauth2 import service_account
 import trueskill
 
-import os
-import tempfile, datetime
+import os, tempfile, datetime, argparse, time, json
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
+GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
-    
+
+# pub sub commands (from pub.py)
+def get_callback(api_future, data, ref):
+    """Wrap message data in the context of the callback function."""
+    def callback(api_future):
+        try:
+            print("Published message {} now has message ID {}".format(
+                data, api_future.result()))
+            ref["num_messages"] += 1
+        except Exception:
+            print("A problem occurred when publishing {}: {}\n".format(
+                data, api_future.exception()))
+            raise
+    return callback
+
+def pub(project_id, topic_name, data=""):
+    """Publishes a message to a Pub/Sub topic."""
+
+    # Initialize a Publisher client.
+    # credentials must be loaded from a file, so we temporarily create ibe 
+    with open('gcloud-key.json', 'w') as outfile:
+        outfile.write(settings.GOOGLE_APPLICATION_CREDENTIALS)
+        outfile.close()
+    credentials = service_account.Credentials. from_service_account_file('gcloud-key.json')
+    client = pubsub_v1.PublisherClient(credentials=credentials)
+    os.remove('gcloud-key.json') # important!!!
+
+    # Create a fully qualified identifier in the form of
+    # `projects/{project_id}/topics/{topic_name}`
+    topic_path = client.topic_path(project_id, topic_name)
+
+    # Data sent to Cloud Pub/Sub must be a bytestring.
+    #data = b"examplefuncs"
+    if data == "":
+        data = b"sample pub/sub message"
+
+    # Keep track of the number of published messages.
+    ref = dict({"num_messages": 0})
+
+    # When you publish a message, the client returns a future.
+    api_future = client.publish(topic_path, data=data)
+    api_future.add_done_callback(get_callback(api_future, data, ref))
+
+    # Keep the main thread from exiting while the message future
+    # gets resolved in the background.
+    while api_future.running():
+        time.sleep(0.5)
+        # print("Published {} message(s).".format(ref["num_messages"]))
 
 class GCloudUploadDownload():
     """
@@ -181,8 +230,6 @@ class LeagueViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LeagueSerializer
     permission_classes = (permissions.AllowAny,)
 
-
-
 class TeamViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.ListModelMixin,
@@ -214,21 +261,22 @@ class TeamViewSet(viewsets.GenericViewSet,
     Leaves the team. The authenticated user must be on the team, and the league must be active.
     Deletes the team if this is the last user to leave the team.
     """
-    queryset = Team.objects.all().order_by('name').exclude(deleted=True)
+    model = Team
     serializer_class = TeamSerializer
     pagination_class = SearchResultsPagination
     permission_classes = (LeagueActiveOrSafeMethods, IsAuthenticatedOrSafeMethods)
-    filter_backends = (filters.SearchFilter,filters.OrderingFilter)
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     # NOTE: IF THE TEAM SEARCH IS EVER SLOW, REMOVE TEAM SEARCH BY USERNAME
     # it is nice to have it, but will certainly take more time to evaluate
     search_fields = ('name','users__username')
-    ordering_fields = ('mu',)
+    ordering_fields = ('mu', 'name')
+    ordering = ('name', 'id')
 
     def get_queryset(self):
         """
         Only teams within the league are visible.
         """
-        return super().get_queryset().filter(league_id=self.kwargs['league_id'])
+        return Team.objects.all().exclude(deleted=True).order_by('name', 'id').filter(league_id=self.kwargs['league_id'])
 
     def list(self, request, *args, **kwargs):
         """
@@ -435,7 +483,13 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
-        #TODO::: call to compile server
+        #TODO: call to compile server
+        print('attempting call to compile server')
+        print('id:', serializer.data['id'])
+        data = str(serializer.data['id'])
+        data_bytestring = data.encode('utf-8')
+        print(type(data_bytestring))
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
 
@@ -493,7 +547,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             submission = self.get_queryset().get(pk=pk)
             if submission.compilation_status != 0:
                 return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
-            comp_status = request.data.get('compilation_status')
+            comp_status = int(request.data.get('compilation_status'))
 
             if comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)

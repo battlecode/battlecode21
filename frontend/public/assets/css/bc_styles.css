@@ -57,6 +57,22 @@
 	margin-bottom: 0px !important;
 }
 
+.installation-steps {
+	margin-top: 7px !important;
+	margin-bottom: 7px !important;
+	font-size: 14px !important;
+}
+
+.selected-ide-button {
+	background-color: #888888 !important;
+	color: white !important;
+}
+.ide-button-getting-started {
+	font-size: 0.9em !important;
+	padding-top: 4px !important;
+	padding-bottom: 4px !important;
+}
+
 /* a container that displays its children as a centered column in desktop site 
    and as a single row in mobile site 
    margins need to be important because otherwise bootstrap will override */
