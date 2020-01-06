@@ -31,16 +31,15 @@ That means the following elevations will be flooded at the corresponding rounds,
 | elevation | round flooded |
 | --- | --- |
 | 0 | 0 |
-| 1 |
-| 3 |
-| 5 |
-| 10 |
-| 25 |
-| 50 |
-| 100 |
-| 1000 |
+| 1 | 256 |
+| 3 | 677 |
+| 5 | 1210 |
+| 10 | 1771 |
+| 25 | 2143 |
+| 50 | 2348 |
+| 100 | 2524 |
+| 1000 | 3019 |
 
-[TODO: complete table]
 
 **Pollution** is the other environmental factor your robots must contend with.
 The presence of pollution on a map tile will slow down any robot on that tile by an amount proportional to the amount of pollution
@@ -96,8 +95,7 @@ Every action has a **base cooldown** cost, but the actual **cooldown** incurred 
 The actual **cooldown** is equal to **base_cooldown** times $(1+ P/2000)$.
 E.g. a total pollution level of 2000 (between global and local effects) makes everything take twice as long.
 
-All robots can **sense** their surroundings within their vision radius using:
-[TODO: table of functions and what they tell you]
+All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.
 
 Now, there are two types of robots, **buildings** and **units**.
 
@@ -111,24 +109,24 @@ A unit can move to a tile given all of the following constraints are met:
 - the destination tile must have elevation within +/- 3 of the current location
 - the destination tile must not be occupied by another robot
 
-We provide the `canMove(Direction dir)` function to check all of these at once for a given tile.
+We provide the `canMove` function to check all of these at once for a given tile.
 
 The three producible unit types are:
 
 **Miner**: builds buildings and extracts raw soup.
 
-- Produced by the **HQ**
-- Can `mineSoup` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to 
-- Can use [TODO: func] to transfer soup from its inventory to an adjacent **refinery**.
-- Can build **design schools** and **fulfillment centers**
+- Produced by the **HQ**.
+- Can `mineSoup` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to `RobotType.MINER.soupLimit`, currently set to 10).
+- Can use `depositSoup` to transfer soup from its inventory to an adjacent **refinery**.
+- Can build **design schools** and **fulfillment centers**.
 
 **Landscaper**: moves **dirt** around the map to adjust **elevation** and destroy buildings.
 
 - Produced by the **design school**
-- Can perform the action [TODO: 'dig' func] to remove one unit of dirt from an adjacent tile,
-reducing its elevation by 1 and increasing its stored dirt by 1 up to a max of [TODO].
+- Can perform the action `digDirt` to remove one unit of dirt from an adjacent tile,
+reducing its elevation by 1 and increasing its stored dirt by 1 up to a max of `RobotType.LANDSCAPER.dirtLimit` (currently set to 25).
 This can be done if the tile is empty, flooded, or contains another **unit**, but NOT if the tile contains a **building**.
-- Can perform the action [TODO: 'place' func] to place one unit of dirt onto an adjacent tile.
+- Can perform the action `depositDirt` to place one unit of dirt onto an adjacent tile.
 If the tile contains a **building**, the dirt partially buries it--the **health** of a building is how much dirt can be placed on it before it is destroyed.
 If the tile is empty, flooded, or contains another **unit**, the only effect is that the elevation of that tile increases by 1.
 - Note: this implies that buildings may never change elevation, so be careful to contain that water level.
@@ -138,24 +136,24 @@ If the tile is empty, flooded, or contains another **unit**, the only effect is 
 
 - Produced by the **fulfillment center**
 - Can move into flooded tiles without dying, but not onto other **robots**.
-- Can perform the action [TODO] to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
-- Can perform the action [TODO] to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
+- Can perform the action `pickUpUnit` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
+- Can perform the action `dropUnit` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
 
 [TODO: fill in this big table]
 
-| unit | cost (soup) | vision radius (squared distance) | base move cooldown | base action cooldown(s) | produced by |
-| --- | --- | --- | --- | --- | --- |
-| Miner |
-| Landscaper |
-| Delivery Drone |
+| unit | cost (soup) | sensor radius (squared distance) | base cooldown(s) | produced by |
+| --- | --- | --- | --- | --- |
+| Miner | 70 | 35 | 1 | HQ |
+| Landscaper | 150 | 24 | 1 | Design School |
+| Delivery Drone | 150 | 24 | 1.5 | Fulfillment Center |
 
 
 ### Buildings
 
 **Buildings** are **robots** which cannot move, and produce **units** (incurring a **cooldown** penalty as with any action).
-If the team has enough **soup** to build the unit, you can use the function [TODO] to produce it on any adjacent tile within an elevation of +/-3 of the building.
+If the team has enough **soup** to build the unit, you can use the function `rc.buildRobot` to produce it on any adjacent tile within an elevation of +/-3 of the building.
 **Buildings** are completely stationary and cannot change in elevation once built.
 Any dirt placed on a tile with a **building** will accumulate on that building and eventually bury it, destroying the building.
 Dirt can also be removed from buildings, until there is none left, but after that dirt cannot be taken from that tile.
@@ -165,17 +163,17 @@ The net amount of dirt that must be added to a building before it is destroyed i
 
 - Built by **miners**
 - Can store an unlimited amount of unrefined soup, inserted by miners,
-and refines `min([TODO: constant], [TODO: soup held])` per turn, adding that amount to the team pool.
-- Each time a nonzero amount of soup is refined, the **global pollution** level increases by 1
-and the pollution in tiles within radius squared [TODO] temporarily increases by [TODO].
+and refines `min(RobotType.REFINERY.maxSoupProduced, rc.getSoupCarrying())` per turn, adding that amount to the team pool.
+- Each time a nonzero amount of soup is refined, the **global pollution** level increases by 1 (`RobotType.REFINERY.globalPollutionAmount`)
+and the pollution in tiles within radius squared 35 (`RobotType.REFINERY.pollutionRadiusSquared`) temporarily increases by 500 (`Robottype.REFINERY.localPollutionAdditiveEffect`).
 The temporary local increase in pollution starts immediately and is in effect for exactly one round total (it ends at the beginning of this **refinery's** next turn, next round).
 
 **Vaporator**: condenses soup from the air, reducing pollution. Clean energy!
 
 - Built by **miners**
-- Produces [TODO] soup per turn for free
-- Reduces **global pollution** by 1 per turn
-- Reduces pollution on tiles within radius squared [TODO] by [TODO]
+- Produces 7 soup (`RobotType.VAPORATOR.maxSoupProduced`) per turn for free
+- Reduces **global pollution** by 1 per turn (`RobotType.VAPORATOR.globalPollutionAmount`)
+- Reduces pollution on tiles within radius squared 35 (`RobotType.VAPORATOR.pollutionRadiusSquared`) temporarily decreases by a factor of 0.67 (`Robottype.VAPORATOR.localPollutionAdditiveEffect`).
 
 **Design School**: a creative institution for training talented **landscapers**.
 
@@ -190,26 +188,24 @@ The temporary local increase in pollution starts immediately and is in effect fo
 **Net Gun**: for defense against **drones**
 
 - Built by **miners**
-- Can perform the [TODO] action to destroy a drone within its attack radius squared of [TODO: attack radius constant]
+- Can perform the `shootUnit` action to destroy a drone within its attack radius squared of `GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED`.
 
 **HQ**: the most important building
 
 - Cannot be built
 - Game ends when either team's HQ is destroyed
 - Produces **miners**
-- Has a built-in **net gun** (can shoot **drones** with [TODO])
+- Has a built-in **net gun** (can shoot **drones** with `shootUnit`)
 - Has a built-in **refinery** (automatically refines soup deposited by miners)
 
-[TODO: fill in this big table]
-
-| building | cost (soup) | health | vision radius (squared distance) | produces |
+| building | cost (soup) | health | sensor radius (squared distance) | produces |
 | --- | --- | --- | --- | --- |
-| HQ |
-| Refinery |
-| Vaporator |
-| Design School |
-| Fulfillment Center |
-| Net Gun |
+| HQ | n/a | 50 | 48 | Miner |
+| Refinery | 200 | 15 | 24 | soup |
+| Vaporator | 1000 | 15 | 24 | soup |
+| Design School | 150 | 15 | 24 | Landscapers |
+| Fulfillment Center | 150 | 15 | 24 | Delivery Drones |
+| Net Gun | 250 | 15 | 24 | Delivery Drone deaths |
 
 ## Communication
 
@@ -220,7 +216,7 @@ The **blockchain** is a series of **blocks**, one per round, each with at most 7
 Each **transaction** is 7 integers, a message chosen by the sender of the transaction.
 Every robot can read _all_ transactions, which are not labeled by sender or team.
 (So you will need to find a way to distinguish them.)
-Any robot can submit a transaction to the **transaction pool** with the function [TODO] and by paying, in **soup**, a **transaction fee** (think of it as a bid).
+Any robot can submit a transaction to the **transaction pool** with the function `rc.submitTransaction` and by paying, in **soup**, a **transaction fee** (think of it as a bid).
 At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
 For every round thereafter, those 7 transactions are visible to all robots at all times.
 Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.
@@ -254,19 +250,19 @@ The per-turn bytecode limits for various robots are as follows:
 - All units: 10,000
 
 Some standard functions such as the math library, blockchain API, and sensing functions have fixed bytecode costs,
-available at [TODO].
+available [here](https://github.com/battlecode/battlecode20/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
 More details on this at the end of the spec.
 
 
 ## Sample Player
 
-[Examplefuncsplayer](TODO), a simple player which performs various game actions, is included with battlecode.
+[Examplefuncsplayer](https://github.com/battlecode/battlecode20-scaffold), a simple player which performs various game actions, is included with battlecode.
 It includes helpful comments and is a template you can use to see what RobotPlayer files should look like.
 
 
 ## Debugging
 
-Extremely important. See http://2020.battlecode.org/debugging.html to learn about our useful debug tools.
+Extremely important. See http://2020.battlecode.org/debugging to learn about our useful debug tools.
 
 
 ## Other Utilities
@@ -291,7 +287,7 @@ Unhandled exceptions may cause your robot to explode.
 
 The next few sections deal with some of the mechanics of how your players are run in the game engine, including bytecode-counting, library restrictions, etc.
 
-Players may use classes from any of the packages listed in AllowedPackages.txt, except for classes listed in DisallowedPackages.txt. These files can be found [here](https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources).
+Players may use classes from any of the packages listed in AllowedPackages.txt, except for classes listed in DisallowedPackages.txt. These files can be found [here](https://github.com/battlecode/battlecode20/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
 
 Furthermore, the following restrictions apply:
 
@@ -321,7 +317,7 @@ String.replaceFirst
 String.split
 ```
 
-The function `System.arraycopy` costs one bytecode for each element copied. All other functions have a fixed bytecode cost. These costs are listed in the [`MethodCosts.txt` file](https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources). Methods not listed are free. The bytecode costs of battlecode.common functions are also listed in the javadoc.
+The function `System.arraycopy` costs one bytecode for each element copied. All other functions have a fixed bytecode cost. These costs are listed in the [`MethodCosts.txt` file](https://github.com/battlecode/battlecode20/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt). Methods not listed are free. The bytecode costs of battlecode.common functions are also listed in the javadoc.
 
 Basic operations like integer comparison and array indexing cost small numbers of bytecodes each.
 
@@ -336,7 +332,7 @@ Note that this change should have minimal impact on the typical team, and is onl
 
 # Lingering Questions/Clarifications
 
-If something is unclear, direct your questions to our [Discord](TODO: invite link) where other people may have the same question.
+If something is unclear, direct your questions to our [Discord](https://discordapp.com/channels/386965718572466197/401552721095688193) where other people may have the same question.
 We'll update this spec as the competition progresses.
 
 
