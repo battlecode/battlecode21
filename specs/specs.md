@@ -1,6 +1,7 @@
 # Battlecode 2020
 
-_The formal specification of this year's game, version 2020.0.1.2._
+_The formal specification of this year's game._
+Current version: 2020.1.0.0
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -76,7 +77,7 @@ There is also a base soup income of [TODO: gameconstant name], currently set at 
 All distances, vision radii, etc are given as the Euclidean distance squared (equal to $dx^2 + dy^2$, the x-offset squared plus y-offset squared).
 There are two main benefits of doing this:
 - everything is an integer, which makes life better
-- taking square roots is a waste of bytecode
+- taking square roots is a waste of time
 
 Intuitions for this are best gained through a few examples:
 [TODO: make a nice graphic of different distances squared, including 1, 2, 3, 4, and the vision radii of each unit]
@@ -210,10 +211,30 @@ The temporary local increase in pollution starts immediately and is in effect fo
 | Fulfillment Center |
 | Net Gun |
 
-### Bytecodes
+## Communication
+
+Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging.
+Thus, we provide a global, append-only, immutable ledger any robot can read and write to, which we call the **blockchain**\*.
+
+The **blockchain** is a series of **blocks**, one per round, each with at most 7 **transactions**.
+Each **transaction** is 7 integers, a message chosen by the sender of the transaction.
+Every robot can read _all_ transactions, which are not labeled by sender or team.
+(So you will need to find a way to distinguish them.)
+Any robot can submit a transaction to the **transaction pool** with the function [TODO] and by paying, in **soup**, a **transaction fee** (think of it as a bid).
+At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
+For every round thereafter, those 7 transactions are visible to all robots at all times.
+Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.
+
+
+\*(Ok technically it's not a blockchain because it's not hash-linked, it's just a series of blocks, but otherwise it's pretty similar.)
+
+## Bytecode Limits
 
 Robots are also very limited in the amount of computation they are allowed to perform per **turn**.
-**Bytecodes** are a convenient measure of computation in languages like Java, where one Java bytecode corresponds roughly to one basic operation.
+**Bytecodes** are a convenient measure of computation in languages like Java,
+where one Java bytecode corresponds roughly to one basic operation such as "subtract" or "get field",
+and a single line of code generally contains several bytecodes.
+(For details see http://en.wikipedia.org/wiki/Java_bytecode)
 Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs.
 This is great, because it allows us to avoid using _time_ as a measure of computation, which leads to problems such as nondeterminism.
 With bytecode cutoffs, running the same match between the same bots twice produces exactly the same results--a feature you will find very useful for debugging.
@@ -234,66 +255,37 @@ The per-turn bytecode limits for various robots are as follows:
 
 Some standard functions such as the math library, blockchain API, and sensing functions have fixed bytecode costs,
 available at [TODO].
-
-## Communication
-
-Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging.
-Thus, we provide a global, append-only, immutable ledger any robot can read and write to, which we call the **blockchain**\*.
-
-The **blockchain** is a series of **blocks**, one per round, each with at most 7 **transactions**.
-Each **transaction** is 7 integers, a message chosen by the sender of the transaction.
-Every robot can read _all_ transactions, which are not labeled by sender or team.
-(So you will need to find a way to distinguish them.)
-Any robot can submit a transaction to the **transaction pool** with the function [TODO] and by paying, in **soup**, a **transaction fee** (think of it as a bid).
-At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
-For every round thereafter, those 7 transactions are visible to all robots at all times.
-Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.
+More details on this at the end of the spec.
 
 
-\*(Ok technically it's not a blockchain because it's not hash-linked, it's just a series of blocks, but otherwise it's pretty similar.)
+## Sample Player
+
+[Examplefuncsplayer](TODO), a simple player which performs various game actions, is included with battlecode.
+It includes helpful comments and is a template you can use to see what RobotPlayer files should look like.
 
 
+## Debugging
+
+Extremely important. See http://2020.battlecode.org/debugging.html to learn about our useful debug tools.
 
 
-## Lingering Questions/Clarifications
+## Other Utilities
 
-If something is unclear, direct your questions to our [Discord](TODO: invite link) where other people may have the same question.
-We'll update this spec as the competition progresses.
-
-
-Appendix A: Javadocs and Other References
-------------
-
-Javadocs can be found [here](https://www.battlecode.org/contestants/releases/), included in the software distribution. Here, you'll find everything you need, as well as some helpful methods that might not be mentioned above.
-
-The javadocs include the values of the game constants and robot attributes. Look in `GameConstants` for specific constants related to the whole game (such as the part generation per round) and look in `RobotType` for stats relating to a specific robot type.
-
-For instructions on installation and how to use the client (keyboard shortcuts, etc.), please visit [this page](https://github.com/battlecode/battlecode-scaffold-2017/blob/master/README.md).
-
-MethodCosts.txt, AllowedPackages.txt, and DisallowedPackages.txt can be found [here](https://github.com/battlecode/battlecode-server/tree/master/src/main/battlecode/instrumenter/bytecode/resources).
-
-
-### Sample Player
-
-Examplefuncsplayer, a very simple player that performs various game actions, is included with battlecode. It includes helpful comments and is a template by which a new player can figure out what RobotPlayer files should look like.
-
-
-Appendix B: More In-depth Mechanics 
--------------------
-
-### Timing
-
-Each robot is allowed a certain amount of computation each round. Computation is measured in terms of Java bytecodes, the atomic instructions of compiled Java code. Individual bytecodes are simple instructions such as "subtract" or "get field", and a single line of code generally contains several bytecodes. (For details see http://en.wikipedia.org/wiki/Java_bytecode) Each round, every player runs a number of bytecodes determined by the robot's individual properties. When a robot hits the bytecode limit, its computation is paused while other robots get to do their computation for the same round or the next round. On the next round, the robot's computation is resumed exactly where it left off. Thus, to the robot's code, the round change is invisible. Nothing will jump out and shout at the robot when a round ends.
 
 ### Monitoring
 
-The Clock class provides a way to identify the current round ( `rc.getRoundNum()` ), and how many bytecodes have been executed during the current round ( `Clock.getBytecodeNum()` ).
+The Clock class provides a way to identify the current round ( `rc.getRoundNum()` ),
+and how many bytecodes have been executed during the current round ( `Clock.getBytecodeNum()` ).
 
 ### GameActionExceptions
 
-GameActionExceptions are thrown when something cannot be done. It is often the result of uncertainty about the game world, or an unexpected round change in your code. Thus, you must write your player defensively and handle GameActionExceptions judiciously. You should also be prepared for any ability to fail and make sure that this has as little effect as possible on the control flow of your program.
+GameActionExceptions are thrown when something cannot be done.
+It is often the result of illegal actions such as moving onto another robot, or an unexpected round change in your code.
+Thus, you must write your player defensively and handle GameActionExceptions judiciously.
+You should also be prepared for any ability to fail and make sure that this has as little effect as possible on the control flow of your program.
 
-Exceptions cause a bytecode penalty of 500 bytecodes. Unhandled exceptions cause your robot to explode.
+Throwing any Exceptions cause a bytecode penalty of 500 bytecodes.
+Unhandled exceptions may cause your robot to explode.
 
 ### Java Language Usage
 
@@ -309,7 +301,14 @@ Furthermore, the following restrictions apply:
 
 Note that violating any of the above restrictions will cause the robots to self-destruct when run, even if the source files compile without problems.
 
-### Bytecode costs
+
+## Other restrictions
+
+### Memory Usage
+
+Robots must keep their memory usage reasonable. If a robot uses more than 8 Mb of heap space during a tournament or scrimmage match, the robot may explode.
+
+### More Information on Bytecode Costs
 
 Classes in `java.util`, `java.math`, and scala and their subpackages are bytecode counted as if they were your own code. The following functions in `java.lang` are also bytecode counted as if they were your own code.
 
@@ -326,51 +325,22 @@ The function `System.arraycopy` costs one bytecode for each element copied. All 
 
 Basic operations like integer comparison and array indexing cost small numbers of bytecodes each.
 
-Bytecodes relating to the creation of arrays (specifically NEWARRAY, ANEWARRAY, and MULTIANEWARRAY; see <a href="https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings"> here </a> for reference) have an effective cost greater than a single bytecode. This is because these instructions, although they are represented as a single bytecode, can be vastly more expensive than other instructions in terms of computational cost. To remedy this, these instructions now have a bytecode cost equal to the total length of the instantiated array. Note that this change should have minimal impact on the typical team, and is only intended to prevent teams from repeatedly instantiating excessively large arrays.
-
-### Memory Usage
-
-Robots must keep their memory usage reasonable. If a robot uses more than 8 Mb of heap space during a tournament or scrimmage match, the robot may explode.
-
-### Debugging
-
-This section describes some of the features of the game engine intended to make debugging somewhat less painful. Debug mode reveals valuable information about robots at development time but will be turned off for scrimmages and real tournaments.
-
-#### System.out
-
-Any output that your robots print to System.out is directed to the output stream of the Battlecode engine, prefixed with information about the robot.
-
-#### Indicator Items
-
-There exist `setIndicatorDot()` and `setIndicatorLine()`, which draw visuals on the map when the robot is selected.
-
-#### Debug Methods
-
-The game engine has a feature that allows you to separate out debugging code that is unimportant to your player's performance in the tournament. Methods that have names beginning with `debug_` and that have a void return type are given special status. During tournaments and scrimmages, these methods are skipped during execution of the player. When `bc.engine.debug-methods` is set to true, however, these methods are executed normally except that they do not count against your robot's bytecode limit. Code that prepares the arguments to such a method may consume bytecodes, but the body of the method and any methods that it invokes are not counted.
-
-To turn on debug methods (and have debug methods execute normally but with no bytecode cost), include a line in `build.gradle` within `jvmArgs` like this:
-```
-"-Dbc.engine.debug-methods=true",
-```
-
-By default, debug methods are already turned on and the property is set to true. During tournaments and scrimmages, debug methods will always be turned off and debug methods will never execute.
-
-#### System Properties
-
-Your robot can read system properties whose names begin with "bc.testing.". You can set a property by adding a line in `build.gradle` like this within `jvmArgs`:
-
-```
-"-Dbc.testing.team-a-strategy=experimental",
-```
-
-You can check the value of the property like this:
-
-```java
-String strategy = System.getProperty("bc.testing.team-a-strategy");
-```
+Bytecodes relating to the creation of arrays
+(specifically NEWARRAY, ANEWARRAY, and MULTIANEWARRAY; see [here](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings) for reference)
+have an effective cost greater than a single bytecode.
+This is because these instructions, although they are represented as a single bytecode, can be vastly more expensive than other instructions in terms of computational cost.
+To remedy this, these instructions now have a bytecode cost equal to the total length of the instantiated array.
+Note that this change should have minimal impact on the typical team, and is only intended to prevent teams from repeatedly instantiating excessively large arrays.
 
 
 
-## Changelog
+# Lingering Questions/Clarifications
 
-- 2020.0.1.2 (1/2/20) - Prerelease.
+If something is unclear, direct your questions to our [Discord](TODO: invite link) where other people may have the same question.
+We'll update this spec as the competition progresses.
+
+
+
+# Changelog
+
+- 2020.1.0.0 (1/6/20) - Initial release.
