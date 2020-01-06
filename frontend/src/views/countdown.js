@@ -11,7 +11,7 @@ class Countdown extends Component {
       hours: 0,
       min: 0,
       sec: 0,
-      end_date: new Date('January 12, 2020 19:00:00'),
+      end_date: null,
       tournament_name: 'hej',
       est_date: 'somedate'
     }
