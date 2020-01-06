@@ -73,7 +73,7 @@ class GettingStarted extends Component {
 
 <li>Create a new Eclipse workspace. The workspace should NOT contain the <code>battlecode20-scaffold</code> folder.</li>
 
-<li>Run <code>File -> Import...</code>, and select <code>Gradle / Gradle Project</code>.
+<li>Run <code>File -> Import...</code>, and select <code>Gradle / Existing Gradle Project</code>.
             <Floater content={
                                     <div>
                                     <p>
@@ -84,13 +84,13 @@ If you are unable to find this option, you may be using an old version of Eclips
 </Floater>
 </li>
 
-<li>In the <code>Select root directory</code> field, navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
+<li>Next to <code>Project root directory</code> field, press <code>Browse...</code> and navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
 
-<li>Open <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
+<li>If you do not see a window labeled <code>Gradle Tasks</code>, navigate to <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
 
-<li>You should now see a list of available Gradle tasks somewhere in the IDE. Open the <code>battlecode</code> group, and double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
+<li>In the <code>Gradle Tasks</code> window, you should now see a list of available Gradle tasks. Open the <code>battlecode20-scaffold</code> folder and navigate to the <code>battlecode</code> group, and then double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
 
-<li>You're good to go; you can run other Gradle tasks using the other options in the "Gradle Tasks" menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
+<li>You're good to go; you can run other Gradle tasks using the other options in the <code>Gradle Tasks</code> menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
             <Floater content={
                                     <div>
                                     <p>
