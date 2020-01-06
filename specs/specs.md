@@ -93,7 +93,7 @@ and performing an action adds the corresponding cooldown to the robot’s `coold
 which can be checked with `rc.getCooldownTurns()`.
 
 Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $$P$$ on the current tile as well.
-The actual **cooldown** is equal to **base_cooldown** times $$(1+ P/2000)$$.
+The actual **cooldown** is equal to **base cooldown** times $$(1+ P/2000)$$.
 E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.
 
 All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.senseNearbyRobots` to get an array of nearby robots. For a complete reference, go to the [javadocs](https://2020.battlecode.org/javadoc/index.html).
@@ -117,19 +117,19 @@ The three producible unit types are:
 **Miner**: builds buildings and extracts raw soup.
 
 - Produced by the **HQ**.
-- Can `mineSoup` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to `RobotType.MINER.soupLimit`, currently set to 10).
-- Can use `depositSoup` to transfer soup from its inventory to an adjacent **refinery**.
-- Can build **design schools** and **fulfillment centers**.
+- Can `rc.mineSoup()` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to `RobotType.MINER.soupLimit`, currently set to 10).
+- Can use `rc.depositSoup()` to transfer soup from its inventory to an adjacent **refinery**.
+- Can build **design schools** and **fulfillment centers** with `rc.buildRobot()`.
 
 **Landscaper**: moves **dirt** around the map to adjust **elevation** and destroy buildings.
 
-- Produced by the **design school**
-- Can perform the action `digDirt` to remove one unit of dirt from an adjacent tile,
-reducing its elevation by 1 and increasing its stored dirt by 1 up to a max of `RobotType.LANDSCAPER.dirtLimit` (currently set to 25).
-This can be done if the tile is empty, flooded, or contains another **unit**, but NOT if the tile contains a **building**.
-- Can perform the action `depositDirt` to place one unit of dirt onto an adjacent tile.
+- Produced by the **design school**.
+- Can perform the action `rc.digDirt()` to remove one unit of dirt from an adjacent tile,
+reducing its elevation by 1 and increasing the landscaper's stored dirt by 1 up to a max of `RobotType.LANDSCAPER.dirtLimit` (currently set to 25).
+This can be done if the tile is empty, **flooded**, or contains another unit, but NOT if the tile contains a **building**.
+- Can perform the action `rc.depositDirt()` to reduce its stored dirt by one and place one unit of dirt onto an adjacent tile.
 If the tile contains a **building**, the dirt partially buries it--the **health** of a building is how much dirt can be placed on it before it is destroyed.
-If the tile is empty, flooded, or contains another **unit**, the only effect is that the elevation of that tile increases by 1.
+If the tile is empty, flooded, or contains another unit, the only effect is that the elevation of that tile increases by 1.
 - Note: this implies that buildings may never change elevation, so be careful to contain that water level.
 - If enough dirt is placed on a flooded tile to raise its **elevation** above the **water level**, it becomes not flooded.
 
@@ -137,12 +137,13 @@ If the tile is empty, flooded, or contains another **unit**, the only effect is 
 
 - Produced by the **fulfillment center**
 - Can move into flooded tiles without dying, but not onto other **robots**.
-- Can perform the action `pickUpUnit` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
-- Can perform the action `dropUnit` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
+- Can perform the action `rc.pickUpUnit()` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
+- Can perform the action `rc.dropUnit()` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
 
-| unit | cost (soup) | sensor radius (squared distance) | base cooldown(s) | produced by |
+
+| unit | cost (soup) | sensor radius (squared distance) | base cooldown | produced by |
 | --- | --- | --- | --- | --- |
 | Miner | 70 | 35 | 1 | HQ |
 | Landscaper | 150 | 24 | 1 | Design School |
@@ -172,7 +173,7 @@ The temporary local increase in pollution starts immediately and is in effect fo
 - Built by **miners**
 - Produces 7 soup (`RobotType.VAPORATOR.maxSoupProduced`) per turn for free
 - Reduces **global pollution** by 1 per turn (`RobotType.VAPORATOR.globalPollutionAmount`)
-- Reduces pollution on tiles within radius squared 35 (`RobotType.VAPORATOR.pollutionRadiusSquared`) temporarily decreases by a factor of 0.67 (`Robottype.VAPORATOR.localPollutionAdditiveEffect`).
+- Pollution on tiles within radius squared 35 (`RobotType.VAPORATOR.pollutionRadiusSquared`) temporarily decreases by a factor of 0.67 (`RobotType.VAPORATOR.localPollutionMultiplicativeEffect`).
 
 **Design School**: a creative institution for training talented **landscapers**.
 
@@ -187,14 +188,14 @@ The temporary local increase in pollution starts immediately and is in effect fo
 **Net Gun**: for defense against **drones**
 
 - Built by **miners**
-- Can perform the `shootUnit` action to destroy a drone within its attack radius squared of `GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED`.
+- Can perform the `rc.shootUnit()` action to destroy a drone within its attack radius squared of `GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED` (currently 15).
 
 **HQ**: the most important building
 
 - Cannot be built
 - Game ends when either team's HQ is destroyed
 - Produces **miners**
-- Has a built-in **net gun** (can shoot **drones** with `shootUnit`)
+- Has a built-in **net gun** (can shoot **drones** with `rc.shootUnit()`)
 - Has a built-in **refinery** (automatically refines soup deposited by miners)
 
 | building | cost (soup) | health | sensor radius (squared distance) | produces |
@@ -204,7 +205,7 @@ The temporary local increase in pollution starts immediately and is in effect fo
 | Vaporator | 1000 | 15 | 24 | soup |
 | Design School | 150 | 15 | 24 | Landscapers |
 | Fulfillment Center | 150 | 15 | 24 | Delivery Drones |
-| Net Gun | 250 | 15 | 24 | Delivery Drone deaths |
+| Net Gun | 250 | 15 | 24 | failed deliveries |
 
 ## Communication
 
@@ -213,7 +214,7 @@ Thus, we provide a global, append-only, immutable ledger any robot can read and 
 
 The **blockchain** is a series of **blocks**, one per round, each with at most 7 **transactions**.
 Each **transaction** is 7 integers, a message chosen by the sender of the transaction.
-Every robot can read _all_ transactions, which are not labeled by sender or team.
+Every robot can read _all_ transactions (with `rc.getBlock()`), which are not labeled by sender or team.
 (So you will need to find a way to distinguish them.)
 Any robot can submit a transaction to the **transaction pool** with the function `rc.submitTransaction` and by paying, in **soup**, a **transaction fee** (think of it as a bid).
 At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
@@ -232,12 +233,12 @@ and a single line of code generally contains several bytecodes.
 (For details see http://en.wikipedia.org/wiki/Java_bytecode)
 Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs.
 This is great, because it allows us to avoid using _time_ as a measure of computation, which leads to problems such as nondeterminism.
-With bytecode cutoffs, running the same match between the same bots twice produces exactly the same results--a feature you will find very useful for debugging.
+With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results--a feature you will find very useful for debugging.
 
 Every round each robot sequentially takes its turn.
 If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something),
 its computation will be paused and then resumed at exactly that point next turn.
-This can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile.
+The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile.
 Instead, use the `rc.yield()` function to end a robot's turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
@@ -282,11 +283,11 @@ You should also be prepared for any ability to fail and make sure that this has 
 Throwing any Exceptions cause a bytecode penalty of 500 bytecodes.
 Unhandled exceptions may cause your robot to explode.
 
+## Other restrictions
+
 ### Java Language Usage
 
-The next few sections deal with some of the mechanics of how your players are run in the game engine, including bytecode-counting, library restrictions, etc.
-
-Players may use classes from any of the packages listed in AllowedPackages.txt, except for classes listed in DisallowedPackages.txt. These files can be found [here](https://github.com/battlecode/battlecode20/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
+Players may use classes from any of the packages listed in `AllowedPackages.txt`, except for classes listed in `DisallowedPackages.txt`. These files can be found [here](https://github.com/battlecode/battlecode20/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
 
 Furthermore, the following restrictions apply:
 
@@ -296,8 +297,6 @@ Furthermore, the following restrictions apply:
 
 Note that violating any of the above restrictions will cause the robots to self-destruct when run, even if the source files compile without problems.
 
-
-## Other restrictions
 
 ### Memory Usage
 
