@@ -272,6 +272,9 @@ View instructions for:
                                     <h4 className="title">Upload Your Bot and Scrimmage</h4>
                                 </div>
                                 <div className="content">
+                                    <p>
+                                        Note: scrimmaging will open on January 7!
+                                    </p>
                                 <p>
                                     Run the Gradle task <code>jarForUpload</code> to produce a jar that can be uploaded to the <NavLink to='submissions'>submissions</NavLink> page.
                                 </p>
