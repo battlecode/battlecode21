@@ -96,7 +96,7 @@ Every action has a **base cooldown** cost, but the actual **cooldown** incurred 
 The actual **cooldown** is equal to **base_cooldown** times $$(1+ P/2000)$$.
 E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.
 
-All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.
+All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.senseNearbyRobots` to get an array of nearby robots. For a complete reference, go to the [javadocs](https://2020.battlecode.org/javadoc/index.html).
 
 Now, there are two types of robots, **buildings** and **units**.
 
@@ -141,8 +141,6 @@ If the tile is empty, flooded, or contains another **unit**, the only effect is 
 - Can perform the action `dropUnit` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
-
-[TODO: fill in this big table]
 
 | unit | cost (soup) | sensor radius (squared distance) | base cooldown(s) | produced by |
 | --- | --- | --- | --- | --- |
