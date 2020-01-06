@@ -14,7 +14,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 ext.versions = [
-    battlecode: new URL("https://battlecode.org/version.txt").text
+    battlecode: new URL("https://2020.battlecode.org/version.txt").text
     //scala: '2.11.7'
 ]
 
@@ -60,10 +60,10 @@ sourceSets {
 //Setting default output directories for compiled classes and generated replay files
 //For other default properties, see gradle.properties
 if (!project.hasProperty("classLocationA")) {
-    ext.classLocationA = sourceSets.main.output.classesDirs
+    ext.classLocationA = sourceSets.main.output.classesDirs.getAsPath()
 }
 if (!project.hasProperty("classLocationB")) {
-    ext.classLocationB = sourceSets.main.output.classesDirs
+    ext.classLocationB = sourceSets.main.output.classesDirs.getAsPath()
 }
 if (!project.hasProperty("replay")) {
     ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
