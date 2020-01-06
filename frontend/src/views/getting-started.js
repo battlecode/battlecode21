@@ -52,26 +52,15 @@ class GettingStarted extends Component {
 
         <li>In the <code>Welcome to IntelliJ IDEA</code> window that pops up when you start IntelliJ, select <code>Import Project</code></li>
         
-        <li>In the <code>Open File or Project</code> window, select the <code>build.gradle</code> file in the scaffold folder.</li>
-        
-        <li>Check the options "Create separate module per source set", and "Use gradle wrapper task configuration". Set the "Gradle JVM" option to 1.8. 
-            <Floater content={
-                                    <div>
-                                    <p>
-                                        If you don't have a 1.8 option, make sure you followed step 1 and installed Java correctly.
-</p></div>
-} showCloseButton={true}>
-                                    <i className="pe-7s-info pe-fw" />
-</Floater>
-</li>
+        <li>In the <code>Select File or Dictionary to Import</code> window, select the <code>build.gradle</code> file in the scaffold folder.</li>
         
         <li>Hit OK.</li>
         
-        <li>Wait a minute or two for IntelliJ to finish configuring itself.</li>
+        <li>We need to set the jdk properly; open the settings with <code>File > Settings</code> or <code>ctrl+alt+s</code>. Navigate to <code>Build, Execution, Deployment > Build Tools > Gradle</code> and change <code>Gradle JVM</code> to 1.8</li>
         
-        <li>When the bar at the bottom of the screen has stopped downloading things, we'll need to check that everything is set up correctly. Go to <code>View / Tool Windows / Gradle</code>. In the new window that pops up, select <code>Tasks / battlecode / build</code>, and double click it. You should now see a nice tree of tasks unfold at the bottom of the screen. If you run into an error here, you should <a href='https://discordapp.com/channels/386965718572466197/662426611563626537'>get help on Discord</a>.</li>
-        
-        <li>If you haven't seen any errors, you should be good to go. </li>
+        <li>Time for a first build! On the right side of the screen, click the small button that says gradle and has a picture of an elephant. Navigate to <code>battlecode20-scaffold > Tasks > battlecode</code> and double click on <code>build</code>. This will install the client and engine for you.</li>
+
+        <li>If you haven't seen any errors, you should be good to go.</li>
         </ul>
         </div>)
       } else if (this.state.ide === 'eclipse') {
@@ -190,7 +179,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </p>
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
-                                You'll need a Java Development Kit (JDK) compatible with Java 8 or later, which you 
+                                You'll need a Java Development Kit (JDK) compatible with Java 8, which you 
                                 can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>.
                                 <Floater content={
                                     <div>
