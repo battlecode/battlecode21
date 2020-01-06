@@ -21,19 +21,20 @@ class Countdown extends Component {
   componentDidMount() {
     Api.getNextTournament((tournament_info) => {
         console.log(tournament_info)
+        const d = new Date();
         console.log(new Date(Date.parse(new Date()) + 1000*tournament_info['seconds_until']))
         this.setState({
-            end_date: new Date(Date.parse(new Date()) + 1000*tournament_info['seconds_until']),
+            end_date: new Date(Date.parse(new Date()) - (d.getTimezoneOffset() - 300)*60*1000 + 1000*tournament_info['seconds_until']),
             tournament_name: tournament_info['tournament_name'],
             est_date: tournament_info['est_date_str']
         })
-    })
       const date = this.calculateCountdown(this.state.end_date);
       date ? this.setState(date) : this.stop();
     this.interval = setInterval(() => {
       const date = this.calculateCountdown(this.state.end_date);
       date ? this.setState(date) : this.stop();
     }, 1000);
+    })
   }
 
   componentWillUnmount() {
