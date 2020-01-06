@@ -17,7 +17,7 @@ This year’s game is as much about surviving the changing climate as defeating 
 
 Battlecode 2020 is played by controlling **robots** on a rectangular grid called the **map**.
 Two teams of robots, **red** and **blue**, roam the map.
-Every **round**, each robot will get to take one **turn** in [TODO: what order?].
+Every **round**, each robot will get to take one **turn**, in spawn order.
 More on what they can do with that turn later.
 
 At the beginning of a match, at least one map tile will be **flooded**.
@@ -55,8 +55,8 @@ which can be extracted by **miners**, as we’ll see below.
 These four important characteristics of each map tile,
 elevation, flood status, pollution, and soup content,
 are only visible to robots which are nearby.
-A robot can **sense** these characteristics if the tile is within its **vision radius** (a trait which varies by robot type),
-using the functions [TODO], [TODO], [TODO], and [TODO], respectively.
+A robot can **sense** these characteristics if the tile is within its **sensor radius** (a trait which varies by robot type),
+using the functions `senseElevation`, `senseFlooded`, `sensePollution`, and `senseSoup`, respectively.
 
 At the beginning of the game, these characteristics and the two starting **HQ**s are guaranteed to be horizontally, vertically, or rotationally symmetric.
 
@@ -69,8 +69,8 @@ It actually comes in two forms;
 the soup distributed around the map can only be gathered by **miners** and is NOT added to the team pool until it has been **refined** in a **refinery**.
 Miners must bring unrefined soup from around the map to a **refinery**, where it is processed and added to the team pool, at which point it may be spent.
 
-Each team starts with [TODO: gameconstant and value] soup in the pool.
-There is also a base soup income of [TODO: gameconstant name], currently set at 1, automatically added to the team pool each turn.
+Each team starts with 210 soup in the pool (`GameConstants.INITIAL_SOUP`).
+There is also a base soup income of `GameConstants.BASE_INCOME_PER_ROUND`, currently set at 1, automatically added to the team pool each turn.
 
 ## Disclaimer: Distance Squared
 
@@ -89,8 +89,8 @@ Each robot runs an independent copy of your code.
 It acts given only its own nearby surroundings and the contents of the **blockchain**, which is described at length below.
 Actions (such as **moving** or **mining**) incur a **cooldown** penalty, which varies by action, robot, and **pollution** level.
 Robots can only perform actions when their cooldown is less than 1,
-and performing an action adds the corresponding cooldown to the robot’s [TODO: what’s the name of the field],
-which can be checked with [TODO].
+and performing an action adds the corresponding cooldown to the robot’s `cooldownTurns`
+which can be checked with `getCooldownTurns()`.
 
 Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $P$ on the current tile as well.
 The actual **cooldown** is equal to **base_cooldown** times $(1+ P/2000)$.
@@ -111,14 +111,14 @@ A unit can move to a tile given all of the following constraints are met:
 - the destination tile must have elevation within +/- 3 of the current location
 - the destination tile must not be occupied by another robot
 
-We provide the `canMove(TODO: what args? also does it check cooldown?)` function to check all of these at once for a given tile.
+We provide the `canMove(Direction dir)` function to check all of these at once for a given tile.
 
 The three producible unit types are:
 
 **Miner**: builds buildings and extracts raw soup.
 
 - Produced by the **HQ**
-- Can [TODO: mine_soup function name] to take ? units of soup from the map and add it to its inventory (up to [TODO: inventory limit])
+- Can `mineSoup` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to 
 - Can use [TODO: func] to transfer soup from its inventory to an adjacent **refinery**.
 - Can build **design schools** and **fulfillment centers**
 
