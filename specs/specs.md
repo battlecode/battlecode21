@@ -22,10 +22,10 @@ More on what they can do with that turn later.
 
 At the beginning of a match, at least one map tile will be **flooded**.
 On every turn, each tile adjacent to a **flooded** tile whose **elevation** is below the **water level** will become **flooded**.
-Any robot on a flooded tile is destroyed, except **delivery drones**.
+Any robot on a **flooded** tile is destroyed, except **delivery drones**.
 If your **HQ** is destroyed, you lose.
 As the match goes on, the **water level** will increase at an increasing rate, flooding adjacent tiles if their **elevation** is too low.
-The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1,$$ where $x$ is the current round.
+The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1$$, where $$x$$ is the current round.
 That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:
 
 | elevation | round flooded |
@@ -53,10 +53,10 @@ Map tiles may also contain some amount of **soup**,
 which can be extracted by **miners**, as we’ll see below.
 
 These four important characteristics of each map tile,
-elevation, flood status, pollution, and soup content,
+**elevation**, **flood** status, **pollution**, and **soup** content,
 are only visible to robots which are nearby.
 A robot can **sense** these characteristics if the tile is within its **sensor radius** (a trait which varies by robot type),
-using the functions `senseElevation`, `senseFlooded`, `sensePollution`, and `senseSoup`, respectively.
+using the functions `rc.senseElevation()`, `rc.senseFlooded()`, `rc.sensePollution()`, and `rc.senseSoup()`, respectively.
 
 At the beginning of the game, these characteristics and the two starting **HQ**s are guaranteed to be horizontally, vertically, or rotationally symmetric.
 
@@ -69,12 +69,13 @@ It actually comes in two forms;
 the soup distributed around the map can only be gathered by **miners** and is NOT added to the team pool until it has been **refined** in a **refinery**.
 Miners must bring unrefined soup from around the map to a **refinery**, where it is processed and added to the team pool, at which point it may be spent.
 
-Each team starts with 210 soup in the pool (`GameConstants.INITIAL_SOUP`).
+Each team starts with 200 soup in the pool (`GameConstants.INITIAL_SOUP`).
 There is also a base soup income of `GameConstants.BASE_INCOME_PER_ROUND`, currently set at 1, automatically added to the team pool each turn.
 
 ## Disclaimer: Distance Squared
 
-All distances, vision radii, etc are given as the Euclidean distance squared (equal to $dx^2 + dy^2$, the x-offset squared plus y-offset squared).
+All distances, vision radii, etc are given as the Euclidean distance squared (equal to $$dx^2 + dy^2$$, the x-offset squared plus y-offset squared).
+If we say "vision radius" or "distance", we really mean "vision radius squared" or "distance squared".
 There are two main benefits of doing this:
 - everything is an integer, which makes life better
 - taking square roots is a waste of time
@@ -90,11 +91,11 @@ It acts given only its own nearby surroundings and the contents of the **blockch
 Actions (such as **moving** or **mining**) incur a **cooldown** penalty, which varies by action, robot, and **pollution** level.
 Robots can only perform actions when their cooldown is less than 1,
 and performing an action adds the corresponding cooldown to the robot’s `cooldownTurns`
-which can be checked with `getCooldownTurns()`.
+which can be checked with `rc.getCooldownTurns()`.
 
-Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $P$ on the current tile as well.
-The actual **cooldown** is equal to **base_cooldown** times $(1+ P/2000)$.
-E.g. a total pollution level of 2000 (between global and local effects) makes everything take twice as long.
+Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $$P$$ on the current tile as well.
+The actual **cooldown** is equal to **base_cooldown** times $$(1+ P/2000)$$.
+E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.
 
 All robots can **sense** their surroundings within their vision radius using:
 [TODO: table of functions and what they tell you]
@@ -108,10 +109,10 @@ A unit can move to a tile given all of the following constraints are met:
 
 - the unit’s cooldown must be less than 1
 - the destination tile must be adjacent to the current location (the square of 8 tiles around the robot)
-- the destination tile must have elevation within +/- 3 of the current location
+- the destination tile must have elevation within +/- 3 of the current location (except for **drones**)
 - the destination tile must not be occupied by another robot
 
-We provide the `canMove(Direction dir)` function to check all of these at once for a given tile.
+We provide the `rc.canMove(Direction dir)` function to check all of these at once for a given direction.
 
 The three producible unit types are:
 
