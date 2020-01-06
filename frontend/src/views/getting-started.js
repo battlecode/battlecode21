@@ -223,7 +223,8 @@ View instructions for:
     {this.getIDEInstallation()}
 
 </p>
-<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.)</p>
+<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
+If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the Client.</p>
 
                                 </div>
                             </div>
