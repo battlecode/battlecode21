@@ -96,7 +96,7 @@ Every action has a **base cooldown** cost, but the actual **cooldown** incurred 
 The actual **cooldown** is equal to **base cooldown** times $$(1+ P/2000)$$.
 E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.
 
-All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.
+All robots can **sense** their surroundings within their sensor radius. For example, you can call `rc.senseNearbyRobots` to get an array of nearby robots. For a complete reference, go to the [javadocs](https://2020.battlecode.org/javadoc/index.html).
 
 Now, there are two types of robots, **buildings** and **units**.
 
