@@ -283,6 +283,10 @@ You should also be prepared for any ability to fail and make sure that this has 
 Throwing any Exceptions cause a bytecode penalty of 500 bytecodes.
 Unhandled exceptions may cause your robot to explode.
 
+### Complete Documentation
+
+Every function you could possibly use to interact with the game can be found in our [javadocs](http://2020.battlecode.org/javadoc/index.html).
+
 ## Other restrictions
 
 ### Java Language Usage
