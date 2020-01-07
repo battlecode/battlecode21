@@ -4,6 +4,7 @@ FROM bc20-env
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
 
 # Install software dependencies
+# Need g++ for pip to successfully install google cloud dependencies
 RUN apk --update --no-cache add \
     g++ \
     openjdk8 \
@@ -13,11 +14,8 @@ RUN pip3 install --upgrade \
     google-cloud-storage \
     requests
 
-# Insert shared codebase
+# Initialise box and gradle
 COPY box box/
-COPY app/config.py app/subscription.py app/util.py app/gcloud-key.json app/
+RUN cd box && ./gradlew --no-daemon build && rm -rf build src
 
-# Initialise gradle
-WORKDIR box
-RUN ./gradlew --no-daemon build && rm -rf build src
-WORKDIR /
+COPY app/config.py app/subscription.py app/util.py app/gcloud-key.json app/

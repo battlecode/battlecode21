@@ -116,6 +116,9 @@ def game_worker(gameinfo):
         except:
             game_log_error(gametype, gameid, 'Could not determine player packages')
 
+        # Update distribution
+        util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+
         # Execute game
         result = util.monitor_command(
             ['./gradlew', 'run',
