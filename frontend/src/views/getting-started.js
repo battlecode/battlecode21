@@ -107,7 +107,7 @@ If you are unable to find this option, you may be using an old version of Eclips
           return (
               <div>
                   <ul style={{marginLeft: '-15px'}}>
-<li>Start every Gradle command with <code>./gradlew</code>, if using Max or Linux, or <code>gradlew</code>, if using Windows.</li>
+<li>Start every Gradle command with <code>./gradlew</code>, if using Mac or Linux, or <code>gradlew</code>, if using Windows.</li>
 
 <li>You will need to set the <code>JAVA_HOME</code> environment variable to point to the installation path of your JDK.
             <Floater content={
