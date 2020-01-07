@@ -141,6 +141,7 @@ If the tile is empty, flooded, or contains another unit, the only effect is that
 - Can perform the action `rc.dropUnit()` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
+- Drones cannot pick up **buildings**, or other drones.
 
 
 | unit | cost (soup) | sensor radius (squared distance) | base cooldown | produced by |
@@ -213,6 +214,7 @@ There is one final unit which cannot be built and is not controlled by any team:
 **Cows** are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them.
 They move around the map at random, with a base cooldown of 1.
 However, cows are similar to other units:
+
 - They die if the end up on a **flooded** tile.
 - They can be picked up by **drones** (ideally, towards the enemy team).
 
