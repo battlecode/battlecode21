@@ -26,7 +26,7 @@ On every turn, each tile adjacent to a **flooded** tile whose **elevation** is b
 Any robot on a **flooded** tile is destroyed, except **delivery drones**.
 If your **HQ** is destroyed, you lose.
 As the match goes on, the **water level** will increase at an increasing rate, flooding adjacent tiles if their **elevation** is too low.
-Elevations can be anywhere between $$-\infty$$ and $$\infty$$.
+Elevations can be anywhere between $-\infty$ and $\infty$.
 The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1,$$ where $x$ is the current round.
 That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:
 
@@ -75,7 +75,7 @@ There is also a base soup income of `GameConstants.BASE_INCOME_PER_ROUND`, curre
 
 ## Disclaimer: Distance Squared
 
-All distances, vision radii, etc are given as the Euclidean distance squared (equal to $$dx^2 + dy^2$$, the x-offset squared plus y-offset squared).
+All distances, vision radii, etc are given as the Euclidean distance squared (equal to $dx^2 + dy^2$, the x-offset squared plus y-offset squared).
 If we say "vision radius" or "distance", we really mean "vision radius squared" or "distance squared".
 There are two main benefits of doing this:
 - everything is an integer, which makes life better
@@ -94,8 +94,8 @@ Robots can only perform actions when their cooldown is less than 1,
 and performing an action adds the corresponding cooldown to the robot’s `cooldownTurns`
 which can be checked with `rc.getCooldownTurns()`.
 
-Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $$P$$ on the current tile as well.
-The actual **cooldown** is equal to **base cooldown** times $$(1+ P/2000)$$.
+Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $P$ on the current tile as well.
+The actual **cooldown** is equal to **base cooldown** times $(1+ P/2000)$.
 E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.
 
 All robots can **sense** their surroundings within their sensor radius (given as distance squared, as always).
@@ -103,7 +103,7 @@ For example, you can call `rc.senseNearbyRobots` to get an array of nearby robot
 (For a complete list of functions, see the [javadocs](https://2020.battlecode.org/javadoc/index.html).)
 **Sensor radius** is affected by pollution similarly to cooldown--the worse the pollution, the less your robots can see.
 All sensor radius values are the **base sensor radius**, while the actual **sensor radius** is
-the **base sensor radius** times $$1/(1+ P/4000)^2$$.
+the **base sensor radius** times $1/(1+ P/4000)^2$.
 E.g. a total pollution level of 4000 cuts the distance they can see (_non_-squared vision radius) in half.
 
 Now, there are two types of robots, **buildings** and **units**.
@@ -292,7 +292,8 @@ The winner is determined as follows (with ties at one level being broken by the 
 
 ## Sample Player
 
-[Examplefuncsplayer](https://github.com/battlecode/battlecode20-scaffold), a simple player which performs various game actions, is included with battlecode.
+[examplefuncsplayer](https://github.com/battlecode/battlecode20-scaffold),
+a simple player which performs various game actions, is included with battlecode.
 It includes helpful comments and is a template you can use to see what RobotPlayer files should look like.
 
 
