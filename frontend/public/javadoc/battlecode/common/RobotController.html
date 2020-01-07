@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6,"i52":6,"i53":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -213,7 +213,7 @@ var activeTableTab = "activeTableTab";
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#canSubmitTransaction-int:A-int-">canSubmitTransaction</a></span>(int[]&nbsp;message,
                     int&nbsp;cost)</code>
-<div class="block">Checks that the robot can submit a transaction
+<div class="block">Tests if the robot can submit a transaction
  to the blockchain at the indicated cost.</div>
 </td>
 </tr>
@@ -274,117 +274,129 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getMapHeight--">getMapHeight</a></span>()</code>
+<div class="block">Returns the height of the map.</div>
+</td>
+</tr>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getMapWidth--">getMapWidth</a></span>()</code>
+<div class="block">Returns the width of the map.</div>
+</td>
+</tr>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getRobotCount--">getRobotCount</a></span>()</code>
 <div class="block">Returns the number of robots on your team (including your HQ).</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getRoundNum--">getRoundNum</a></span>()</code>
 <div class="block">Returns the current round number, where round 1 is the first round of the
  match.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getSoupCarrying--">getSoupCarrying</a></span>()</code>
 <div class="block">Returns the amount of crude soup this robot is carrying.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getTeam--">getTeam</a></span>()</code>
 <div class="block">Returns this robot's Team.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getTeamSoup--">getTeamSoup</a></span>()</code>
 <div class="block">Returns the team's total soup.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getType--">getType</a></span>()</code>
 <div class="block">Returns this robot's type (MINER, HQ, etc.).</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#isCurrentlyHoldingUnit--">isCurrentlyHoldingUnit</a></span>()</code>
 <div class="block">Returns whether the robot is currently holding a unit (for delivery drones).</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#isLocationOccupied-battlecode.common.MapLocation-">isLocationOccupied</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Senses whether there is a robot at the given location.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#isReady--">isReady</a></span>()</code>
 <div class="block">Tests whether the robot can perform an action.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#mineSoup-battlecode.common.Direction-">mineSoup</a></span>(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</code>
 <div class="block">Mines soup in the given direction.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#move-battlecode.common.Direction-">move</a></span>(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</code>
 <div class="block">Moves one step in the given direction.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#onTheMap-battlecode.common.MapLocation-">onTheMap</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Senses whether a MapLocation is on the map.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#pickUpUnit-int-">pickUpUnit</a></span>(int&nbsp;id)</code>
 <div class="block">Picks up another unit.</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#resign--">resign</a></span>()</code>
 <div class="block">Causes your team to lose the game.</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseElevation-battlecode.common.MapLocation-">senseElevation</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns the elevation at a given location, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseFlooding-battlecode.common.MapLocation-">senseFlooding</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns whether or not a given location is flooded, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbyRobots--">senseNearbyRobots</a></span>()</code>
 <div class="block">Returns all robots within sense radius.</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbyRobots-int-">senseNearbyRobots</a></span>(int&nbsp;radiusSquared)</code>
 <div class="block">Returns all robots that can be sensed within a certain distance of this
  robot.</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbyRobots-int-battlecode.common.Team-">senseNearbyRobots</a></span>(int&nbsp;radiusSquared,
                  <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team)</code>
@@ -392,7 +404,7 @@ var activeTableTab = "activeTableTab";
  distance of this robot.</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbyRobots-battlecode.common.MapLocation-int-battlecode.common.Team-">senseNearbyRobots</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;center,
                  int&nbsp;radius,
@@ -401,34 +413,34 @@ var activeTableTab = "activeTableTab";
  radius of a specified location.</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#sensePollution-battlecode.common.MapLocation-">sensePollution</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns the pollution level at a given location, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseRobot-int-">senseRobot</a></span>(int&nbsp;id)</code>
 <div class="block">Senses information about a particular robot given its ID.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseRobotAtLocation-battlecode.common.MapLocation-">senseRobotAtLocation</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Senses the robot at the given location, or null if there is no robot
  there.</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseSoup-battlecode.common.MapLocation-">senseSoup</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns the crude soup count at a given location, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#setIndicatorDot-battlecode.common.MapLocation-int-int-int-">setIndicatorDot</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc,
                int&nbsp;red,
@@ -437,7 +449,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Draw a dot on the game map for debugging purposes.</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#setIndicatorLine-battlecode.common.MapLocation-battlecode.common.MapLocation-int-int-int-">setIndicatorLine</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;startLoc,
                 <a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;endLoc,
@@ -447,13 +459,13 @@ var activeTableTab = "activeTableTab";
 <div class="block">Draw a line on the game map for debugging purposes.</div>
 </td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#shootUnit-int-">shootUnit</a></span>(int&nbsp;id)</code>
 <div class="block">Shoots down another unit.</div>
 </td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#submitTransaction-int:A-int-">submitTransaction</a></span>(int[]&nbsp;message,
                  int&nbsp;cost)</code>
@@ -519,6 +531,34 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the number of robots on your team</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>20</code></dd></dl>
+</li>
+</ul>
+<a name="getMapWidth--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMapWidth</h4>
+<pre>int&nbsp;getMapWidth()</pre>
+<div class="block">Returns the width of the map.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the width of the map.</dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>1</code></dd></dl>
+</li>
+</ul>
+<a name="getMapHeight--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMapHeight</h4>
+<pre>int&nbsp;getMapHeight()</pre>
+<div class="block">Returns the height of the map.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the height of the map.</dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>1</code></dd></dl>
 </li>
 </ul>
 <a name="getID--">
@@ -1319,8 +1359,9 @@ var activeTableTab = "activeTableTab";
 <h4>canSubmitTransaction</h4>
 <pre>boolean&nbsp;canSubmitTransaction(int[]&nbsp;message,
                              int&nbsp;cost)</pre>
-<div class="block">Checks that the robot can submit a transaction
- to the blockchain at the indicated cost.</div>
+<div class="block">Tests if the robot can submit a transaction
+ to the blockchain at the indicated cost. Tests if the team has enough soup,
+ that the provided cost is non-negative, and that the message doesn't exceed the limit.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - the list of ints to send (at most of GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH many).</dd>
@@ -1346,7 +1387,7 @@ var activeTableTab = "activeTableTab";
 <dd><code>cost</code> - the price that the unit is willing to pay for the message</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the team does not have enough soup to cover the cost,
-  or if the message exceeds the allowed limit</dd>
+  if the message exceeds the allowed limit, or if the cost is negative</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
 </li>
 </ul>
