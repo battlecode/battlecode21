@@ -24,10 +24,10 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p className='text-center'>
-                                    <a type="button" className="btn btn-info btn-fill text-center" href='/battlecode20-game-specs.html'>Read the Game Specifications</a>
+                                    <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Read the Game Specifications</a>
                                 </p>
                                 <p>
-                                The game specifications will be released on January 6.
+                                    For documentation on all methods you can call, <a href='https://2020.battlecode.org/javadoc/index.html'>read the Javadocs</a>.
                                 </p>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Lectures are held at MIT every weekday the first two weeks of IAP, exact time and location to be determined.
+                                    Lectures are held at MIT every weekday the first two weeks of IAP, in 32-123 from 7 pm to 10 pm.
                                 </p>
                                 <p>
                                     All lectures are streamed live on <a href='https://twitch.tv/mitbattlecode'>our Twitch account</a>, and
@@ -71,11 +71,13 @@ class Resources extends Component {
                                     <h4 className="title">Other Resources</h4>
                                 </div>
                                 <div className="content">
-                                <p>
-                                    We will have a starter pack containing all code that you need to get started.
+                                    <p>
+                                <ul>
+                                    <li><a href='https://2020.battlecode.org/javadoc/index.html'>Javadocs</a>: the documentation of <code>RobotController</code> methods. Very helpful.</li>
+                                </ul>
                                 </p>
                                 <p>
-                                    All of the code powering Battlecode 2020 will be open source on GitHub, in the (currently private) <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
+                                    All of the code powering Battlecode 2020 is open source on GitHub, in the <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
                                 </p>
                                 <p>
                                     We will also list helpful third-party tools here, as they start popping up.
