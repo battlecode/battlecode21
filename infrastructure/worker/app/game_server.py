@@ -146,22 +146,28 @@ def game_worker(gameinfo):
         # Interpret game result
         server_output = result[1].decode().split('\n')
 
-        winner = None
+        wins = [0, 0]
         try:
-            while True:
-                if re.fullmatch(GAME_WINNER, server_output[-1]):
-                    winner = server_output[-1][server_output[-1].rfind('wins')-3]
-                    break
-                server_output.pop()
+            # Read the winner of each game from the engine
+            for line in server_output:
+                if re.fullmatch(GAME_WINNER, line):
+                    game_winner = line[line.rfind('wins')-3]
+                    assert (game_winner == 'A' or game_winner == 'B')
+                    if game_winner == 'A':
+                        wins[0] += 1
+                    elif game_winner == 'B':
+                        wins[1] += 1
+            # We should have as many game wins as games played
+            assert (wins[0] + wins[1] == len(maps.split(',')))
         except:
             game_log_error(gametype, gameid, 'Could not determine winner')
-        finally:
-            if winner == 'A':
+        else:
+            if wins[0] > wins[1]:
                 game_report_result(gametype, gameid, GAME_REDWON)
-            elif winner == 'B':
+            elif wins[1] > wins[0]:
                 game_report_result(gametype, gameid, GAME_BLUEWON)
             else:
-                raise RuntimeError
+                game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
     finally:
         # Clean up working directory
