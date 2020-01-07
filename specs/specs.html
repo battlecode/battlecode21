@@ -143,14 +143,17 @@ border-radius: 50%;
           <li><a href="#robots">Robots</a><ul>
           <li><a href="#units">Units</a></li>
           <li><a href="#buildings">Buildings</a></li>
+          <li><a href="#cows">Cows</a></li>
           </ul></li>
           <li><a href="#communication">Communication</a></li>
           <li><a href="#bytecode-limits">Bytecode Limits</a></li>
+          <li><a href="#tiebreakers">Tiebreakers</a></li>
           <li><a href="#sample-player">Sample Player</a></li>
           <li><a href="#debugging">Debugging</a></li>
           <li><a href="#other-utilities">Other Utilities</a><ul>
           <li><a href="#monitoring">Monitoring</a></li>
           <li><a href="#gameactionexceptions">GameActionExceptions</a></li>
+          <li><a href="#complete-documentation">Complete Documentation</a></li>
           </ul></li>
           <li><a href="#other-restrictions">Other restrictions</a><ul>
           <li><a href="#java-language-usage">Java Language Usage</a></li>
@@ -170,8 +173,8 @@ border-radius: 50%;
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
 <h2 id="the-game-environment">The Game Environment</h2>
-<p>Battlecode 2020 is played by controlling <strong>robots</strong> on a rectangular grid called the <strong>map</strong>. Two teams of robots, <strong>red</strong> and <strong>blue</strong>, roam the map. Every <strong>round</strong>, each robot will get to take one <strong>turn</strong>, in spawn order. More on what they can do with that turn later.</p>
-<p>At the beginning of a match, at least one map tile will be <strong>flooded</strong>. On every turn, each tile adjacent to a <strong>flooded</strong> tile whose <strong>elevation</strong> is below the <strong>water level</strong> will become <strong>flooded</strong>. Any robot on a <strong>flooded</strong> tile is destroyed, except <strong>delivery drones</strong>. If your <strong>HQ</strong> is destroyed, you lose. As the match goes on, the <strong>water level</strong> will increase at an increasing rate, flooding adjacent tiles if their <strong>elevation</strong> is too low. The water level at a given round is provided via the function <br /><span class="math display"><em>e</em><sup>0.0028<em>x</em> − 1.38sin (0.00157<em>x</em> − 1.73) + 1.38sin ( − 1.73)</sup> − 1,</span><br /> where <span class="math inline"><em>x</em></span> is the current round. That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:</p>
+<p>Battlecode 2020 is played by controlling <strong>robots</strong> on a rectangular grid called the <strong>map</strong>. The map will be between 32x32 and 64x64, inclusive. Two teams of robots, <strong>red</strong> and <strong>blue</strong>, roam the map. Every <strong>round</strong>, each robot will get to take one <strong>turn</strong>, in spawn order. More on what they can do with that turn later.</p>
+<p>At the beginning of a match, at least one map tile will be <strong>flooded</strong>. On every turn, each tile adjacent to a <strong>flooded</strong> tile whose <strong>elevation</strong> is below the <strong>water level</strong> will become <strong>flooded</strong>. Any robot on a <strong>flooded</strong> tile is destroyed, except <strong>delivery drones</strong>. If your <strong>HQ</strong> is destroyed, you lose. As the match goes on, the <strong>water level</strong> will increase at an increasing rate, flooding adjacent tiles if their <strong>elevation</strong> is too low. Elevations can be anywhere between <span class="math inline"> − ∞</span> and <span class="math inline">∞</span>. The water level at a given round is provided via the function <br /><span class="math display"><em>e</em><sup>0.0028<em>x</em> − 1.38sin (0.00157<em>x</em> − 1.73) + 1.38sin ( − 1.73)</sup> − 1,</span><br /> where <span class="math inline"><em>x</em></span> is the current round. That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:</p>
 <table>
 <thead>
 <tr class="header">
@@ -226,12 +229,12 @@ border-radius: 50%;
 <p><strong>Soup</strong> is the main resource in Battlecode 2020. Each team has a pool of soup shared by all robots, which is spent to build more robots and pay blockchain transaction fees. It actually comes in two forms; the soup distributed around the map can only be gathered by <strong>miners</strong> and is NOT added to the team pool until it has been <strong>refined</strong> in a <strong>refinery</strong>. Miners must bring unrefined soup from around the map to a <strong>refinery</strong>, where it is processed and added to the team pool, at which point it may be spent.</p>
 <p>Each team starts with 200 soup in the pool (<code>GameConstants.INITIAL_SOUP</code>). There is also a base soup income of <code>GameConstants.BASE_INCOME_PER_ROUND</code>, currently set at 1, automatically added to the team pool each turn.</p>
 <h2 id="disclaimer-distance-squared">Disclaimer: Distance Squared</h2>
-<p>All distances, vision radii, etc are given as the Euclidean distance squared (equal to <br /><span class="math display"><em>d</em><em>x</em><sup>2</sup> + <em>d</em><em>y</em><sup>2</sup></span><br />, the x-offset squared plus y-offset squared). If we say “vision radius” or “distance”, we really mean “vision radius squared” or “distance squared”. There are two main benefits of doing this: - everything is an integer, which makes life better - taking square roots is a waste of time</p>
+<p>All distances, vision radii, etc are given as the Euclidean distance squared (equal to <span class="math inline"><em>d</em><em>x</em><sup>2</sup> + <em>d</em><em>y</em><sup>2</sup></span>, the x-offset squared plus y-offset squared). If we say “vision radius” or “distance”, we really mean “vision radius squared” or “distance squared”. There are two main benefits of doing this: - everything is an integer, which makes life better - taking square roots is a waste of time</p>
 <p>Intuitions for this are best gained through a few examples: [TODO: make a nice graphic of different distances squared, including 1, 2, 3, 4, and the vision radii of each unit]</p>
 <h2 id="robots">Robots</h2>
 <p>Each robot runs an independent copy of your code. It acts given only its own nearby surroundings and the contents of the <strong>blockchain</strong>, which is described at length below. Actions (such as <strong>moving</strong> or <strong>mining</strong>) incur a <strong>cooldown</strong> penalty, which varies by action, robot, and <strong>pollution</strong> level. Robots can only perform actions when their cooldown is less than 1, and performing an action adds the corresponding cooldown to the robot’s <code>cooldownTurns</code> which can be checked with <code>rc.getCooldownTurns()</code>.</p>
-<p>Every action has a <strong>base cooldown</strong> cost, but the actual <strong>cooldown</strong> incurred is a function of the <strong>pollution</strong> <br /><span class="math display"><em>P</em></span><br /> on the current tile as well. The actual <strong>cooldown</strong> is equal to <strong>base cooldown</strong> times <br /><span class="math display">(1 + <em>P</em>/2000)</span><br />. E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.</p>
-<p>All robots can <strong>sense</strong> their surroundings within their sensor radius. For example, you can call <code>rc.senseNearbyRobots</code> to get an array of nearby robots. For a complete reference, go to the <a href="https://2020.battlecode.org/javadoc/index.html">javadocs</a>.</p>
+<p>Every action has a <strong>base cooldown</strong> cost, but the actual <strong>cooldown</strong> incurred is a function of the <strong>pollution</strong> <span class="math inline"><em>P</em></span> on the current tile as well. The actual <strong>cooldown</strong> is equal to <strong>base cooldown</strong> times <span class="math inline">(1 + <em>P</em>/2000)</span>. E.g. a total pollution level of 2000 (after global and local effects) makes everything take twice as long.</p>
+<p>All robots can <strong>sense</strong> their surroundings within their sensor radius (given as distance squared, as always). For example, you can call <code>rc.senseNearbyRobots</code> to get an array of nearby robots. (For a complete list of functions, see the <a href="https://2020.battlecode.org/javadoc/index.html">javadocs</a>.) <strong>Sensor radius</strong> is affected by pollution similarly to cooldown–the worse the pollution, the less your robots can see. All sensor radius values are the <strong>base sensor radius</strong>, while the actual <strong>sensor radius</strong> is the <strong>base sensor radius</strong> times <span class="math inline">1/(1 + <em>P</em>/4000)<sup>2</sup></span>. E.g. a total pollution level of 4000 cuts the distance they can see (<em>non</em>-squared vision radius) in half.</p>
 <p>Now, there are two types of robots, <strong>buildings</strong> and <strong>units</strong>.</p>
 <h3 id="units">Units</h3>
 <p><strong>Units</strong> are <strong>robots</strong> which can move. A unit can move to a tile given all of the following constraints are met:</p>
@@ -246,7 +249,7 @@ border-radius: 50%;
 <p><strong>Miner</strong>: builds buildings and extracts raw soup.</p>
 <ul>
 <li>Produced by the <strong>HQ</strong>.</li>
-<li>Can <code>rc.mineSoup()</code> to take <code>GameConstants.SOUP_MINING_RATE</code> units of soup (currently set to 7) from the map and add it to its inventory (up to <code>RobotType.MINER.soupLimit</code>, currently set to 10).</li>
+<li>Can <code>rc.mineSoup()</code> to take <code>GameConstants.SOUP_MINING_RATE</code> units of soup (currently set to 7) from the map and add it to its inventory (up to <code>RobotType.MINER.soupLimit</code>, currently set to 100).</li>
 <li>Can use <code>rc.depositSoup()</code> to transfer soup from its inventory to an adjacent <strong>refinery</strong>.</li>
 <li>Can build <strong>design schools</strong> and <strong>fulfillment centers</strong> with <code>rc.buildRobot()</code>.</li>
 </ul>
@@ -256,6 +259,7 @@ border-radius: 50%;
 <li>Can perform the action <code>rc.digDirt()</code> to remove one unit of dirt from an adjacent tile, reducing its elevation by 1 and increasing the landscaper’s stored dirt by 1 up to a max of <code>RobotType.LANDSCAPER.dirtLimit</code> (currently set to 25). This can be done if the tile is empty, <strong>flooded</strong>, or contains another unit, but NOT if the tile contains a <strong>building</strong>.</li>
 <li>Can perform the action <code>rc.depositDirt()</code> to reduce its stored dirt by one and place one unit of dirt onto an adjacent tile. If the tile contains a <strong>building</strong>, the dirt partially buries it–the <strong>health</strong> of a building is how much dirt can be placed on it before it is destroyed. If the tile is empty, flooded, or contains another unit, the only effect is that the elevation of that tile increases by 1.</li>
 <li>Note: this implies that buildings may never change elevation, so be careful to contain that water level.</li>
+<li>When a <strong>landscaper</strong> dies, the dirt it’s carrying is dropped on the current tile.</li>
 <li>If enough dirt is placed on a flooded tile to raise its <strong>elevation</strong> above the <strong>water level</strong>, it becomes not flooded.</li>
 </ul>
 <p><strong>Delivery drone</strong>: picks up and moves units around the map.</p>
@@ -266,6 +270,7 @@ border-radius: 50%;
 <li>Can perform the action <code>rc.dropUnit()</code> to place the currently held <strong>unit</strong> on an adjacent empty or flooded tile, but not onto another <strong>robot</strong>.</li>
 <li>When a <strong>delivery drone</strong> is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.</li>
 <li>If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.</li>
+<li>Drones cannot pick up <strong>buildings</strong>, or other drones.</li>
 </ul>
 <table>
 <thead>
@@ -302,7 +307,7 @@ border-radius: 50%;
 </tbody>
 </table>
 <h3 id="buildings">Buildings</h3>
-<p><strong>Buildings</strong> are <strong>robots</strong> which cannot move, and produce <strong>units</strong> (incurring a <strong>cooldown</strong> penalty as with any action). If the team has enough <strong>soup</strong> to build the unit, you can use the function <code>rc.buildRobot</code> to produce it on any adjacent tile within an elevation of +/-3 of the building. <strong>Buildings</strong> are completely stationary and cannot change in elevation once built. Any dirt placed on a tile with a <strong>building</strong> will accumulate on that building and eventually bury it, destroying the building. Dirt can also be removed from buildings, until there is none left, but after that dirt cannot be taken from that tile. The net amount of dirt that must be added to a building before it is destroyed is called the building’s <strong>health</strong>.</p>
+<p><strong>Buildings</strong> are <strong>robots</strong> which cannot move, and produce <strong>units</strong> (incurring a <strong>cooldown</strong> penalty as with any action). If the team has enough <strong>soup</strong> to build the unit, you can use the function <code>rc.buildRobot</code> to produce it on any adjacent tile within an elevation of +/-3 of the building. <strong>Buildings</strong> are completely stationary and cannot change in elevation once built. Any dirt placed on a tile with a <strong>building</strong> will accumulate on that building and eventually bury it, destroying the building. Dirt can also be removed from buildings, until there is none left, but after that dirt cannot be taken from that tile. The net amount of dirt that must be added to a building before it is destroyed is called the building’s <strong>health</strong>. When a building is destroyed this way, the dirt that was burying it is added to the now vacant tile, increasing its elevation by an amount equal to the health of the deceased building.</p>
 <p><strong>Refinery</strong>: takes soup from miners and adds it to the team shared pool, producing pollution.</p>
 <ul>
 <li>Built by <strong>miners</strong></li>
@@ -394,6 +399,13 @@ border-radius: 50%;
 </tr>
 </tbody>
 </table>
+<h3 id="cows">Cows</h3>
+<p>There is one final unit which cannot be built and is not controlled by any team: <strong>cows</strong>. <strong>Cows</strong> are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them. They move around the map at random, with a base cooldown of 1. However, cows are similar to other units:</p>
+<ul>
+<li>They die if the end up on a <strong>flooded</strong> tile.</li>
+<li>They can be picked up by <strong>drones</strong> (ideally, towards the enemy team).</li>
+</ul>
+<p>Initial cow positions are a property of the map, and some maps may not have any.</p>
 <h2 id="communication">Communication</h2>
 <p>Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging. Thus, we provide a global, append-only, immutable ledger any robot can read and write to, which we call the <strong>blockchain</strong>*.</p>
 <p>The <strong>blockchain</strong> is a series of <strong>blocks</strong>, one per round, each with at most 7 <strong>transactions</strong>. Each <strong>transaction</strong> is 7 integers, a message chosen by the sender of the transaction. Every robot can read <em>all</em> transactions (with <code>rc.getBlock()</code>), which are not labeled by sender or team. (So you will need to find a way to distinguish them.) Any robot can submit a transaction to the <strong>transaction pool</strong> with the function <code>rc.submitTransaction</code> and by paying, in <strong>soup</strong>, a <strong>transaction fee</strong> (think of it as a bid). At the end of each round, the 7 transactions in the <strong>transaction pool</strong> with the highest <strong>transaction fee</strong> are removed from the pool and added to that round’s <strong>block</strong>. For every round thereafter, those 7 transactions are visible to all robots at all times. Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.</p>
@@ -409,8 +421,17 @@ border-radius: 50%;
 <li>All units: 10,000</li>
 </ul>
 <p>Some standard functions such as the math library, blockchain API, and sensing functions have fixed bytecode costs, available <a href="https://github.com/battlecode/battlecode20/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt">here</a>. More details on this at the end of the spec.</p>
+<h2 id="tiebreakers">Tiebreakers</h2>
+<p>Some games will end with both <strong>HQ</strong>s being flooded at the same time. The winner is determined as follows (with ties at one level being broken by the next):</p>
+<ol type="1">
+<li>Last surviving HQ</li>
+<li>Greatest number of units</li>
+<li>Greatest net worth (production cost of all units plus soup in team pool)</li>
+<li>Most transactions successfully minted in the <strong>blockchain</strong></li>
+<li>Highest robot ID (random) (should never get here)</li>
+</ol>
 <h2 id="sample-player">Sample Player</h2>
-<p><a href="https://github.com/battlecode/battlecode20-scaffold">Examplefuncsplayer</a>, a simple player which performs various game actions, is included with battlecode. It includes helpful comments and is a template you can use to see what RobotPlayer files should look like.</p>
+<p><a href="https://github.com/battlecode/battlecode20-scaffold">examplefuncsplayer</a>, a simple player which performs various game actions, is included with battlecode. It includes helpful comments and is a template you can use to see what RobotPlayer files should look like.</p>
 <h2 id="debugging">Debugging</h2>
 <p>Extremely important. See http://2020.battlecode.org/debugging to learn about our useful debug tools.</p>
 <h2 id="other-utilities">Other Utilities</h2>
@@ -419,6 +440,8 @@ border-radius: 50%;
 <h3 id="gameactionexceptions">GameActionExceptions</h3>
 <p>GameActionExceptions are thrown when something cannot be done. It is often the result of illegal actions such as moving onto another robot, or an unexpected round change in your code. Thus, you must write your player defensively and handle GameActionExceptions judiciously. You should also be prepared for any ability to fail and make sure that this has as little effect as possible on the control flow of your program.</p>
 <p>Throwing any Exceptions cause a bytecode penalty of 500 bytecodes. Unhandled exceptions may cause your robot to explode.</p>
+<h3 id="complete-documentation">Complete Documentation</h3>
+<p>Every function you could possibly use to interact with the game can be found in our <a href="http://2020.battlecode.org/javadoc/index.html">javadocs</a>.</p>
 <h2 id="other-restrictions">Other restrictions</h2>
 <h3 id="java-language-usage">Java Language Usage</h3>
 <p>Players may use classes from any of the packages listed in <code>AllowedPackages.txt</code>, except for classes listed in <code>DisallowedPackages.txt</code>. These files can be found <a href="https://github.com/battlecode/battlecode20/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources">here</a>.</p>
