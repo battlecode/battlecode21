@@ -278,6 +278,17 @@ Some standard functions such as the math library, blockchain API, and sensing fu
 available [here](https://github.com/battlecode/battlecode20/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
 More details on this at the end of the spec.
 
+## Tiebreakers
+
+Some games will end with both **HQ**s being flooded at the same time.
+The winner is determined as follows (with ties at one level being broken by the next):
+
+1. Last surviving HQ
+2. Greatest number of units
+3. Greatest net worth (production cost of all units plus soup in team pool)
+4. Most transactions successfully minted in the **blockchain**
+5. Highest robot ID (random) (should never get here)
+
 
 ## Sample Player
 
