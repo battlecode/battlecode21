@@ -56,7 +56,7 @@ class GettingStarted extends Component {
         
         <li>Hit OK.</li>
         
-        <li>We need to set the jdk properly; open the settings with <code>File > Settings</code> or <code>ctrl+alt+s</code>. Navigate to <code>Build, Execution, Deployment > Build Tools > Gradle</code> and change <code>Gradle JVM</code> to 1.8</li>
+        <li>We need to set the jdk properly; open the settings with <code>File > Settings</code> (<code>IntelliJ IDEA > Preferences</code> on Mac) or <code>ctrl+alt+s</code>. Navigate to <code>Build, Execution, Deployment > Build Tools > Gradle</code> and change <code>Gradle JVM</code> to 1.8</li>
         
         <li>Time for a first build! On the right side of the screen, click the small button that says gradle and has a picture of an elephant. Navigate to <code>battlecode20-scaffold > Tasks > battlecode</code> and double click on <code>build</code>. This will install the client and engine for you.</li>
 
@@ -179,8 +179,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </p>
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
-                                You'll need a Java Development Kit (JDK) compatible with Java 8, which you 
-                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>.
+                                You'll need a JDK 8. Unfortunately, higher versions will not work. You can download it here <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a></b>.
                                 <Floater content={
                                     <div>
                                     <p>
