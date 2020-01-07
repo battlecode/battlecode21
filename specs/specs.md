@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.0.1
+Current version: 2020.1.0.2
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -378,6 +378,8 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.0.2 (1/7/20) - Bug fixes.
+    - Add `rc.getCurrentSensorRadiusSquared`.
 - 2020.1.0.1 (1/7/20) - Spec clarifications and bug fixes.
     - Add `rc.getMapWidth` and `rc.getMapHeight`.
 - 2020.1.0.0 (1/6/20) - Initial release.
