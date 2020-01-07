@@ -94,11 +94,11 @@ class Countdown extends Component {
         const countDown = this.state;
         let title = 'Next Submission Deadline in';
         if (this.state.tournament_name == 'START') {
-          title = 'Game Specs Released in';
+          title = 'Game Specs are now released!';
         }
         let explanatoryText = <div>The submission deadline for the <b>{this.state.tournament_name}</b> is at <b>{this.state.est_date}</b>.</div>;
         if (this.state.tournament_name == 'START') {
-          explanatoryText = <div>Battlecode 2020 will start at <b>{this.state.est_date}</b>.</div>;
+          explanatoryText = <div>Specifications are avaliable in the resources tab. Be sure to look at the getting started section for information on how to get the game and your first bot running! </div>;
         }
         return (
             <div className="card ">
