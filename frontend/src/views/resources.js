@@ -75,6 +75,7 @@ class Resources extends Component {
                                 <ul>
                                     <li><a href='https://2020.battlecode.org/javadoc/index.html'>Javadocs</a>: the documentation of <code>RobotController</code> methods. Very helpful.</li>
                                     <li><NavLink to='common-issues'>Common Issues</NavLink>: a non-exhaustive collection of common problems, and fixes.</li>
+                                    <li><NavLink to='debugging'>Debugging</NavLink>: a guide for how to debug your code.</li>
                                 </ul>
                                 </p>
                                 <p>
