@@ -32,6 +32,17 @@ ALLOWED_HOSTS = ['*']
 # The URL of the application
 THIS_URL = 'https://2020.battlecode.org'
 
+# TODO: update this every time we update maps
+SERVER_MAPS = [
+  "FourLakeLand",
+  "CentralLake",
+  "ALandDivided",
+  "SoupOnTheSide",
+  "TwoForOneAndTwoForAll",
+  "WaterBot",
+  "CentralSoup"
+]
+
 
 # Application definition
 

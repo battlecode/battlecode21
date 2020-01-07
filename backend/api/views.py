@@ -17,11 +17,12 @@ from google.cloud import pubsub_v1
 from google.oauth2 import service_account
 import trueskill
 
-import os, tempfile, datetime, argparse, time, json
+import os, tempfile, datetime, argparse, time, json, random, binascii
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bc20-game'
 GCLOUD_RES_BUCKET = ""
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
@@ -73,6 +74,10 @@ def pub(project_id, topic_name, data=""):
     while api_future.running():
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
+
+def get_random_maps(num):
+    n = min(num, len(settings.SERVER_MAPS))
+    return random.sample(settings.SERVER_MAPS, n)
 
 class GCloudUploadDownload():
     """
@@ -728,11 +733,27 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 data['status'] = 'queued'
 
+
             # Create scrimmage
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             serializer.save()
+
+            #TODO: call to compile server
+            print('attempting call to compile server')
+            scrimmage_server_data = {
+                'gametype': 'scrimmage',
+                'gameid': str(serializer.id),
+                'player1': red_team.name,
+                'player2': blue_team.name,
+                'maps': get_random_maps(3),
+                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+            }
+            data['replay'] = scrimmage_server_data['replay']
+            data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+            pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
