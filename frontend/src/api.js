@@ -298,9 +298,15 @@ class Api {
 
   static joinTeam(secret_key, team_name, callback) {
     $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
-      if (team_data.results.length === 0) return callback(false);
+      let found_result = null
+      team_data.results.forEach(result => {
+        if (result.name === team_name) {
+          found_result = result
+        }
+      })
+      if (found_result === null) return callback(false);
       $.ajax({
-        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
+        url: `${URL}/api/${LEAGUE}/team/${found_result.id}/join/`,
         type: 'PATCH',
         data: { team_key: secret_key },
       }).done((data, status) => {
