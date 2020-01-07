@@ -207,6 +207,18 @@ The temporary local increase in pollution starts immediately and is in effect fo
 | Fulfillment Center | 150 | 15 | 24 | Delivery Drones |
 | Net Gun | 250 | 15 | 24 | failed deliveries |
 
+### Cows
+
+There is one final unit which cannot be built and is not controlled by any team: **cows**.
+**Cows** are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them.
+They move around the map at random, with a base cooldown of 1.
+However, cows are similar to other units:
+- They die if the end up on a **flooded** tile.
+- They can be picked up by **drones** (ideally, towards the enemy team).
+
+Initial cow positions are a property of the map, and some maps may not have any.
+
+
 ## Communication
 
 Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging.
