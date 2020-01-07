@@ -73,7 +73,7 @@ class GettingStarted extends Component {
 
 <li>Create a new Eclipse workspace. The workspace should NOT contain the <code>battlecode20-scaffold</code> folder.</li>
 
-<li>Run <code>File -> Import...</code>, and select <code>Gradle / Gradle Project</code>.
+<li>Run <code>File -> Import...</code>, and select <code>Gradle / Existing Gradle Project</code>.
             <Floater content={
                                     <div>
                                     <p>
@@ -84,13 +84,13 @@ If you are unable to find this option, you may be using an old version of Eclips
 </Floater>
 </li>
 
-<li>In the <code>Select root directory</code> field, navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
+<li>Next to <code>Project root directory</code> field, press <code>Browse...</code> and navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
 
-<li>Open <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
+<li>If you do not see a window labeled <code>Gradle Tasks</code>, navigate to <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
 
-<li>You should now see a list of available Gradle tasks somewhere in the IDE. Open the <code>battlecode</code> group, and double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
+<li>In the <code>Gradle Tasks</code> window, you should now see a list of available Gradle tasks. Open the <code>battlecode20-scaffold</code> folder and navigate to the <code>battlecode</code> group, and then double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
 
-<li>You're good to go; you can run other Gradle tasks using the other options in the "Gradle Tasks" menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
+<li>You're good to go; you can run other Gradle tasks using the other options in the <code>Gradle Tasks</code> menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
             <Floater content={
                                     <div>
                                     <p>
@@ -179,7 +179,8 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </p>
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
-                                You'll need a JDK 8. Unfortunately, higher versions will not work. You can download it here <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a></b>.
+                                You'll need JDK 8. Unfortunately, higher versions will not work. You can download it <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a></b>.
+
                                 <Floater content={
                                     <div>
                                     <p>
@@ -222,7 +223,8 @@ View instructions for:
     {this.getIDEInstallation()}
 
 </p>
-<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.)</p>
+<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
+If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the Client.</p>
 
                                 </div>
                             </div>

@@ -94,11 +94,48 @@ class Countdown extends Component {
         const countDown = this.state;
         let title = 'Next Submission Deadline in';
         if (this.state.tournament_name == 'START') {
-          title = 'Game Specs Released in';
+          title = 'Game Specs are now released!';
         }
         let explanatoryText = <div>The submission deadline for the <b>{this.state.tournament_name}</b> is at <b>{this.state.est_date}</b>.</div>;
+
+        let countdown = (
+          <div className='countdown-container'>
+            <div className="Countdown">
+              <span className="Countdown-col">
+                <span className="Countdown-col-element">
+                    <strong>{this.addLeadingZeros(countDown.days)}</strong>
+                    <span>{countDown.days === 1 ? 'Day' : 'Days'}</span>
+                </span>
+              </span>
+      
+              <span className="Countdown-col">
+                <span className="Countdown-col-element">
+                  <strong>{this.addLeadingZeros(countDown.hours)}</strong>
+                  <span>{countDown.hours === 1 ? 'Hour' : 'Hours'}</span>
+                </span>
+              </span>
+      
+      
+              <span className="Countdown-col">
+                <span className="Countdown-col-element">
+                  <strong>{this.addLeadingZeros(countDown.min)}</strong>
+                  <span>Min</span>
+                </span>
+              </span>
+      
+              <span className="Countdown-col">
+                <span className="Countdown-col-element">
+                  <strong>{this.addLeadingZeros(countDown.sec)}</strong>
+                  <span>Sec</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        )
+
         if (this.state.tournament_name == 'START') {
-          explanatoryText = <div>Battlecode 2020 will start at <b>{this.state.est_date}</b>.</div>;
+          explanatoryText = <div>Specifications are avaliable in the resources tab. Be sure to look at the getting started section for information on how to get the game and your first bot running! </div>;
+          countdown = null
         }
         return (
             <div className="card ">
@@ -106,38 +143,7 @@ class Countdown extends Component {
                     <h4 className="title">{title}</h4>
                 </div>
                 <div className="content">
-                <div className='countdown-container'>
-                <div className="Countdown">
-                  <span className="Countdown-col">
-                    <span className="Countdown-col-element">
-                        <strong>{this.addLeadingZeros(countDown.days)}</strong>
-                        <span>{countDown.days === 1 ? 'Day' : 'Days'}</span>
-                    </span>
-                  </span>
-          
-                  <span className="Countdown-col">
-                    <span className="Countdown-col-element">
-                      <strong>{this.addLeadingZeros(countDown.hours)}</strong>
-                      <span>{countDown.hours === 1 ? 'Hour' : 'Hours'}</span>
-                    </span>
-                  </span>
-          
-          
-                  <span className="Countdown-col">
-                    <span className="Countdown-col-element">
-                      <strong>{this.addLeadingZeros(countDown.min)}</strong>
-                      <span>Min</span>
-                    </span>
-                  </span>
-          
-                  <span className="Countdown-col">
-                    <span className="Countdown-col-element">
-                      <strong>{this.addLeadingZeros(countDown.sec)}</strong>
-                      <span>Sec</span>
-                    </span>
-                  </span>
-                </div>
-                </div>
+                {countdown}
                 {explanatoryText}
                 </div>
             </div>
