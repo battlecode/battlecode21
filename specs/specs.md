@@ -117,7 +117,7 @@ The three producible unit types are:
 **Miner**: builds buildings and extracts raw soup.
 
 - Produced by the **HQ**.
-- Can `rc.mineSoup()` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to `RobotType.MINER.soupLimit`, currently set to 10).
+- Can `rc.mineSoup()` to take `GameConstants.SOUP_MINING_RATE` units of soup (currently set to 7) from the map and add it to its inventory (up to `RobotType.MINER.soupLimit`, currently set to 100).
 - Can use `rc.depositSoup()` to transfer soup from its inventory to an adjacent **refinery**.
 - Can build **design schools** and **fulfillment centers** with `rc.buildRobot()`.
 
