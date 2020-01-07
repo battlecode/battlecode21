@@ -16,6 +16,7 @@ This year’s game is as much about surviving the changing climate as defeating 
 ## The Game Environment
 
 Battlecode 2020 is played by controlling **robots** on a rectangular grid called the **map**.
+The map will be between 32x32 and 64x64, inclusive.
 Two teams of robots, **red** and **blue**, roam the map.
 Every **round**, each robot will get to take one **turn**, in spawn order.
 More on what they can do with that turn later.
@@ -25,6 +26,7 @@ On every turn, each tile adjacent to a **flooded** tile whose **elevation** is b
 Any robot on a **flooded** tile is destroyed, except **delivery drones**.
 If your **HQ** is destroyed, you lose.
 As the match goes on, the **water level** will increase at an increasing rate, flooding adjacent tiles if their **elevation** is too low.
+Elevations can be anywhere between $$-\infty$$ and $$\infty$$.
 The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1,$$ where $x$ is the current round.
 That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:
 
