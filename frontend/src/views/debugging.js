@@ -11,7 +11,7 @@ const Hee = styled.h5`
   font-size:1.2em;
 `;
 
-class Issues extends Component {
+class Debugging extends Component {
     render() {
         return (
             <div className="content">
@@ -49,4 +49,4 @@ class Issues extends Component {
     }
 }
 
-export default Issues;
+export default Debugging;
