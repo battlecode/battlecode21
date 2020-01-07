@@ -1,27 +1,31 @@
-// This is the build file we use to compile and run Battlecode players.
-// We're using Gradle: https://gradle.org/
-
 // Gradle's plugins allow it to automatically generate build scripts
 // for different types of code. Here we apply the Java plugin, which provides
 // all the tools needed to build player code!
 apply plugin: 'java'
 
-// The Scala plugin expands upon the Java plugin, allowing us to compile
-// Scala source files.
+// The Scala plugin expands upon the Java plugin, allowing us to compile Scala source files.
 //apply plugin: 'scala'
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 ext.versions = [
-    battlecode: new URL("https://2020.battlecode.org/version.txt").text
+    battlecode: new File(projectDir, "version.txt").text
     //scala: '2.11.7'
 ]
 
+// TODO: DELETE CREDENTIALS AFTER PUBLIC RELEASE
+
+// Here we register battlecode's maven repository, so the gradle knows where to download the engine and client from
 repositories {
     mavenCentral()
     maven {
+
         url "https://maven.pkg.github.com/battlecode/battlecode20"
+        credentials {
+            username = project.findProperty("gpr.user")
+            password = new URL("https://2020.battlecode.org/access.txt").text.trim()
+        }
     }
     // Use the JCenter repo to resolve Scala dependencies.
     jcenter()
@@ -80,38 +84,48 @@ dependencies {
     // testImplementation 'junit:junit:4.12'
 }
 
-// Eclipse specific setup to enable docs and sources, and configure layout.
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = true
-
-        defaultOutputDir = new File(project.buildDir, 'classes-eclipse')
+task version {
+    group 'battlecode'
+    doLast{
+        println("\nVersion: " + versions.battlecode + "\n")
     }
 }
 
-// IntelliJ settings.
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
+task screamForUpdate() {
+    group 'battlecode'
+    doLast {
+        if (versions.battlecode != new URL("https://2020.battlecode.org/version.txt").text) print("\n\n\n\n\n\n\tNEW VERSION AVAILABLE\n\trun ./gradlew update to download \n\n\n\n")
     }
 }
 
+// This task pulls the newest version number from the website
+// The gradle will then download that version of the engine and client
+task update {
+    group 'battlecode'
+    doLast {
+        //overwrites stored version number
+        new File(projectDir, "version.txt").text = new URL("https://2020.battlecode.org/version.txt").text
+
+        //overwrites cached version number
+        versions.battlecode = new File(projectDir, "version.txt").text
+        println("Update Complete")
+    }
+}
 
 build.group = 'battlecode'
 
-// Another task. This one accepts three optional parameters, or "properties",
-// corresponding to the bots used by the two teams, and the map(s) used in this
-// game. These properties can be set in the command line with:
-// On windows:
+// Another task. This one accepts optional parameters, or "properties",
+// corresponding to the bots used by the two teams, the map(s) used in this
+// game, the location of the classes for the two teams, and the destination of the replay file.
+// These properties can be set in the command line with:
+// On Windows cmd:
 //   `gradlew -PteamA=<team A bot> -PteamB=<team B bot> -Pmaps=<comma
-//   separated list of maps>`
-// On OS X and Linux:
+//   separated list of maps> -Preplay=<destination> -PclassLocation=<where the packages are stored>`
+// On Powershell, OS X, and Linux:
 //   `./gradlew -PteamA=<team A bot> -PteamB=<team B bot> -Pmaps=<comma
 //   separated list of maps>`
+
 task run(type: JavaExec, dependsOn: 'build') {
-    print(versions.battlecode)
     description 'Runs a match without starting the client.'
     group 'battlecode'
 
@@ -128,7 +142,7 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.game.team-a.url='+project.property('classLocationA'),
         '-Dbc.game.team-b.url='+project.property('classLocationB'),
         '-Dbc.game.maps='+project.property('maps'),
-        '-Dbc.server.save-file=' + project.property('replay')
+        '-Dbc.server.save-file=' +project.property('replay')
     ]
 }
 
