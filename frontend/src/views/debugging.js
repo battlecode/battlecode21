@@ -27,10 +27,10 @@ class Issues extends Component {
                                 <p>
                                     Add the gradle run task as a configuration
                                     <ul>
-                                        <li>In the dropdown near the hammer, play, and bug icons, select <code>edit configurations"</code></li>
+                                        <li>In the dropdown near the hammer, play, and bug icons, select <code>edit configurations</code></li>
                                         <li>Hit the plus and select <code>gradle</code></li>
                                         <li>Give the configuration a name, e.g. "RunBattlecode"</li>
-                                        <li>Next to the <code>gradle project</code> field, click the folder icon and select <code>battlecode20-scaffold"</code></li>
+                                        <li>Next to the <code>gradle project</code> field, click the folder icon and select <code>battlecode20-scaffold</code></li>
                                         <li>In the <code>Tasks</code> field, type <code>run</code></li>
                                         <li>Click <code>Apply</code>, <code>Ok</code></li>
                                     </ul>
@@ -38,6 +38,9 @@ class Issues extends Component {
                                     
                                     Clicking on the bug icon next to the play button will run the game in debug mode in the ide. Use breakpoints and the debuging interface to walk through your code.
                                     For more info on debugging with intelliJ, see <a href='https://www.jetbrains.com/help/idea/debugging-code.html'>here</a>
+
+
+                                    You can specify the map and teams to run in the <code>gradle.properties</code> file.
                                 </p>
                                 </div>
                             </div>
