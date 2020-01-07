@@ -180,7 +180,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
                                 You'll need a Java Development Kit (JDK) compatible with Java 8, which you 
-                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>.
+                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>. (You may need to create an Oracle account.)
                                 <Floater content={
                                     <div>
                                     <p>
