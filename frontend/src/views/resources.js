@@ -1,5 +1,6 @@
 ﻿import React, { Component } from 'react';
 import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
 
 const He = styled.h5`
   font-weight: bold;
@@ -43,8 +44,7 @@ class Resources extends Component {
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/visualizer.html'>Go to the Visualizer</a>
                                 </p>
                                 <p>
-                                    You can also run the visualizer locally, which, for example, has the added benefit of automatically reloading replay files.
-                                    The visualizer will not be released until the game is released.
+                                    It is recommmended to run the client locally (see <NavLink to='getting-started'>getting started</NavLink>).
                                 </p>
 
 
@@ -74,6 +74,7 @@ class Resources extends Component {
                                     <p>
                                 <ul>
                                     <li><a href='https://2020.battlecode.org/javadoc/index.html'>Javadocs</a>: the documentation of <code>RobotController</code> methods. Very helpful.</li>
+                                    <li><NavLink to='common-issues'>Common Issues</NavLink>: a non-exhaustive collection of common problems, and fixes.</li>
                                 </ul>
                                 </p>
                                 <p>

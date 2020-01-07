@@ -175,11 +175,13 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </div>
                                 <div className="content">
                                 <p>
-                                The first lecture, on January 6, will walk you through these installation steps.
+                                    If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
                                 </p>
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
-                                You'll need JDK 8. Unfortunately, higher versions will not work. You can download it <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a></b>.
+                                You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
+                                work. <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" style={{fontWeight:700}}>Download it here</a></b>.
+                                You may need to create an Oracle account.
 
                                 <Floater content={
                                     <div>
@@ -224,7 +226,7 @@ View instructions for:
 
 </p>
 <p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
-If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the Client.</p>
+If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the client.</p>
 
                                 </div>
                             </div>
@@ -283,7 +285,7 @@ If you're on Linux, navigate to the <code>client</code> folder and run <code>./b
                                     Now, read the <a href='specs.html'>game specs</a> carefully and consult the <a href='javadoc/index.html'>javadocs</a> to learn about the API.
                                 </p>
                                 <p>
-                                    Bugs will happen eventually; read about our <a href='404'>debugging tools here</a>.
+                                    Bugs will happen eventually; read about our <NavLink to='debugging'>debugging tools here</NavLink>.
                                 </p>
                                 </div>
                             </div>
