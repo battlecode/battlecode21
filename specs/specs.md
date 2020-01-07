@@ -133,6 +133,7 @@ This can be done if the tile is empty, **flooded**, or contains another unit, bu
 If the tile contains a **building**, the dirt partially buries it--the **health** of a building is how much dirt can be placed on it before it is destroyed.
 If the tile is empty, flooded, or contains another unit, the only effect is that the elevation of that tile increases by 1.
 - Note: this implies that buildings may never change elevation, so be careful to contain that water level.
+- When a **landscaper** dies, the dirt it's carrying is dropped on the current tile.
 - If enough dirt is placed on a flooded tile to raise its **elevation** above the **water level**, it becomes not flooded.
 
 **Delivery drone**: picks up and moves units around the map.
@@ -161,6 +162,8 @@ If the team has enough **soup** to build the unit, you can use the function `rc.
 Any dirt placed on a tile with a **building** will accumulate on that building and eventually bury it, destroying the building.
 Dirt can also be removed from buildings, until there is none left, but after that dirt cannot be taken from that tile.
 The net amount of dirt that must be added to a building before it is destroyed is called the building's **health**.
+When a building is destroyed this way, the dirt that was burying it is added to the now vacant tile,
+increasing its elevation by an amount equal to the health of the deceased building.
 
 **Refinery**: takes soup from miners and adds it to the team shared pool, producing pollution.
 
