@@ -180,7 +180,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
                                 You'll need a Java Development Kit (JDK) compatible with Java 8, which you 
-                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>.
+                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>. (You may need to create an Oracle account.)
                                 <Floater content={
                                     <div>
                                     <p>
@@ -223,7 +223,8 @@ View instructions for:
     {this.getIDEInstallation()}
 
 </p>
-<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.)</p>
+<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
+If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the Client.</p>
 
                                 </div>
                             </div>
