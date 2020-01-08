@@ -90,9 +90,18 @@ Intuitions for this are best gained through a few examples:
 Each robot runs an independent copy of your code.
 It acts given only its own nearby surroundings and the contents of the **blockchain**, which is described at length below.
 Actions (such as **moving** or **mining**) incur a **cooldown** penalty, which varies by action, robot, and **pollution** level.
-Robots can only perform actions when their cooldown is less than 1,
-and performing an action adds the corresponding cooldown to the robot’s `cooldownTurns`
+Robots can only perform actions when their **cooldown** is less than 1,
+and performing an action adds the corresponding **cooldown penalty** to the robot’s total cooldown,
 which can be checked with `rc.getCooldownTurns()`.
+At the beginning of each turn, the robot's cooldown is reduced by 1 (but not below zero), potentially allowing it to act again.
+For example, if a **drone** starts with cooldown 0, it can move one tile, incurring a penalty of 1.5
+(this is the drone's base cooldown, in zero pollution).
+Then, next turn, its cooldown will be 0.5, so it can move again, bringing the cooldown to 2.
+The turn after that, however, the cooldown will be 1, so it will not be able to move this turn.
+Thus, drones can move twice every three turns.
+
+Additionally, every robot (except the **HQ**) begins life with 10 initial cooldown, and thus cannot act for 10 turns.
+Think of this as the period during which it's being built.
 
 Every action has a **base cooldown** cost, but the actual **cooldown** incurred is a function of the **pollution** $P$ on the current tile as well.
 The actual **cooldown** is equal to **base cooldown** times $(1+ P/2000)$.
