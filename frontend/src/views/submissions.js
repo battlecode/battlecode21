@@ -190,6 +190,9 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
+                        <p>
+                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below.
+                        </p>
                         <label htmlFor="file_upload">
                             <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
                         </label>

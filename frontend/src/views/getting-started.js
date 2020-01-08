@@ -264,11 +264,8 @@ If you're on Linux, navigate to the <code>client</code> folder and run <code>./b
                                     <h4 className="title">Upload Your Bot and Scrimmage</h4>
                                 </div>
                                 <div className="content">
-                                    <p>
-                                        Note: scrimmaging will open on January 7!
-                                    </p>
                                 <p>
-                                    Run the Gradle task <code>jarForUpload</code> to produce a jar that can be uploaded to the <NavLink to='submissions'>submissions</NavLink> page.
+                                    Create a zip file containing only your robot code (only 1 package), and uploaded it to the <NavLink to='submissions'>submissions</NavLink> page.
                                 </p>
                                 <p>
                                     Your bot will automatically be ran against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
