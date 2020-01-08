@@ -30,6 +30,8 @@ class Issues extends Component {
                                         <li><code>Exception in thread "examplefuncsplayer.RobotPlayer #0" java.lang.IllegalArgumentException</code>. This means that Gradle
                                         is not finding a Java 8 JDK. This could be if you installed a newer version of Java, or if you already had a newer version of Java
                                         installed from earlier. We will add instructions here shortly, but for now, ask on the Discord for the fix.</li>
+                                        <li><code>NullPointerException</code>. A common error in java, but sometimes happens if you close the client while a game is running.
+                                        The solution is to run <code>./gradlew --stop</code> to stop all of the Gradle daemons and the next time you open the client it will use a fresh one.</li>
                                         <li><code>Exception in thread "WebsocketSelector14" java.lang.NullPointerException at battlecode.server.NetServer.onError(NetServer.java:165)</code>. This
                                         probably means that you're running two instances of the engine at the same time. Try running <code>./gradlew --stop</code> (if you're running
                                         things in IntelliJ, click the elephant in the Gradle Tool Window (the right-hand sidebar) and then execute <code>gradle --stop</code> in the
