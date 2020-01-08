@@ -378,6 +378,18 @@ class Api {
     });
   }
 
+  static resumeUpload(resume_file, callback) {
+    $.get(`${Cookies.get('user_url')}resume_upload/`, (data, succcess) => {
+      $.ajax({
+        url: data['upload_url'], 
+        method: "PUT",
+        data: resume_file,
+        processData: false,
+        contentType: false
+      })
+    });
+  }
+
   //----SCRIMMAGING----
 
   static acceptScrimmage(scrimmage_id, callback) {

@@ -23,7 +23,7 @@ GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
 GCLOUD_SUB_SCRIMMAGE_NAME = 'bc20-game'
-GCLOUD_RES_BUCKET = ""
+GCLOUD_RES_BUCKET = "bc20-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
@@ -158,9 +158,13 @@ class UserViewSet(viewsets.GenericViewSet,
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
 
-class ResumeUpload(viewsets.ViewSet):
-    permission_classes = (IsAuthenticatedAsRequestedUser,)
-
+    @action(detail=True, methods=['get'])
+    def resume_upload(self, request, pk=None):
+        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET)
+        user = self.queryset.get(pk=pk)
+        user.verified = True
+        user.save()
+        return Response({'upload_url': upload_url}, status.HTTP_200_OK)
 
 class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -181,7 +185,6 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ('username',)
     pagination_class = SearchResultsPagination
 
-
 class VerifyUserViewSet(viewsets.GenericViewSet):
     queryset = get_user_model().objects.all().order_by('id')
     permission_classes = (IsAuthenticatedAsRequestedUser,)
@@ -199,7 +202,6 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
             return Response({'status': 'OK'})
         return Response({'status': 'Wrong Key'},
                 status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UserTeamViewSet(viewsets.ReadOnlyModelViewSet):
@@ -518,33 +520,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         return Response({'download_url': download_url}, status.HTTP_200_OK)
 
 
-    def signed_url(self, submission_id):
-        """
-        returns a pre-signed url for uploading the submission with given id to google cloud
-        this URL can be used with a PUT request to upload data; no authentication needed.
-        """
-        with tempfile.NamedTemporaryFile() as temp:
-            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
-            temp.flush()
-            storage_client = storage.Client.from_service_account_json(temp.name)
-            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
-            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
-            return blob.create_resumable_upload_session()
-
-    def signed_download_url(self, submisison_id):
-        """
-        returns a pre-signed url for downloading the zip of the submission from
-        google cloud, this URL can be used with a GET request to dowload the file
-        with no additional authentication needed.
-        """
-        with tempfile.NamedTemporaryFile() as temp:
-            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
-            temp.flush()
-            storage_client = storage.Client.from_service_account_json(temp.name)
-            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
-            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
-
-
     @action(methods=['patch'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
@@ -743,11 +718,17 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             #TODO: call to compile server
             print('attempting call to compile server')
+
+            #get teams most recent submission
+            redid = TeamSubmission.objects.get(pk=red_team.name).id
+            blueid = TeamSubmission.objects.get(pk=blue_team.name).id
+            print(redid)
+            print(blueid)
             scrimmage_server_data = {
                 'gametype': 'scrimmage',
                 'gameid': str(serializer.id),
-                'player1': red_team.name,
-                'player2': blue_team.name,
+                'player1': redid,
+                'player2': blueid,
                 'maps': ','.join(get_random_maps(3)),
                 'replay': data['replay']
             }
