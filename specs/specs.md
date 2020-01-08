@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.0.3
+Current version: 2020.1.0.4
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -232,7 +232,7 @@ The temporary local increase in pollution starts immediately and is in effect fo
 
 There is one final unit which cannot be built and is not controlled by any team: **cows**.
 **Cows** are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them.
-They move around the map at random, with a base cooldown of 1.
+They move around the map at random, with a base cooldown of 2.
 However, cows are similar to other units:
 
 - They die if the end up on a **flooded** tile.
@@ -297,6 +297,7 @@ Therefore, we make the following promises about all maps:
 - The HQ will start at an effective elevation between 2 and 5 inclusive
 (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5).
 - The HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods).
+- There will always be a large negative elevation water tile (no games that never end).
 
 ## Tiebreakers
 
@@ -405,6 +406,15 @@ We'll update this spec as the competition progresses.
         - elaborate on cooldown mechanic
         - add HQ placement restrictions
         - add distance squared graphic
+        - increase cooldown of cows to 2
+    - engine fixes:
+        - make blockchain immutable
+        - make maps always have low elevation water tile
+        - fix bug where units were always killed after being dropped
+        - change `canSenseLocation` to return false for tiles outside the map
+        - change cooldown of cows
+    - client fixes:
+        - change soup and dirt max/min values
 - 2020.1.0.3 (1/8/20)
     - Fix bug where client would freeze when drones drop units.
 - 2020.1.0.2 (1/7/20) - Bug fixes.
