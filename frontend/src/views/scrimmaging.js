@@ -98,7 +98,7 @@ class ScrimmageHistory extends Component {
                                     <th>Time</th>
                                     <th>Status</th>
                                     <th>Team</th>
-                                    <th>Color</th>
+                                    <th>Ranked</th>
                                     <th>Replay</th>
                                 </tr>
                             </thead>
@@ -109,8 +109,8 @@ class ScrimmageHistory extends Component {
                                         <td>{ s.time }</td>
                                         <td>{ s.status }</td>
                                         <td>{ s.team }</td>
-                                        <td>{ s.color }</td>
-                                        { s.replay?<td><a href={`${process.env.PUBLIC_URL}/replay?${s.replay}`} onClick={ this.playReplay }>Watch</a></td>:<td>N/A</td> }
+                                        <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
+                                        { s.replay?<td><a href={`${process.env.PUBLIC_URL}/visualizer.html?${process.env.PUBLIC_URL}/replays/${s.replay}.bc20`} onClick={ this.playReplay }>Watch</a></td>:<td>N/A</td> }
                                     </tr>
                                 )) }
                             </tbody>
