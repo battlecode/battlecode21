@@ -104,7 +104,7 @@ class App extends Component {
       <Route path={`${process.env.PUBLIC_URL}/rankings/:team_id`} component={TeamInfo} />,
       <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />,
         <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
-        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />,
       <Route path="*" component={NotFound} />
     ]
 
@@ -131,7 +131,7 @@ class App extends Component {
             <NavBar />
             <Switch>
               { homeElems }
-              { gameElems }
+              {/* { gameElems } */}
               { staffElems }
               { loggedInElems }
               { nonLoggedInElems }
