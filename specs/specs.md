@@ -81,8 +81,9 @@ There are two main benefits of doing this:
 - everything is an integer, which makes life better
 - taking square roots is a waste of time
 
-Intuitions for this are best gained through a few examples:
-[TODO: make a nice graphic of different distances squared, including 1, 2, 3, 4, and the vision radii of each unit]
+Intuitions for this are best gained visually:
+[!img](https://media.discordapp.net/attachments/400575649720303616/664388327331594240/unknown.png)
+(thanks @FortColors!)
 
 
 ## Robots
