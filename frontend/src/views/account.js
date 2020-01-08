@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Api from '../api';
 
 import UserCard from '../components/userCard';
+import Floater from 'react-floater';
 
 class Account extends Component {
     constructor() {
@@ -18,9 +19,11 @@ class Account extends Component {
                 avatar: '',
                 country: '',
                 is_staff: '',
-                id: ''
+                id: '',
+                verified: ''
             },
-            'up': 'Update Info'
+            'up': 'Update Info',
+            'selectedFile': null
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -35,6 +38,14 @@ class Account extends Component {
             prevState.user[id] = val;
             return prevState;
         });
+    }
+
+    fileChangeHandler = event => {
+        console.log(event.target.files[0])
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
     }
 
     updateUser() {
@@ -64,7 +75,34 @@ class Account extends Component {
         }.bind(this));
     }
 
+    uploadResume = () => {
+        Api.resumeUpload(this.state.selectedFile, null)
+    }
+
     render() {
+        let btn_class = "btn btn" 
+        let file_label = "No file chosen."
+        let button = <button disabled style={{float: "right"}} onClick={this.uploadResume} className={ btn_class }> Upload </button>
+        if (this.state.selectedFile !== null) {
+            btn_class += " btn-info btn-fill" 
+            file_label = this.state.selectedFile["name"]
+            button = <button style={{float: "right"}} onClick={this.uploadResume} className={ btn_class }> Upload </button>
+        }
+
+        let resume_status = null
+        if (this.state.user.verified === true) {
+            resume_status = (
+                <label style={{float: "right"}}> You have not uploaded a resume.
+                </label>
+            )
+        } else {
+            resume_status = (
+                <label style={{float: "right", color: "green"}}>
+                    <i className="pe-7s-check pe-fw" style={{fontWeight: 'bold'}}/>Uploaded!
+                </label>
+            )
+        }
+
         return (
             <div className="content">
                 <div className="content">
@@ -331,6 +369,25 @@ class Account extends Component {
                                                 <div className="form-group">
                                                     <label>User Bio</label>
                                                     <textarea rows={5} className="form-control" placeholder="Put your bio here." onChange={this.changeHandler} id="bio" value={this.state.user.bio} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <div className="form-group">
+                                                    <label>Resume</label>
+                                                    <Floater content={
+                                                        <div>
+                                                        <p>We'll share your resume with our <a href="http://battlecode.org/#sponsors-sponsors">sponsors</a>. In the past, sponsors have offered our competitors opprotunities based of their resumes and performance in Battlecode!</p></div> } showCloseButton={true}>
+                                                         <i className="pe-7s-info pe-fw" />
+                                                    </Floater>
+                                                    {resume_status}
+                                                    <br />
+                                                    <label htmlFor="file_upload">
+                                                        <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
+                                                    </label>
+                                                    <input id="file_upload" type="file" accept=".pdf" onChange={this.fileChangeHandler} style={{display: "none"}}/>
+                                                    {button}
                                                 </div>
                                             </div>
                                         </div>

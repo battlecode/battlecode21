@@ -109,9 +109,6 @@ class YesTeam extends Component {
                                 <div className="col-md-6">
                                     <label id="auto_accept_unranked" className="center-row"><input type="checkbox" checked={ this.state.team.auto_accept_unranked } onChange={this.changeHandler} className="form-control center-row-start" /> Auto-accept scrimmages.</label>
                                 </div>
-                                <div className="col-md-6">
-                                    <label id="auto_accept_ranked" className="center-row"><input type="checkbox" checked={ this.state.team.auto_accept_ranked} onChange={this.changeHandler} className="form-control center-row-start" /> Auto-run ranking scrimmages.</label>
-                                </div>
                             </div>
                             <div className="row">
                                 <div className="col-md-12">

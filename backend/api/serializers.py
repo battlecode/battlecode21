@@ -68,8 +68,8 @@ class FullUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id', 'url', 'email', 'first_name', 'last_name', 'password', 'date_of_birth',
-            'username', 'avatar', 'bio', 'country', 'is_staff')
-        read_only_fields = ('id', 'url', 'registration_key', 'is_staff')
+            'username', 'avatar', 'bio', 'country', 'is_staff', 'verified')
+        read_only_fields = ('id', 'url', 'registration_key', 'is_staff', 'verified')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -147,7 +147,7 @@ class ScrimmageSerializer(serializers.HyperlinkedModelSerializer):
         model = Scrimmage
         fields = ('url', 'id', 'league', 'red_team', 'red_mu', 'blue_team', 'blue_mu', 'ranked',
             'status', 'replay', 'requested_by', 'requested_at', 'started_at', 'updated_at')
-        read_only_fields = ('url', 'replay', 'requested_at', 'started_at', 'updated_at')
+        read_only_fields = ('url', 'requested_at', 'started_at', 'updated_at')
 
 
 class TournamentSerializer(serializers.HyperlinkedModelSerializer):

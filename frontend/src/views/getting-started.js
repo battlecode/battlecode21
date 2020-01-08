@@ -52,26 +52,15 @@ class GettingStarted extends Component {
 
         <li>In the <code>Welcome to IntelliJ IDEA</code> window that pops up when you start IntelliJ, select <code>Import Project</code></li>
         
-        <li>In the <code>Open File or Project</code> window, select the <code>build.gradle</code> file in the scaffold folder.</li>
-        
-        <li>Check the options "Create separate module per source set", and "Use gradle wrapper task configuration". Set the "Gradle JVM" option to 1.8. 
-            <Floater content={
-                                    <div>
-                                    <p>
-                                        If you don't have a 1.8 option, make sure you followed step 1 and installed Java correctly.
-</p></div>
-} showCloseButton={true}>
-                                    <i className="pe-7s-info pe-fw" />
-</Floater>
-</li>
+        <li>In the <code>Select File or Dictionary to Import</code> window, select the <code>build.gradle</code> file in the scaffold folder.</li>
         
         <li>Hit OK.</li>
         
-        <li>Wait a minute or two for IntelliJ to finish configuring itself.</li>
+        <li>We need to set the jdk properly; open the settings with <code>File > Settings</code> (<code>IntelliJ IDEA > Preferences</code> on Mac) or <code>ctrl+alt+s</code>. Navigate to <code>Build, Execution, Deployment > Build Tools > Gradle</code> and change <code>Gradle JVM</code> to 1.8</li>
         
-        <li>When the bar at the bottom of the screen has stopped downloading things, we'll need to check that everything is set up correctly. Go to <code>View / Tool Windows / Gradle</code>. In the new window that pops up, select <code>Tasks / battlecode / build</code>, and double click it. You should now see a nice tree of tasks unfold at the bottom of the screen. If you run into an error here, you should <a href='https://discordapp.com/channels/386965718572466197/662426611563626537'>get help on Discord</a>.</li>
-        
-        <li>If you haven't seen any errors, you should be good to go. </li>
+        <li>Time for a first build! On the right side of the screen, click the small button that says gradle and has a picture of an elephant. Navigate to <code>battlecode20-scaffold > Tasks > battlecode</code> and double click on <code>build</code>. This will install the client and engine for you.</li>
+
+        <li>If you haven't seen any errors, you should be good to go.</li>
         </ul>
         </div>)
       } else if (this.state.ide === 'eclipse') {
@@ -84,7 +73,7 @@ class GettingStarted extends Component {
 
 <li>Create a new Eclipse workspace. The workspace should NOT contain the <code>battlecode20-scaffold</code> folder.</li>
 
-<li>Run <code>File -> Import...</code>, and select <code>Gradle / Gradle Project</code>.
+<li>Run <code>File -> Import...</code>, and select <code>Gradle / Existing Gradle Project</code>.
             <Floater content={
                                     <div>
                                     <p>
@@ -95,13 +84,13 @@ If you are unable to find this option, you may be using an old version of Eclips
 </Floater>
 </li>
 
-<li>In the <code>Select root directory</code> field, navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
+<li>Next to <code>Project root directory</code> field, press <code>Browse...</code> and navigate to <code>battlecode20-scaffold</code>. Finish importing the project.</li>
 
-<li>Open <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
+<li>If you do not see a window labeled <code>Gradle Tasks</code>, navigate to <code>Window / Show View / Other...</code>. Select <code>Gradle / Gradle Tasks</code>.</li>
 
-<li>You should now see a list of available Gradle tasks somewhere in the IDE. Open the <code>battlecode</code> group, and double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
+<li>In the <code>Gradle Tasks</code> window, you should now see a list of available Gradle tasks. Open the <code>battlecode20-scaffold</code> folder and navigate to the <code>battlecode</code> group, and then double-click <code>build</code>. This will run tests to verify that everything is working correctly</li>
 
-<li>You're good to go; you can run other Gradle tasks using the other options in the "Gradle Tasks" menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
+<li>You're good to go; you can run other Gradle tasks using the other options in the <code>Gradle Tasks</code> menu. Note that you shouldn't need any task not in the <code>battlecode</code> group.
             <Floater content={
                                     <div>
                                     <p>
@@ -118,7 +107,7 @@ If you are unable to find this option, you may be using an old version of Eclips
           return (
               <div>
                   <ul style={{marginLeft: '-15px'}}>
-<li>Start every Gradle command with <code>./gradlew</code>, if using Max or Linux, or <code>gradlew</code>, if using Windows.</li>
+<li>Start every Gradle command with <code>./gradlew</code>, if using Mac or Linux, or <code>gradlew</code>, if using Windows.</li>
 
 <li>You will need to set the <code>JAVA_HOME</code> environment variable to point to the installation path of your JDK.
             <Floater content={
@@ -186,12 +175,14 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </div>
                                 <div className="content">
                                 <p>
-                                The first lecture, on January 6, will walk you through these installation steps.
+                                    If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
                                 </p>
                                     <h6 class="installation-steps">Step 1: Install Java</h6>
                                 <p>
-                                You'll need a Java Development Kit (JDK) compatible with Java 8 or later, which you 
-                                can <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">install here</a></b>.
+                                You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
+                                work. <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" style={{fontWeight:700}}>Download it here</a></b>.
+                                You may need to create an Oracle account.
+
                                 <Floater content={
                                     <div>
                                     <p>
@@ -234,7 +225,8 @@ View instructions for:
     {this.getIDEInstallation()}
 
 </p>
-<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.)</p>
+<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
+If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the client.</p>
 
                                 </div>
                             </div>
@@ -272,6 +264,9 @@ View instructions for:
                                     <h4 className="title">Upload Your Bot and Scrimmage</h4>
                                 </div>
                                 <div className="content">
+                                    <p>
+                                        Note: scrimmaging will open on January 7!
+                                    </p>
                                 <p>
                                     Run the Gradle task <code>jarForUpload</code> to produce a jar that can be uploaded to the <NavLink to='submissions'>submissions</NavLink> page.
                                 </p>
@@ -290,7 +285,7 @@ View instructions for:
                                     Now, read the <a href='specs.html'>game specs</a> carefully and consult the <a href='javadoc/index.html'>javadocs</a> to learn about the API.
                                 </p>
                                 <p>
-                                    Bugs will happen eventually; read about our <a href='404'>debugging tools here</a>.
+                                    Bugs will happen eventually; read about our <NavLink to='debugging'>debugging tools here</NavLink>.
                                 </p>
                                 </div>
                             </div>

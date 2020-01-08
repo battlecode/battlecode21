@@ -298,9 +298,15 @@ class Api {
 
   static joinTeam(secret_key, team_name, callback) {
     $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
-      if (team_data.results.length === 0) return callback(false);
+      let found_result = null
+      team_data.results.forEach(result => {
+        if (result.name === team_name) {
+          found_result = result
+        }
+      })
+      if (found_result === null) return callback(false);
       $.ajax({
-        url: `${URL}/api/${LEAGUE}/team/${team_data.results[0].id}/join/`,
+        url: `${URL}/api/${LEAGUE}/team/${found_result.id}/join/`,
         type: 'PATCH',
         data: { team_key: secret_key },
       }).done((data, status) => {
@@ -369,6 +375,18 @@ class Api {
       callback(true);
     }).fail((xhr, status, error) => {
       callback(false);
+    });
+  }
+
+  static resumeUpload(resume_file, callback) {
+    $.get(`${Cookies.get('user_url')}resume_upload/`, (data, succcess) => {
+      $.ajax({
+        url: data['upload_url'], 
+        method: "PUT",
+        data: resume_file,
+        processData: false,
+        contentType: false
+      })
     });
   }
 
@@ -446,6 +464,11 @@ class Api {
 
         if (s[i].status === 'redwon') s[i].status = on_red ? 'won' : 'lost';
         else if (s[i].status === 'bluewon') s[i].status = on_red ? 'lost' : 'won';
+
+        if (s[i].status !== 'lost' && s[i].status !== 'won') {
+          s[i].replay = undefined;
+        }
+
         s[i].status = s[i].status.charAt(0).toUpperCase() + s[i].status.slice(1);
 
         s[i].date = new Date(s[i].updated_at).toLocaleDateString();
@@ -453,6 +476,7 @@ class Api {
 
         s[i].team = on_red ? s[i].blue_team : s[i].red_team;
         s[i].color = on_red ? 'Red' : 'Blue';
+
 
         requests.push(s[i]);
       } callback(requests);

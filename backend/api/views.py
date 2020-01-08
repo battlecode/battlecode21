@@ -17,12 +17,13 @@ from google.cloud import pubsub_v1
 from google.oauth2 import service_account
 import trueskill
 
-import os, tempfile, datetime, argparse, time, json
+import os, tempfile, datetime, argparse, time, json, random, binascii
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
-GCLOUD_RES_BUCKET = ""
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bc20-game'
+GCLOUD_RES_BUCKET = "bc20-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
@@ -73,6 +74,10 @@ def pub(project_id, topic_name, data=""):
     while api_future.running():
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
+
+def get_random_maps(num):
+    n = min(num, len(settings.SERVER_MAPS))
+    return random.sample(settings.SERVER_MAPS, n)
 
 class GCloudUploadDownload():
     """
@@ -153,9 +158,13 @@ class UserViewSet(viewsets.GenericViewSet,
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
 
-class ResumeUpload(viewsets.ViewSet):
-    permission_classes = (IsAuthenticatedAsRequestedUser,)
-
+    @action(detail=True, methods=['get'])
+    def resume_upload(self, request, pk=None):
+        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET)
+        user = self.queryset.get(pk=pk)
+        user.verified = True
+        user.save()
+        return Response({'upload_url': upload_url}, status.HTTP_200_OK)
 
 class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -176,7 +185,6 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ('username',)
     pagination_class = SearchResultsPagination
 
-
 class VerifyUserViewSet(viewsets.GenericViewSet):
     queryset = get_user_model().objects.all().order_by('id')
     permission_classes = (IsAuthenticatedAsRequestedUser,)
@@ -194,7 +202,6 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
             return Response({'status': 'OK'})
         return Response({'status': 'Wrong Key'},
                 status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UserTeamViewSet(viewsets.ReadOnlyModelViewSet):
@@ -483,7 +490,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
-        #TODO: call to compile server
+        # call to compile server
         print('attempting call to compile server')
         print('id:', serializer.data['id'])
         data = str(serializer.data['id'])
@@ -511,33 +518,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         download_url = GCloudUploadDownload.signed_download_url(SUBMISSION_FILENAME(pk), GCLOUD_SUB_BUCKET)
         return Response({'download_url': download_url}, status.HTTP_200_OK)
-
-
-    def signed_url(self, submission_id):
-        """
-        returns a pre-signed url for uploading the submission with given id to google cloud
-        this URL can be used with a PUT request to upload data; no authentication needed.
-        """
-        with tempfile.NamedTemporaryFile() as temp:
-            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
-            temp.flush()
-            storage_client = storage.Client.from_service_account_json(temp.name)
-            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
-            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
-            return blob.create_resumable_upload_session()
-
-    def signed_download_url(self, submisison_id):
-        """
-        returns a pre-signed url for downloading the zip of the submission from
-        google cloud, this URL can be used with a GET request to dowload the file
-        with no additional authentication needed.
-        """
-        with tempfile.NamedTemporaryFile() as temp:
-            temp.write(settings.GOOGLE_APPLICATION_CREDENTIALS.encode('utf-8'))
-            temp.flush()
-            storage_client = storage.Client.from_service_account_json(temp.name)
-            bucket = storage_client.get_bucket(GCLOUD_BUCKET)
-            blob = bucket.blob(SUBMISSION_FILENAME(submission_id))
 
 
     @action(methods=['patch'], detail=True)
@@ -701,7 +681,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         try:
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
-            ranked = request.data['ranked'] == 'True'
+            # ranked = request.data['ranked'] == 'True'
+            ranked = False
 
             # Validate teams
             team = self.kwargs['team']
@@ -716,23 +697,31 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if that_team is None:
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
+            replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+            print("the replay string is", replay_string)
             data = {
                 'league': league_id,
                 'red_team': red_team.name,
                 'blue_team': blue_team.name,
                 'ranked': ranked,
                 'requested_by': this_team.id,
+                'replay': replay_string,
             }
+            print(data)
+            # TODO replay won't save somewhere
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 data['status'] = 'queued'
+
 
             # Create scrimmage
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             serializer.save()
+
+
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
@@ -746,8 +735,31 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Cannot accept an outgoing scrimmage.'}, status.HTTP_400_BAD_REQUEST)
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
-            scrimmage.status = 'queued'
+            
 
+            # call to scrimmage server
+            print('attempting call to scrimmage server')
+    
+            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+            if red_submission_id is None and blue_submission_id is None:
+                return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            if red_submission_id is None:
+                return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            if blue_submission_id is None:
+                return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            scrimmage_server_data = {
+                'gametype': 'scrimmage',
+                'gameid': str(scrimmage.id),
+                'player1': str(red_submission_id),
+                'player2': str(blue_submission_id),
+                'maps': ','.join(get_random_maps(3)),
+                'replay': scrimmage.replay
+            }
+            data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+            pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+
+            scrimmage.status = 'queued'
             scrimmage.save()
 
             serializer = self.get_serializer(scrimmage)
@@ -803,35 +815,36 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
 
-                    # update rankings based on trueskill algoirthm
-                    # get team info
-                    rteam = self.get_team(league_id, scrimmage.red_team_id)
-                    bteam = self.get_team(league_id, scrimmage.blue_team_id)
-                    won = rteam if sc_status == "redwon" else bteam
-                    lost = rteam if sc_status == "bluewon" else bteam
-                    
-                    # store previous mu in scrimmage
-                    scrimmage.blue_mu = bteam.mu
-                    scrimmage.red_mu = rteam.mu
+                    if scrimmage.ranked: # TODO check if ranked
+                        # update rankings based on trueskill algoirthm
+                        # get team info
+                        rteam = self.get_team(league_id, scrimmage.red_team_id)
+                        bteam = self.get_team(league_id, scrimmage.blue_team_id)
+                        won = rteam if sc_status == "redwon" else bteam
+                        lost = rteam if sc_status == "bluewon" else bteam
+                        
+                        # store previous mu in scrimmage
+                        scrimmage.blue_mu = bteam.mu
+                        scrimmage.red_mu = rteam.mu
 
-                    # get mu and sigma
-                    muW = won.mu
-                    sdW = won.sigma
-                    muL = lost.mu
-                    sdL = lost.sigma
+                        # get mu and sigma
+                        muW = won.mu
+                        sdW = won.sigma
+                        muL = lost.mu
+                        sdL = lost.sigma
 
-                    winner = trueskill.Rating(mu=muW, sigma=sdW)
-                    loser = trueskill.Rating(mu=muL, sigma=sdL)
+                        winner = trueskill.Rating(mu=muW, sigma=sdW)
+                        loser = trueskill.Rating(mu=muL, sigma=sdL)
 
-                    # applies trueskill algorithm & update teams with new scores
-                    wScore, lScore = trueskill.rate_1vs1(winner, loser)
-                    won.mu = wScore.mu
-                    won.sigma = wScore.sigma
-                    lost.mu = lScore.mu
-                    lost.sigma = lScore.sigma
+                        # applies trueskill algorithm & update teams with new scores
+                        wScore, lScore = trueskill.rate_1vs1(winner, loser)
+                        won.mu = wScore.mu
+                        won.sigma = wScore.sigma
+                        lost.mu = lScore.mu
+                        lost.sigma = lScore.sigma
 
-                    won.save()
-                    lost.save()
+                        won.save()
+                        lost.save()
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
