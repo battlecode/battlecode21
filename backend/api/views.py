@@ -727,6 +727,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 'blue_team': blue_team.name,
                 'ranked': ranked,
                 'requested_by': this_team.id,
+                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
             }
 
             # Check auto accept
@@ -747,10 +748,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 'gameid': str(serializer.id),
                 'player1': red_team.name,
                 'player2': blue_team.name,
-                'maps': get_random_maps(3),
-                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+                'maps': ','.join(get_random_maps(3)),
+                'replay': data['replay']
             }
-            data['replay'] = scrimmage_server_data['replay']
             data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
             pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
