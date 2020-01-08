@@ -5,6 +5,10 @@
 	align-items: center;
 }
 
+h5 {
+	font-weight: bold;
+}
+
 .center-row-start {
 	width: auto;
 	/* these have to be important because bootstrap's js means its margin styles will always take precedence */
