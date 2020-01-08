@@ -168,7 +168,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.2</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.3</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -412,7 +412,7 @@ border-radius: 50%;
 <p>*(Ok technically it’s not a blockchain because it’s not hash-linked, it’s just a series of blocks, but otherwise it’s pretty similar.)</p>
 <h2 id="bytecode-limits">Bytecode Limits</h2>
 <p>Robots are also very limited in the amount of computation they are allowed to perform per <strong>turn</strong>. <strong>Bytecodes</strong> are a convenient measure of computation in languages like Java, where one Java bytecode corresponds roughly to one basic operation such as “subtract” or “get field”, and a single line of code generally contains several bytecodes. (For details see http://en.wikipedia.org/wiki/Java_bytecode) Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs. This is great, because it allows us to avoid using <em>time</em> as a measure of computation, which leads to problems such as nondeterminism. With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results–a feature you will find very useful for debugging.</p>
-<p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, use the <code>rc.yield()</code> function to end a robot’s turn. This will pause computation where you choose, and resume on the next line next turn.</p>
+<p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, use the <code>Clock.yield()</code> function to end a robot’s turn. This will pause computation where you choose, and resume on the next line next turn.</p>
 <p>The per-turn bytecode limits for various robots are as follows:</p>
 <ul>
 <li>HQ: 20,000</li>
@@ -465,6 +465,10 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.1.0.3 (1/8/20)
+<ul>
+<li>Fix bug where client would freeze when drones drop units.</li>
+</ul></li>
 <li>2020.1.0.2 (1/7/20) - Bug fixes.
 <ul>
 <li>Add <code>rc.getCurrentSensorRadiusSquared</code>.</li>

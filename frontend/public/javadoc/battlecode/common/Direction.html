@@ -119,7 +119,8 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Enum&lt;<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&gt;</pre>
 <div class="block">This enumeration represents a direction from one MapLocation to another.
  There is a direction for each of the cardinals (north, south, east, west),
- and each of diagonals (northwest, southwest, northeast, southeast).
+ each of the diagonals (northwest, southwest, northeast, southeast), and
+ no direction (center).
  <p>
  Since Direction is a Java 1.5 enum, you can use it in <code>switch</code>
  statements, it has all the standard enum methods (<code>valueOf</code>,
@@ -538,7 +539,7 @@ not permitted.)</div>
  Direction.values().</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>array of all cardinal directions.</dd>
+<dd>array of all directions.</dd>
 </dl>
 </li>
 </ul>
