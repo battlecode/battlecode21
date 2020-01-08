@@ -488,7 +488,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
-        #TODO: call to compile server
+        # call to compile server
         print('attempting call to compile server')
         print('id:', serializer.data['id'])
         data = str(serializer.data['id'])
@@ -721,14 +721,18 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if that_team is None:
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
+            replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+            print("the replay string is", replay_string)
             data = {
                 'league': league_id,
                 'red_team': red_team.name,
                 'blue_team': blue_team.name,
                 'ranked': ranked,
                 'requested_by': this_team.id,
-                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+                'replay': replay_string,
             }
+            print(data)
+            # TODO replay won't save somewhere
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
@@ -740,19 +744,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             serializer.save()
+            serializer.save()
 
-            #TODO: call to compile server
-            print('attempting call to compile server')
-            scrimmage_server_data = {
-                'gametype': 'scrimmage',
-                'gameid': str(serializer.id),
-                'player1': red_team.name,
-                'player2': blue_team.name,
-                'maps': ','.join(get_random_maps(3)),
-                'replay': data['replay']
-            }
-            data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-            pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
@@ -767,8 +760,31 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Cannot accept an outgoing scrimmage.'}, status.HTTP_400_BAD_REQUEST)
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
-            scrimmage.status = 'queued'
+            
 
+            # call to scrimmage server
+            print('attempting call to scrimmage server')
+    
+            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+            if red_submission_id is None and blue_submission_id is None:
+                return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            if red_submission_id is None:
+                return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            if blue_submission_id is None:
+                return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            scrimmage_server_data = {
+                'gametype': 'scrimmage',
+                'gameid': str(scrimmage.id),
+                'player1': str(red_submission_id),
+                'player2': str(blue_submission_id),
+                'maps': ','.join(get_random_maps(3)),
+                'replay': scrimmage.replay
+            }
+            data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+            pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+
+            scrimmage.status = 'queued'
             scrimmage.save()
 
             serializer = self.get_serializer(scrimmage)
