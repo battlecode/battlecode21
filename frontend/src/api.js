@@ -472,7 +472,9 @@ class Api {
         s[i].team = on_red ? s[i].blue_team : s[i].red_team;
         s[i].color = on_red ? 'Red' : 'Blue';
 
-        if (s[i].status !== 'redwon' && s[i].status !== 'bluewon') s[i].replay = undefined;
+        if (s[i].status !== 'lost' && s[i].status !== 'won') {
+          s[i].replay = undefined;
+        }
 
         requests.push(s[i]);
       } callback(requests);
