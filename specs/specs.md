@@ -26,7 +26,7 @@ On every turn, each tile adjacent to a **flooded** tile whose **elevation** is b
 Any robot on a **flooded** tile is destroyed, except **delivery drones**.
 If your **HQ** is destroyed, you lose.
 As the match goes on, the **water level** will increase at an increasing rate, flooding adjacent tiles if their **elevation** is too low.
-Elevations can be anywhere between $-\infty$ and $\infty$.
+Elevations can be anywhere between Integer.MIN_VALUE and Integer.MAX_VALUE inclusive.
 The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1,$$ where $x$ is the current round.
 That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:
 
