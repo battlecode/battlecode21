@@ -319,7 +319,7 @@ It includes helpful comments and is a template you can use to see what RobotPlay
 
 ## Debugging
 
-Extremely important. See http://2020.battlecode.org/debugging to learn about our useful debug tools.
+Extremely important. See the [debugging tips](http://2020.battlecode.org/debugging) to learn about our useful debug tools.
 
 
 ## Other Utilities
