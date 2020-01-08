@@ -88,6 +88,8 @@ class App extends Component {
         <Route path={`${process.env.PUBLIC_URL}/password_forgot`} component={Home} />,
         <Route path={`${process.env.PUBLIC_URL}/password_change`} component={Home} />,
         <Route path={`${process.env.PUBLIC_URL}/login`} component={Home} />,
+        <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
+        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />,
         <Route path={`${process.env.PUBLIC_URL}/register`} component={Home} />
       ]
     }
@@ -114,13 +116,13 @@ class App extends Component {
     }
 
     // should only be visible if user is staff or submissions are enabled
-    let gameElems = []
-    if (this.isSubmissionEnabled()) {
-      gameElems = [
-        <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
-        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
-      ]
-    }
+    // let gameElems = []
+    // if (this.isSubmissionEnabled()) {
+    //   gameElems = [
+    //     <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
+    //     <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+    //   ]
+    // }
 
     return (
       <div className="wrapper">
@@ -129,7 +131,7 @@ class App extends Component {
             <NavBar />
             <Switch>
               { homeElems }
-              { gameElems }
+              {/* { gameElems } */}
               { staffElems }
               { loggedInElems }
               { nonLoggedInElems }
