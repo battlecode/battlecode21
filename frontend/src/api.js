@@ -464,6 +464,11 @@ class Api {
 
         if (s[i].status === 'redwon') s[i].status = on_red ? 'won' : 'lost';
         else if (s[i].status === 'bluewon') s[i].status = on_red ? 'lost' : 'won';
+
+        if (s[i].status !== 'lost' && s[i].status !== 'won') {
+          s[i].replay = undefined;
+        }
+
         s[i].status = s[i].status.charAt(0).toUpperCase() + s[i].status.slice(1);
 
         s[i].date = new Date(s[i].updated_at).toLocaleDateString();
@@ -472,9 +477,6 @@ class Api {
         s[i].team = on_red ? s[i].blue_team : s[i].red_team;
         s[i].color = on_red ? 'Red' : 'Blue';
 
-        if (s[i].status !== 'lost' && s[i].status !== 'won') {
-          s[i].replay = undefined;
-        }
 
         requests.push(s[i]);
       } callback(requests);
