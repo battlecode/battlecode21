@@ -16,7 +16,6 @@ This year’s game is as much about surviving the changing climate as defeating 
 ## The Game Environment
 
 Battlecode 2020 is played by controlling **robots** on a rectangular grid called the **map**.
-The map will be between 32x32 and 64x64, inclusive.
 Two teams of robots, **red** and **blue**, roam the map.
 Every **round**, each robot will get to take one **turn**, in spawn order.
 More on what they can do with that turn later.
@@ -287,6 +286,16 @@ The per-turn bytecode limits for various robots are as follows:
 Some standard functions such as the math library, blockchain API, and sensing functions have fixed bytecode costs,
 available [here](https://github.com/battlecode/battlecode20/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
 More details on this at the end of the spec.
+
+## Map Restrictions
+
+This year we, Teh Devs, are making all the maps.
+We're going to try to make interesting maps with interesting scenarios, but we're not going to be evil.
+Therefore, we make the following promises about all maps:
+
+- it will be between 32x32 and 64x64, inclusive
+- the HQ will start at an effective elevation between 2 and 5 inclusive (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5)
+- the HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods)
 
 ## Tiebreakers
 
