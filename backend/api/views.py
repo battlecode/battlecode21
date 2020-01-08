@@ -720,7 +720,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             serializer.save()
-            serializer.save()
 
 
             return Response(serializer.data, status.HTTP_201_CREATED)
