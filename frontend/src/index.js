@@ -88,6 +88,8 @@ class App extends Component {
         <Route path={`${process.env.PUBLIC_URL}/password_forgot`} component={Home} />,
         <Route path={`${process.env.PUBLIC_URL}/password_change`} component={Home} />,
         <Route path={`${process.env.PUBLIC_URL}/login`} component={Home} />,
+        <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
+        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />,
         <Route path={`${process.env.PUBLIC_URL}/register`} component={Home} />
       ]
     }
@@ -103,8 +105,6 @@ class App extends Component {
       <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />,
       <Route path={`${process.env.PUBLIC_URL}/rankings/:team_id`} component={TeamInfo} />,
       <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />,
-        <Route path={`${process.env.PUBLIC_URL}/scrimmaging`} component={Scrimmaging} />,
-        <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />,
       <Route path="*" component={NotFound} />
     ]
 
