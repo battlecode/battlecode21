@@ -293,9 +293,10 @@ This year we, Teh Devs, are making all the maps.
 We're going to try to make interesting maps with interesting scenarios, but we're not going to be evil.
 Therefore, we make the following promises about all maps:
 
-- it will be between 32x32 and 64x64, inclusive
-- the HQ will start at an effective elevation between 2 and 5 inclusive (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5)
-- the HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods)
+- It will be between 32x32 and 64x64, inclusive.
+- The HQ will start at an effective elevation between 2 and 5 inclusive
+(so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5).
+- The HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods).
 
 ## Tiebreakers
 
