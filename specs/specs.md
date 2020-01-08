@@ -81,7 +81,7 @@ There are two main benefits of doing this:
 - taking square roots is a waste of time
 
 Intuitions for this are best gained visually:
-![img](https://media.discordapp.net/attachments/400575649720303616/664388327331594240/unknown.png)
+![img](https://media.discordapp.net/attachments/664564354066415617/664585439067373598/unknown.png)
 (thanks @FortColors!)
 
 
