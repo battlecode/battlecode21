@@ -398,10 +398,22 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.0.4 (1/8/20)
+    - spec changes:
+        - clarify "adjacent"
+        - clarify dirt/building relationship
+        - elaborate on cooldown mechanic
+        - add HQ placement restrictions
+        - add distance squared graphic
 - 2020.1.0.3 (1/8/20)
     - Fix bug where client would freeze when drones drop units.
 - 2020.1.0.2 (1/7/20) - Bug fixes.
     - Add `rc.getCurrentSensorRadiusSquared`.
-- 2020.1.0.1 (1/7/20) - Spec clarifications and bug fixes.
+- 2020.1.0.1 (1/7/20)
+    - Spec clarifications and bug fixes.
+        - add tiebreakers to spec
+        - add pollution effect on vision radius to spec
+        - add cows to spec
+        - drones can't pick up drones
     - Add `rc.getMapWidth` and `rc.getMapHeight`.
 - 2020.1.0.0 (1/6/20) - Initial release.
