@@ -203,6 +203,48 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
         return Response({'status': 'Wrong Key'},
                 status=status.HTTP_400_BAD_REQUEST)
 
+class MatchmakingViewSet(viewsets.GenericViewSet):
+    permission_classes = ()
+
+    @action(detail=False, methods=['get'])
+    def generate_matches(self, request):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if True:
+            teams = Team.objects.all()
+            matches = set()
+
+            not_submitted = set()
+            ratings = {}
+            for team in teams:
+                if  TeamSubmission.objects.get(pk=team.id).last_1_id == None:
+                    not_submitted.add(team.id)
+                else:
+                    ratings[team.id] = trueskill.Rating(mu=team.mu, sigma=team.sigma)
+
+            teams_matches = set()
+
+            for team in teams:
+                if team.id not in teams_matches and team.id not in not_submitted:
+                    besteam = None
+                    bestqual = None
+
+                    for potmatch in teams:
+                        if potmatch.id not in not_submitted and potmatch.id != team.id:
+                            print([ratings[team.id], ratings[potmatch.id]])
+                            this_qual = trueskill.quality_1vs1(ratings[team.id], ratings[potmatch.id])
+                            if bestqual == None or this_qual > bestqual:
+                                besteam = potmatch
+                                bestqual = this_qual
+
+                    if besteam != None:
+                        matches.add((team.id, besteam.id))
+                        teams_matches.add(team.id)
+                        teams_matches.add(besteam.id)
+
+            return Response({'matches': matches}, status.HTTP_200_OK)
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
+
 
 class UserTeamViewSet(viewsets.ReadOnlyModelViewSet):
     """
