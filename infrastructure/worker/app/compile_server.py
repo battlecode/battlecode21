@@ -60,13 +60,8 @@ def compile_worker(submissionid):
         # Obtain compressed archive of the submission
         try:
             os.mkdir(sourcedir)
-            blob = None
-            while blob is None:
-                # This file is guaranteed to exist
-                # If it doesn't, just try again, to avoid race condition
-                blob = bucket.get_blob(os.path.join(submissionid, 'source.zip'))
             with open(os.path.join(rootdir, 'source.zip'), 'wb') as file_obj:
-                blob.download_to_file(file_obj)
+                bucket.get_blob(os.path.join(submissionid, 'source.zip')).download_to_file(file_obj)
         except:
             compile_log_error(submissionid, 'Could not retrieve source file from bucket')
 

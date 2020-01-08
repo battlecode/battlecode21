@@ -35,7 +35,7 @@ def subscribe(subscription_name, worker):
 
         process = multiprocessing.Process(target=worker, args=(message.message.data.decode(),))
         process.start()
-        logging.info('Job {}: beginning'.format(message.message.data))
+        logging.info('Beginning: {}'.format(message.message.data.decode()))
 
         while True:
             # If the process is still running, give it more time to finish
@@ -46,12 +46,17 @@ def subscribe(subscription_name, worker):
                     [message.ack_id],
                     ack_deadline_seconds=SUB_ACK_DEADLINE)
                 logging.debug('Reset ack deadline for {} for {}s'.format(
-                    message.message.data, SUB_ACK_DEADLINE))
+                    message.message.data.decode(), SUB_ACK_DEADLINE))
 
-            # If the process is finished, acknowledge it
+            # The process is finished
             else:
-                client.acknowledge(subscription_path, [message.ack_id])
-                logging.info('Job {}: ending and acknowledged'.format(message.message.data))
+                if process.exitcode == 0:
+                    # Success; acknowledge and return
+                    client.acknowledge(subscription_path, [message.ack_id])
+                    logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+                else:
+                    # Failure; refuse to acknowledge
+                    logging.error('Failed, not acknowledged: {}'.format(message.message.data.decode()))
                 break
 
             # Sleep the thread before checking again
