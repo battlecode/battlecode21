@@ -10,7 +10,7 @@ In GCloud > PubSub:
 In GCloud > IAM > Service accounts:
 - Create new service account.
 - Add roles: PubSub publisher, PubSub subscriber.
-- Download JSON key; call it `app/gcloud-key.json`.
+- Download JSON key; call it `worker/app/gcloud-key.json`.
 
 In GCloud > Storage:
 - Create new bucket. Call it `bc20-submissions`.
@@ -22,11 +22,10 @@ In GCloud > Compute Engine > Instance templates:
 
 ## How to use
 
-- For a docker shell to do debugging in, run the following,
-  where `X` is either `worker` or `matcher`:
+- For a docker shell to do debugging in, run the following.
   ```
-  make X
-  docker run -it bc20-X
+  make worker
+  docker run -it bc20-worker
   ```
 - For an actual server, run the following,
   where X is one of `compile`, `game`, `scrimmage` or `tournament`:
@@ -41,6 +40,6 @@ In GCloud > Compute Engine > Instance templates:
   ```
 - To publish a `helloworld` message to the Pub/Sub, obtain the private key, and then:
   ```
-  export GOOGLE_APPLICATION_CREDENTIALS=app/gcloud-key.json
+  export GOOGLE_APPLICATION_CREDENTIALS=worker/app/gcloud-key.json
   ./pub.py battlecode18 bc20-compile
   ```

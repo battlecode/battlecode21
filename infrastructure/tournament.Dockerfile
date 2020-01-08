@@ -1,4 +1,8 @@
-FROM bc20-matcher
+FROM bc20-env
 
-COPY app/tournament_server.py app/bracket.py app/
-CMD ./app/tournament_server.py
+# Install software dependencies
+RUN pip3 install --upgrade \
+    requests
+COPY * app/
+
+CMD /app/tournament_server.py

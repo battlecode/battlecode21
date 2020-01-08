@@ -14,14 +14,14 @@ def game_report_result(gametype, gameid, result):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
-        response = requests.post(url=api_game_update(gametype, gameid), data={
+        response = requests.patch(url=api_game_update(gametype, gameid), data={
             'status': result
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
-    except:
-        logging.critical('Could not report result to API endpoint')
+    except Exception as e:
+        logging.critical('Could not report result to API endpoint', exc_info=e)
         sys.exit(1)
 
 def game_log_error(gametype, gameid, reason):
@@ -33,7 +33,7 @@ def game_log_error(gametype, gameid, reason):
 def game_worker(gameinfo):
     """
     Runs a game as specified by the message
-    Message contains JSON data, with 4 string parameters:
+    Message contains JSON data, with string parameters:
         gametype: string, either "scrimmage" or "tournament"
         gameid:   string, id of the game
         player1:  string, id of red player submission
@@ -116,6 +116,9 @@ def game_worker(gameinfo):
         except:
             game_log_error(gametype, gameid, 'Could not determine player packages')
 
+        # Update distribution
+        util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+
         # Execute game
         result = util.monitor_command(
             ['./gradlew', 'run',
@@ -136,29 +139,36 @@ def game_worker(gameinfo):
         bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
         try:
             with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
-                bucket.blob('{}.bc20'.format(replay)).upload_from_file(file_obj)
+                bucket.blob(os.path.join('replays', '{}.bc20'.format(replay))).upload_from_file(file_obj)
         except:
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
         # Interpret game result
         server_output = result[1].decode().split('\n')
 
-        winner = None
+        wins = [0, 0]
         try:
-            while True:
-                if re.fullmatch(GAME_WINNER, server_output[-1]):
-                    winner = server_output[-1][server_output[-1].rfind('wins')-3]
-                    break
-                server_output.pop()
+            # Read the winner of each game from the engine
+            for line in server_output:
+                if re.fullmatch(GAME_WINNER, line):
+                    game_winner = line[line.rfind('wins')-3]
+                    assert (game_winner == 'A' or game_winner == 'B')
+                    if game_winner == 'A':
+                        wins[0] += 1
+                    elif game_winner == 'B':
+                        wins[1] += 1
+            # We should have as many game wins as games played
+            assert (wins[0] + wins[1] == len(maps.split(',')))
+            logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
         except:
             game_log_error(gametype, gameid, 'Could not determine winner')
-        finally:
-            if winner == 'A':
+        else:
+            if wins[0] > wins[1]:
                 game_report_result(gametype, gameid, GAME_REDWON)
-            elif winner == 'B':
+            elif wins[1] > wins[0]:
                 game_report_result(gametype, gameid, GAME_BLUEWON)
             else:
-                raise RuntimeError
+                game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
     finally:
         # Clean up working directory

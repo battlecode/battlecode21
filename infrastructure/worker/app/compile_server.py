@@ -19,8 +19,8 @@ def compile_report_result(submissionid, result):
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
-    except:
-        logging.critical('Could not report result to API endpoint')
+    except Exception as e:
+        logging.critical('Could not report result to API endpoint', exc_info=e)
         sys.exit(1)
 
 def compile_log_error(submissionid, reason):
@@ -73,33 +73,41 @@ def compile_worker(submissionid):
         if result[0] != 0:
             compile_log_error(submissionid, 'Could not decompress source file')
 
+        # Update distribution
+        util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
+
         # Execute compilation
         result = util.monitor_command(
             ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
             cwd=rootdir,
             timeout=TIMEOUT_COMPILE)
-        packages = os.listdir(classdir)
 
         # Only one package allowed per submission
-        if result[0] == 0 and len(packages) == 1:
-            # Compress compiled classes
-            result = util.monitor_command(
-                ['zip', '-r', 'player.zip', packages[0]],
-                cwd=classdir,
-                timeout=TIMEOUT_COMPILE)
-
-            # Send package to bucket for storage
-            if result[0] == 0:
-                try:
-                    with open(os.path.join(classdir, 'player.zip'), 'rb') as file_obj:
-                        bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
-                except:
-                    compile_log_error(submissionid, 'Could not send executable to bucket')
-                compile_report_result(submissionid, COMPILE_SUCCESS)
-            else:
-                compile_log_error(submissionid, 'Could not compress compiled classes')
-        else:
+        try:
+            packages = os.listdir(classdir)
+        except:
+            # No classes were generated after compiling
             compile_report_result(submissionid, COMPILE_FAILED)
+        else:
+            if result[0] == 0 and len(packages) == 1:
+                # Compress compiled classes
+                result = util.monitor_command(
+                    ['zip', '-r', 'player.zip', packages[0]],
+                    cwd=classdir,
+                    timeout=TIMEOUT_COMPILE)
+
+                # Send package to bucket for storage
+                if result[0] == 0:
+                    try:
+                        with open(os.path.join(classdir, 'player.zip'), 'rb') as file_obj:
+                            bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
+                    except:
+                        compile_log_error(submissionid, 'Could not send executable to bucket')
+                    compile_report_result(submissionid, COMPILE_SUCCESS)
+                else:
+                    compile_log_error(submissionid, 'Could not compress compiled classes')
+            else:
+                compile_report_result(submissionid, COMPILE_FAILED)
     finally:
         # Clean up working directory
         try:
