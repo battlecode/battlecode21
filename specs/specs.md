@@ -264,7 +264,7 @@ Every round each robot sequentially takes its turn.
 If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something),
 its computation will be paused and then resumed at exactly that point next turn.
 The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile.
-Instead, use the `rc.yield()` function to end a robot's turn.
+Instead, use the `Clock.yield()` function to end a robot's turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
 The per-turn bytecode limits for various robots are as follows:
