@@ -139,7 +139,7 @@ def game_worker(gameinfo):
         bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
         try:
             with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
-                bucket.blob('{}.bc20'.format(replay)).upload_from_file(file_obj)
+                bucket.blob(os.path.join('replays', '{}.bc20'.format(replay))).upload_from_file(file_obj)
         except:
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
@@ -159,6 +159,7 @@ def game_worker(gameinfo):
                         wins[1] += 1
             # We should have as many game wins as games played
             assert (wins[0] + wins[1] == len(maps.split(',')))
+            logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
         except:
             game_log_error(gametype, gameid, 'Could not determine winner')
         else:
