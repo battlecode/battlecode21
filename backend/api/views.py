@@ -209,15 +209,20 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['get'])
     def generate_matches(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
-        if True:
+        if is_admin:
             teams = Team.objects.all()
             matches = set()
 
             not_submitted = set()
             ratings = {}
+            submissions = {}
+
             for team in teams:
-                if  TeamSubmission.objects.get(pk=team.id).last_1_id == None:
-                    not_submitted.add(team.id)
+                sub_id = TeamSubmission.objects.get(pk=team.id).last_1_id
+                submissions[team.id] = sub_id
+
+                if sub_id == None:
+                     not_submitted.add(team.id)
                 else:
                     ratings[team.id] = trueskill.Rating(mu=team.mu, sigma=team.sigma)
 
@@ -230,18 +235,47 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
                     for potmatch in teams:
                         if potmatch.id not in not_submitted and potmatch.id != team.id:
-                            print([ratings[team.id], ratings[potmatch.id]])
                             this_qual = trueskill.quality_1vs1(ratings[team.id], ratings[potmatch.id])
                             if bestqual == None or this_qual > bestqual:
                                 besteam = potmatch
                                 bestqual = this_qual
 
                     if besteam != None:
-                        matches.add((team.id, besteam.id))
+                        # make new scrimmage
+                        replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+                        scrimmage = {
+                            'league': 0,
+                            'red_team': team.name,
+                            'blue_team': besteam.name,
+                            'requested_by': team.id,
+                            'ranked': True,
+                            'replay': replay_string
+                        }
+
+                        ScrimSerial = ScrimmageSerializer(data=scrimmage)
+
+                        if not ScrimSerial.is_valid():
+                            return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
+
+                        srim = ScrimSerial.save()
+
+                        # add to pub sub
+                        scrimmage_server_data = {
+                            'gametype': 'scrimmage',
+                            'gameid': str(srim.id),
+                            'player1': str(submissions[team.id]),
+                            'player2': str(submissions[besteam.id]),
+                            'maps': ','.join(get_random_maps(3)),
+                            'replay': srim.replay
+                        }
+
+                        data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+                        pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+
                         teams_matches.add(team.id)
                         teams_matches.add(besteam.id)
 
-            return Response({'matches': matches}, status.HTTP_200_OK)
+            return Response({'message': 'matches are generated!'}, status.HTTP_200_OK)
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
@@ -790,6 +824,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
             if blue_submission_id is None:
                 return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+            
             scrimmage_server_data = {
                 'gametype': 'scrimmage',
                 'gameid': str(scrimmage.id),
