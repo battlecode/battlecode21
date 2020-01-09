@@ -10,5 +10,5 @@ token=$( /usr/bin/curl -sX POST \
   | /usr/bin/jq -r ".access" )
 
 /usr/bin/curl -vX GET \
-    https://2020.battlecode.org/api/match/generate_matches \
+    https://2020.battlecode.org/api/match/generate_matches/ \
     --oauth2-bearer ${token}
