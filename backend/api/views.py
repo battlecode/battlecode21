@@ -75,6 +75,25 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay):
+    print('attempting publication to scrimmage pub/sub')
+    if red_submission_id is None and blue_submission_id is None:
+        return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
+    if red_submission_id is None:
+        return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+    if blue_submission_id is None:
+        return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+    scrimmage_server_data = {
+        'gametype': 'scrimmage',
+        'gameid': str(scrimmage_id),
+        'player1': str(red_submission_id),
+        'player2': str(blue_submission_id),
+        'maps': ','.join(get_random_maps(3)),
+        'replay': scrimmage_replay
+    }
+    data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+    pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+
 def get_random_maps(num):
     n = min(num, len(settings.SERVER_MAPS))
     return random.sample(settings.SERVER_MAPS, n)
@@ -698,7 +717,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
             replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-            print("the replay string is", replay_string)
             data = {
                 'league': league_id,
                 'red_team': red_team.name,
@@ -707,25 +725,28 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 'requested_by': this_team.id,
                 'replay': replay_string,
             }
-            print(data)
-            # TODO replay won't save somewhere
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 data['status'] = 'queued'
 
-
-            # Create scrimmage
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            scrimmage = serializer.save()
 
+            # check the ID
+            # if auto accept, then create scrimmage
+            if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
+                red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+                blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
+
 
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
@@ -736,31 +757,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-
-            # call to scrimmage server
-            print('attempting call to scrimmage server')
-    
-            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            if red_submission_id is None and blue_submission_id is None:
-                return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
-            if red_submission_id is None:
-                return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
-            if blue_submission_id is None:
-                return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
-            scrimmage_server_data = {
-                'gametype': 'scrimmage',
-                'gameid': str(scrimmage.id),
-                'player1': str(red_submission_id),
-                'player2': str(blue_submission_id),
-                'maps': ','.join(get_random_maps(3)),
-                'replay': scrimmage.replay
-            }
-            data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-            pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
-
             scrimmage.status = 'queued'
             scrimmage.save()
+            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
 
             serializer = self.get_serializer(scrimmage)
             return Response(serializer.data, status.HTTP_200_OK)
