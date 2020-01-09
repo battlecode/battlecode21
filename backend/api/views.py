@@ -225,7 +225,7 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
 class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['post'])
     def generate_matches(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
