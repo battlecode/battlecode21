@@ -717,7 +717,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
             replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-            # print("the replay string is", replay_string)
             data = {
                 'league': league_id,
                 'red_team': red_team.name,
@@ -734,20 +733,20 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            scrimmage = serializer.save()
 
             # check the ID
-            print("the id of this scrimmage is", scrimmage.data['id'])
             # if auto accept, then create scrimmage
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
                 blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, replay_string)
+                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
+
 
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
