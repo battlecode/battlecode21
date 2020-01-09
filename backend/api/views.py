@@ -75,10 +75,8 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(scrimmage):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay):
     print('attempting publication to scrimmage pub/sub')
-    red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-    blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
     if red_submission_id is None:
@@ -87,11 +85,11 @@ def scrimmage_pub_sub_call(scrimmage):
         return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
     scrimmage_server_data = {
         'gametype': 'scrimmage',
-        'gameid': str(scrimmage.id),
+        'gameid': str(scrimmage_id),
         'player1': str(red_submission_id),
         'player2': str(blue_submission_id),
         'maps': ','.join(get_random_maps(3)),
-        'replay': scrimmage.replay
+        'replay': scrimmage_replay
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
@@ -739,10 +737,12 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             serializer.save()
 
             # check the ID
-            print("the id of this scrimmage is", scrimmage.id())
+            print("the id of this scrimmage is", scrimmage.data['id'])
             # if auto accept, then create scrimmage
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
-                scrimmage_pub_sub_call(scrimmage)
+                red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+                blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, replay_string)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
@@ -760,7 +760,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             
             scrimmage.status = 'queued'
             scrimmage.save()
-            scrimmage_pub_sub_call(scrimmage)
+            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
+            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
+            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
 
             serializer = self.get_serializer(scrimmage)
             return Response(serializer.data, status.HTTP_200_OK)
