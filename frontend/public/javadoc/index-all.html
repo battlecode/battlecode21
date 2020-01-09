@@ -245,7 +245,9 @@
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/Transaction.html#compareTo-battlecode.common.Transaction-">compareTo(Transaction)</a></span> - Method in class battlecode.common.<a href="battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a></dt>
 <dd>
-<div class="block">Transactions with higher cost have higher priority.</div>
+<div class="block">Transactions with higher cost have higher priority, then transactions with
+ higher randomly generated id, then (if two transactions somehow collide in 
+ randomly generated id) transaction that is lexicographically earlier.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotType.html#cost">cost</a></span> - Variable in enum battlecode.common.<a href="battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></dt>
 <dd>
@@ -808,7 +810,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="battlecode/common/Transaction.html" title="class in battlecode.common"><span class="typeNameLink">Transaction</span></a> - Class in <a href="battlecode/common/package-summary.html">battlecode.common</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="battlecode/common/Transaction.html#Transaction-int-int:A-">Transaction(int, int[])</a></span> - Constructor for class battlecode.common.<a href="battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a></dt>
+<dt><span class="memberNameLink"><a href="battlecode/common/Transaction.html#Transaction-int-int:A-int-">Transaction(int, int[], int)</a></span> - Constructor for class battlecode.common.<a href="battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/MapLocation.html#translate-int-int-">translate(int, int)</a></span> - Method in class battlecode.common.<a href="battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></dt>
 <dd>

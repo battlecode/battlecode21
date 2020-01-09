@@ -131,8 +131,9 @@ implements java.lang.Comparable&lt;<a href="../../battlecode/common/Transaction.
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../battlecode/common/Transaction.html#Transaction-int-int:A-">Transaction</a></span>(int&nbsp;cost,
-           int[]&nbsp;message)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../battlecode/common/Transaction.html#Transaction-int-int:A-int-">Transaction</a></span>(int&nbsp;cost,
+           int[]&nbsp;message,
+           int&nbsp;id)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -152,7 +153,9 @@ implements java.lang.Comparable&lt;<a href="../../battlecode/common/Transaction.
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/Transaction.html#compareTo-battlecode.common.Transaction-">compareTo</a></span>(<a href="../../battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a>&nbsp;other)</code>
-<div class="block">Transactions with higher cost have higher priority.</div>
+<div class="block">Transactions with higher cost have higher priority, then transactions with
+ higher randomly generated id, then (if two transactions somehow collide in 
+ randomly generated id) transaction that is lexicographically earlier.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -189,14 +192,15 @@ implements java.lang.Comparable&lt;<a href="../../battlecode/common/Transaction.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Transaction-int-int:A-">
+<a name="Transaction-int-int:A-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Transaction</h4>
 <pre>public&nbsp;Transaction(int&nbsp;cost,
-                   int[]&nbsp;message)</pre>
+                   int[]&nbsp;message,
+                   int&nbsp;id)</pre>
 </li>
 </ul>
 </li>
@@ -241,7 +245,9 @@ implements java.lang.Comparable&lt;<a href="../../battlecode/common/Transaction.
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>public&nbsp;int&nbsp;compareTo(<a href="../../battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a>&nbsp;other)</pre>
-<div class="block">Transactions with higher cost have higher priority.</div>
+<div class="block">Transactions with higher cost have higher priority, then transactions with
+ higher randomly generated id, then (if two transactions somehow collide in 
+ randomly generated id) transaction that is lexicographically earlier.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a>&gt;</code></dd>
