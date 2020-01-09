@@ -525,7 +525,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             submission = self.get_queryset().get(pk=pk)
-            if submission.compilation_status != 0:
+            if submission.compilation_status != 0 and submission.compilation_status != 3:
                 return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
             comp_status = int(request.data.get('compilation_status'))
 
