@@ -135,6 +135,7 @@ task run(type: JavaExec, dependsOn: 'build') {
     jvmArgs = [
         '-Dbc.server.mode=headless',
         '-Dbc.server.map-path=maps',
+        '-Dbc.server.robot-player-to-system-out=false',
         '-Dbc.server.debug=true',
         '-Dbc.engine.debug-methods=true',
         '-Dbc.game.team-a='+project.property('teamA'),
