@@ -21,7 +21,7 @@ def compile_report_result(submissionid, result):
         response.raise_for_status()
     except Exception as e:
         logging.critical('Could not report result to API endpoint', exc_info=e)
-        sys.exit(0)
+        sys.exit(1)
 
 def compile_log_error(submissionid, reason):
     """Reports a server-side error to the backend and terminates with failure"""
