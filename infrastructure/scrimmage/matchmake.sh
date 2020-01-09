@@ -9,6 +9,6 @@ token=$( /usr/bin/curl -sX POST \
     -d password=${BC20_DB_PASSWORD} \
   | /usr/bin/jq -r ".access" )
 
-/usr/bin/curl -vX POST \
-    https://2020.battlecode.org/api/0/matchmake \
+/usr/bin/curl -vX GET \
+    https://2020.battlecode.org/api/match/generate_matches \
     --oauth2-bearer ${token}
