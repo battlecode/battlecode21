@@ -36,7 +36,7 @@ class Issues extends Component {
                                             <li>Try setting <code>org.gradle.java.home=/path_to_jdk_1.8_directory</code>. You need to know your <code>JAVA_HOME</code> (try <a href='https://www.baeldung.com/find-java-home'>this guide</a>).</li>
                                         </ul>
                                         </li>
-                                        <li><code>NullPointerException</code>. A common error in java, but sometimes happens if you close the client while a game is running.
+                                        <li><code>Exception in thread "WebsocketSelector14" java.lang.NullPointerException</code>. A common error in java, but sometimes happens if you close the client while a game is running.
                                         The solution is to run <code>./gradlew --stop</code> to stop all of the Gradle daemons and the next time you open the client it will use a fresh one.</li>
                                         <li><code>Exception in thread "WebsocketSelector14" java.lang.NullPointerException at battlecode.server.NetServer.onError(NetServer.java:165)</code>. This
                                         probably means that you're running two instances of the engine at the same time. Try running <code>./gradlew --stop</code> (if you're running
