@@ -169,7 +169,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.3</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.4</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -402,7 +402,7 @@ border-radius: 50%;
 </tbody>
 </table>
 <h3 id="cows">Cows</h3>
-<p>There is one final unit which cannot be built and is not controlled by any team: <strong>cows</strong>. <strong>Cows</strong> are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them. They move around the map at random, with a base cooldown of 1. However, cows are similar to other units:</p>
+<p>There is one final unit which cannot be built and is not controlled by any team: <strong>cows</strong>. <strong>Cows</strong> are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them. They move around the map at random, with a base cooldown of 2. However, cows are similar to other units:</p>
 <ul>
 <li>They die if the end up on a <strong>flooded</strong> tile.</li>
 <li>They can be picked up by <strong>drones</strong> (ideally, towards the enemy team).</li>
@@ -429,6 +429,7 @@ border-radius: 50%;
 <li>It will be between 32x32 and 64x64, inclusive.</li>
 <li>The HQ will start at an effective elevation between 2 and 5 inclusive (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5).</li>
 <li>The HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods).</li>
+<li>There will always be a large negative elevation water tile (no games that never end).</li>
 </ul>
 <h2 id="tiebreakers">Tiebreakers</h2>
 <p>Some games will end with both <strong>HQ</strong>s being flooded at the same time. The winner is determined as follows (with ties at one level being broken by the next):</p>
@@ -474,6 +475,30 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.1.0.4 (1/8/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>clarify “adjacent”</li>
+<li>clarify dirt/building relationship</li>
+<li>elaborate on cooldown mechanic</li>
+<li>add HQ placement restrictions</li>
+<li>add distance squared graphic</li>
+<li>increase cooldown of cows to 2</li>
+</ul></li>
+<li>engine fixes:
+<ul>
+<li>make blockchain immutable</li>
+<li>make maps always have low elevation water tile</li>
+<li>fix bug where units were always killed after being dropped</li>
+<li>change <code>canSenseLocation</code> to return false for tiles outside the map</li>
+<li>change cooldown of cows</li>
+</ul></li>
+<li>client fixes:
+<ul>
+<li>change soup and dirt max/min values</li>
+</ul></li>
+</ul></li>
 <li>2020.1.0.3 (1/8/20)
 <ul>
 <li>Fix bug where client would freeze when drones drop units.</li>
@@ -482,8 +507,15 @@ String.split</code></pre>
 <ul>
 <li>Add <code>rc.getCurrentSensorRadiusSquared</code>.</li>
 </ul></li>
-<li>2020.1.0.1 (1/7/20) - Spec clarifications and bug fixes.
+<li>2020.1.0.1 (1/7/20)
 <ul>
+<li>Spec clarifications and bug fixes.
+<ul>
+<li>add tiebreakers to spec</li>
+<li>add pollution effect on vision radius to spec</li>
+<li>add cows to spec</li>
+<li>drones can’t pick up drones</li>
+</ul></li>
 <li>Add <code>rc.getMapWidth</code> and <code>rc.getMapHeight</code>.</li>
 </ul></li>
 <li>2020.1.0.0 (1/6/20) - Initial release.</li>

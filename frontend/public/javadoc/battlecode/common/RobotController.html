@@ -187,7 +187,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#canSenseLocation-battlecode.common.MapLocation-">canSenseLocation</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
-<div class="block">Senses whether the given location is within the robot's sensor range.</div>
+<div class="block">Senses whether the given location is within the robot's sensor range, and if it is on the map.</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
@@ -712,12 +712,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>canSenseLocation</h4>
 <pre>boolean&nbsp;canSenseLocation(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</pre>
-<div class="block">Senses whether the given location is within the robot's sensor range.</div>
+<div class="block">Senses whether the given location is within the robot's sensor range, and if it is on the map.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>loc</code> - the location to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the given location is within the robot's sensor range; false otherwise.</dd>
+<dd>true if the given location is within the robot's sensor range and is on the map; false otherwise.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>5</code></dd></dl>
 </li>
 </ul>
