@@ -18,6 +18,6 @@ router.register('(?P<league_id>[^\/.]+)/teamsubmission', views.TeamSubmissionVie
 router.register('(?P<league_id>[^\/.]+)/scrimmage', views.ScrimmageViewSet, base_name='scrimmage')
 router.register('(?P<league_id>[^\/.]+)/tournament', views.TournamentViewSet, base_name='tournament')
 router.register('userteam/(?P<username>[^\/]+)', views.UserTeamViewSet, base_name='userteam')
-
+router.register('match', views.MatchmakingViewSet, base_name='match')
 
 urlpatterns = router.urls
