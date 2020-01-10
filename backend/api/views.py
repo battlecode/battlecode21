@@ -372,14 +372,14 @@ class TeamViewSet(viewsets.GenericViewSet,
     # NOTE: IF THE TEAM SEARCH IS EVER SLOW, REMOVE TEAM SEARCH BY USERNAME
     # it is nice to have it, but will certainly take more time to evaluate
     search_fields = ('name','users__username')
-    ordering_fields = ('mu', 'name')
-    ordering = ('name', 'id')
+    ordering_fields = ('score','name')
+    ordering = ('score','name')
 
     def get_queryset(self):
         """
         Only teams within the league are visible.
         """
-        return Team.objects.all().exclude(deleted=True).order_by('name', 'id').filter(league_id=self.kwargs['league_id'])
+        return Team.objects.all().exclude(deleted=True).filter(league_id=self.kwargs['league_id'])
 
     def list(self, request, *args, **kwargs):
         """
@@ -463,14 +463,18 @@ class TeamViewSet(viewsets.GenericViewSet,
     @action(methods=['get'], detail=True)
     def ranking(self, request, league_id, pk=None):
         cur_place = 0
+        num_same = 0
         latest_mu = None
-        for team in Team.objects.order_by('-mu'):
-            if latest_mu is None or team.mu != latest_mu:
-                cur_place += 1
-                latest_mu = team.mu
+        for team in Team.objects.order_by('-score'):
+            cur_place += 1
+            if team.score == latest_mu:
+                num_same += 1
+            else:
+                num_same = 0
+            latest_mu = team.score
 
             if team.id == int(pk):
-                return Response({'ranking': cur_place}, status.HTTP_200_OK)
+                return Response({'ranking': cur_place-num_same}, status.HTTP_200_OK)
 
         return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
 
