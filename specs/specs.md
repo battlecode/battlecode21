@@ -236,7 +236,7 @@ They move around the map at random, with a base cooldown of 2.
 However, cows are similar to other units:
 
 - They die if the end up on a **flooded** tile.
-- They can be picked up by **drones** (ideally, towards the enemy team).
+- They can be picked up by **drones** (ideally, towards the enemy team). While carried by a drone, they don't pollute.
 
 Initial cow positions are a property of the map, and some maps may not have any.
 
