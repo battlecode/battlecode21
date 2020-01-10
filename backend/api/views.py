@@ -892,14 +892,14 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
 
-                    if scrimmage.ranked: # TODO check if ranked
-                        # update rankings based on trueskill algoirthm
-                        # get team info
-                        rteam = self.get_team(league_id, scrimmage.red_team_id)
-                        bteam = self.get_team(league_id, scrimmage.blue_team_id)
-                        won = rteam if sc_status == "redwon" else bteam
-                        lost = rteam if sc_status == "bluewon" else bteam
+                    # update rankings based on trueskill algoirthm
+                    # get team info
+                    rteam = self.get_team(league_id, scrimmage.red_team_id)
+                    bteam = self.get_team(league_id, scrimmage.blue_team_id)
+                    won = rteam if sc_status == "redwon" else bteam
+                    lost = rteam if sc_status == "bluewon" else bteam
                         
+                    if scrimmage.ranked: # TODO check if ranked
                         # store previous mu in scrimmage
                         scrimmage.blue_mu = bteam.mu
                         scrimmage.red_mu = rteam.mu
@@ -920,8 +920,13 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                         lost.mu = lScore.mu
                         lost.sigma = lScore.sigma
 
-                        won.save()
-                        lost.save()
+                    # update wins and losses
+                    won.wins = won.wins + 1
+                    lost.losses = lost.losses + 1
+
+                    won.save()
+                    lost.save()
+
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
