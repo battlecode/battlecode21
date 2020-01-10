@@ -280,8 +280,8 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                         scrimmage_server_data = {
                             'gametype': 'scrimmage',
                             'gameid': str(scrim.id),
-                            'player1': str(submissions[team.id]),
-                            'player2': str(submissions[besteam.id]),
+                            'player1': str(submissions[team_1.id]),
+                            'player2': str(submissions[team_2.id]),
                             'maps': ','.join(get_random_maps(3)),
                             'replay': scrim.replay
                         }
