@@ -1218,7 +1218,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if this robot is not a landscaper, if
  the robot is still in cooldown, the robot cannot carry more dirt,
- or the location is not valid (there is a robot/building).</dd>
+ or the location is not valid.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1265,7 +1265,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>canPickUpUnit</h4>
 <pre>boolean&nbsp;canPickUpUnit(int&nbsp;id)</pre>
-<div class="block">Tests whether a robot is able to pick up a specific unit.</div>
+<div class="block">Tests whether a robot is able to pick up a specific unit. Checks
+ whether this robot is a delivery drone that is not holding anything right
+ now, whether the robot it is trying to be picked up can be picked up
+ (and that that robot is not currently held by another drone), that
+ the robot is within the pickup radius, and that there are cooldown
+ turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the id of the robot to pick up</dd>
@@ -1300,7 +1305,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>canDropUnit</h4>
 <pre>boolean&nbsp;canDropUnit(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
-<div class="block">Tests whether a robot is able to drop a unit in a specified direction.</div>
+<div class="block">Tests whether a robot is able to drop a unit in a specified direction.
+ Checks whether the robot is a drone that is currently holding a unit,
+ that the target location is unoccupied and on the map, and that
+ there are cooldown turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the specified direction</dd>
@@ -1334,7 +1342,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>canShootUnit</h4>
 <pre>boolean&nbsp;canShootUnit(int&nbsp;id)</pre>
-<div class="block">Tests whether a robot is able to shoot down a specific unit.</div>
+<div class="block">Tests whether a robot is able to shoot down a specific unit.
+ Checks whether the robot is a net gun (or HQ), whether the target
+ robot exists, can be shot and is in the shoot radius, and whether
+ there are cooldown turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the id of the robot to shoot</dd>
@@ -1384,7 +1395,7 @@ var activeTableTab = "activeTableTab";
                              int&nbsp;cost)</pre>
 <div class="block">Tests if the robot can submit a transaction
  to the blockchain at the indicated cost. Tests if the team has enough soup,
- that the provided cost is non-negative, and that the message doesn't exceed the limit.</div>
+ that the provided cost is positive, and that the message doesn't exceed the limit.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - the list of ints to send (at most of GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH many).</dd>
