@@ -46,7 +46,7 @@ class RankingTeamList extends TeamList {
                 }
                 return (
                     <tr key={ team.id } onClick={() => this.showTeamPage(team.id) }>
-                            <td>{ Math.round(team.mu * 1000) / 1000 }</td>
+                            <td>{ Math.round((team.mu - 3*team.sigma) * 1000) / 1000 }</td>
                             <td>{ team.name }</td>
                             <td>{ team.users.join(", ") }</td>
                             <td>{ team.bio }</td>
