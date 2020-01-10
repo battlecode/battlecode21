@@ -169,7 +169,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.8</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.9</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -268,7 +268,7 @@ border-radius: 50%;
 <ul>
 <li>Produced by the <strong>fulfillment center</strong></li>
 <li>Can move into flooded tiles without dying, but not onto other <strong>robots</strong>.</li>
-<li>Can perform the action <code>rc.pickUpUnit()</code> to pick up a single <strong>unit</strong> from an adjacent tile, removing it from the map, to be placed later.</li>
+<li>Can perform the action <code>rc.pickUpUnit()</code> to pick up a single <strong>unit</strong> from an adjacent tile, removing it from the map, to be placed later. The picked up unit is frozen; it cannot execute any code and its remaining cooldown is constant, until it is dropped by the drone.</li>
 <li>Can perform the action <code>rc.dropUnit()</code> to place the currently held <strong>unit</strong> on an adjacent empty or flooded tile, but not onto another <strong>robot</strong>.</li>
 <li>When a <strong>delivery drone</strong> is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.</li>
 <li>If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.</li>
@@ -405,12 +405,12 @@ border-radius: 50%;
 <p>There is one final unit which cannot be built and is not controlled by any team: <strong>cows</strong>. <strong>Cows</strong> are NPCs which produce tons of local pollution (plus 2000) in a radius squared of 15 around them. They move around the map at random, with a base cooldown of 2. However, cows are similar to other units:</p>
 <ul>
 <li>They die if the end up on a <strong>flooded</strong> tile.</li>
-<li>They can be picked up by <strong>drones</strong> (ideally, towards the enemy team).</li>
+<li>They can be picked up by <strong>drones</strong> (ideally, towards the enemy team). While carried by a drone, they don’t pollute.</li>
 </ul>
 <p>Initial cow positions are a property of the map, and some maps may not have any.</p>
 <h2 id="communication">Communication</h2>
 <p>Robots can only see their immediate surroundings and are independently controlled by copies of your code, making coordination very challenging. Thus, we provide a global, append-only, immutable ledger any robot can read and write to, which we call the <strong>blockchain</strong>*.</p>
-<p>The <strong>blockchain</strong> is a series of <strong>blocks</strong>, one per round, each with at most 7 <strong>transactions</strong>. Each <strong>transaction</strong> is 7 integers, a message chosen by the sender of the transaction. Every robot can read <em>all</em> transactions (with <code>rc.getBlock()</code>), which are not labeled by sender or team. (So you will need to find a way to distinguish them.) Any robot can submit a transaction to the <strong>transaction pool</strong> with the function <code>rc.submitTransaction</code> and by paying, in <strong>soup</strong>, a <strong>transaction fee</strong> (think of it as a bid). At the end of each round, the 7 transactions in the <strong>transaction pool</strong> with the highest <strong>transaction fee</strong> are removed from the pool and added to that round’s <strong>block</strong>. For every round thereafter, those 7 transactions are visible to all robots at all times. Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.</p>
+<p>The <strong>blockchain</strong> is a series of <strong>blocks</strong>, one per round, each with at most 7 <strong>transactions</strong>. Each <strong>transaction</strong> is 7 integers, a message chosen by the sender of the transaction. Every robot can read <em>all</em> transactions (with <code>rc.getBlock()</code>), which are not labeled by sender or team. (So you will need to find a way to distinguish them.) Any robot can submit a transaction to the <strong>transaction pool</strong> with the function <code>rc.submitTransaction</code> and by paying, in <strong>soup</strong>, a <strong>transaction fee</strong> (think of it as a bid). At the end of each round, the 7 transactions in the <strong>transaction pool</strong> with the highest <strong>transaction fee</strong> are removed from the pool and added to that round’s <strong>block</strong>. For every round thereafter, those 7 transactions are visible to all robots at all times. Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block. Reading and submitting transactions are not considered actions, and thus do not interact with the cooldown.</p>
 <p>*(Ok technically it’s not a blockchain because it’s not hash-linked, it’s just a series of blocks, but otherwise it’s pretty similar.)</p>
 <h2 id="bytecode-limits">Bytecode Limits</h2>
 <p>Robots are also very limited in the amount of computation they are allowed to perform per <strong>turn</strong>. <strong>Bytecodes</strong> are a convenient measure of computation in languages like Java, where one Java bytecode corresponds roughly to one basic operation such as “subtract” or “get field”, and a single line of code generally contains several bytecodes. (For details see http://en.wikipedia.org/wiki/Java_bytecode) Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs. This is great, because it allows us to avoid using <em>time</em> as a measure of computation, which leads to problems such as nondeterminism. With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results–a feature you will find very useful for debugging.</p>
@@ -475,6 +475,26 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.1.0.9 (1/10/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>clarify that picked up units are frozen, including their cooldown</li>
+<li>clarify that cows don’t pollute when carried by a drone</li>
+<li>clarify that blockchain methods don’t incur cooldown</li>
+</ul></li>
+<li>client changes: none</li>
+<li>engine changes:
+<ul>
+<li>add conditions to documentation of canShootUnit, canDropUnit, canPickUpUnit</li>
+<li>fix bug where drones could pick up units that were already picked up by another drone</li>
+<li>dropUnit, pickUpUnit, shootUnit now all incur cooldown</li>
+<li>blockchain now only allows transaction of minimum cost 1</li>
+<li>fix bug where cow would continue to pollute at the location they were picked up</li>
+<li>fix bug where replay files would not always store the global pollution level</li>
+<li>internals: add option to limit the size of logs in replay files</li>
+</ul></li>
+</ul></li>
 <li>2020.1.0.8 (1/9/20)
 <ul>
 <li>spec changes: none</li>
