@@ -268,7 +268,8 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                             'blue_team': besteam.name,
                             'requested_by': team.id,
                             'ranked': True,
-                            'replay': replay_string
+                            'replay': replay_string,
+                            'status': 'queued'
                         }
 
                         ScrimSerial = ScrimmageSerializer(data=scrimmage)
