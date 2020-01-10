@@ -155,7 +155,7 @@ If the tile is empty, flooded, or contains another unit, the only effect is that
 
 - Produced by the **fulfillment center**
 - Can move into flooded tiles without dying, but not onto other **robots**.
-- Can perform the action `rc.pickUpUnit()` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
+- Can perform the action `rc.pickUpUnit()` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later. The picked up unit is freezes when picked up; it cannot execute any code, and its remaining cooldown is constant, until it is dropped by the drone.
 - Can perform the action `rc.dropUnit()` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
