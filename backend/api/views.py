@@ -231,69 +231,63 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
         if is_admin:
             teams = Team.objects.all()
             matches = set()
-
-            not_submitted = set()
-            ratings = {}
+            ratings = []
             submissions = {}
 
             for team in teams:
                 sub_id = TeamSubmission.objects.get(pk=team.id).last_1_id
                 submissions[team.id] = sub_id
+                if sub_id is not None:
+                    # The uniform random number prevents a sort from using a non-existent
+                    # team comparator.
+                    ratings.append((trueskill.Rating(mu=team.mu, sigma=team.sigma),
+                        random.uniform(0, 1),
+                        team))
 
-                if sub_id == None:
-                     not_submitted.add(team.id)
-                else:
-                    ratings[team.id] = trueskill.Rating(mu=team.mu, sigma=team.sigma)
+            # Partition into blocks, and round robin in each block
+            IDEAL_BLOCK_SIZE = 5
+            ratings.sort()
+            block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
+            num_blocks = len(block_sizes)
+            for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
+                block_sizes[i % num_blocks] += 1
+            random.shuffle(block_sizes)
 
-            teams_matches = set()
+            already_matched = 0
+            for size in block_sizes:
+                for i in range(size):
+                    for j in range(i+1, size):
+                        team_1 = ratings[already_matched+i][2]
+                        team_2 = ratings[already_matched+j][2]
 
-            for team in teams:
-                if team.id not in teams_matches and team.id not in not_submitted:
-                    besteam = None
-                    bestqual = None
-
-                    for potmatch in teams:
-                        if potmatch.id not in not_submitted and potmatch.id != team.id:
-                            this_qual = trueskill.quality_1vs1(ratings[team.id], ratings[potmatch.id])
-                            if bestqual == None or this_qual > bestqual:
-                                besteam = potmatch
-                                bestqual = this_qual
-
-                    if besteam != None:
-                        # make new scrimmage
                         replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
                         scrimmage = {
                             'league': 0,
-                            'red_team': team.name,
-                            'blue_team': besteam.name,
-                            'requested_by': team.id,
+                            'red_team': team_1.name,
+                            'blue_team': team_2.name,
+                            'requested_by': team_1.id,
                             'ranked': True,
                             'replay': replay_string,
                             'status': 'queued'
                         }
 
                         ScrimSerial = ScrimmageSerializer(data=scrimmage)
-
                         if not ScrimSerial.is_valid():
                             return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-
-                        srim = ScrimSerial.save()
+                        scrim = ScrimSerial.save()
 
                         # add to pub sub
                         scrimmage_server_data = {
                             'gametype': 'scrimmage',
-                            'gameid': str(srim.id),
-                            'player1': str(submissions[team.id]),
-                            'player2': str(submissions[besteam.id]),
+                            'gameid': str(scrim.id),
+                            'player1': str(submissions[team_1.id]),
+                            'player2': str(submissions[team_2.id]),
                             'maps': ','.join(get_random_maps(3)),
-                            'replay': srim.replay
+                            'replay': scrim.replay
                         }
-
                         data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
                         pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
-
-                        teams_matches.add(team.id)
-                        teams_matches.add(besteam.id)
+                already_matched += size
 
             return Response({'message': 'matches are generated!'}, status.HTTP_200_OK)
         else:
