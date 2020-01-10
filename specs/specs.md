@@ -254,6 +254,7 @@ Any robot can submit a transaction to the **transaction pool** with the function
 At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
 For every round thereafter, those 7 transactions are visible to all robots at all times.
 Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.
+Reading and submitting transactions are not considered actions, and thus do not interact with the cooldown.
 
 
 \*(Ok technically it's not a blockchain because it's not hash-linked, it's just a series of blocks, but otherwise it's pretty similar.)
