@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.0.8
+Current version: 2020.1.0.9
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -400,6 +400,20 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.0.9 (1/10/20)
+    - spec changes:
+        - clarify that picked up units are frozen, including their cooldown
+        - clarify that cows don't pollute when carried by a drone
+        - clarify that blockchain methods don't incur cooldown
+    - client changes: none
+    - engine changes:
+        - add conditions to documentation of canShootUnit, canDropUnit, canPickUpUnit
+        - fix bug where drones could pick up units that were already picked up by another drone
+        - dropUnit, pickUpUnit, shootUnit now all incur cooldown
+        - blockchain now only allows transaction of minimum cost 1
+        - fix bug where cow would continue to pollute at the location they were picked up
+        - fix bug where replay files would not always store the global pollution level
+        - internals: add option to limit the size of logs in replay files
 - 2020.1.0.8 (1/9/20)
     - spec changes: none
     - client changes:
