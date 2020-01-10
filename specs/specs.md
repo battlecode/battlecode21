@@ -410,7 +410,7 @@ We'll update this spec as the competition progresses.
         - add conditions to documentation of canShootUnit, canDropUnit, canPickUpUnit
         - fix bug where drones could pick up units that were already picked up by another drone
         - dropUnit, pickUpUnit, shootUnit now all incur cooldown
-        - blockchain now only allows transaction of minimum cost 1
+        - blockchain now has a minimum cost limit of 1 soup
         - fix bug where cow would continue to pollute at the location they were picked up
         - fix bug where replay files would not always store the global pollution level
         - internals: add option to limit the size of logs in replay files
