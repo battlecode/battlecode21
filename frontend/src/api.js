@@ -210,7 +210,7 @@ class Api {
 
   static searchRanking(apiURL, query, page, callback) {
     const encQuery = encodeURIComponent(query);
-    const teamUrl = `${apiURL}/?ordering=-mu,name&search=${encQuery}&page=${page}`;
+    const teamUrl = `${apiURL}/?ordering=-score,name&search=${encQuery}&page=${page}`;
     if ($.ajaxSettings && $.ajaxSettings.headers) {
       delete $.ajaxSettings.headers.Authorization;
     } // we should not require valid login for this. 
