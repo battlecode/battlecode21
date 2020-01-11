@@ -225,72 +225,74 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
 class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
 
-    def actually_generate_matches(self):
-        teams = Team.objects.all()
-        matches = set()
-        ratings = []
-        submissions = {}
+    @action(detail=False, methods=['get'])
+    def scrimmage_list(self, request):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            teams = Team.objects.all()
+            team_subs = TeamSubmission.objects.all()
+            ratings = []
+            has_sub = set()
+            scrim_list = []
 
-        for team in teams:
-            sub_id = TeamSubmission.objects.get(pk=team.id).last_1_id
-            submissions[team.id] = sub_id
-            if sub_id is not None:
-                # The uniform random number prevents a sort from using a non-existent
-                # team comparator.
-                ratings.append((trueskill.Rating(mu=team.mu, sigma=team.sigma),
-                    random.uniform(0, 1),
-                    team))
+            for team_sub in team_subs:
+                if team_sub.last_1_id is not None:
+                    has_sub.add(team_sub.team_id)
+            for team in teams:
+                if team.id in has_sub:
+                    # The uniform random number prevents a sort from using a non-existent team comparator.
+                    ratings.append((trueskill.Rating(mu=team.mu, sigma=team.sigma), random.uniform(0, 1), team))
+            ratings.sort()
 
-        # Partition into blocks, and round robin in each block
-        IDEAL_BLOCK_SIZE = 5
-        ratings.sort()
-        block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
-        num_blocks = len(block_sizes)
-        for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
-            block_sizes[i % num_blocks] += 1
-        random.shuffle(block_sizes)
+            # Partition into blocks, and round robin in each block
+            IDEAL_BLOCK_SIZE = 5
+            block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
+            num_blocks = len(block_sizes)
+            for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
+                block_sizes[i % num_blocks] += 1
+            random.shuffle(block_sizes)
 
-        already_matched = 0
-        for size in block_sizes:
-            for i in range(size):
-                for j in range(i+1, size):
-                    team_1 = ratings[already_matched+i][2]
-                    team_2 = ratings[already_matched+j][2]
+            already_matched = 0
+            for size in block_sizes:
+                for i in range(size):
+                    for j in range(i+1, size):
+                        scrim_list.append({
+                            "player1": ratings[already_matched+i][2].id,
+                            "player2": ratings[already_matched+j][2].id
+                        })
+                already_matched += size
+            return Response({'matches': scrim_list}, status.HTTP_200_OK)
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
-                    replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-                    scrimmage = {
-                        'league': 0,
-                        'red_team': team_1.name,
-                        'blue_team': team_2.name,
-                        'requested_by': team_1.id,
-                        'ranked': True,
-                        'replay': replay_string,
-                        'status': 'queued'
-                    }
+    def actually_generate_matches(self, request):
+        scrimmage_list = self.scrimmage_list(request).data['matches']
+        for scrim in scrimmage_list:
+            team_1 = Team.objects.get(pk=scrim["player1"])
+            team_2 = Team.objects.get(pk=scrim["player2"])
+            sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
+            sub_2 = TeamSubmission.objects.get(pk=team_2.id).last_1_id
+            scrimmage = {
+                'league': 0,
+                'red_team': team_1.name,
+                'blue_team': team_2.name,
+                'requested_by': team_1.id,
+                'ranked': True,
+                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+                'status': 'queued'
+            }
 
-                    ScrimSerial = ScrimmageSerializer(data=scrimmage)
-                    if not ScrimSerial.is_valid():
-                        return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-                    scrim = ScrimSerial.save()
-
-                    # add to pub sub
-                    scrimmage_server_data = {
-                        'gametype': 'scrimmage',
-                        'gameid': str(scrim.id),
-                        'player1': str(submissions[team_1.id]),
-                        'player2': str(submissions[team_2.id]),
-                        'maps': ','.join(get_random_maps(3)),
-                        'replay': scrim.replay
-                    }
-                    data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-                    pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
-            already_matched += size
+            ScrimSerial = ScrimmageSerializer(data=scrimmage)
+            if not ScrimSerial.is_valid():
+                return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
+            scrim = ScrimSerial.save()
+            scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
 
     @action(detail=False, methods=['post'])
     def generate_matches(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
-            threading.Thread(target=self.actually_generate_matches).start()
+            threading.Thread(target=self.actually_generate_matches, args=(request,)).start()
             return Response({'message': 'matches are being generated!'}, status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
