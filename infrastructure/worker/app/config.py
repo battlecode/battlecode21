@@ -1,12 +1,9 @@
 import os
-import logging, multiprocessing
+import logging
 
 # Configure logging format
 
-multiprocessing.log_to_stderr()
-multiprocessing.get_logger().handlers[0].setFormatter(logging.Formatter(
-    '%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s'))
-logging.getLogger().addHandler(multiprocessing.get_logger().handlers[0])
+logging.basicConfig(format='%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 logging.getLogger().setLevel(logging.INFO)
 
 
