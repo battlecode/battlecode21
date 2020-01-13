@@ -265,6 +265,43 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
+    @action(detail=False, methods=['post'])
+    def enqueue(self, request):
+            #         if 'tour_id' in request.data:
+            #     tour_id = request.data['tour_id'])
+            #     if not tour_id is None:
+            #         tour_id = int(tour_id)
+            # 'tournament_id': tour_id,
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            match_type = request.data.get("type")
+            if match_type == "scrimmage":
+                team_1 = Team.objects.get(pk=request.data.get("player1"))
+                team_2 = Team.objects.get(pk=request.data.get("player2"))
+                sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
+                sub_2 = TeamSubmission.objects.get(pk=team_2.id).last_1_id
+                scrimmage = {
+                    'league': 0,
+                    'red_team': team_1.name,
+                    'blue_team': team_2.name,
+                    'requested_by': team_1.id,
+                    'ranked': True,
+                    'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+                    'status': 'queued'
+                }
+
+                ScrimSerial = ScrimmageSerializer(data=scrimmage)
+                if not ScrimSerial.is_valid():
+                    return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
+                scrim = ScrimSerial.save()
+                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
+                return Response({'message': 'match has been enqueued'}, status.HTTP_200_OK)
+            else:
+                return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
+
+    # Kept only for reverse-compatibility with infrastructure, no longer needed
     def actually_generate_matches(self, request):
         scrimmage_list = self.scrimmage_list(request).data['matches']
         for scrim in scrimmage_list:
@@ -288,6 +325,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             scrim = ScrimSerial.save()
             scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
 
+    # Kept only for reverse-compatibility with infrastructure, no longer needed
     @action(detail=False, methods=['post'])
     def generate_matches(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
