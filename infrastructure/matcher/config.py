@@ -18,5 +18,5 @@ API_ENQUEUE = 'https://2020.battlecode.org/api/match/enqueue/'
 
 NUM_WORKER_THREADS = 10
 
-TOURNAMENT_SLEEP_TIME = 15
+TOURNAMENT_WORKER_TIMEOUT = 15
 FILE_TEAMNAMES = 'team_names'
