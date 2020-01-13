@@ -1074,9 +1074,12 @@ var activeTableTab = "activeTableTab";
 <pre>boolean&nbsp;canBuildRobot(<a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a>&nbsp;type,
                       <a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
 <div class="block">Tests whether the robot can build a robot of the given type in the
- given direction. Checks cooldown turns remaining,
- whether the robot can build, and that the given direction is
- not blocked.</div>
+ given direction. Checks that the robot can build the desired type,
+ that the team has enough soup, that the target location is on the map,
+ that the target location is not occupied, that the target location
+ is not flooded (unless trying to build a drone), that the dirt
+ difference is within <code>GameConstants.MAX_DIRT_DIFFERENCE</code>,
+ and that there are cooldown turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to build in</dd>
@@ -1102,9 +1105,8 @@ var activeTableTab = "activeTableTab";
 <dd><code>dir</code> - the direction to spawn the unit</dd>
 <dd><code>type</code> - the type of robot to build</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if you don't have enough soup, if
- the robot is still in cooldown, if the direction is not a
- good build direction, or if this robot is not of an appropriate type.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canBuildRobot</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1116,8 +1118,10 @@ var activeTableTab = "activeTableTab";
 <h4>canMineSoup</h4>
 <pre>boolean&nbsp;canMineSoup(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
 <div class="block">Tests whether the robot can mine soup in the given direction.
- Checks cooldown turns remaining, whether the robot can mine,
- and that the given direction has soup.</div>
+ Checks that the robot is a miner, that it has not yet reached
+ its soup limit, that the target location is on the map, that
+ there is soup on the target location, and that there are cooldown
+ turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to mine</dd>
@@ -1141,8 +1145,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to mine</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if this robot is not a miner, if
- the robot is still in cooldown, or if there is no soup to mine.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canMineSoup</code>
+ are all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1154,8 +1158,9 @@ var activeTableTab = "activeTableTab";
 <h4>canDepositSoup</h4>
 <pre>boolean&nbsp;canDepositSoup(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
 <div class="block">Tests whether the robot can deposit soup in the given direction.
- Checks cooldown turns remaining, whether the robot can deposit soup, whether
- the robot has crude soup, and that the given direction has a refinery (or HQ).</div>
+ Checks that the robot is a miner, that it is carrying soup, that
+ the target location is on the map, that there is a refinery (or HQ)
+ on the target location, and that there are cooldown turns remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to deposit soup</dd>
@@ -1179,9 +1184,8 @@ var activeTableTab = "activeTableTab";
 <dd><code>dir</code> - the direction to deposit soup</dd>
 <dd><code>amount</code> - the amount of soup to deposit</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if this robot is not a miner, if
- the robot is still in cooldown, if there is no crude soup to deposit,
- or if there is no refinery (or HQ).</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canDepositSoup</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1193,8 +1197,11 @@ var activeTableTab = "activeTableTab";
 <h4>canDigDirt</h4>
 <pre>boolean&nbsp;canDigDirt(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
 <div class="block">Tests whether the robot can dig dirt in the given direction.
- Checks cooldown turns remaining, whether the robot can dig,
- that the robot can carry more dirt, and that the location is valid.</div>
+ Checks that the robot is a landscaper, that it has not yet
+ reached its dirt limit, that the target location is on the map,
+ that it is not trying to dig underneath a building (that does
+ not already have dirt on top of it), and that cooldown turns
+ are remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to dig in</dd>
@@ -1216,9 +1223,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to dig in</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if this robot is not a landscaper, if
- the robot is still in cooldown, the robot cannot carry more dirt,
- or the location is not valid.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canDigDirt</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1230,8 +1236,9 @@ var activeTableTab = "activeTableTab";
 <h4>canDepositDirt</h4>
 <pre>boolean&nbsp;canDepositDirt(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</pre>
 <div class="block">Tests whether the robot can deposit dirt in the given direction.
- Checks cooldown turns remaining, whether the robot can deposit dirt,
- and whether the robot has dirt.</div>
+ Checks that the robot is a landscaper, that it is carrying at
+ least 1 unit of dirt, that the target location is on the map,
+ and that cooldown turns are remaining.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to deposit</dd>
@@ -1253,8 +1260,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to deposit</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if this robot is not a landscaper, if
- the robot is still in cooldown, if there is no dirt to deposit,</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canDepositDirt</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1292,9 +1299,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the id of the robot to pick up</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the robot is not of type DELIVERY_DRONE or cannot pick up
- a unit because it is already carrying a unit or if the unit to pick up is not in the radius
- of this robot.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canPickUpUnit</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>5</code></dd></dl>
 </li>
 </ul>
@@ -1330,8 +1336,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dir</code> - the direction to drop in</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the robot is not of type DELIVERY_DRONE or if the robot is not currently
- holding a unit that it can drop.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canDropUnit</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
@@ -1367,10 +1373,8 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the id of the unit to shoot</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the robot is not of type NET_GUN,
-  or the robot's action cooldown is not ready, or if the unit to
-  shoot down is not in the radius of this robot, or if the unit
-  cannot be shot down.</dd>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the conditions of <code>canShootUnit</code>
+ are not all satisfied.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
