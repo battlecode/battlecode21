@@ -213,7 +213,7 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        <p>Submissions are now disabled! Check back later.</p>
+                        <p>Submissions are currently disabled! Check back later.</p>
                     </div>
                 </div>
             )
