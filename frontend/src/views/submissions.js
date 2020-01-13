@@ -145,7 +145,7 @@ class Submissions extends Component {
         if (this.state.user.is_staff == true) {
             return true;
         }
-        if (this.state.league.game_released == true) {
+        if (this.state.league.submissions_enabled == true && this.state.league.game_released == true) {
             return true;
         }
         return false;
