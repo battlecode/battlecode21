@@ -1,5 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import Api from '../api';
 import UpdateCard from './updateCard';
 
@@ -8,34 +9,36 @@ class PerfCard extends UpdateCard {
         $().ready(function() {
             Api.getOwnTeamMuHistory(function(perf) {
                 console.log(perf)
-                // let data = perf.map(scrimRes => {
-                //     if (data.mu !== null) {
-                //         return {
-                //             x: new Date(scrimRes.date),
-                //             y: data.mu
-                //         }
-                //     }
-                    
-                // })
-                // perf = [1,2,3,4,5,6]
-                // var dataSales = {'series':[perf], 'labels':[]};
-                // console.log(dataSales)
-                // for (var i=perf.length-1; i>=0; i--)
-                //     dataSales.labels.push(i===0 ? "Now" : i + "hr ago");
+                let data = []
+                perf.forEach(scrimRes => {
+                    if (scrimRes.mu !== undefined && scrimRes.mu !== null)  {
+                        console.log(scrimRes.mu)
+                        data.push({
+                            x: new Date(scrimRes.date),
+                            y: scrimRes.mu
+                        })
+                    }
+                })
 
-                // window.Chartist.Line('#mu_chart', dataSales, {
-                //     low: 0,
-                //     height: "245px",
-                //     axisX: { showGrid: false, },
-                //     lineSmooth: window.Chartist.Interpolation.simple({
-                //         divisor: 3
-                //     }), showLine: true,
-                //     showPoint: false,
-                // }, [['screen and (max-width: 640px)', {
-                //     axisX: {
-                //         labelInterpolationFnc: v => v[0]
-                //     }
-                // }]]);
+                console.log(data)
+                window.Chartist.Line('#mu_chart', {series: [{
+                        name: "mu_data",
+                        data: data
+                    }]
+                }, {
+                    height: "245px",
+                    axisX: { 
+                        showGrid: false,
+                        type: window.Chartist.FixedScaleAxis,
+                        divisor: 5,
+                        labelInterpolationFnc: v => moment(v).format('MMM D')
+                    },
+                    lineSmooth: false,
+
+                    showLine: true,
+                    showPoint: true,
+                },
+                );
             });
         });
     }
