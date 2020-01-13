@@ -267,6 +267,11 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
+            #         if 'tour_id' in request.data:
+            #     tour_id = request.data['tour_id'])
+            #     if not tour_id is None:
+            #         tour_id = int(tour_id)
+            # 'tournament_id': tour_id,
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             match_type = request.data.get("type")
@@ -817,10 +822,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         try:
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
-            if 'tour_id' in request.data:
-                tour_id = request.data['tour_id'])
-                if not tour_id is None:
-                    tour_id = int(tour_id)
             # ranked = request.data['ranked'] == 'True'
             ranked = False
 
@@ -845,7 +846,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 'ranked': ranked,
                 'requested_by': this_team.id,
                 'replay': replay_string,
-                'tournament_id': tour_id,
             }
 
             # Check auto accept
