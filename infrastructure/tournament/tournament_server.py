@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import util, bracket
+import util, bracketlib
 from config import *
 
-import logging, threading, queue, time, requests, copy
-import queue
+import logging, threading, queue, time, requests
 
 
 class TournamentManager:
@@ -24,8 +23,8 @@ class TournamentManager:
             self.player2_name = player2_name
 
         def __str__(self):
-            return '[internal {0:>5}] [external {1:>5}] | {2} ({3}) -vs- {4} ({5})'.format(
-                self.internal_id, self.external_id,
+            return '[internal {0:>3}] [external {1:>5}] | {2} ({3}) -vs- {4} ({5})'.format(
+                self.internal_id, self.external_id if self.external_id != None else "?",
                 self.player1_pk, self.player1_name,
                 self.player2_pk, self.player2_name)
 
@@ -40,27 +39,28 @@ class TournamentManager:
          - team_names: a list of team names, used in human-readable log
                        outputs
         """
-        if not isinstance(bracket, Tournament):
+        if not isinstance(bracket, bracketlib.Tournament):
             raise TypeError("bracket must be a Tournament")
 
         self.bracket = bracket
         self.team_pk = team_pk
         self.team_names = team_names
+        self.remaining_games = len(self.bracket.matches)
+        self.lock = threading.Lock()
 
         self.match_is_prerequisite_of = []
         for idx, match in enumerate(self.bracket.matches):
             self.match_is_prerequisite_of += [[]]
-            if isinstance(match.player1, MatchResultPlayer):
-                self.match_is_prerequisite_of[match.player1.internal_id] += [(idx, 1)]
-            if isinstance(match.player2, MatchResultPlayer):
-                self.match_is_prerequisite_of[match.player2.internal_id] += [(idx, 2)]
-            # If this match is ready to be played, add it to the game queue
+            if isinstance(match.player1, bracketlib.MatchResultPlayer):
+                self.match_is_prerequisite_of[match.player1.match_idx] += [(idx, 1)]
+            if isinstance(match.player2, bracketlib.MatchResultPlayer):
+                self.match_is_prerequisite_of[match.player2.match_idx] += [(idx, 2)]
 
     def start(self):
         """Returns a list of matches that are initially ready to be queued"""
         ready = []
         for idx, match in enumerate(self.bracket.matches):
-            if isinstance(match.player1, Team) and isinstance(match.player2, Team):
+            if isinstance(match.player1, bracketlib.Team) and isinstance(match.player2, bracketlib.Team):
                 ready.append(TournamentManager.MatchInfo(idx,
                     self.team_pk[match.player1.team_id],
                     self.team_pk[match.player2.team_id],
@@ -76,25 +76,28 @@ class TournamentManager:
          - winner must be either 1 or 2
         Returns a list of matches that are ready to be queued as a result of this outcome.
         """
-        logging.info("Player {} wins match {j".format(winner, match))
         self.bracket.matches[match.internal_id].report_winner(winner)
+        self.remaining_games -= 1
 
         # Check if new matches are now ready to be played
         ready = []
         for next_match, playernum in self.match_is_prerequisite_of[match.internal_id]:
             # Update match player
             if playernum == 1:
-                self.bracket.matches[next_match].player1 = Team(self.bracket.matches[next_match].player1.get_team_id(self.bracket.matches))
+                self.bracket.matches[next_match].player1 = bracketlib.Team(self.bracket.matches[next_match].player1.get_team_id(self.bracket.matches))
             else:
-                self.bracket.matches[next_match].player2 = Team(self.bracket.matches[next_match].player2.get_team_id(self.bracket.matches))
+                self.bracket.matches[next_match].player2 = bracketlib.Team(self.bracket.matches[next_match].player2.get_team_id(self.bracket.matches))
             # Check if match is ready
-            if isinstance(self.bracket.matches[next_match].player1, Team) and isinstance(self.bracket.matches[next_match].player2, Team):
+            if isinstance(self.bracket.matches[next_match].player1, bracketlib.Team) and isinstance(self.bracket.matches[next_match].player2, bracketlib.Team):
                 ready.append(TournamentManager.MatchInfo(next_match,
                     self.team_pk[self.bracket.matches[next_match].player1.team_id],
                     self.team_pk[self.bracket.matches[next_match].player2.team_id],
                     self.team_names[self.bracket.matches[next_match].player1.team_id],
                     self.team_names[self.bracket.matches[next_match].player2.team_id]))
         return ready
+
+    def is_complete(self):
+        return self.remaining_games == 0
 
 
 def publish_match(player1, player2):
@@ -137,31 +140,35 @@ def get_match_winner(match):
 
 def run_tournament(num_players, team_pk, team_names):
     """Generates the tournament bracket and publishes it to the queue"""
-    tournament = bracket.DoubleEliminationTournament(num_players)
+    tournament = bracketlib.SingleEliminationTournament(num_players)
     tournament.generate_bracket()
-    manager = bracket.TournamentManager(tournament, team_pk, team_names)
+    manager = TournamentManager(tournament, team_pk, team_names)
 
     ready = queue.Queue()   # A list of matches ready to be queued
     monitor = queue.Queue() # A list of matches to monitor results on
-    complete = False
+
+    # Enqueue initial matches
+    for match in manager.start():
+        ready.put(match)
 
     def enqueue_worker():
         """A worker to enqueue matches"""
-        while not complete:
+        while not manager.is_complete():
             try:
                 match = ready.get(timeout=TOURNAMENT_WORKER_TIMEOUT)
             except queue.Empty:
                 logging.info('Found no match ready to queue')
                 continue
             try:
-                publish_match(match.player1_pk, match.player2_pk)
+                logging.info('Sending match: {}'.format(match))
+                match.external_id = publish_match(match.player1_pk, match.player2_pk)
                 monitor.put(match)
             except:
                 logging.error('Error enqueueing match: {}'.format(match))
 
     def dequeue_worker():
         """A worker to check for completed matches"""
-        while not complete:
+        while not manager.is_complete():
             try:
                 match = monitor.get(timeout=TOURNAMENT_WORKER_TIMEOUT)
             except queue.Empty:
@@ -174,7 +181,9 @@ def run_tournament(num_players, team_pk, team_names):
                     time.sleep(TOURNAMENT_WORKER_TIMEOUT) # Prevent spam
                     monitor.put(match)
                 else:
-                    matches = manager.report_winner(winner)
+                    logging.info('Player {} wins match {}'.format(winner, match))
+                    with manager.lock:
+                        matches = manager.report_winner(match, winner)
                     for match in matches:
                         ready.put(match)
             except:
@@ -187,7 +196,8 @@ def run_tournament(num_players, team_pk, team_names):
         threads.append(threading.Thread(target=dequeue_worker))
     for thread in threads:
         thread.start()
-    complete = True # TODO
+    for thread in threads:
+        thread.join()
 
 
 if __name__ == '__main__':

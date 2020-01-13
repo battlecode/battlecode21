@@ -12,7 +12,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 # Constants, parameters and configurations
 
-TOURNAMENT_SLEEP_TIME = 15 # Interval between checks on tournament match statuses
+NUM_WORKER_THREADS = 2
+TOURNAMENT_WORKER_TIMEOUT = 10
 
 API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
