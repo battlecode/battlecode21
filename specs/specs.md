@@ -406,7 +406,6 @@ We'll update this spec as the competition progresses.
     - client changes:
         - show correct values for "Dirt on this" and "Carrying dirt"
         - add hotkey 'H' to show shorter log headers
-        - fix icon for linux
         - select drone when clicking on drone holding another unit
         - fix bug where hotkeys would stop working when the tab was changed
     - engine changes:
