@@ -191,6 +191,9 @@ class Submissions extends Component {
                     </div>
                     <div className="content">
                         <p>
+                            <b>The deadline for the Sprint tournament is at 7 pm EST (less than 2 hours from now!). Submit your code using the button below.</b> For peace of mind, submit 15 minutes before and make sure it compiles and shows up under "Latest Submissions."
+                        </p>
+                        <p>
                             Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below.
                         </p>
                         <label htmlFor="file_upload">
@@ -210,7 +213,7 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        <p>Game not released; check back in January!</p>
+                        <p>Submissions are now disabled! Check back later.</p>
                     </div>
                 </div>
             )
