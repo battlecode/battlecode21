@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.0.9
+Current version: 2020.1.1.1
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -400,6 +400,25 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.1.1 (1/13/20)
+    - spec changes:
+        - clarify that map elevation is between `Integer.MIN_VALUE` and `Integer.MAX_VALUE`, not actually $-\infty$ and $\infty$
+    - client changes:
+        - show correct values for "Dirt on this" and "Carrying dirt"
+        - add hotkey 'H' to show shorter log headers
+        - select drone when clicking on drone holding another unit
+        - fix bug where hotkeys would stop working when the tab was changed
+    - engine changes:
+        - change minimum water elevation to `Integer.MIN_VALUE/2` so as to avoid problem with underflow
+        - change the hash function for maplocations to minimize the number of conflicts
+        - clarify javadocs for some action methods
+        - fix vulnerability where the bytecode limit could overflow
+        - fix vulnerability where initializing zero-dimensional array would cost 0
+        - fix bug where print statements could reach the bytecode limit in the middle, corrupting replays
+        - consequence: print log header for every print statement
+        - implement successful broadcasts tiebreak
+        - check more conditions in map validation
+        - make symmetric cows use the same seed for their movements, increasing fairness
 - 2020.1.0.9 (1/10/20)
     - spec changes:
         - clarify that picked up units are frozen, including their cooldown

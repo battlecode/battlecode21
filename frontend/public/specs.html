@@ -169,13 +169,13 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.0.9</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.1.1</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
 <h2 id="the-game-environment">The Game Environment</h2>
 <p>Battlecode 2020 is played by controlling <strong>robots</strong> on a rectangular grid called the <strong>map</strong>. Two teams of robots, <strong>red</strong> and <strong>blue</strong>, roam the map. Every <strong>round</strong>, each robot will get to take one <strong>turn</strong>, in spawn order. More on what they can do with that turn later.</p>
-<p>At the beginning of a match, at least one map tile will be <strong>flooded</strong>. On every round, each tile adjacent (the 8 neighbors) to a <strong>flooded</strong> tile whose <strong>elevation</strong> is below the <strong>water level</strong> will become <strong>flooded</strong>. Any robot on a <strong>flooded</strong> tile is destroyed, except <strong>delivery drones</strong>. If your <strong>HQ</strong> is destroyed, you lose. As the match goes on, the <strong>water level</strong> will increase at an increasing rate, flooding adjacent tiles if their <strong>elevation</strong> is too low. Elevations can be anywhere between <span class="math inline"> − ∞</span> and <span class="math inline">∞</span>. The water level at a given round is provided via the function <br /><span class="math display"><em>e</em><sup>0.0028<em>x</em> − 1.38sin (0.00157<em>x</em> − 1.73) + 1.38sin ( − 1.73)</sup> − 1,</span><br /> where <span class="math inline"><em>x</em></span> is the current round. That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:</p>
+<p>At the beginning of a match, at least one map tile will be <strong>flooded</strong>. On every round, each tile adjacent (the 8 neighbors) to a <strong>flooded</strong> tile whose <strong>elevation</strong> is below the <strong>water level</strong> will become <strong>flooded</strong>. Any robot on a <strong>flooded</strong> tile is destroyed, except <strong>delivery drones</strong>. If your <strong>HQ</strong> is destroyed, you lose. As the match goes on, the <strong>water level</strong> will increase at an increasing rate, flooding adjacent tiles if their <strong>elevation</strong> is too low. Elevations can be anywhere between <code>Integer.MIN_VALUE</code> and <code>Integer.MAX_VALUE</code> inclusive. The water level at a given round is provided via the function <br /><span class="math display"><em>e</em><sup>0.0028<em>x</em> − 1.38sin (0.00157<em>x</em> − 1.73) + 1.38sin ( − 1.73)</sup> − 1,</span><br /> where <span class="math inline"><em>x</em></span> is the current round. That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:</p>
 <table>
 <thead>
 <tr class="header">
@@ -475,6 +475,33 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.1.1.1 (1/13/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>clarify that map elevation is between <code>Integer.MIN_VALUE</code> and <code>Integer.MAX_VALUE</code>, not actually <span class="math inline"> − ∞</span> and <span class="math inline">∞</span></li>
+</ul></li>
+<li>client changes:
+<ul>
+<li>show correct values for “Dirt on this” and “Carrying dirt”</li>
+<li>add hotkey ‘H’ to show shorter log headers</li>
+<li>select drone when clicking on drone holding another unit</li>
+<li>fix bug where hotkeys would stop working when the tab was changed</li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>change minimum water elevation to <code>Integer.MIN_VALUE/2</code> so as to avoid problem with underflow</li>
+<li>change the hash function for maplocations to minimize the number of conflicts</li>
+<li>clarify javadocs for some action methods</li>
+<li>fix vulnerability where the bytecode limit could overflow</li>
+<li>fix vulnerability where initializing zero-dimensional array would cost 0</li>
+<li>fix bug where print statements could reach the bytecode limit in the middle, corrupting replays</li>
+<li>consequence: print log header for every print statement</li>
+<li>implement successful broadcasts tiebreak</li>
+<li>check more conditions in map validation</li>
+<li>make symmetric cows use the same seed for their movements, increasing fairness</li>
+</ul></li>
+</ul></li>
 <li>2020.1.0.9 (1/10/20)
 <ul>
 <li>spec changes:
