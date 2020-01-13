@@ -39,6 +39,11 @@ class RankCard extends Component {
 						<label>rank</label>
 						<h1 style={rankStyle}>{rankStr}</h1>
 					</div>
+					<br></br>
+					<p style={{textAlign: 'center'}}>
+						μ: {this.props.team.mu.toFixed(2)},
+						σ: {this.props.team.sigma.toFixed(2)}
+					</p>
 				</div>
 			</div>
 		)
@@ -65,10 +70,6 @@ class WinsCard extends Component {
 						<div className="row-items-box items-box-center items-box-skinny">
 							<label>wins</label>
 							<h1>{wins}</h1>
-						</div>
-						<div className="row-items-box items-box-center items-box-skinny">
-							<label>draws</label>
-							<h1>{draws}</h1>
 						</div>
 						<div className="row-items-box items-box-center items-box-skinny">
 							<label>losses</label>
@@ -109,7 +110,7 @@ class TeamInfo extends Component {
 							<div className="col-md-3">
 								<div className="container-fluid">
 									<div className="row">
-										<RankCard teamId={team.id}/>
+										<RankCard teamId={team.id} team={team}/>
 									</div>
 								</div>
 							</div>
@@ -123,7 +124,7 @@ class TeamInfo extends Component {
 							<div className="col-md-6">
 								<div className="container-fluid">
 									<div className="row">
-										<PerfCard team={team}/>
+										<PerfCard team={team.id}/>
 									</div>
 								</div>
 							</div>

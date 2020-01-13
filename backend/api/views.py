@@ -17,7 +17,7 @@ from google.cloud import pubsub_v1
 from google.oauth2 import service_account
 import trueskill
 
-import os, tempfile, datetime, argparse, time, json, random, binascii
+import os, tempfile, datetime, argparse, time, json, random, binascii, threading
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
@@ -226,76 +226,74 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
 
     @action(detail=False, methods=['get'])
-    def generate_matches(self, request):
+    def scrimmage_list(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             teams = Team.objects.all()
-            matches = set()
+            team_subs = TeamSubmission.objects.all()
+            ratings = []
+            has_sub = set()
+            scrim_list = []
 
-            not_submitted = set()
-            ratings = {}
-            submissions = {}
-
+            for team_sub in team_subs:
+                if team_sub.last_1_id is not None:
+                    has_sub.add(team_sub.team_id)
             for team in teams:
-                sub_id = TeamSubmission.objects.get(pk=team.id).last_1_id
-                submissions[team.id] = sub_id
+                if team.id in has_sub:
+                    # The uniform random number prevents a sort from using a non-existent team comparator.
+                    ratings.append((trueskill.Rating(mu=team.mu, sigma=team.sigma), random.uniform(0, 1), team))
+            ratings.sort()
 
-                if sub_id == None:
-                     not_submitted.add(team.id)
-                else:
-                    ratings[team.id] = trueskill.Rating(mu=team.mu, sigma=team.sigma)
+            # Partition into blocks, and round robin in each block
+            IDEAL_BLOCK_SIZE = 5
+            block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
+            num_blocks = len(block_sizes)
+            for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
+                block_sizes[i % num_blocks] += 1
+            random.shuffle(block_sizes)
 
-            teams_matches = set()
+            already_matched = 0
+            for size in block_sizes:
+                for i in range(size):
+                    for j in range(i+1, size):
+                        scrim_list.append({
+                            "player1": ratings[already_matched+i][2].id,
+                            "player2": ratings[already_matched+j][2].id
+                        })
+                already_matched += size
+            return Response({'matches': scrim_list}, status.HTTP_200_OK)
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
-            for team in teams:
-                if team.id not in teams_matches and team.id not in not_submitted:
-                    besteam = None
-                    bestqual = None
+    def actually_generate_matches(self, request):
+        scrimmage_list = self.scrimmage_list(request).data['matches']
+        for scrim in scrimmage_list:
+            team_1 = Team.objects.get(pk=scrim["player1"])
+            team_2 = Team.objects.get(pk=scrim["player2"])
+            sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
+            sub_2 = TeamSubmission.objects.get(pk=team_2.id).last_1_id
+            scrimmage = {
+                'league': 0,
+                'red_team': team_1.name,
+                'blue_team': team_2.name,
+                'requested_by': team_1.id,
+                'ranked': True,
+                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
+                'status': 'queued'
+            }
 
-                    for potmatch in teams:
-                        if potmatch.id not in not_submitted and potmatch.id != team.id:
-                            this_qual = trueskill.quality_1vs1(ratings[team.id], ratings[potmatch.id])
-                            if bestqual == None or this_qual > bestqual:
-                                besteam = potmatch
-                                bestqual = this_qual
+            ScrimSerial = ScrimmageSerializer(data=scrimmage)
+            if not ScrimSerial.is_valid():
+                return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
+            scrim = ScrimSerial.save()
+            scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
 
-                    if besteam != None:
-                        # make new scrimmage
-                        replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-                        scrimmage = {
-                            'league': 0,
-                            'red_team': team.name,
-                            'blue_team': besteam.name,
-                            'requested_by': team.id,
-                            'ranked': True,
-                            'replay': replay_string,
-                            'status': 'queued'
-                        }
-
-                        ScrimSerial = ScrimmageSerializer(data=scrimmage)
-
-                        if not ScrimSerial.is_valid():
-                            return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-
-                        srim = ScrimSerial.save()
-
-                        # add to pub sub
-                        scrimmage_server_data = {
-                            'gametype': 'scrimmage',
-                            'gameid': str(srim.id),
-                            'player1': str(submissions[team.id]),
-                            'player2': str(submissions[besteam.id]),
-                            'maps': ','.join(get_random_maps(3)),
-                            'replay': srim.replay
-                        }
-
-                        data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-                        pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
-
-                        teams_matches.add(team.id)
-                        teams_matches.add(besteam.id)
-
-            return Response({'message': 'matches are generated!'}, status.HTTP_200_OK)
+    @action(detail=False, methods=['post'])
+    def generate_matches(self, request):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            threading.Thread(target=self.actually_generate_matches, args=(request,)).start()
+            return Response({'message': 'matches are being generated!'}, status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
@@ -372,14 +370,14 @@ class TeamViewSet(viewsets.GenericViewSet,
     # NOTE: IF THE TEAM SEARCH IS EVER SLOW, REMOVE TEAM SEARCH BY USERNAME
     # it is nice to have it, but will certainly take more time to evaluate
     search_fields = ('name','users__username')
-    ordering_fields = ('mu', 'name')
-    ordering = ('name', 'id')
+    ordering_fields = ('score','name')
+    ordering = ('score','name')
 
     def get_queryset(self):
         """
         Only teams within the league are visible.
         """
-        return Team.objects.all().exclude(deleted=True).order_by('name', 'id').filter(league_id=self.kwargs['league_id'])
+        return Team.objects.all().exclude(deleted=True).filter(league_id=self.kwargs['league_id'])
 
     def list(self, request, *args, **kwargs):
         """
@@ -463,14 +461,18 @@ class TeamViewSet(viewsets.GenericViewSet,
     @action(methods=['get'], detail=True)
     def ranking(self, request, league_id, pk=None):
         cur_place = 0
+        num_same = 0
         latest_mu = None
-        for team in Team.objects.order_by('-mu'):
-            if latest_mu is None or team.mu != latest_mu:
-                cur_place += 1
-                latest_mu = team.mu
+        for team in Team.objects.order_by('-score'):
+            cur_place += 1
+            if team.score == latest_mu:
+                num_same += 1
+            else:
+                num_same = 0
+            latest_mu = team.score
 
             if team.id == int(pk):
-                return Response({'ranking': cur_place}, status.HTTP_200_OK)
+                return Response({'ranking': cur_place-num_same}, status.HTTP_200_OK)
 
         return Response({'message': 'Team not found'}, status.HTTP_404_NOT_FOUND)
 
@@ -486,12 +488,14 @@ class TeamViewSet(viewsets.GenericViewSet,
         return_data = []
 
         # loop through all scrimmages involving this team
+        # only add ranked scriammges
         # add entry to result array defining whether or not this team won and time of scrimmage
         for scrimmage in scrimmages:
-            won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
-            won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
-            team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-            return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
+            if (scrimmage.ranked):
+                won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
+                won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
+                team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
+                return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
 
@@ -584,6 +588,10 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
+        team.sigma = 8.333
+        team.score = team.mu - 3 * team.sigma
+        team.save()
+
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
         # call to compile server
@@ -633,6 +641,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 if comp_status == 1: #compilation failed
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
                     if submission.id != team_sub.compiling_id:
+                        submission.save()
                         return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_200_OK)
                     team_sub.compiling_id = None
                     team_sub.last_3_id = team_sub.last_2_id
@@ -893,14 +902,14 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
 
-                    if scrimmage.ranked: # TODO check if ranked
-                        # update rankings based on trueskill algoirthm
-                        # get team info
-                        rteam = self.get_team(league_id, scrimmage.red_team_id)
-                        bteam = self.get_team(league_id, scrimmage.blue_team_id)
-                        won = rteam if sc_status == "redwon" else bteam
-                        lost = rteam if sc_status == "bluewon" else bteam
+                    # update rankings based on trueskill algoirthm
+                    # get team info
+                    rteam = self.get_team(league_id, scrimmage.red_team_id)
+                    bteam = self.get_team(league_id, scrimmage.blue_team_id)
+                    won = rteam if sc_status == "redwon" else bteam
+                    lost = rteam if sc_status == "bluewon" else bteam
                         
+                    if scrimmage.ranked: # TODO check if ranked
                         # store previous mu in scrimmage
                         scrimmage.blue_mu = bteam.mu
                         scrimmage.red_mu = rteam.mu
@@ -921,8 +930,13 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                         lost.mu = lScore.mu
                         lost.sigma = lScore.sigma
 
-                        won.save()
-                        lost.save()
+                    # update wins and losses
+                    won.wins = won.wins + 1
+                    lost.losses = lost.losses + 1
+
+                    won.save()
+                    lost.save()
+
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:

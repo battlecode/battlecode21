@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.0.8
+Current version: 2020.1.0.9
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -25,7 +25,7 @@ On every round, each tile adjacent (the 8 neighbors) to a **flooded** tile whose
 Any robot on a **flooded** tile is destroyed, except **delivery drones**.
 If your **HQ** is destroyed, you lose.
 As the match goes on, the **water level** will increase at an increasing rate, flooding adjacent tiles if their **elevation** is too low.
-Elevations can be anywhere between $-\infty$ and $\infty$.
+Elevations can be anywhere between `Integer.MIN_VALUE` and `Integer.MAX_VALUE` inclusive.
 The water level at a given round is provided via the function $$e^{0.0028x-1.38\sin(0.00157x-1.73)+1.38\sin(-1.73)}-1,$$ where $x$ is the current round.
 That means the following elevations will be flooded at the corresponding rounds, if adjacent to a flooded tile:
 
@@ -155,7 +155,7 @@ If the tile is empty, flooded, or contains another unit, the only effect is that
 
 - Produced by the **fulfillment center**
 - Can move into flooded tiles without dying, but not onto other **robots**.
-- Can perform the action `rc.pickUpUnit()` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later.
+- Can perform the action `rc.pickUpUnit()` to pick up a single **unit** from an adjacent tile, removing it from the map, to be placed later. The picked up unit is frozen; it cannot execute any code and its remaining cooldown is constant, until it is dropped by the drone.
 - Can perform the action `rc.dropUnit()` to place the currently held **unit** on an adjacent empty or flooded tile, but not onto another **robot**.
 - When a **delivery drone** is destroyed, if it is holding a unit, that unit is placed on the tile where the drone died.
 - If the unit is placed on a flooded tile and is not a drone, it is destroyed as usual.
@@ -236,7 +236,7 @@ They move around the map at random, with a base cooldown of 2.
 However, cows are similar to other units:
 
 - They die if the end up on a **flooded** tile.
-- They can be picked up by **drones** (ideally, towards the enemy team).
+- They can be picked up by **drones** (ideally, towards the enemy team). While carried by a drone, they don't pollute.
 
 Initial cow positions are a property of the map, and some maps may not have any.
 
@@ -254,6 +254,7 @@ Any robot can submit a transaction to the **transaction pool** with the function
 At the end of each round, the 7 transactions in the **transaction pool** with the highest **transaction fee** are removed from the pool and added to that round's **block**.
 For every round thereafter, those 7 transactions are visible to all robots at all times.
 Transactions which were not in the top 7 stay in the transaction pool and continue to be eligible until they are added to a block.
+Reading and submitting transactions are not considered actions, and thus do not interact with the cooldown.
 
 
 \*(Ok technically it's not a blockchain because it's not hash-linked, it's just a series of blocks, but otherwise it's pretty similar.)
@@ -399,6 +400,20 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.0.9 (1/10/20)
+    - spec changes:
+        - clarify that picked up units are frozen, including their cooldown
+        - clarify that cows don't pollute when carried by a drone
+        - clarify that blockchain methods don't incur cooldown
+    - client changes: none
+    - engine changes:
+        - add conditions to documentation of canShootUnit, canDropUnit, canPickUpUnit
+        - fix bug where drones could pick up units that were already picked up by another drone
+        - dropUnit, pickUpUnit, shootUnit now all incur cooldown
+        - blockchain now has a minimum cost limit of 1 soup
+        - fix bug where cow would continue to pollute at the location they were picked up
+        - fix bug where replay files would not always store the global pollution level
+        - internals: add option to limit the size of logs in replay files
 - 2020.1.0.8 (1/9/20)
     - spec changes: none
     - client changes:

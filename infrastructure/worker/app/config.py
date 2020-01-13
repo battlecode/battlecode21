@@ -1,12 +1,9 @@
 import os
-import logging, multiprocessing
+import logging
 
 # Configure logging format
 
-multiprocessing.log_to_stderr()
-multiprocessing.get_logger().handlers[0].setFormatter(logging.Formatter(
-    '%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s'))
-logging.getLogger().addHandler(multiprocessing.get_logger().handlers[0])
+logging.basicConfig(format='%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 logging.getLogger().setLevel(logging.INFO)
 
 
@@ -22,7 +19,7 @@ SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
 TIMEOUT_UNZIP   = 30   # Maximum execution time for unzipping submission archive
-TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
+TIMEOUT_PULL    = 150   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300  # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 

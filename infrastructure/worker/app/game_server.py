@@ -144,7 +144,7 @@ def game_worker(gameinfo):
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
         # Interpret game result
-        server_output = result[1].decode().split('\n')
+        server_output = result[1].split('\n')
 
         wins = [0, 0]
         try:

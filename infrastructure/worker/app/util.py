@@ -1,7 +1,14 @@
 from config import *
 
-import subprocess, threading
-import requests, json
+import os, subprocess, signal, threading, logging, requests
+
+class NoTimer:
+    def __init__(self):
+        pass
+    def start(self):
+        pass
+    def cancel(self):
+        pass
 
 def monitor_command(command, cwd, timeout=0):
     """
@@ -9,18 +16,27 @@ def monitor_command(command, cwd, timeout=0):
     Returns (exitcode, stdout, stderr) upon completion.
     Upon timeout, exitcode is -9 (on UNIX only)
     """
-    subproc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+
+    return_code = None
+    subproc = subprocess.Popen(command,
+         stdout=subprocess.PIPE,
+         stderr=subprocess.PIPE,
+         cwd=cwd,
+         preexec_fn=os.setsid)
+
+    to = NoTimer()
     if timeout > 0:
-        to = threading.Timer(timeout, subproc.kill)
-        try:
-            to.start()
-            proc_stdout, proc_stderr = subproc.communicate()
-            return (subproc.returncode, proc_stdout, proc_stderr)
-        finally:
-            to.cancel()
-    else:
+        to = threading.Timer(timeout, os.killpg, (os.getpgid(subproc.pid), signal.SIGKILL))
+    try:
+        to.start()
+        for line in subproc.stderr:
+            line = line.decode()[:-1] # Remove trailing newline
+            logging.info("[subprocess stderr]  {}".format(line))
         proc_stdout, proc_stderr = subproc.communicate()
-        return (subproc.returncode, proc_stdout, proc_stderr)
+        return (subproc.returncode, proc_stdout.decode(), proc_stderr.decode())
+    finally:
+        to.cancel()
+
 
 def pull_distribution(cwd, onerror):
     """Updates the distribution, using the gradle update task"""
@@ -42,6 +58,6 @@ def get_api_auth_token():
             'password': API_PASSWORD
         })
         response.raise_for_status()
-        return json.loads(response.text)['access']
+        return response.json()['access']
     except:
         logging.error('Could not obtain API authentication token')
