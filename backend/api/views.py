@@ -488,12 +488,14 @@ class TeamViewSet(viewsets.GenericViewSet,
         return_data = []
 
         # loop through all scrimmages involving this team
+        # only add ranked scriammges
         # add entry to result array defining whether or not this team won and time of scrimmage
         for scrimmage in scrimmages:
-            won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
-            won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
-            team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-            return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
+            if (scrimmage.ranked):
+                won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
+                won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
+                team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
+                return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
 

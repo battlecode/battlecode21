@@ -188,7 +188,7 @@ class Home extends Component {
                                         <LinksCard />
                                 </div>
                                 <div className="row">
-                                        {this.state.on_team && <PerfCard />}
+                                        {this.state.on_team && <PerfCard team={null} />}
                                 </div>
                             </div>
                         </div>

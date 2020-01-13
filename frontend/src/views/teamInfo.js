@@ -124,7 +124,7 @@ class TeamInfo extends Component {
 							<div className="col-md-6">
 								<div className="container-fluid">
 									<div className="row">
-										<PerfCard team={team}/>
+										<PerfCard team={team.id}/>
 									</div>
 								</div>
 							</div>

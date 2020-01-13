@@ -5,14 +5,19 @@ import Api from '../api';
 import UpdateCard from './updateCard';
 
 class PerfCard extends UpdateCard {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+
     componentDidMount() {
+        const team = this.props.team
+
         $().ready(function() {
-            Api.getOwnTeamMuHistory(function(perf) {
-                console.log(perf)
+            const graphFunc = function(perf) {
                 let data = []
                 perf.forEach(scrimRes => {
                     if (scrimRes.mu !== undefined && scrimRes.mu !== null)  {
-                        console.log(scrimRes.mu)
                         data.push({
                             x: new Date(scrimRes.date),
                             y: scrimRes.mu
@@ -20,7 +25,14 @@ class PerfCard extends UpdateCard {
                     }
                 })
 
-                console.log(data)
+                data.sort((pt1, pt2) => {
+                    if (pt1.x == pt2.x) {
+                        return 0
+                    } else {
+                        return (pt1.x > pt2.x) ? 1 : -1
+                    }
+                })
+
                 window.Chartist.Line('#mu_chart', {series: [{
                         name: "mu_data",
                         data: data
@@ -36,10 +48,16 @@ class PerfCard extends UpdateCard {
                     lineSmooth: false,
 
                     showLine: true,
-                    showPoint: true,
+                    showPoint: false,
                 },
                 );
-            });
+            }
+
+            if (team === null) {
+                Api.getOwnTeamMuHistory(graphFunc)
+            } else {
+                Api.getTeamMuHistory(team, graphFunc)
+            }
         });
     }
 
