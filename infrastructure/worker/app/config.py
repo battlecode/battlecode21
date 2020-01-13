@@ -19,7 +19,7 @@ SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
 TIMEOUT_UNZIP   = 30   # Maximum execution time for unzipping submission archive
-TIMEOUT_PULL    = 30   # Maximum execution time for updating distribution
+TIMEOUT_PULL    = 150   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300  # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 3600 # Maximum execution time for game running
 
