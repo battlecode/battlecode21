@@ -267,15 +267,10 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
-            #         if 'tour_id' in request.data:
-            #     tour_id = request.data['tour_id'])
-            #     if not tour_id is None:
-            #         tour_id = int(tour_id)
-            # 'tournament_id': tour_id,
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             match_type = request.data.get("type")
-            if match_type == "scrimmage":
+            if match_type == "scrimmage" or match_type == "tour_scrimmage":
                 team_1 = Team.objects.get(pk=request.data.get("player1"))
                 team_2 = Team.objects.get(pk=request.data.get("player2"))
                 sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
@@ -289,6 +284,10 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
                     'status': 'queued'
                 }
+
+                if match_type == "tour_scrimmage":
+                    tour_id = int(request.data.get("tournament_id"))
+                    scrimmage['tournament_id'] = tour_id
 
                 ScrimSerial = ScrimmageSerializer(data=scrimmage)
                 if not ScrimSerial.is_valid():
