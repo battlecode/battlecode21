@@ -9,6 +9,7 @@ from rest_framework import permissions, status, mixins, viewsets, filters
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from django.shortcuts import get_object_or_404
 from api.serializers import *
 from api.permissions import *
 
@@ -829,12 +830,12 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, league_id, team, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
-        # TODO actually serialize what's being returned
+        queryset = self.get_queryset()
         if is_admin:
-            scrimmage_queried = Scrimmage.objects.get(pk=pk)
-        else:
-            scrimmage_queried = self.get_queryset().get(pk=pk)
-        return Response({'message': str(scrimmage_queried.status)}, status.HTTP_200_OK)
+            queryset = Scrimmage.objects.all()
+        scrimmage_queried = get_object_or_404(queryset, pk=pk)
+        scrimmage_serializer = ScrimmageSerializer(scrimmage_queried)
+        return Response(scrimmage_serializer.data)
 
     def create(self, request, league_id, team):
         try:
