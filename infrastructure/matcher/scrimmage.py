@@ -14,11 +14,13 @@ def worker():
     while True:
         scrim = scrim_queue.get()
         logging.info('Enqueueing scrimmage: {}'.format(scrim))
-        util.enqueue({
+        result = util.enqueue({
             'type': 'scrimmage',
             'player1': scrim['player1'],
             'player2': scrim['player2']
         })
+        if result == None:
+            scrim_queue.put(scrim)
 
 @sched.scheduled_job('cron', minute=0)
 def matchmake():

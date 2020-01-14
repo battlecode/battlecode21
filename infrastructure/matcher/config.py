@@ -19,4 +19,10 @@ API_ENQUEUE = 'https://2020.battlecode.org/api/match/enqueue/'
 NUM_WORKER_THREADS = 10
 
 TOURNAMENT_WORKER_TIMEOUT = 15
-FILE_TEAMNAMES = 'team_names'
+
+def api_match_status(gameid):
+    """
+    Returns the API link for obtaining the status of a scrimmage
+    gameid: the ID of the game
+    """
+    return 'https://2020.battlecode.org/api/0/scrimmage/{}/'.format(gameid)
