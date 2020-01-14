@@ -814,7 +814,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter(Q(red_team=team) | Q(blue_team=team))
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=None)) 
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
