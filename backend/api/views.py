@@ -986,6 +986,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
+                elif sc_status == "error":
+                    scrimmage.status = sc_status
+
+                    scrimmage.save()
+                    return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:

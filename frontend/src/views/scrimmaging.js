@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Api from '../api';
+import Floater from 'react-floater';
 
 import ScrimmageRequestor from '../components/scrimmageRequestor';
 
@@ -103,16 +104,30 @@ class ScrimmageHistory extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                { this.state.scrimmages.map(s => (
-                                    <tr key={s.id}>
-                                        <td>{ s.date }</td>
-                                        <td>{ s.time }</td>
-                                        <td>{ s.status }</td>
-                                        <td>{ s.team }</td>
-                                        <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
-                                        { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/visualizer.html?${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.bc20`} target="_blank">Watch</a></td>:<td>N/A</td> }
-                                    </tr>
-                                )) }
+                                { this.state.scrimmages.map(s => {
+                                    let stat_row = <td>{ s.status }</td>
+                                    if (s.status.toLowerCase() == "error") {
+                                        stat_row = (
+                                        <td>
+                                            { s.status } 
+                                            <Floater content={
+                                                <div>
+                                                <p>Our server has run into an error running this scrimmage. Don't worry, we're working on resolving it!</p></div> } showCloseButton={true}>
+                                                 <i className="pe-7s-info pe-fw" />
+                                            </Floater>
+                                        </td>)
+                                    }
+                                    return (
+                                        <tr key={s.id}>
+                                            <td>{ s.date }</td>
+                                            <td>{ s.time }</td>
+                                            { stat_row }
+                                            <td>{ s.team }</td>
+                                            <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
+                                            { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/visualizer.html?${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.bc20`} target="_blank">Watch</a></td>:<td>N/A</td> }
+                                        </tr>
+                                    )
+                                }) }
                             </tbody>
                         </table>
                     </div>
