@@ -16,7 +16,7 @@ class TournamentManager:
     class MatchInfo:
         def __init__(self, internal_id, player1_pk, player2_pk, player1_name, player2_name, round_name):
             self.internal_id = internal_id # The internally known id of the match
-            self.external_ids = None       # The match id assigned by the backend database
+            self.external_ids = []         # The match id assigned by the backend database
             self.player1_pk = player1_pk
             self.player2_pk = player2_pk
             self.player1_name = player1_name
@@ -104,11 +104,11 @@ class TournamentManager:
         return self.remaining_games == 0
 
 
-def get_match_winner(match, game_idx):
+def get_match_winner(match_id):
     """Checks the status of a match, returning either 1, 2 or None"""
     try:
         auth_token = util.get_api_auth_token()
-        response = requests.get(url=api_match_status(match.external_ids[game_idx]), headers={
+        response = requests.get(url=api_match_status(match_id), headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
@@ -121,7 +121,7 @@ def get_match_winner(match, game_idx):
         else:
             raise RuntimeError('Unexpected match status: {}'.format(response.text))
     except Exception as e:
-        logging.error('Could not get match winner', exc_info=e)
+        logging.error('Could not get match winner (game id={})'.format(match_id), exc_info=e)
         return None
 
 
@@ -146,18 +146,19 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
             except queue.Empty:
                 logging.info('Found no match ready to queue')
                 continue
+            match.external_ids = [None] * len(maps[match.round_name])
             for index, one_map in enumerate(maps[match.round_name]):
                 while True:
                     try:
                         logging.info('Sending match: map={} | {}'.format(one_map, match))
-                        match.external_id = util.enqueue({
+                        match.external_ids[index] = util.enqueue({
                             'type': 'tour_scrimmage',
                             'tournament_id': tournament_id,
                             'player1': match.player1_pk if index != 1 else match.player2_pk,
                             'player2': match.player2_pk if index != 1 else match.player1_pk,
                             'map_ids': one_map
                         })
-                        assert (match.external_id != None)
+                        assert (match.external_ids[index] != None)
                         monitor.put(match)
                     except:
                         logging.error('Error enqueueing match: map={} | {}'.format(one_map, match))
@@ -180,9 +181,9 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
             for index, one_map in enumerate(maps[match.round_name]):
                 complete = False
                 try:
-                    winner = get_match_winner(match, index)
+                    winner = get_match_winner(match.external_ids[index])
                     if winner == None:
-                        logging.info('Winner not yet declared for match: {}'.format(match))
+                        logging.info('Winner not yet declared for match: map={} | {}'.format(one_map, match))
                         time.sleep(TOURNAMENT_WORKER_TIMEOUT) # Prevent spam
                         monitor.put(match)
                         break
@@ -194,7 +195,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                         complete = True
                         continue
                 except:
-                    logging.error('Error monitoring match: {}'.format(match))
+                    logging.error('Error monitoring match: map={} | {}'.format(one_map, match))
                     monitor.put(match)
                     time.sleep(TOURNAMENT_WORKER_TIMEOUT)
                     break
