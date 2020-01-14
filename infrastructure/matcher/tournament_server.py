@@ -16,7 +16,6 @@ class TournamentManager:
     class MatchInfo:
         def __init__(self, internal_id, player1_pk, player2_pk, player1_name, player2_name, round_name):
             self.internal_id = internal_id # The internally known id of the match
-            self.external_ids = []         # The match id assigned by the backend database
             self.player1_pk = player1_pk
             self.player2_pk = player2_pk
             self.player1_name = player1_name
@@ -48,6 +47,8 @@ class TournamentManager:
         self.team_pk = team_pk
         self.team_names = team_names
         self.remaining_games = len(self.bracket.matches)
+        self.external_ids = [[] for match in self.bracket.matches]
+        self.replays = [None for match in self.bracket.matches]
         self.lock = threading.Lock()
 
         self.match_is_prerequisite_of = []
@@ -104,26 +105,31 @@ class TournamentManager:
         return self.remaining_games == 0
 
 
-def get_match_winner(match_id):
-    """Checks the status of a match, returning either 1, 2 or None"""
+def get_match_result(match_id):
+    """
+    Checks the status of a match, returning a tuple winner, replay
+    winner is either 1, 2 or None
+    replay is set to the replay string, only if winner is defined
+    """
     try:
         auth_token = util.get_api_auth_token()
         response = requests.get(url=api_match_status(match_id), headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
-        status = response.json()['status']
+        result = response.json()
+        status, replay = result['status'], result['replay']
         if status == 'redwon':
-            return 1
+            return 1, replay
         elif status == 'bluewon':
-            return 2
+            return 2, replay
         elif status == 'queued':
-            return None
+            return None, None
         else:
             raise RuntimeError('Unexpected match status: {}'.format(response.text))
     except Exception as e:
         logging.error('Could not get match winner (game id={})'.format(match_id), exc_info=e)
-        return None
+        return None, None
 
 
 def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
@@ -147,19 +153,21 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
             except queue.Empty:
                 logging.info('Found no match ready to queue')
                 continue
-            match.external_ids = [None] * len(maps[match.round_name])
+            with manager.lock:
+                manager.external_ids[match.internal_id] = [None] * len(maps[match.round_name])
+                manager.replays[match.internal_id] = [None] * len(maps[match.round_name])
             for index, one_map in enumerate(maps[match.round_name]):
                 while True:
                     try:
                         logging.info('Sending match: map={} | {}'.format(one_map, match))
-                        match.external_ids[index] = util.enqueue({
+                        manager.external_ids[match.internal_id][index] = util.enqueue({
                             'type': 'tour_scrimmage',
                             'tournament_id': tournament_id,
                             'player1': match.player1_pk if index != 1 else match.player2_pk,
                             'player2': match.player2_pk if index != 1 else match.player1_pk,
                             'map_ids': one_map
                         })
-                        assert (match.external_ids[index] != None)
+                        assert (manager.external_ids[match.internal_id][index] != None)
                     except:
                         logging.error('Error enqueueing match: map={} | {}'.format(one_map, match))
                         time.sleep(TOURNAMENT_WORKER_TIMEOUT)
@@ -177,11 +185,12 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                 continue
 
             wins = [None, 0, 0]
+            replays = [None] * len(maps[match.round_name])
             complete = True
             for index, one_map in enumerate(maps[match.round_name]):
                 complete = False
                 try:
-                    winner = get_match_winner(match.external_ids[index])
+                    winner, replays[index] = get_match_result(manager.external_ids[match.internal_id][index])
                     if winner == None:
                         logging.info('Winner not yet declared for match: map={} | {}'.format(one_map, match))
                         time.sleep(TOURNAMENT_WORKER_TIMEOUT) # Prevent spam
@@ -207,6 +216,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                     wins[1], wins[2]))
                 with manager.lock:
                     matches = manager.report_winner(match, winner)
+                    manager.replays[match.internal_id] = replays
                 for match in matches:
                     ready.put(match)
 
@@ -219,6 +229,10 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
         thread.start()
     for thread in threads:
         thread.join()
+
+    with open('replay_dump.json', 'w') as f:
+        f.write(json.dumps(manager.replays))
+    logging.info(json.dumps(manager.replays))
 
 
 if __name__ == '__main__':
@@ -247,3 +261,6 @@ if __name__ == '__main__':
     logging.info('Beginning tournament')
     run_tournament(num_players, tournament_id, team_pk, maps, team_names)
     logging.info('Tournament finished')
+
+    while True: # Block to keep the docker instance from exiting
+        pass
