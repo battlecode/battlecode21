@@ -75,7 +75,7 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
@@ -299,7 +299,9 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
+                print("team names are", team_1.name, team_2.name)
                 scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
+                # print("team names are", team_1.name, team_2.name)
                 return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
