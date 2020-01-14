@@ -6,12 +6,26 @@ class Tournament extends Component {
         return (
             <div className="accordion" id={ this.props.name }>
                 <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Tournaments</h4>
+                                </div>
+
+                                <div className="content">
+<p>
+            A live stream of the Sprint tournament will start at 5 pm EST for the top 64 teams, on <a href='https://twitch.tv/mitbattlecode'>Twitch</a>! Click below to show the bracket. To view the replays
+            associated with a particular match, click on "Attachments" next to a match.
+    </p>
+
+
+                                </div>
+
                     <div className="card-header">
                         <h5 className="mb-0">
                             <button className="btn btn-default btn-block collapsed" type="button" data-toggle="collapse" data-target={ '#' + this.props.name + '0'}>
                                 { this.props.name.charAt(0).toUpperCase() + this.props.name.slice(1) } Tournament Bracket
                             </button>
                         </h5>
+
                     </div>
                     <div id={ this.props.name + '0' } className="collapse" data-parent={ '#' + this.props.name } style={{ 'margin-top':'-1em' }}>
                         <div className="card-body">
@@ -42,6 +56,9 @@ class Tournaments extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
+                            { this.state.tournaments.map(t => 
+                                <Tournament name={ t.name } challonge={ t.challonge } />
+                            )}
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Tournament Schedule</h4>
@@ -82,9 +99,6 @@ class Tournaments extends Component {
                                 </div>
                             </div>
 
-                            { this.state.tournaments.map(t => 
-                                <Tournament name={ t.name } challonge={ t.challonge } />
-                            )}
 
                             <div className="card">
                                 <div className="header">
