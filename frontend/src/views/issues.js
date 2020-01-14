@@ -32,6 +32,7 @@ class Issues extends Component {
                                         is not finding a Java 8 JDK. This could be if you installed a newer version of Java, or if you already had a newer version of Java
                                         installed from earlier. We will add instructions here shortly, but for now, ask on the Discord for the fix.
                                         <ul>
+                                            <li>Before doing the following two suggestions, try adding the line <code>org.gradle.java.home=&lt;path to your java 8 jdk&gt;</code> to your <code>gradle.properties</code> file</li>
                                             <li>For Windows, try following <a href="https://www.theserverside.com/feature/How-to-set-JAVA_HOME-in-Windows-and-echo-the-result">these instructions</a>.</li>
                                             <li>Try setting <code>org.gradle.java.home=/path_to_jdk_1.8_directory</code>. You need to know your <code>JAVA_HOME</code> (try <a href='https://www.baeldung.com/find-java-home'>this guide</a>).</li>
                                         </ul>
@@ -58,6 +59,7 @@ class Issues extends Component {
                                     <li><i>After an update, InteliiJ doesn't recognize new API functions (e.g. <code>rc.getMapWidth</code>).</i>  You 
                                     need to refresh dependencies. Right-click on the project name (most likely <code>battlecode20-scaffold</code>) in the Gradle Tool Window (the right-hand sidebar),
                                     and click <code>Refresh Gradle Dependencies</code>. It is good to do this after every update.</li>
+                                    <li>You can enable auto-updates in IntelliJ by navigating to <code>settings > build, execution, deployment > Gradle</code> and checking <code>Automatically import this project on changes in build script files</code>, or the button that says somethign similar if you have an older version</li>
                                     </ul>
                                 </p>
                                 </div>

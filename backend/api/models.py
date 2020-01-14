@@ -223,6 +223,7 @@ class Scrimmage(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     started_at   = models.DateTimeField(null=True)
     updated_at   = models.DateTimeField(auto_now=True)
+    tournament_id = models.IntegerField(null=True)
 
     def __str__(self):
         return '{}: (#{}) {} vs {}'.format(self.league, self.id, self.red_team, self.blue_team)

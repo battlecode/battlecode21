@@ -29,7 +29,7 @@ class LeagueActiveOrSafeMethods(permissions.BasePermission):
         return request.method in permissions.SAFE_METHODS or league.active
 
 
-class SubmissionsEnabledOrSafeMethods(LeagueActiveOrSafeMethods):
+class SubmissionsEnabledOrSafeMethodsOrIsSuperuser(LeagueActiveOrSafeMethods):
     message = 'Submissions for the league must be enabled, or only safe methods permitted.'
 
     def has_permission(self, request, view):
@@ -37,7 +37,7 @@ class SubmissionsEnabledOrSafeMethods(LeagueActiveOrSafeMethods):
             league = League.objects.get(pk=view.kwargs.get('league_id'))
         except League.DoesNotExist:
             raise PermissionDenied
-        return request.method in permissions.SAFE_METHODS or (league.active and league.submissions_enabled)
+        return request.method in permissions.SAFE_METHODS or (league.active and league.submissions_enabled) or request.user.is_superuser
 
 
 class IsAuthenticatedOnTeam(LeagueActiveOrSafeMethods):

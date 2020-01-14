@@ -108,10 +108,19 @@ class Api {
   }
 
   static getTeamWinStats(callback) {
-    this.getUserTeam((team) => {
-      const stats = [team.wins, team.losses];
-      callback(stats);
-    });
+    this.getOwnTeamMuHistory((data) => {
+      let wins = 0
+      let losses = 0
+      data.forEach(entry => {
+        if (entry.won) {
+          wins++
+        } else {
+          losses++
+        }
+      })
+
+      callback([wins, losses])
+    })
   }
 
 
