@@ -878,8 +878,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
                 blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                red_team_name = "red team"
-                blue_team_name = "blue team"
+                red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
+                blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
                 scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
@@ -900,11 +900,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             scrimmage.save()
             red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
             blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            red_team_name = "red team"
-            blue_team_name = "blue team"
+            red_team_name = scrimmage.red_team.name
+            blue_team_name = scrimmage.blue_team.name
             scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
-            serializer = self.get_serializer(scrimmage)
+            serializer = self.get_serializer(scrimmage)tjis is not 
             return Response(serializer.data, status.HTTP_200_OK)
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
