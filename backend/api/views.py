@@ -827,12 +827,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
 
-
-        if False: # team != scrimmage.team: TODO fix this
-            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
-
-        return super().retrieve(request, pk=pk)
-
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
         try:
