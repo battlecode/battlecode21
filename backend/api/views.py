@@ -904,7 +904,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             blue_team_name = scrimmage.blue_team.name
             scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
-            serializer = self.get_serializer(scrimmage)tjis is not 
+            serializer = self.get_serializer(scrimmage)
             return Response(serializer.data, status.HTTP_200_OK)
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
