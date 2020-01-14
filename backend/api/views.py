@@ -75,7 +75,7 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
@@ -289,7 +289,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
                     'status': 'queued'
                 }
-
+                map_ids = None
                 if match_type == "tour_scrimmage":
                     tour_id = int(request.data.get("tournament_id"))
                     scrimmage['tournament_id'] = tour_id
@@ -299,7 +299,9 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay, map_ids)
+                print("team names are", team_1.name, team_2.name)
+                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
+                # print("team names are", team_1.name, team_2.name)
                 return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
@@ -328,7 +330,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             if not ScrimSerial.is_valid():
                 return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
             scrim = ScrimSerial.save()
-            scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
+            scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
 
     # Kept only for reverse-compatibility with infrastructure, no longer needed
     @action(detail=False, methods=['post'])
@@ -878,10 +880,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
                 blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                red_team_name = "red team"
-                blue_team_name = "blue team"
+                red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
+                blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
                 scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
@@ -900,8 +901,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             scrimmage.save()
             red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
             blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            red_team_name = "red team"
-            blue_team_name = "blue team"
+            red_team_name = scrimmage.red_team.name
+            blue_team_name = scrimmage.blue_team.name
             scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
             serializer = self.get_serializer(scrimmage)
