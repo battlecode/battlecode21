@@ -75,7 +75,8 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay, map_ids = None):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay):
+
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
@@ -88,6 +89,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, 
         'gameid': str(scrimmage_id),
         'player1': str(red_submission_id),
         'player2': str(blue_submission_id),
+        'name1': str(red_team_name),
+        'name2': str(blue_team_name), 
         'maps': ','.join(get_random_maps(3)),
         'replay': scrimmage_replay
     }
@@ -824,10 +827,12 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, league_id, team, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
+        # TODO actually serialize what's being returned
         if is_admin:
-            Scrimmage.objects.get(pk=pk)
+            scrimmage_queried = Scrimmage.objects.get(pk=pk)
         else:
-            self.get_queryset().get(pk=pk)
+            scrimmage_queried = self.get_queryset().get(pk=pk)
+        return Response({'message': str(scrimmage_queried.status)}, status.HTTP_200_OK)
 
     def create(self, request, league_id, team):
         try:
@@ -873,13 +878,14 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
                 blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
+                red_team_name = "red team"
+                blue_team_name = "blue team"
+                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
-
 
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
@@ -894,7 +900,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             scrimmage.save()
             red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
             blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
+            red_team_name = "red team"
+            blue_team_name = "blue team"
+            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
             serializer = self.get_serializer(scrimmage)
             return Response(serializer.data, status.HTTP_200_OK)
