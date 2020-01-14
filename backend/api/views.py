@@ -289,7 +289,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
                     'status': 'queued'
                 }
-
+                map_ids = None
                 if match_type == "tour_scrimmage":
                     tour_id = int(request.data.get("tournament_id"))
                     scrimmage['tournament_id'] = tour_id
@@ -299,7 +299,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay, map_ids)
+                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
                 return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
@@ -328,7 +328,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             if not ScrimSerial.is_valid():
                 return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
             scrim = ScrimSerial.save()
-            scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
+            scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
 
     # Kept only for reverse-compatibility with infrastructure, no longer needed
     @action(detail=False, methods=['post'])
@@ -881,7 +881,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
                 blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
                 scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
