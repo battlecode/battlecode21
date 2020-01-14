@@ -160,13 +160,12 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                             'map_ids': one_map
                         })
                         assert (match.external_ids[index] != None)
-                        monitor.put(match)
                     except:
                         logging.error('Error enqueueing match: map={} | {}'.format(one_map, match))
-                        ready.put(match)
                         time.sleep(TOURNAMENT_WORKER_TIMEOUT)
                     else:
                         break
+            monitor.put(match)
 
     def dequeue_worker():
         """A worker to check for completed matches"""
