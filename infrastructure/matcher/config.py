@@ -25,4 +25,4 @@ def api_match_status(gameid):
     Returns the API link for obtaining the status of a scrimmage
     gameid: the ID of the game
     """
-    return 'https://2020.battlecode.org/api/0/scrimmage/{}/status/'.format(gameid)
+    return 'https://2020.battlecode.org/api/0/scrimmage/{}/'.format(gameid)
