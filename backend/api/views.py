@@ -75,7 +75,7 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay, map_ids = None):
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
@@ -91,6 +91,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, 
         'maps': ','.join(get_random_maps(3)),
         'replay': scrimmage_replay
     }
+    if not map_ids is None:
+        scrimmage_server_data['maps'] = map_ids
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
@@ -288,13 +290,14 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if match_type == "tour_scrimmage":
                     tour_id = int(request.data.get("tournament_id"))
                     scrimmage['tournament_id'] = tour_id
+                    map_ids = request.data.get("map_ids")
 
                 ScrimSerial = ScrimmageSerializer(data=scrimmage)
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
-                return Response({'message': 'match has been enqueued'}, status.HTTP_200_OK)
+                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay, map_ids)
+                return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
         else:
