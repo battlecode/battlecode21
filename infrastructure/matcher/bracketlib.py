@@ -5,10 +5,7 @@ Reverse-engineering Challonge is, like, work
 
 from config import *
 
-import sys
-import logging
-import heapq
-import json
+import sys, heapq, json
 
 class Entity:
     """A class for a generic team-like entity"""
@@ -397,109 +394,6 @@ class DoubleEliminationTournament(Tournament):
             yield i
         for i in range(n - 1, n // 2 - 1, -1):
             yield i
-
-
-class TournamentManager:
-    """
-    A utility that manages a tournament queue using a tournament bracket.
-    Accepts and processes match results, and produces lists of ongoing
-    matches to monitor and lists of matches ready to be queued.
-    """
-
-    class MatchInfo:
-        def __init__(self, match_idx, player1_key, player2_key, player1_name, player2_name):
-            self.match_idx = match_idx
-            self.player1_key = player1_key
-            self.player2_key = player2_key
-            self.player1_name = player1_name
-            self.player2_name = player2_name
-
-        def __str__(self):
-            return '[{0:>4}]: {1} ({2}) -vs- {3} ({4})'.format(
-                self.match_idx,
-                self.player1_key, self.player1_name,
-                self.player2_key, self.player2_name)
-
-    def __init__(self, bracket, team_keys, team_names):
-        """
-        Initialises this tournament bracket. Requires the following
-        parameters:
-         - bracket:    a Tournament instance containing the bracket to be
-                       used for running this tournament
-         - team_keys:  a list of unique identifying keys for each team,
-                       which may be useful in tournament starter procedures
-         - team_names: a list of team names, used in human-readable log
-                       outputs
-        """
-        if not isinstance(bracket, Tournament):
-            raise TypeError("bracket must be a Tournament")
-
-        self.bracket = bracket
-        self.team_keys = team_keys
-        self.team_names = team_names
-
-        self.ready = set()
-        self.running = set()
-        self.match_is_prerequisite_of = []
-        for idx, match in enumerate(self.bracket.matches):
-            self.match_is_prerequisite_of += [[]]
-            if isinstance(match.player1, MatchResultPlayer):
-                self.match_is_prerequisite_of[match.player1.match_idx] += [(idx, 1)]
-            if isinstance(match.player2, MatchResultPlayer):
-                self.match_is_prerequisite_of[match.player2.match_idx] += [(idx, 2)]
-            # If this match is ready to be played, add it to the game queue
-            if isinstance(match.player1, Team) and isinstance(match.player2, Team):
-                self.ready.add(TournamentManager.MatchInfo(idx,
-                    self.team_keys[match.player1.team_id],
-                    self.team_keys[match.player2.team_id],
-                    self.team_names[match.player1.team_id],
-                    self.team_names[match.player2.team_id]))
-
-    def match_enqueue(self, match, starter):
-        """
-        Enqueues a ready match by calling the provided starter function.
-        Updates the tournament manager's internal state to reflect this.
-        """
-        if match not in self.ready:
-            raise ValueError("this match is not marked as ready")
-
-        logging.info("Adding match [{}] to queue: {} vs {}".format(match.match_idx,
-            match.player1_name, match.player2_name))
-        self.ready.remove(match)
-        starter(match)
-        self.running.add(match)
-
-    def match_report_winner(self, match, winner):
-        """
-        Reports the outcome of a game, updating the tournament manager's
-        internal state. Parameters:
-         - match must be a MatchInfo instance
-         - winner must be either 1 or 2
-        """
-        if match not in self.running:
-            raise ValueError("this match is not currently running")
-
-        logging.info("Match [{}] won by {}".format(
-            match.match_idx,
-            match.player1_name if winner == 1 else match.player2_name))
-        self.running.remove(match)
-        self.bracket.matches[match.match_idx].report_winner(winner)
-
-        # Check if new matches are now ready to be played
-        for next_match, playernum in self.match_is_prerequisite_of[match.match_idx]:
-            if playernum == 1:
-                self.bracket.matches[next_match].player1 = Team(self.bracket.matches[next_match].player1.get_team_id(self.bracket.matches))
-            else:
-                self.bracket.matches[next_match].player2 = Team(self.bracket.matches[next_match].player2.get_team_id(self.bracket.matches))
-            if isinstance(self.bracket.matches[next_match].player1, Team) and isinstance(self.bracket.matches[next_match].player2, Team):
-                self.ready.add(TournamentManager.MatchInfo(next_match,
-                    self.team_keys[self.bracket.matches[next_match].player1.team_id],
-                    self.team_keys[self.bracket.matches[next_match].player2.team_id],
-                    self.team_names[self.bracket.matches[next_match].player1.team_id],
-                    self.team_names[self.bracket.matches[next_match].player2.team_id]))
-
-    def is_complete(self):
-        return (not self.ready) and (not self.running)
 
 
 def dump_json(n, ouf):

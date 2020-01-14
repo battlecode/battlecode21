@@ -39,7 +39,7 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
-            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma')
+            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma', 'score')
         read_only_fields = ('id',)
 
     def update(self, instance, validated_data):
@@ -146,7 +146,7 @@ class ScrimmageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scrimmage
         fields = ('url', 'id', 'league', 'red_team', 'red_mu', 'blue_team', 'blue_mu', 'ranked',
-            'status', 'replay', 'requested_by', 'requested_at', 'started_at', 'updated_at')
+            'status', 'replay', 'requested_by', 'requested_at', 'started_at', 'updated_at', 'tournament_id')
         read_only_fields = ('url', 'requested_at', 'started_at', 'updated_at')
 
 

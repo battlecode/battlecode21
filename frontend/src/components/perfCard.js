@@ -1,42 +1,63 @@
 import React from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import Api from '../api';
 import UpdateCard from './updateCard';
 
 class PerfCard extends UpdateCard {
-    componentDidMount() {
-        $().ready(function() {
-            Api.getOwnTeamMuHistory(function(perf) {
-                console.log(perf)
-                // let data = perf.map(scrimRes => {
-                //     if (data.mu !== null) {
-                //         return {
-                //             x: new Date(scrimRes.date),
-                //             y: data.mu
-                //         }
-                //     }
-                    
-                // })
-                // perf = [1,2,3,4,5,6]
-                // var dataSales = {'series':[perf], 'labels':[]};
-                // console.log(dataSales)
-                // for (var i=perf.length-1; i>=0; i--)
-                //     dataSales.labels.push(i===0 ? "Now" : i + "hr ago");
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
 
-                // window.Chartist.Line('#mu_chart', dataSales, {
-                //     low: 0,
-                //     height: "245px",
-                //     axisX: { showGrid: false, },
-                //     lineSmooth: window.Chartist.Interpolation.simple({
-                //         divisor: 3
-                //     }), showLine: true,
-                //     showPoint: false,
-                // }, [['screen and (max-width: 640px)', {
-                //     axisX: {
-                //         labelInterpolationFnc: v => v[0]
-                //     }
-                // }]]);
-            });
+    componentDidMount() {
+        const team = this.props.team
+
+        $().ready(function() {
+            const graphFunc = function(perf) {
+                let data = []
+                perf.forEach(scrimRes => {
+                    if (scrimRes.mu !== undefined && scrimRes.mu !== null)  {
+                        data.push({
+                            x: new Date(scrimRes.date),
+                            y: scrimRes.mu
+                        })
+                    }
+                })
+
+                data.sort((pt1, pt2) => {
+                    if (pt1.x == pt2.x) {
+                        return 0
+                    } else {
+                        return (pt1.x > pt2.x) ? 1 : -1
+                    }
+                })
+
+                window.Chartist.Line('#mu_chart', {series: [{
+                        name: "mu_data",
+                        data: data
+                    }]
+                }, {
+                    height: "245px",
+                    axisX: { 
+                        showGrid: false,
+                        type: window.Chartist.FixedScaleAxis,
+                        divisor: 5,
+                        labelInterpolationFnc: v => moment(v).format('MMM D')
+                    },
+                    lineSmooth: false,
+
+                    showLine: true,
+                    showPoint: false,
+                },
+                );
+            }
+
+            if (team === null) {
+                Api.getOwnTeamMuHistory(graphFunc)
+            } else {
+                Api.getTeamMuHistory(team, graphFunc)
+            }
         });
     }
 

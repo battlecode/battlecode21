@@ -7,8 +7,8 @@ class UpdateCard extends Component {
     updated/so not really ideal
     */
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {'update_date': new Date()}; 
     }
 

@@ -12,11 +12,11 @@ compile: worker
 game: worker
 	docker build -f game.Dockerfile -t bc20-game worker
 
-# Other servers: scrimmage matchmaking and tournament running
+# Matchmaking servers: scrimmage matchmaking and tournament running
 scrimmage: env
-	docker build -f scrimmage.Dockerfile -t bc20-scrimmage scrimmage
+	docker build -f scrimmage.Dockerfile -t bc20-scrimmage matcher
 tournament: env
-	docker build -f tournament.Dockerfile -t bc20-tournament tournament
+	docker build -f tournament.Dockerfile -t bc20-tournament matcher
 
 images: compile game scrimmage tournament
 
