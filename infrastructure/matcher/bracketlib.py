@@ -396,17 +396,17 @@ class DoubleEliminationTournament(Tournament):
             yield i
 
 
-def dump_json(n, ouf):
+def dump_json(n, inf, ouf):
     """Dumps the tournament bracket as JSON for use by bracket viewer"""
 
-    tournament = DoubleEliminationTournament(n)
+    tournament = SingleEliminationTournament(n)
     tournament.generate_bracket()
     data = { }
     data['tournament_name'] = input('Name of tournament: ')
     data['rounds'] = []
     data['matches'] = []
 
-    with open(FILE_TEAMNAMES, 'r') as f:
+    with open(inf, 'r') as f:
         team_names = f.read().split('\n')
 
     def to_json_object(entity):
@@ -437,5 +437,6 @@ def dump_json(n, ouf):
 
 if __name__ == '__main__':
     n = int(sys.argv[1])
-    ouf = sys.argv[2]
-    dump_json(n, ouf)
+    inf = sys.argv[2]
+    ouf = sys.argv[3]
+    dump_json(n, inf, ouf)
