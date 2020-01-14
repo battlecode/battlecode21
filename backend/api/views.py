@@ -822,6 +822,13 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         context['league_id'] = self.kwargs.get('league_id', None)
         return context
 
+    def retrieve(self, request, league_id, team, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            Scrimmage.objects.get(pk=pk)
+        else:
+            self.get_queryset().get(pk=pk)
+
     def create(self, request, league_id, team):
         try:
             red_team_id = int(request.data['red_team'])
