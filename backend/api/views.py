@@ -290,7 +290,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if match_type == "tour_scrimmage":
                     tour_id = int(request.data.get("tournament_id"))
                     scrimmage['tournament_id'] = tour_id
-                    map_ids = list(request.data.get("map_ids"))
+                    map_ids = request.data.get("map_ids")
 
                 ScrimSerial = ScrimmageSerializer(data=scrimmage)
                 if not ScrimSerial.is_valid():
