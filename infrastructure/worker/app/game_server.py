@@ -38,6 +38,8 @@ def game_worker(gameinfo):
         gameid:   string, id of the game
         player1:  string, id of red player submission
         player2:  string, id of blue player submission
+        name1:    string, team name of the red player
+        name2:    string, team name of the blue player
         maps:     string, comma separated list of maps
         replay:   string, a unique identifier for the name of the replay
 
@@ -68,6 +70,16 @@ def game_worker(gameinfo):
         player2  = gameinfo['player2']
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
+
+        # For reverse-compatibility
+        if 'name1' in gameinfo:
+            teamname1 = gameinfo['name1']
+        else:
+            teamname1 = player1
+        if 'name2' in gameinfo:
+            teamname2 = gameinfo['name2']
+        else:
+            teamname2 = player2
     except:
         game_log_error(gametype, gameid, 'Game information in incorrect format')
 
@@ -122,11 +134,13 @@ def game_worker(gameinfo):
         # Execute game
         result = util.monitor_command(
             ['./gradlew', 'run',
-                '-PteamA={}'.format(package1),
-                '-PteamB={}'.format(package2),
-                '-Pmaps={}'.format(maps),
+                '-PteamA={}'.format(teamname1),
+                '-PteamB={}'.format(teamname2),
                 '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
                 '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
+                '-PpackageNameA={}'.format(package1),
+                '-PpackageNameB={}'.format(package2),
+                '-Pmaps={}'.format(maps),
                 '-Preplay=replay.bc20'
             ],
             cwd=rootdir,

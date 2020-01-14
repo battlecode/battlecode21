@@ -14,8 +14,6 @@ ext.versions = [
     //scala: '2.11.7'
 ]
 
-// TODO: DELETE CREDENTIALS AFTER PUBLIC RELEASE
-
 // Here we register battlecode's maven repository, so the gradle knows where to download the engine and client from
 repositories {
     mavenCentral()
@@ -91,13 +89,6 @@ task version {
     }
 }
 
-task screamForUpdate() {
-    group 'battlecode'
-    doLast {
-        if (versions.battlecode != new URL("https://2020.battlecode.org/version.txt").text) print("\n\n\n\n\n\n\tNEW VERSION AVAILABLE\n\trun ./gradlew update to download \n\n\n\n")
-    }
-}
-
 // This task pulls the newest version number from the website
 // The gradle will then download that version of the engine and client
 task update {
@@ -141,6 +132,8 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.game.team-b='+project.property('teamB'),
         '-Dbc.game.team-a.url='+project.property('classLocationA'),
         '-Dbc.game.team-b.url='+project.property('classLocationB'),
+        '-Dbc.game.team-a.package='+project.property('packageNameA'),
+        '-Dbc.game.team-b.package='+project.property('packageNameB'),
         '-Dbc.game.maps='+project.property('maps'),
         '-Dbc.server.save-file=' +project.property('replay')
     ]
@@ -187,35 +180,4 @@ task listMaps {
             }
         }
     }
-}
-
-// This task prepares player code for upload, assembling it into a Java archive.
-// This archive can be uploaded at `2020.battlecode.org`.
-task jarForUpload(type: Jar) {
-    description 'Assembles source code into an archive, ready to be uploaded to the Battlecode site.'
-    group 'battlecode'
-
-    from 'src'
-    destinationDir = project.projectDir
-    archiveName = 'battlecode-player-upload.jar'
-}
-
-task runDebug(type: JavaExec, dependsOn: 'build') {
-    main = 'battlecode.server.Main'
-    classpath = project.sourceSets.main.runtimeClasspath
-    args = ['-c=-']
-    jvmArgs = [
-            '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005',
-            '-Dbc.server.mode=headless',
-            '-Dbc.server.map-path=maps',
-            '-Dbc.server.debug=false',
-            '-Dbc.server.robot-player-to-system-out=true',
-            '-Dbc.engine.debug-methods=true',
-            '-Dbc.game.team-a='+project.property('teamA'),
-            '-Dbc.game.team-b='+project.property('teamB'),
-            '-Dbc.game.team-a.url='+project.property('classLocationA'),
-            '-Dbc.game.team-b.url='+project.property('classLocationB'),
-            '-Dbc.game.maps='+project.property('maps'),
-            '-Dbc.server.save-file=' + project.property('replay')
-    ]
 }
