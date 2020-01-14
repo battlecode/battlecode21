@@ -52,13 +52,8 @@ class RankCard extends Component {
 
 class WinsCard extends Component {
 	constructor(props) {
-		super()
-		const {team} = props
-		this.state = {
-			wins: team.wins,
-			draws: team.draws,
-			losses: team.losses
-		}
+		super(props);
+		this.state = {}
 	}
 
 	render() {
@@ -69,11 +64,11 @@ class WinsCard extends Component {
 					<div className="col-2-row">
 						<div className="row-items-box items-box-center items-box-skinny">
 							<label>wins</label>
-							<h1>{wins}</h1>
+							<h1>{this.props.wins}</h1>
 						</div>
 						<div className="row-items-box items-box-center items-box-skinny">
 							<label>losses</label>
-							<h1>{losses}</h1>
+							<h1>{this.props.losses}</h1>
 						</div>
 					</div>
 				</div>
@@ -85,12 +80,28 @@ class WinsCard extends Component {
 class TeamInfo extends Component {
 	state = {
 		team: null,
+		wins: 0,
+		losses: 0,
 	};
 
 	componentDidMount() {
 		const teamId = this.props.match.params.team_id;
 		//get team info by id
 		Api.getTeamById(teamId, this.setTeam)
+
+		Api.getOwnTeamMuHistory((data) => {
+	    	let wins = 0
+	    	let losses = 0
+	    	data.forEach(entry => {
+	        	if (entry.won) {
+	          		wins++
+	       		} else {
+	          		losses++
+	        	}
+	      	})
+
+	      	this.setState({wins: wins, losses: losses})
+    	})
 	}
 
 	setTeam = (team_data) => {
@@ -117,7 +128,7 @@ class TeamInfo extends Component {
 							<div className="col-md-3">
 								<div className="container-fluid">
 									<div className="row">
-										<WinsCard team={team}/>
+										<WinsCard wins={this.state.wins} losses={this.state.losses}/>
 									</div>
 								</div>
 							</div>
