@@ -112,11 +112,12 @@ def get_match_winner(match_id):
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
-        if response.text == 'redwon':
+        status = response.json()['status']
+        if status == 'redwon':
             return 1
-        elif response.text == 'bluewon':
+        elif status == 'bluewon':
             return 2
-        elif response.text == 'queued':
+        elif status == 'queued':
             return None
         else:
             raise RuntimeError('Unexpected match status: {}'.format(response.text))
