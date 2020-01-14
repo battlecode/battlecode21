@@ -827,10 +827,12 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, league_id, team, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
+        # TODO actually serialize what's being returned
         if is_admin:
-            Scrimmage.objects.get(pk=pk)
+            scrimmage_queried = Scrimmage.objects.get(pk=pk)
         else:
-            self.get_queryset().get(pk=pk)
+            scrimmage_queried = self.get_queryset().get(pk=pk)
+        return Response({'message': str(scrimmage_queried.status)}, status.HTTP_200_OK)
 
     def create(self, request, league_id, team):
         try:
