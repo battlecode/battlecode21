@@ -9,6 +9,7 @@ from rest_framework import permissions, status, mixins, viewsets, filters
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from django.shortcuts import get_object_or_404
 from api.serializers import *
 from api.permissions import *
 
@@ -75,7 +76,8 @@ def pub(project_id, topic_name, data=""):
         time.sleep(0.5)
         # print("Published {} message(s).".format(ref["num_messages"]))
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, scrimmage_replay):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
+
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
@@ -88,9 +90,13 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage_id, 
         'gameid': str(scrimmage_id),
         'player1': str(red_submission_id),
         'player2': str(blue_submission_id),
+        'name1': str(red_team_name),
+        'name2': str(blue_team_name), 
         'maps': ','.join(get_random_maps(3)),
         'replay': scrimmage_replay
     }
+    if not map_ids is None:
+        scrimmage_server_data['maps'] = map_ids
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
@@ -267,15 +273,10 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
-            #         if 'tour_id' in request.data:
-            #     tour_id = request.data['tour_id'])
-            #     if not tour_id is None:
-            #         tour_id = int(tour_id)
-            # 'tournament_id': tour_id,
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             match_type = request.data.get("type")
-            if match_type == "scrimmage":
+            if match_type == "scrimmage" or match_type == "tour_scrimmage":
                 team_1 = Team.objects.get(pk=request.data.get("player1"))
                 team_2 = Team.objects.get(pk=request.data.get("player2"))
                 sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
@@ -289,13 +290,20 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
                     'status': 'queued'
                 }
+                map_ids = None
+                if match_type == "tour_scrimmage":
+                    tour_id = int(request.data.get("tournament_id"))
+                    scrimmage['tournament_id'] = tour_id
+                    map_ids = request.data.get("map_ids")
 
                 ScrimSerial = ScrimmageSerializer(data=scrimmage)
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
-                return Response({'message': 'match has been enqueued'}, status.HTTP_200_OK)
+                print("team names are", team_1.name, team_2.name)
+                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
+                # print("team names are", team_1.name, team_2.name)
+                return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
         else:
@@ -323,7 +331,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             if not ScrimSerial.is_valid():
                 return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
             scrim = ScrimSerial.save()
-            scrimmage_pub_sub_call(sub_1, sub_2, scrim.id, scrim.replay)
+            scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
 
     # Kept only for reverse-compatibility with infrastructure, no longer needed
     @action(detail=False, methods=['post'])
@@ -812,13 +820,22 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter(Q(red_team=team) | Q(blue_team=team))
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=None)) 
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
         context['league_id'] = self.kwargs.get('league_id', None)
         return context
+
+    def retrieve(self, request, league_id, team, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        queryset = self.get_queryset()
+        if is_admin:
+            queryset = Scrimmage.objects.all()
+        scrimmage_queried = get_object_or_404(queryset, pk=pk)
+        scrimmage_serializer = ScrimmageSerializer(scrimmage_queried)
+        return Response(scrimmage_serializer.data)
 
     def create(self, request, league_id, team):
         try:
@@ -864,13 +881,13 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
                 blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
-
+                red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
+                blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
+                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
             return Response(serializer.data, status.HTTP_201_CREATED)
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
-
 
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
@@ -885,7 +902,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             scrimmage.save()
             red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
             blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, scrimmage.id, scrimmage.replay)
+            red_team_name = scrimmage.red_team.name
+            blue_team_name = scrimmage.blue_team.name
+            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
             serializer = self.get_serializer(scrimmage)
             return Response(serializer.data, status.HTTP_200_OK)
@@ -974,6 +993,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
                     won.save()
                     lost.save()
+
+                    scrimmage.save()
+                    return Response({'status': sc_status}, status.HTTP_200_OK)
+                elif sc_status == "error":
+                    scrimmage.status = sc_status
 
                     scrimmage.save()
                     return Response({'status': sc_status}, status.HTTP_200_OK)
