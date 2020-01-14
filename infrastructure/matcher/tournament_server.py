@@ -189,7 +189,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                     else:
                         if index != 1:
                             wins[winner] += 1
-                        else
+                        else:
                             wins[3-winner] += 1
                         complete = True
                         continue
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     # argv[3] = file containing names
     # argv[4] = file containing map config
     # Team data should be ordered from first to last seed, one per line
-    # Map data should be a JSON map from round name to a string containing a comma-separated map list
+    # Map data should be a JSON map from round name to a list of maps
 
     tournament_id = sys.argv[1]
     team_pk = []
