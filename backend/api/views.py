@@ -834,7 +834,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         if is_admin:
             queryset = Scrimmage.objects.all()
         scrimmage_queried = get_object_or_404(queryset, pk=pk)
-        scrimmage_serializer = ScrimmageSerializer(scrimmage_queried)
+        scrimmage_serializer = ScrimmageSerializer(scrimmage_queried, context=self.get_serializer_context())
         return Response(scrimmage_serializer.data)
 
     def create(self, request, league_id, team):
