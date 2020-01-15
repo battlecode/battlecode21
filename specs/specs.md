@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.1.1
+Current version: 2020.1.1.2
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -400,6 +400,16 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.1.1.2 (1/14/20)
+    - spec changes: none
+    - client changes:
+        - add sprint maps
+        - possibly make log viewing slightly faster
+    - engine changes:
+        - add sprint maps
+        - (note: GSF is slightly different from GSF in the tournament; slightly more soup was added close to the HQ)
+        - fix "greater number of units" tiebreak
+        - make mapbuilder slightly more restrictive
 - 2020.1.1.1 (1/13/20)
     - spec changes:
         - clarify that map elevation is between `Integer.MIN_VALUE` and `Integer.MAX_VALUE`, not actually $-\infty$ and $\infty$

@@ -40,7 +40,23 @@ SERVER_MAPS = [
   "SoupOnTheSide",
   "TwoForOneAndTwoForAll",
   "WaterBot",
-  "CentralSoup"
+  "CentralSoup",
+  "ChristmasInJuly",
+  "ClearlyTwelveHorsesInASalad",
+  "CowFarm",
+  "DidAMonkeyMakeThis",
+  "GSF",
+  "Hills",
+  "InADitch",
+  "Islands",
+  "IsThisProcedural",
+  "OmgThisIsProcedural",
+  "ProceduralConfirmed",
+  "RandomSoup1",
+  "RandomSoup2",
+  "Soup",
+  "Volcano",
+  "WateredDown",
 ]
 
 

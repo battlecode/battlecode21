@@ -15,12 +15,13 @@ def get_api_auth_token():
         logging.error('Could not obtain API authentication token')
 
 def enqueue(match_params):
-    """Enqueues a match"""
+    """Enqueues a match, returning the match id on success"""
     try:
         auth_token = get_api_auth_token()
         response = requests.post(url=API_ENQUEUE, data=match_params, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
         response.raise_for_status()
+        return response.json()["message"]
     except:
         logging.error('Could not enqueue match: {}'.format(match_params))
