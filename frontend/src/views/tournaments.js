@@ -12,7 +12,7 @@ class Tournament extends Component {
 
                                 <div className="content">
 <p>
-            A live stream of the Sprint tournament will start at 5 pm EST for the top 64 teams, on <a href='https://twitch.tv/mitbattlecode'>Twitch</a>! Click below to show the bracket. To view the replays
+            Congrats to <NavLink to='rankings/1158'>Bruteforcer</NavLink> for winning the Sprint tournament! Click below to show the bracket. To view the replays
             associated with a particular match, click on "Attachments" next to a match.
     </p>
 
