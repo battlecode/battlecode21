@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.1.1.2
+Current version: 2020.2.0.0
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -406,6 +406,7 @@ We'll update this spec as the competition progresses.
         - vaporators cost 500 and yield 2 soup/turn (down from 1000 and 7)
         - vaporators decrease nearby pollution by 20% (down from 33%)
         - maps will always have 1k soup near the HQ (reachable by miners)
+    - client changes: none
     - engine changes:
         - messages submitted to the blockchain must now be exactly length 7 (`GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH` has been renamed to `GameConstants.BLOCKCHAIN_TRANSACTION_LENGTH`)
         - add more fields to `RobotInfo`, including: unit carried by drone (`currentlyHoldingUnit` and `heldUnitID`), dirt carried by landscaper (`dirtCarrying`), dirt on building (`dirtCarrying`), soup carried by miner (`soupCarrying`), cooldown of every unit (`cooldownTurns`)
