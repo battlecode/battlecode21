@@ -42,39 +42,48 @@ def get_callback(api_future, data, ref):
             raise
     return callback
 
-def pub(project_id, topic_name, data=""):
+def pub(project_id, topic_name, data="", num_retries=5):
     """Publishes a message to a Pub/Sub topic."""
 
-    # Initialize a Publisher client.
-    # credentials must be loaded from a file, so we temporarily create ibe 
-    with open('gcloud-key.json', 'w') as outfile:
-        outfile.write(settings.GOOGLE_APPLICATION_CREDENTIALS)
-        outfile.close()
-    credentials = service_account.Credentials. from_service_account_file('gcloud-key.json')
-    client = pubsub_v1.PublisherClient(credentials=credentials)
-    os.remove('gcloud-key.json') # important!!!
+    # Repeat while this fails, because the data is already in the
+    # database. The pub/sub message needs to be enqueued to ensure the
+    # request is complete.
+    for i in range(num_retries):
+        try:
+            # Initialize a Publisher client.
+            # credentials must be loaded from a file, so we temporarily create ibe 
+            with open('gcloud-key.json', 'w') as outfile:
+                outfile.write(settings.GOOGLE_APPLICATION_CREDENTIALS)
+                outfile.close()
+            credentials = service_account.Credentials. from_service_account_file('gcloud-key.json')
+            client = pubsub_v1.PublisherClient(credentials=credentials)
+            os.remove('gcloud-key.json') # important!!!
 
-    # Create a fully qualified identifier in the form of
-    # `projects/{project_id}/topics/{topic_name}`
-    topic_path = client.topic_path(project_id, topic_name)
+            # Create a fully qualified identifier in the form of
+            # `projects/{project_id}/topics/{topic_name}`
+            topic_path = client.topic_path(project_id, topic_name)
 
-    # Data sent to Cloud Pub/Sub must be a bytestring.
-    #data = b"examplefuncs"
-    if data == "":
-        data = b"sample pub/sub message"
+            # Data sent to Cloud Pub/Sub must be a bytestring.
+            #data = b"examplefuncs"
+            if data == "":
+                data = b"sample pub/sub message"
 
-    # Keep track of the number of published messages.
-    ref = dict({"num_messages": 0})
+            # Keep track of the number of published messages.
+            ref = dict({"num_messages": 0})
 
-    # When you publish a message, the client returns a future.
-    api_future = client.publish(topic_path, data=data)
-    api_future.add_done_callback(get_callback(api_future, data, ref))
+            # When you publish a message, the client returns a future.
+            api_future = client.publish(topic_path, data=data)
+            api_future.add_done_callback(get_callback(api_future, data, ref))
 
-    # Keep the main thread from exiting while the message future
-    # gets resolved in the background.
-    while api_future.running():
-        time.sleep(0.5)
-        # print("Published {} message(s).".format(ref["num_messages"]))
+            # Keep the main thread from exiting while the message future
+            # gets resolved in the background.
+            while api_future.running():
+                time.sleep(0.5)
+                # print("Published {} message(s).".format(ref["num_messages"]))
+        except:
+            pass
+        else:
+            break
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
