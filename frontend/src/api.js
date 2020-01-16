@@ -108,7 +108,11 @@ class Api {
   }
 
   static getTeamWinStats(callback) {
-    this.getOwnTeamMuHistory((data) => {
+    return Api.getOtherTeamWinStats(Cookies.get('team_id'), callback)
+  }
+
+  static getOtherTeamWinStats(team, callback) {
+    this.getTeamMuHistory(team, (data) => {
       let wins = 0
       let losses = 0
       data.forEach(entry => {
