@@ -8,7 +8,7 @@ from google.cloud import pubsub_v1
 
 shutdown_requested = False # Whether this program should shut down due to SIGINT/SIGTERM
 
-def subscribe(subscription_name, worker):
+def subscribe(subscription_name, worker, give_up=False):
     """Receives and spawns threads to handle jobs received in Pub/Sub"""
     global shutdown_requested
 
@@ -51,11 +51,14 @@ def subscribe(subscription_name, worker):
             process.start()
             process.join()
 
-            give_up = (int(time.time()) - message.message.publish_time.seconds) > 600
-            if process.exitcode == 0 or give_up:
+            if process.exitcode == 0:
                 # Success; acknowledge and return
                 client.acknowledge(subscription_path, [message.ack_id])
                 logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+            elif give_up and (int(time.time()) - message.message.publish_time.seconds) > 600:
+                # Failure; give up and acknowledge
+                client.acknowledge(subscription_path, [message.ack_id])
+                logging.info('Failed but acknowledged: {}'.format(message.message.data.decode()))
             else:
                 # Failure; refuse to acknowledge
                 logging.error('Failed, not acknowledged: {}'.format(message.message.data.decode()))
