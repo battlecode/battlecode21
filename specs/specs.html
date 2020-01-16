@@ -169,7 +169,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.1.1</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.2.0.0</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -319,9 +319,9 @@ border-radius: 50%;
 <p><strong>Vaporator</strong>: condenses soup from the air, reducing pollution. Clean energy!</p>
 <ul>
 <li>Built by <strong>miners</strong></li>
-<li>Produces 7 soup (<code>RobotType.VAPORATOR.maxSoupProduced</code>) per turn for free</li>
+<li>Produces 2 soup (<code>RobotType.VAPORATOR.maxSoupProduced</code>) per turn for free</li>
 <li>Reduces <strong>global pollution</strong> by 1 per turn (<code>RobotType.VAPORATOR.globalPollutionAmount</code>)</li>
-<li>Pollution on tiles within radius squared 35 (<code>RobotType.VAPORATOR.pollutionRadiusSquared</code>) temporarily decreases by a factor of 0.67 (<code>RobotType.VAPORATOR.localPollutionMultiplicativeEffect</code>).</li>
+<li>Pollution on tiles within radius squared 35 (<code>RobotType.VAPORATOR.pollutionRadiusSquared</code>) temporarily decreases by a factor of 0.2 (<code>1 - RobotType.VAPORATOR.localPollutionMultiplicativeEffect</code>).</li>
 </ul>
 <p><strong>Design School</strong>: a creative institution for training talented <strong>landscapers</strong>.</p>
 <ul>
@@ -373,7 +373,7 @@ border-radius: 50%;
 </tr>
 <tr class="odd">
 <td>Vaporator</td>
-<td>1000</td>
+<td>500</td>
 <td>15</td>
 <td>24</td>
 <td>soup</td>
@@ -430,6 +430,7 @@ border-radius: 50%;
 <li>The HQ will start at an effective elevation between 2 and 5 inclusive (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5).</li>
 <li>The HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods).</li>
 <li>There will always be a large negative elevation water tile (no games that never end).</li>
+<li>Maps will always have at least 1k soup near the HQ, reachable by miners.</li>
 </ul>
 <h2 id="tiebreakers">Tiebreakers</h2>
 <p>Some games will end with both <strong>HQ</strong>s being flooded at the same time. The winner is determined as follows (with ties at one level being broken by the next):</p>
@@ -475,6 +476,42 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.2.0.0 (1/15/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>vaporators cost 500 and yield 2 soup/turn (down from 1000 and 7)</li>
+<li>vaporators decrease nearby pollution by 20% (down from 33%)</li>
+<li>maps will always have 1k soup near the HQ (reachable by miners)</li>
+</ul></li>
+<li>client changes: none</li>
+<li>engine changes:
+<ul>
+<li>messages submitted to the blockchain must now be exactly length 7 (<code>GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH</code> has been renamed to <code>GameConstants.BLOCKCHAIN_TRANSACTION_LENGTH</code>)</li>
+<li>add more fields to <code>RobotInfo</code>, including: unit carried by drone (<code>currentlyHoldingUnit</code> and <code>heldUnitID</code>), dirt carried by landscaper (<code>dirtCarrying</code>), dirt on building (<code>dirtCarrying</code>), soup carried by miner (<code>soupCarrying</code>), cooldown of every unit (<code>cooldownTurns</code>)</li>
+<li>change <code>onTheMap</code> to do what you expect (return true if on the map and false if not, regardless of whether the location is within sensor range)</li>
+<li>add a <code>disintegrate</code> function (instead of just throwing an uncaught error)</li>
+<li>add <code>senseNearbySoup</code> (like <code>senseNearbyRobots</code>)</li>
+<li>remove <code>getRobotCount</code></li>
+<li>fix bug where <code>senseNearbyRobots</code> would not work for query locations that are far away with a large query radius</li>
+</ul></li>
+</ul></li>
+<li>2020.1.1.2 (1/14/20)
+<ul>
+<li>spec changes: none</li>
+<li>client changes:
+<ul>
+<li>add sprint maps</li>
+<li>possibly make log viewing slightly faster</li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>add sprint maps</li>
+<li>(note: GSF is slightly different from GSF in the tournament; slightly more soup was added close to the HQ)</li>
+<li>fix “greater number of units” tiebreak</li>
+<li>make mapbuilder slightly more restrictive</li>
+</ul></li>
+</ul></li>
 <li>2020.1.1.1 (1/13/20)
 <ul>
 <li>spec changes:

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6,"i52":6,"i53":6,"i54":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6,"i52":6,"i53":6,"i54":6,"i55":6,"i56":6,"i57":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -213,7 +213,7 @@ var activeTableTab = "activeTableTab";
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#canSubmitTransaction-int:A-int-">canSubmitTransaction</a></span>(int[]&nbsp;message,
                     int&nbsp;cost)</code>
-<div class="block">Tests if the robot can submit a transaction
+<div class="block">Checks that the robot can submit a transaction
  to the blockchain at the indicated cost.</div>
 </td>
 </tr>
@@ -238,63 +238,63 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#disintegrate--">disintegrate</a></span>()</code>
+<div class="block">Causes the robot to die.</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#dropUnit-battlecode.common.Direction-">dropUnit</a></span>(<a href="../../battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a>&nbsp;dir)</code>
 <div class="block">Drops the unit that is currently picked up.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getBlock-int-">getBlock</a></span>(int&nbsp;roundNumber)</code>
 <div class="block">Get the block of messages that was approved at a given round.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>float</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getCooldownTurns--">getCooldownTurns</a></span>()</code>
 <div class="block">Returns the number of cooldown turns remaining before this unit can act again.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getCurrentSensorRadiusSquared--">getCurrentSensorRadiusSquared</a></span>()</code>
 <div class="block">Returns the robot's current sensor radius squared, which is affected
  by the current pollution level at the present location.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getDirtCarrying--">getDirtCarrying</a></span>()</code>
 <div class="block">Returns the amount of dirt this robot is carrying.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getID--">getID</a></span>()</code>
 <div class="block">Returns the ID of this robot.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getLocation--">getLocation</a></span>()</code>
 <div class="block">Returns this robot's current location.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getMapHeight--">getMapHeight</a></span>()</code>
 <div class="block">Returns the height of the map.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getMapWidth--">getMapWidth</a></span>()</code>
 <div class="block">Returns the width of the map.</div>
-</td>
-</tr>
-<tr id="i27" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#getRobotCount--">getRobotCount</a></span>()</code>
-<div class="block">Returns the number of robots on your team (including your HQ).</div>
 </td>
 </tr>
 <tr id="i28" class="altColor">
@@ -414,40 +414,61 @@ var activeTableTab = "activeTableTab";
 <tr id="i46" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbyRobots-battlecode.common.MapLocation-int-battlecode.common.Team-">senseNearbyRobots</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;center,
-                 int&nbsp;radius,
+                 int&nbsp;radiusSquared,
                  <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team)</code>
 <div class="block">Returns all robots of a given team that can be sensed within a certain
  radius of a specified location.</div>
 </td>
 </tr>
 <tr id="i47" class="rowColor">
+<td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbySoup--">senseNearbySoup</a></span>()</code>
+<div class="block">Returns all map locations containing soup within sense radius.</div>
+</td>
+</tr>
+<tr id="i48" class="altColor">
+<td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbySoup-int-">senseNearbySoup</a></span>(int&nbsp;radiusSquared)</code>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius.</div>
+</td>
+</tr>
+<tr id="i49" class="rowColor">
+<td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseNearbySoup-battlecode.common.MapLocation-int-">senseNearbySoup</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;center,
+               int&nbsp;radiusSquared)</code>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius of specified location.</div>
+</td>
+</tr>
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#sensePollution-battlecode.common.MapLocation-">sensePollution</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns the pollution level at a given location, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseRobot-int-">senseRobot</a></span>(int&nbsp;id)</code>
 <div class="block">Senses information about a particular robot given its ID.</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseRobotAtLocation-battlecode.common.MapLocation-">senseRobotAtLocation</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Senses the robot at the given location, or null if there is no robot
  there.</div>
 </td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#senseSoup-battlecode.common.MapLocation-">senseSoup</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</code>
 <div class="block">Returns the crude soup count at a given location, if the location is
  within the sensor radius of the robot.</div>
 </td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#setIndicatorDot-battlecode.common.MapLocation-int-int-int-">setIndicatorDot</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc,
                int&nbsp;red,
@@ -456,7 +477,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Draw a dot on the game map for debugging purposes.</div>
 </td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#setIndicatorLine-battlecode.common.MapLocation-battlecode.common.MapLocation-int-int-int-">setIndicatorLine</a></span>(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;startLoc,
                 <a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;endLoc,
@@ -466,13 +487,13 @@ var activeTableTab = "activeTableTab";
 <div class="block">Draw a line on the game map for debugging purposes.</div>
 </td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#shootUnit-int-">shootUnit</a></span>(int&nbsp;id)</code>
 <div class="block">Shoots down another unit.</div>
 </td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotController.html#submitTransaction-int:A-int-">submitTransaction</a></span>(int[]&nbsp;message,
                  int&nbsp;cost)</code>
@@ -522,22 +543,6 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the team's total soup.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>1</code></dd></dl>
-</li>
-</ul>
-<a name="getRobotCount--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRobotCount</h4>
-<pre>int&nbsp;getRobotCount()</pre>
-<div class="block">Returns the number of robots on your team (including your HQ).
- If this number ever reaches zero, the opposing team will automatically
- win by destruction (because your HQ is dead).</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the number of robots on your team</dd>
-<dt><strong>Bytecode cost:</strong></dt><dd><code>20</code></dd></dl>
 </li>
 </ul>
 <a name="getMapWidth--">
@@ -691,17 +696,14 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>onTheMap</h4>
-<pre>boolean&nbsp;onTheMap(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)
-          throws <a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></pre>
-<div class="block">Senses whether a MapLocation is on the map. Will throw an exception if
- the location is not within the sensor range.</div>
+<pre>boolean&nbsp;onTheMap(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;loc)</pre>
+<div class="block">Senses whether a MapLocation is on the map.
+ This is different from before sprint rebalancing.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>loc</code> - the location to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the location is on the map; false otherwise.</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the location is not within sensor range.</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>5</code></dd></dl>
 </li>
 </ul>
@@ -875,7 +877,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>senseNearbyRobots</h4>
 <pre><a href="../../battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a>[]&nbsp;senseNearbyRobots(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;center,
-                              int&nbsp;radius,
+                              int&nbsp;radiusSquared,
                               <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team)</pre>
 <div class="block">Returns all robots of a given team that can be sensed within a certain
  radius of a specified location. The objects are returned in order of
@@ -883,12 +885,68 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>center</code> - center of the given search radius</dd>
-<dd><code>radius</code> - return robots this distance away from the given center
+<dd><code>radiusSquared</code> - return robots this distance squared away from the given center
  location. If -1 is passed, all robots within sense radius are returned</dd>
 <dd><code>team</code> - filter game objects by the given team. If null is passed,
  objects from all teams are returned</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>sorted array of RobotInfo objects of the robots you sensed.</dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
+</li>
+</ul>
+<a name="senseNearbySoup--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>senseNearbySoup</h4>
+<pre><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]&nbsp;senseNearbySoup()</pre>
+<div class="block">Returns all map locations containing soup within sense radius. The
+ locations are returned in no particular order.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>array of map locations that can be sensed containing soup</dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
+</li>
+</ul>
+<a name="senseNearbySoup-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>senseNearbySoup</h4>
+<pre><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]&nbsp;senseNearbySoup(int&nbsp;radiusSquared)</pre>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius. The locations are returned in no particular order.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>radiusSquared</code> - return soup locations this distance away from the center of
+ this robot. If -1 is passed, all locations with soup within sense radius are returned</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>array of map locations that can be sensed within the
+ specified radius containing soup</dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
+</li>
+</ul>
+<a name="senseNearbySoup-battlecode.common.MapLocation-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>senseNearbySoup</h4>
+<pre><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>[]&nbsp;senseNearbySoup(<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;center,
+                              int&nbsp;radiusSquared)</pre>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius of specified location. The locations are returned in no
+ particular order.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>center</code> - center of the given search radius</dd>
+<dd><code>radiusSquared</code> - return soup locations this distance away from the center of
+ this robot. If -1 is passed, all locations with soup within sense radius are returned</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>array of map locations that can be sensed within the
+ specified radius containing soup</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
 </li>
 </ul>
@@ -1378,6 +1436,21 @@ var activeTableTab = "activeTableTab";
 <dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
+<a name="disintegrate--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>disintegrate</h4>
+<pre>void&nbsp;disintegrate()
+           throws <a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></pre>
+<div class="block">Causes the robot to die.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code></dd>
+<dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
+</li>
+</ul>
 <a name="resign--">
 <!--   -->
 </a>
@@ -1397,12 +1470,12 @@ var activeTableTab = "activeTableTab";
 <h4>canSubmitTransaction</h4>
 <pre>boolean&nbsp;canSubmitTransaction(int[]&nbsp;message,
                              int&nbsp;cost)</pre>
-<div class="block">Tests if the robot can submit a transaction
+<div class="block">Checks that the robot can submit a transaction
  to the blockchain at the indicated cost. Tests if the team has enough soup,
- that the provided cost is positive, and that the message doesn't exceed the limit.</div>
+ that the provided cost is positive, and that the message contains exactly 7 integers.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the list of ints to send (at most of GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH many).</dd>
+<dd><code>message</code> - the list of ints to send (exactly GameConstants.BLOCKCHAIN_TRANSACTION_LENGTH of them).</dd>
 <dd><code>cost</code> - the price that the unit is willing to pay for the message, in soup</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>whether the transaction can be submitted or not</dd>
@@ -1418,14 +1491,15 @@ var activeTableTab = "activeTableTab";
 <pre>void&nbsp;submitTransaction(int[]&nbsp;message,
                        int&nbsp;cost)
                 throws <a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></pre>
-<div class="block">Submits a transaction to the transaction pool at the indicated cost.</div>
+<div class="block">Submits a transaction to the transaction pool at the indicated cost.
+ The transaction messages needs to be exactly 7 integers.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - the list of ints to send.</dd>
 <dd><code>cost</code> - the price that the unit is willing to pay for the message</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code> - if the team does not have enough soup to cover the cost,
-  if the message exceeds the allowed limit, or if the cost is negative</dd>
+  if the message is not of the right size, or if the cost is negative</dd>
 <dt><strong>Bytecode cost:</strong></dt><dd><code>100</code></dd></dl>
 </li>
 </ul>
@@ -1438,7 +1512,8 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a>[]&nbsp;getBlock(int&nbsp;roundNumber)
                 throws <a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></pre>
 <div class="block">Get the block of messages that was approved at a given round.
- The block will contain a list of transactions.</div>
+ The block will contain a list of transactions, and each transaction
+ message will have exactly 7 integers.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>roundNumber</code> - the round index.</dd>
