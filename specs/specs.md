@@ -407,12 +407,13 @@ We'll update this spec as the competition progresses.
         - vaporators decrease nearby pollution by 20% (down from 33%)
         - maps will always have 1k soup near the HQ (reachable by miners)
     - engine changes:
-        - messages submitted to the blockchain must now be exactly length 7
-        - added more functions for sensing info about units, including: unit carried by drone, dirt carried by landscaper, dirt on building, soup carried by miner, cooldown of every unit
-        - change onTheMap to do what you expect (return true if on the map and false if not. don't ask)
-        - added a disintegrate function (instead of just throwing an uncaught error)
-        - add senseNearbySoup (like senseNearbyRobots)
-        - increased string op costs to be proportional to length
+        - messages submitted to the blockchain must now be exactly length 7 (`GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH` has been renamed to `GameConstants.BLOCKCHAIN_TRANSACTION_LENGTH`)
+        - add more fields to `RobotInfo`, including: unit carried by drone (`currentlyHoldingUnit` and `heldUnitID`), dirt carried by landscaper (`dirtCarrying`), dirt on building (`dirtCarrying`), soup carried by miner (`soupCarrying`), cooldown of every unit (`cooldownTurns`)
+        - change `onTheMap` to do what you expect (return true if on the map and false if not, regardless of whether the location is within sensor range)
+        - add a `disintegrate` function (instead of just throwing an uncaught error)
+        - add `senseNearbySoup` (like `senseNearbyRobots`)
+        - remove `getRobotCount`
+        - fix bug where `senseNearbyRobots` would not work for query locations that are far away with a large query radius
 - 2020.1.1.2 (1/14/20)
     - spec changes: none
     - client changes:
