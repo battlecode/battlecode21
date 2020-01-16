@@ -169,7 +169,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.1.1.2</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.2.0.0</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -484,14 +484,16 @@ String.split</code></pre>
 <li>vaporators decrease nearby pollution by 20% (down from 33%)</li>
 <li>maps will always have 1k soup near the HQ (reachable by miners)</li>
 </ul></li>
+<li>client changes: none</li>
 <li>engine changes:
 <ul>
-<li>messages submitted to the blockchain must now be exactly length 7</li>
-<li>added more functions for sensing info about units, including: unit carried by drone, dirt carried by landscaper, dirt on building, soup carried by miner, cooldown of every unit</li>
-<li>change onTheMap to do what you expect (return true if on the map and false if not. don’t ask)</li>
-<li>added a disintegrate function (instead of just throwing an uncaught error)</li>
-<li>add senseNearbySoup (like senseNearbyRobots)</li>
-<li>increased string op costs to be proportional to length</li>
+<li>messages submitted to the blockchain must now be exactly length 7 (<code>GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH</code> has been renamed to <code>GameConstants.BLOCKCHAIN_TRANSACTION_LENGTH</code>)</li>
+<li>add more fields to <code>RobotInfo</code>, including: unit carried by drone (<code>currentlyHoldingUnit</code> and <code>heldUnitID</code>), dirt carried by landscaper (<code>dirtCarrying</code>), dirt on building (<code>dirtCarrying</code>), soup carried by miner (<code>soupCarrying</code>), cooldown of every unit (<code>cooldownTurns</code>)</li>
+<li>change <code>onTheMap</code> to do what you expect (return true if on the map and false if not, regardless of whether the location is within sensor range)</li>
+<li>add a <code>disintegrate</code> function (instead of just throwing an uncaught error)</li>
+<li>add <code>senseNearbySoup</code> (like <code>senseNearbyRobots</code>)</li>
+<li>remove <code>getRobotCount</code></li>
+<li>fix bug where <code>senseNearbyRobots</code> would not work for query locations that are far away with a large query radius</li>
 </ul></li>
 </ul></li>
 <li>2020.1.1.2 (1/14/20)
