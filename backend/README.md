@@ -86,6 +86,20 @@ Always commit the most recent `requirements.txt`.
 
 ## Deployment
 
+#### Steps
+
+1. Push to master.
+2. Go to [Cloud Build Triggers](https://console.cloud.google.com/cloud-build/triggers?project=battlecode18) on Google Cloud.
+3. Click "Run trigger" under the `battlecode/battlecode20` trigger.
+4. Go to [Cloud Build History](https://console.cloud.google.com/cloud-build/builds?project=battlecode18). You should see a spinning blue icon next to a recently started build, which should reference the most recent commit ID on master on this repo. Wait until the spinning icon turns into a green checkmark (this usually takes 2-3 minutes).
+5. Go to the [battlecode20-backend-true](https://console.cloud.google.com/compute/instanceGroups/details/us-east1-b/battlecode20-backend-true?project=battlecode18) instance group in the Compute Engine. Press `Rolling Restart/Replace`.
+6. Change operation from `Restart` to `Replace`. Let maximum surge be 1 and **maximum unavailable be 0** (we don't want our server to go down).
+7. Wait until all spinning blue icons have turned into green checkmarks (this takes like 10 minutes I think).
+
+This procedure is currently very long and requires too much manual intervention. We should write a script that does all of this for us (which shouldn't be too hard).
+
+#### Setup
+
 A database should be created.
 
 We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
