@@ -3,10 +3,7 @@
 import subscription, util
 from config import *
 
-import sys, os, shutil
-import logging
-import requests
-import json, re
+import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
@@ -195,4 +192,4 @@ def game_worker(gameinfo):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)

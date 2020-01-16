@@ -89,18 +89,8 @@ class TeamInfo extends Component {
 		//get team info by id
 		Api.getTeamById(teamId, this.setTeam)
 
-		Api.getOwnTeamMuHistory((data) => {
-	    	let wins = 0
-	    	let losses = 0
-	    	data.forEach(entry => {
-	        	if (entry.won) {
-	          		wins++
-	       		} else {
-	          		losses++
-	        	}
-	      	})
-
-	      	this.setState({wins: wins, losses: losses})
+		Api.getOtherTeamWinStats(teamId, (data) => {
+	      	this.setState({wins: data[0], losses: data[1]})
     	})
 	}
 

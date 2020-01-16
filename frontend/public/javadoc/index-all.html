@@ -101,6 +101,10 @@
 </dd>
 <dt><a href="battlecode/common/package-summary.html">battlecode.common</a> - package battlecode.common</dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/GameConstants.html#BLOCKCHAIN_TRANSACTION_LENGTH">BLOCKCHAIN_TRANSACTION_LENGTH</a></span> - Static variable in class battlecode.common.<a href="battlecode/common/GameConstants.html" title="class in battlecode.common">GameConstants</a></dt>
+<dd>
+<div class="block">The maximum number of integers that can be sent in one message.</div>
+</dd>
 <dt><a href="battlecode/common/BodyInfo.html" title="interface in battlecode.common"><span class="typeNameLink">BodyInfo</span></a> - Interface in <a href="battlecode/common/package-summary.html">battlecode.common</a></dt>
 <dd>
 <div class="block">Stores information about a Object/Body in the game world</div>
@@ -227,7 +231,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#canSubmitTransaction-int:A-int-">canSubmitTransaction(int[], int)</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
-<div class="block">Tests if the robot can submit a transaction
+<div class="block">Checks that the robot can submit a transaction
  to the blockchain at the indicated cost.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/Direction.html#cardinalDirections--">cardinalDirections()</a></span> - Static method in enum battlecode.common.<a href="battlecode/common/Direction.html" title="enum in battlecode.common">Direction</a></dt>
@@ -249,9 +253,17 @@
  higher randomly generated id, then (if two transactions somehow collide in 
  randomly generated id) transaction that is lexicographically earlier.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#cooldownTurns">cooldownTurns</a></span> - Variable in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">The cooldown of the robot.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotType.html#cost">cost</a></span> - Variable in enum battlecode.common.<a href="battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></dt>
 <dd>
 <div class="block">Cost for creating the robot.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#currentlyHoldingUnit">currentlyHoldingUnit</a></span> - Variable in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">A boolean indicating whether the robot is currently holding a unit.</div>
 </dd>
 </dl>
 <a name="I:D">
@@ -283,9 +295,17 @@
 <dd>
 <div class="block">Returns the closest approximate Direction from this MapLocation to <code>location</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#dirtCarrying">dirtCarrying</a></span> - Variable in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">The dirt carried by a landscaper, or the dirt on top of a building.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotType.html#dirtLimit">dirtLimit</a></span> - Variable in enum battlecode.common.<a href="battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></dt>
 <dd>
 <div class="block">Limit for amount of dirt robot can hold.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#disintegrate--">disintegrate()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
+<dd>
+<div class="block">Causes the robot to die.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/MapLocation.html#distanceSquaredTo-battlecode.common.MapLocation-">distanceSquaredTo(MapLocation)</a></span> - Method in class battlecode.common.<a href="battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></dt>
 <dd>
@@ -374,6 +394,10 @@
 <dd>
 <div class="block">Returns the number of cooldown turns remaining before this unit can act again.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getCooldownTurns--">getCooldownTurns()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">Returns the cooldown turns of the robot.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/Transaction.html#getCost--">getCost()</a></span> - Method in class battlecode.common.<a href="battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getCurrentSensorRadiusSquared--">getCurrentSensorRadiusSquared()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
@@ -393,6 +417,15 @@
 <dd>
 <div class="block">Returns the amount of dirt this robot is carrying.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getDirtCarrying--">getDirtCarrying()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">Returns the dirt carried by the robot.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getHeldUnitID--">getHeldUnitID()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">Returns the ID of the unit that the robot is holding, if it
+ is holding one.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/BodyInfo.html#getID--">getID()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/BodyInfo.html" title="interface in battlecode.common">BodyInfo</a></dt>
 <dd>
 <div class="block">Returns the ID of this body.</div>
@@ -402,7 +435,9 @@
 <div class="block">Returns the ID of this robot.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getID--">getID()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the ID of this robot.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/BodyInfo.html#getLocation--">getLocation()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/BodyInfo.html" title="interface in battlecode.common">BodyInfo</a></dt>
 <dd>
 <div class="block">Returns the center location of this body.</div>
@@ -412,7 +447,9 @@
 <div class="block">Returns this robot's current location.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getLocation--">getLocation()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the location of this robot.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getMapHeight--">getMapHeight()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
 <div class="block">Returns the height of the map.</div>
@@ -423,10 +460,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/Transaction.html#getMessage--">getMessage()</a></span> - Method in class battlecode.common.<a href="battlecode/common/Transaction.html" title="class in battlecode.common">Transaction</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getRobotCount--">getRobotCount()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
-<dd>
-<div class="block">Returns the number of robots on your team (including your HQ).</div>
-</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getRoundNum--">getRoundNum()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
 <div class="block">Returns the current round number, where round 1 is the first round of the
@@ -441,6 +474,11 @@
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getSoupCarrying--">getSoupCarrying()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
 <div class="block">Returns the amount of crude soup this robot is carrying.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#getSoupCarrying--">getSoupCarrying()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">Returns the soup carried by the robot (miner or refinery (or HQ), 0
+ for other robots).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#getTeam--">getTeam()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
@@ -484,6 +522,10 @@
 <dt><span class="memberNameLink"><a href="battlecode/common/MapLocation.html#hashCode--">hashCode()</a></span> - Method in class battlecode.common.<a href="battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></dt>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#hashCode--">hashCode()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#heldUnitID">heldUnitID</a></span> - Variable in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">The ID of the unit that the robot is currently holding.</div>
+</dd>
 </dl>
 <a name="I:I">
 <!--   -->
@@ -513,6 +555,10 @@
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#isCurrentlyHoldingUnit--">isCurrentlyHoldingUnit()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
 <div class="block">Returns whether the robot is currently holding a unit (for delivery drones).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#isCurrentlyHoldingUnit--">isCurrentlyHoldingUnit()</a></span> - Method in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">Returns whether the robot is currently holding a unit.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#isLocationOccupied-battlecode.common.MapLocation-">isLocationOccupied(MapLocation)</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
@@ -585,10 +631,6 @@
 <dd>
 <div class="block">Creates a new MapLocation representing the location
  with the given coordinates.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="battlecode/common/GameConstants.html#MAX_BLOCKCHAIN_TRANSACTION_LENGTH">MAX_BLOCKCHAIN_TRANSACTION_LENGTH</a></span> - Static variable in class battlecode.common.<a href="battlecode/common/GameConstants.html" title="class in battlecode.common">GameConstants</a></dt>
-<dd>
-<div class="block">The maximum number of integers that can be sent in one message.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/GameConstants.html#MAX_DIRT_DIFFERENCE">MAX_DIRT_DIFFERENCE</a></span> - Static variable in class battlecode.common.<a href="battlecode/common/GameConstants.html" title="class in battlecode.common">GameConstants</a></dt>
 <dd>
@@ -683,7 +725,7 @@
 <dd>
 <div class="block">Struct that stores basic information that was 'sensed' of another Robot.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-battlecode.common.MapLocation-">RobotInfo(int, Team, RobotType, MapLocation)</a></span> - Constructor for class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-int-boolean-int-int-float-battlecode.common.MapLocation-">RobotInfo(int, Team, RobotType, int, boolean, int, int, float, MapLocation)</a></span> - Constructor for class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="battlecode/common/RobotType.html" title="enum in battlecode.common"><span class="typeNameLink">RobotType</span></a> - Enum in <a href="battlecode/common/package-summary.html">battlecode.common</a></dt>
 <dd>
@@ -734,6 +776,20 @@
 <div class="block">Returns all robots of a given team that can be sensed within a certain
  radius of a specified location.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#senseNearbySoup--">senseNearbySoup()</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
+<dd>
+<div class="block">Returns all map locations containing soup within sense radius.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#senseNearbySoup-int-">senseNearbySoup(int)</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
+<dd>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#senseNearbySoup-battlecode.common.MapLocation-int-">senseNearbySoup(MapLocation, int)</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
+<dd>
+<div class="block">Returns all map locations that can be sensed containing soup within
+ specified radius of specified location.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotController.html#sensePollution-battlecode.common.MapLocation-">sensePollution(MapLocation)</a></span> - Method in interface battlecode.common.<a href="battlecode/common/RobotController.html" title="interface in battlecode.common">RobotController</a></dt>
 <dd>
 <div class="block">Returns the pollution level at a given location, if the location is
@@ -772,6 +828,10 @@
 <dt><span class="memberNameLink"><a href="battlecode/common/GameConstants.html#SOUP_MINING_RATE">SOUP_MINING_RATE</a></span> - Static variable in class battlecode.common.<a href="battlecode/common/GameConstants.html" title="class in battlecode.common">GameConstants</a></dt>
 <dd>
 <div class="block">The amount of soup that a miner gets when performing one mine action.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="battlecode/common/RobotInfo.html#soupCarrying">soupCarrying</a></span> - Variable in class battlecode.common.<a href="battlecode/common/RobotInfo.html" title="class in battlecode.common">RobotInfo</a></dt>
+<dd>
+<div class="block">The amount of soup carried by the robot.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="battlecode/common/RobotType.html#soupLimit">soupLimit</a></span> - Variable in enum battlecode.common.<a href="battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></dt>
 <dd>

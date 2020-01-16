@@ -3,9 +3,7 @@
 import subscription, util
 from config import *
 
-import sys, os, shutil
-import logging
-import requests
+import sys, os, shutil, logging, requests
 from google.cloud import storage
 
 
@@ -121,4 +119,4 @@ def compile_worker(submissionid):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_COMPILE_NAME, compile_worker)
+    subscription.subscribe(GCLOUD_SUB_COMPILE_NAME, compile_worker, give_up=True)

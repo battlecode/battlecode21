@@ -6,6 +6,7 @@ In GCloud > PubSub:
 - Create new topic. Call it `bc20-compile`.
 - Create new subscriber. Call it `bc20-compile-sub`. All compile servers will share this subscriber
 - Repeat the above, with `bc20-game` and `bc20-game-sub`.
+- Ensure retention time for both subscribers is sufficiently high.
 
 In GCloud > IAM > Service accounts:
 - Create new service account.

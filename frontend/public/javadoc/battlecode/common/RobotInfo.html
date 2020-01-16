@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -130,6 +130,30 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#cooldownTurns">cooldownTurns</a></span></code>
+<div class="block">The cooldown of the robot.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#currentlyHoldingUnit">currentlyHoldingUnit</a></span></code>
+<div class="block">A boolean indicating whether the robot is currently holding a unit.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#dirtCarrying">dirtCarrying</a></span></code>
+<div class="block">The dirt carried by a landscaper, or the dirt on top of a building.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#heldUnitID">heldUnitID</a></span></code>
+<div class="block">The ID of the unit that the robot is currently holding.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#ID">ID</a></span></code>
 <div class="block">The unique ID of the robot.</div>
@@ -142,12 +166,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#soupCarrying">soupCarrying</a></span></code>
+<div class="block">The amount of soup carried by the robot.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#team">team</a></span></code>
 <div class="block">The Team that the robot is on.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#type">type</a></span></code>
 <div class="block">The type of the robot.</div>
@@ -168,9 +198,14 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-battlecode.common.MapLocation-">RobotInfo</a></span>(int&nbsp;ID,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-int-boolean-int-int-float-battlecode.common.MapLocation-">RobotInfo</a></span>(int&nbsp;ID,
          <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team,
          <a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a>&nbsp;type,
+         int&nbsp;dirtCarrying,
+         boolean&nbsp;currentlyHoldingUnit,
+         int&nbsp;heldUnitID,
+         int&nbsp;soupCarrying,
+         float&nbsp;cooldownTurns,
          <a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;location)</code>&nbsp;</td>
 </tr>
 </table>
@@ -193,30 +228,66 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getID--">getID</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getCooldownTurns--">getCooldownTurns</a></span>()</code>
+<div class="block">Returns the cooldown turns of the robot.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getLocation--">getLocation</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getDirtCarrying--">getDirtCarrying</a></span>()</code>
+<div class="block">Returns the dirt carried by the robot.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getHeldUnitID--">getHeldUnitID</a></span>()</code>
+<div class="block">Returns the ID of the unit that the robot is holding, if it
+ is holding one.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getID--">getID</a></span>()</code>
+<div class="block">Returns the ID of this robot.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getLocation--">getLocation</a></span>()</code>
+<div class="block">Returns the location of this robot.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getSoupCarrying--">getSoupCarrying</a></span>()</code>
+<div class="block">Returns the soup carried by the robot (miner or refinery (or HQ), 0
+ for other robots).</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getTeam--">getTeam</a></span>()</code>
 <div class="block">Returns the team that this robot is on.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#getType--">getType</a></span>()</code>
 <div class="block">Returns the type of this robot.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#isCurrentlyHoldingUnit--">isCurrentlyHoldingUnit</a></span>()</code>
+<div class="block">Returns whether the robot is currently holding a unit.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../battlecode/common/RobotInfo.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -272,6 +343,59 @@ extends java.lang.Object</pre>
 <div class="block">The type of the robot.</div>
 </li>
 </ul>
+<a name="dirtCarrying">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>dirtCarrying</h4>
+<pre>public final&nbsp;int dirtCarrying</pre>
+<div class="block">The dirt carried by a landscaper, or the dirt on top of a building. 0 if
+ the robot is neither a landscaper or a building.</div>
+</li>
+</ul>
+<a name="currentlyHoldingUnit">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>currentlyHoldingUnit</h4>
+<pre>public final&nbsp;boolean currentlyHoldingUnit</pre>
+<div class="block">A boolean indicating whether the robot is currently holding a unit. Always false
+ for robots that are not delivery drones.</div>
+</li>
+</ul>
+<a name="heldUnitID">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>heldUnitID</h4>
+<pre>public final&nbsp;int heldUnitID</pre>
+<div class="block">The ID of the unit that the robot is currently holding. -1 if currentlyHoldingUnit
+ is false.</div>
+</li>
+</ul>
+<a name="soupCarrying">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>soupCarrying</h4>
+<pre>public final&nbsp;int soupCarrying</pre>
+<div class="block">The amount of soup carried by the robot. Works for miners and refineries (HQs).</div>
+</li>
+</ul>
+<a name="cooldownTurns">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cooldownTurns</h4>
+<pre>public final&nbsp;float cooldownTurns</pre>
+<div class="block">The cooldown of the robot.</div>
+</li>
+</ul>
 <a name="location">
 <!--   -->
 </a>
@@ -290,7 +414,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-battlecode.common.MapLocation-">
+<a name="RobotInfo-int-battlecode.common.Team-battlecode.common.RobotType-int-boolean-int-int-float-battlecode.common.MapLocation-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -299,6 +423,11 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;RobotInfo(int&nbsp;ID,
                  <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team,
                  <a href="../../battlecode/common/RobotType.html" title="enum in battlecode.common">RobotType</a>&nbsp;type,
+                 int&nbsp;dirtCarrying,
+                 boolean&nbsp;currentlyHoldingUnit,
+                 int&nbsp;heldUnitID,
+                 int&nbsp;soupCarrying,
+                 float&nbsp;cooldownTurns,
                  <a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;location)</pre>
 </li>
 </ul>
@@ -317,15 +446,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getID</h4>
 <pre>public&nbsp;int&nbsp;getID()</pre>
-</li>
-</ul>
-<a name="getLocation--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getLocation</h4>
-<pre>public&nbsp;<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;getLocation()</pre>
+<div class="block">Returns the ID of this robot.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+</dl>
 </li>
 </ul>
 <a name="getTeam--">
@@ -353,6 +477,92 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the type of this robot.</dd>
+</dl>
+</li>
+</ul>
+<a name="getDirtCarrying--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDirtCarrying</h4>
+<pre>public&nbsp;int&nbsp;getDirtCarrying()</pre>
+<div class="block">Returns the dirt carried by the robot.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the dirt carried by the robot.</dd>
+</dl>
+</li>
+</ul>
+<a name="isCurrentlyHoldingUnit--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isCurrentlyHoldingUnit</h4>
+<pre>public&nbsp;boolean&nbsp;isCurrentlyHoldingUnit()</pre>
+<div class="block">Returns whether the robot is currently holding a unit.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>whether the robot is currently holding a unit.</dd>
+</dl>
+</li>
+</ul>
+<a name="getHeldUnitID--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHeldUnitID</h4>
+<pre>public&nbsp;int&nbsp;getHeldUnitID()</pre>
+<div class="block">Returns the ID of the unit that the robot is holding, if it
+ is holding one. Returns -1 if isCurrentlyHoldingUnit() is false.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the ID of the unit held.</dd>
+</dl>
+</li>
+</ul>
+<a name="getSoupCarrying--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSoupCarrying</h4>
+<pre>public&nbsp;int&nbsp;getSoupCarrying()</pre>
+<div class="block">Returns the soup carried by the robot (miner or refinery (or HQ), 0
+ for other robots).</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the soup amount.</dd>
+</dl>
+</li>
+</ul>
+<a name="getCooldownTurns--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCooldownTurns</h4>
+<pre>public&nbsp;float&nbsp;getCooldownTurns()</pre>
+<div class="block">Returns the cooldown turns of the robot.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the cooldown.</dd>
+</dl>
+</li>
+</ul>
+<a name="getLocation--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLocation</h4>
+<pre>public&nbsp;<a href="../../battlecode/common/MapLocation.html" title="class in battlecode.common">MapLocation</a>&nbsp;getLocation()</pre>
+<div class="block">Returns the location of this robot.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the location.</dd>
 </dl>
 </li>
 </ul>
