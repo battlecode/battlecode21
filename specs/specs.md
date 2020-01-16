@@ -192,9 +192,9 @@ The temporary local increase in pollution starts immediately and is in effect fo
 **Vaporator**: condenses soup from the air, reducing pollution. Clean energy!
 
 - Built by **miners**
-- Produces 7 soup (`RobotType.VAPORATOR.maxSoupProduced`) per turn for free
+- Produces 2 soup (`RobotType.VAPORATOR.maxSoupProduced`) per turn for free
 - Reduces **global pollution** by 1 per turn (`RobotType.VAPORATOR.globalPollutionAmount`)
-- Pollution on tiles within radius squared 35 (`RobotType.VAPORATOR.pollutionRadiusSquared`) temporarily decreases by a factor of 0.67 (`RobotType.VAPORATOR.localPollutionMultiplicativeEffect`).
+- Pollution on tiles within radius squared 35 (`RobotType.VAPORATOR.pollutionRadiusSquared`) temporarily decreases by a factor of 0.2 (`1 - RobotType.VAPORATOR.localPollutionMultiplicativeEffect`).
 
 **Design School**: a creative institution for training talented **landscapers**.
 
@@ -223,7 +223,7 @@ The temporary local increase in pollution starts immediately and is in effect fo
 | --- | --- | --- | --- | --- |
 | HQ | n/a | 50 | 48 | Miner |
 | Refinery | 200 | 15 | 24 | soup |
-| Vaporator | 1000 | 15 | 24 | soup |
+| Vaporator | 500 | 15 | 24 | soup |
 | Design School | 150 | 15 | 24 | Landscapers |
 | Fulfillment Center | 150 | 15 | 24 | Delivery Drones |
 | Net Gun | 250 | 15 | 24 | failed deliveries |
@@ -299,6 +299,7 @@ Therefore, we make the following promises about all maps:
 (so its elevation may be lower, but due to the topology would not flood until the water level exceeds 2-5).
 - The HQ will not start adjacent to deep water (e.g. to make it impossible to protect from floods).
 - There will always be a large negative elevation water tile (no games that never end).
+- Maps will always have at least 1k soup near the HQ, reachable by miners.
 
 ## Tiebreakers
 
@@ -400,6 +401,18 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.2.0.0 (1/15/20)
+    - spec changes:
+        - vaporators cost 500 and yield 2 soup/turn (down from 1000 and 7)
+        - vaporators decrease nearby pollution by 20% (down from 33%)
+        - maps will always have 1k soup near the HQ (reachable by miners)
+    - engine changes:
+        - messages submitted to the blockchain must now be exactly length 7
+        - added more functions for sensing info about units, including: unit carried by drone, dirt carried by landscaper, dirt on building, soup carried by miner, cooldown of every unit
+        - change onTheMap to do what you expect (return true if on the map and false if not. don't ask)
+        - added a disintegrate function (instead of just throwing an uncaught error)
+        - add senseNearbySoup (like senseNearbyRobots)
+        - increased string op costs to be proportional to length
 - 2020.1.1.2 (1/14/20)
     - spec changes: none
     - client changes:
