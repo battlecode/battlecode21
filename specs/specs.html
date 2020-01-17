@@ -498,7 +498,7 @@ String.split</code></pre>
 <li>clarify docs: <code>senseNearbyRobots</code> does not return in order of increasing distance</li>
 <li>instrument <code>indexOf</code>, <code>contains</code> and <code>lastIndexOf</code> for <code>String</code>s, <code>StringBuffer</code>s and <code>StringBuilder</code>s — they now cost bytecode proportional to their actual running time</li>
 <li>add a <code>profilerEnabled</code> option to the engine, which if set to true causes the engine to dump profiling data into the replay file (thanks <span class="citation" data-cites="jmerle">@jmerle</span>!)</li>
-<li>note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual runtime in all cases, even after these changes — however, as long as you aren’t exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you’re free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs.</li>
+<li>note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual runtime in all cases, even after these changes — however, as long as you aren’t exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you’re free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs, but we probably won’t patch it at this point unless it’s a really big problem.</li>
 </ul></li>
 </ul></li>
 <li>2020.2.0.0 (1/15/20)

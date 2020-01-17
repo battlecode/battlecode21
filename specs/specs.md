@@ -417,7 +417,7 @@ We'll update this spec as the competition progresses.
         - clarify docs: `senseNearbyRobots` does not return in order of increasing distance
         - instrument `indexOf`, `contains` and `lastIndexOf` for `String`s, `StringBuffer`s and `StringBuilder`s — they now cost bytecode proportional to their actual running time
         - add a `profilerEnabled` option to the engine, which if set to true causes the engine to dump profiling data into the replay file (thanks @jmerle!)
-        - note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual runtime in all cases, even after these changes — however, as long as you aren't exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you're free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs.
+        - note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual runtime in all cases, even after these changes — however, as long as you aren't exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you're free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs, but we probably won't patch it at this point unless it's a really big problem.
 - 2020.2.0.0 (1/15/20)
     - spec changes:
         - vaporators cost 500 and yield 2 soup/turn (down from 1000 and 7)
