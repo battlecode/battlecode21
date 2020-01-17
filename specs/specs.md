@@ -56,7 +56,7 @@ These four important characteristics of each map tile,
 **elevation**, **flood** status, **pollution**, and **soup** content,
 are only visible to robots which are nearby.
 A robot can **sense** these characteristics if the tile is within its **sensor radius** (a trait which varies by robot type),
-using the functions `rc.senseElevation()`, `rc.senseFlooded()`, `rc.sensePollution()`, and `rc.senseSoup()`, respectively.
+using the functions `rc.senseElevation()`, `rc.senseFlooding()`, `rc.sensePollution()`, and `rc.senseSoup()`, respectively.
 
 At the beginning of the game, these characteristics and the two starting **HQ**s are guaranteed to be horizontally, vertically, or rotationally symmetric.
 
