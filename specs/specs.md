@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.2.0.0
+Current version: 2020.2.0.1
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -401,6 +401,23 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.2.0.1 (1/17/20)
+    - spec changes:
+        - change `rc.senseFlooded` (incorrect) to `rc.senseFlooding` (correct)
+    - client changes:
+        - add visualization of net gun shots
+        - add visualization of water level
+        - change colors: elevation is now a rainbow gradient
+        - add interpolation (makes watching games much more fun!)
+        - update the drone sprite to be more clear (thanks @programjames)
+        - add profiler tab (thanks @jmerle)
+    - engine changes:
+        - calculate pollution in a much faster way, dramatically reducing the time to run games with lots of vaporators
+        - make `disintegrate` actually work
+        - clarify docs: `senseNearbyRobots` does not return in order of increasing distance
+        - instrument `indexOf`, `contains` and `lastIndexOf` for `String`s, `StringBuffer`s and `StringBuilder`s — they now cost bytecode proportional to their actual running time
+        - add a `profilerEnabled` option to the engine, which if set to true causes the engine to dump profiling data into the replay file (thanks @jmerle!)
+        - note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual bytecode cost in all cases, even after these changes — however, as long as you aren't exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you're free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs.
 - 2020.2.0.0 (1/15/20)
     - spec changes:
         - vaporators cost 500 and yield 2 soup/turn (down from 1000 and 7)
