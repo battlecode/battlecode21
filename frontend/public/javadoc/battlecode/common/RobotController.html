@@ -880,8 +880,8 @@ var activeTableTab = "activeTableTab";
                               int&nbsp;radiusSquared,
                               <a href="../../battlecode/common/Team.html" title="enum in battlecode.common">Team</a>&nbsp;team)</pre>
 <div class="block">Returns all robots of a given team that can be sensed within a certain
- radius of a specified location. The objects are returned in order of
- increasing distance from the specified center.</div>
+ radius of a specified location. The objects are returned in no
+ particular order.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>center</code> - center of the given search radius</dd>
@@ -1442,13 +1442,9 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>disintegrate</h4>
-<pre>void&nbsp;disintegrate()
-           throws <a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></pre>
-<div class="block">Causes the robot to die.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../battlecode/common/GameActionException.html" title="class in battlecode.common">GameActionException</a></code></dd>
-<dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
+<pre>void&nbsp;disintegrate()</pre>
+<div class="block">Causes the robot to die. Never fails.</div>
+<dl><dt><strong>Bytecode cost:</strong></dt><dd><code>0</code></dd></dl>
 </li>
 </ul>
 <a name="resign--">

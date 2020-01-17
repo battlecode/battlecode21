@@ -169,7 +169,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="battlecode-2020">Battlecode 2020</h1>
-<p><em>The formal specification of this year’s game.</em> Current version: 2020.2.0.0</p>
+<p><em>The formal specification of this year’s game.</em> Current version: 2020.2.0.1</p>
 <p><em>Warning: This document and the game it describes will be tweaked as the competition progresses. We’ll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced. Any significant changes will be done before the Seeding Tournament.</em></p>
 <h2 id="background">Background</h2>
 <p>As we all know, the world is changing. Water levels are rising, pollution is becoming a global problem, and we are rapidly depleting our most valuable natural resource: soup. This year’s game is as much about surviving the changing climate as defeating the enemy team.</p>
@@ -224,7 +224,7 @@ border-radius: 50%;
 </table>
 <p><strong>Pollution</strong> is the other environmental factor your robots must contend with. The presence of pollution on a map tile will slow down any robot on that tile by an amount proportional to the amount of pollution (see <strong>cooldown</strong> section for details). There is a <strong>global pollution</strong> level which starts at 0, is affected by both teams, and is applied to every map tile, plus <strong>local pollution</strong> from <strong>refineries</strong>, <strong>cows</strong>, and <strong>vaporators</strong> which can affect the pollution level near them. (More details on the individual effects below.)</p>
 <p>Map tiles may also contain some amount of <strong>soup</strong>, which can be extracted by <strong>miners</strong>, as we’ll see below.</p>
-<p>These four important characteristics of each map tile, <strong>elevation</strong>, <strong>flood</strong> status, <strong>pollution</strong>, and <strong>soup</strong> content, are only visible to robots which are nearby. A robot can <strong>sense</strong> these characteristics if the tile is within its <strong>sensor radius</strong> (a trait which varies by robot type), using the functions <code>rc.senseElevation()</code>, <code>rc.senseFlooded()</code>, <code>rc.sensePollution()</code>, and <code>rc.senseSoup()</code>, respectively.</p>
+<p>These four important characteristics of each map tile, <strong>elevation</strong>, <strong>flood</strong> status, <strong>pollution</strong>, and <strong>soup</strong> content, are only visible to robots which are nearby. A robot can <strong>sense</strong> these characteristics if the tile is within its <strong>sensor radius</strong> (a trait which varies by robot type), using the functions <code>rc.senseElevation()</code>, <code>rc.senseFlooding()</code>, <code>rc.sensePollution()</code>, and <code>rc.senseSoup()</code>, respectively.</p>
 <p>At the beginning of the game, these characteristics and the two starting <strong>HQ</strong>s are guaranteed to be horizontally, vertically, or rotationally symmetric.</p>
 <h2 id="soup">Soup</h2>
 <p><strong>Soup</strong> is the main resource in Battlecode 2020. Each team has a pool of soup shared by all robots, which is spent to build more robots and pay blockchain transaction fees. It actually comes in two forms; the soup distributed around the map can only be gathered by <strong>miners</strong> and is NOT added to the team pool until it has been <strong>refined</strong> in a <strong>refinery</strong>. Miners must bring unrefined soup from around the map to a <strong>refinery</strong>, where it is processed and added to the team pool, at which point it may be spent.</p>
@@ -476,6 +476,31 @@ String.split</code></pre>
 <p>If something is unclear, direct your questions to our <a href="https://discordapp.com/channels/386965718572466197/401552721095688193">Discord</a> where other people may have the same question. We’ll update this spec as the competition progresses.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>2020.2.0.1 (1/17/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>change <code>rc.senseFlooded</code> (incorrect) to <code>rc.senseFlooding</code> (correct)</li>
+</ul></li>
+<li>client changes:
+<ul>
+<li>add visualization of net gun shots</li>
+<li>add visualization of water level</li>
+<li>change colors: elevation is now a rainbow gradient</li>
+<li>add interpolation (makes watching games much more fun!)</li>
+<li>update the drone sprite to be more clear (thanks <span class="citation" data-cites="programjames">@programjames</span>)</li>
+<li>add profiler tab (thanks <span class="citation" data-cites="jmerle">@jmerle</span>)</li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>calculate pollution in a much faster way, dramatically reducing the time to run games with lots of vaporators</li>
+<li>make <code>disintegrate</code> actually work</li>
+<li>clarify docs: <code>senseNearbyRobots</code> does not return in order of increasing distance</li>
+<li>instrument <code>indexOf</code>, <code>contains</code> and <code>lastIndexOf</code> for <code>String</code>s, <code>StringBuffer</code>s and <code>StringBuilder</code>s — they now cost bytecode proportional to their actual running time</li>
+<li>add a <code>profilerEnabled</code> option to the engine, which if set to true causes the engine to dump profiling data into the replay file (thanks <span class="citation" data-cites="jmerle">@jmerle</span>!)</li>
+<li>note: these are the LAST MAJOR CHANGES to the engine and the specs. we are aware that the instrumented bytecode cost does not correspond to the actual runtime in all cases, even after these changes — however, as long as you aren’t exploiting that in a malicious way (e.g., trying to kill our servers with infinite loops), you’re free to take advantage of it. we still appreciate if you message us when finding unexpected bytecode costs.</li>
+</ul></li>
+</ul></li>
 <li>2020.2.0.0 (1/15/20)
 <ul>
 <li>spec changes:
