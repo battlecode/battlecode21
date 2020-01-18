@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
 class Footer extends Component {
     render() {
@@ -13,14 +14,9 @@ class Footer extends Component {
                                 </a>
                             </li>
                             <li>
-                                <a href="https://blog.battlecode.org/">
-                                    Blog
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://blog.battlecode.org/terms">
-                                    Usage Terms
-                                </a>
+                                <NavLink to='codeofconduct'>
+                                    Code of Conduct
+                                </NavLink>
                             </li>
                         </ul>
                     </nav>

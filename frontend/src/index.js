@@ -14,6 +14,7 @@ import Search from './views/search';
 import Team from './views/team';
 import Issues from './views/issues';
 import Debugging from './views/debugging';
+import CodeOfConduct from './views/codeofconduct';
 import Staff from './views/staff';
 import Rankings from './views/rankings';
 //import IDE from './views/ide';
@@ -102,6 +103,7 @@ class App extends Component {
       <Route path={`${process.env.PUBLIC_URL}/getting-started`} component={GettingStarted} />,
       <Route path={`${process.env.PUBLIC_URL}/common-issues`} component={Issues} />,
       <Route path={`${process.env.PUBLIC_URL}/debugging`} component={Debugging} />,
+      <Route path={`${process.env.PUBLIC_URL}/codeofconduct`} component={CodeOfConduct} />,
       <Route path={`${process.env.PUBLIC_URL}/resources`} component={Resources} />,
       <Route path={`${process.env.PUBLIC_URL}/rankings/:team_id`} component={TeamInfo} />,
       <Route path={`${process.env.PUBLIC_URL}/rankings`} component={Rankings} />,
