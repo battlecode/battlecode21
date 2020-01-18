@@ -17,7 +17,11 @@ class YesTeam extends Component {
                 auto_accept_unranked:false,
                 bio:'',
                 avatar:'',
-                users:[]
+                users:[],
+                mit: false,
+                student: false,
+                high_school: false,
+                international: false
             },
             'up':'Update Info'
         };
@@ -57,6 +61,7 @@ class YesTeam extends Component {
     }
 
     updateTeam() {
+        console.log(this.state.team)
         this.setState({'up':'<i class="fa fa-circle-o-notch fa-spin"></i>'});
         Api.updateTeam(this.state.team, function(response) {
             if (response) this.setState({'up':'<i class="fa fa-check"></i>'});
@@ -86,6 +91,15 @@ class YesTeam extends Component {
         return (
             <div>
                 <div className="col-md-8">
+                    <div className="card">
+                        <div className="header">
+                            <h4 className="title">Tournament Eligibilty</h4>
+                        </div>
+                        <div className="content">
+                        <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up}/>
+                        </div>
+                    </div>
+
                     <div className="card">
                         <div className="header">
                             <h4 className="title">Team</h4>
@@ -247,6 +261,35 @@ class NoTeam extends Component {
 
                 </div>
         );
+    }
+}
+
+// pass change handler in props.change and team in props.team
+class EligibiltyOptions extends Component {
+    render() {
+        return (
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="form-group" style={{display: "flex"}}>
+                        <label>Full-time Student</label>
+                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="student" checked={this.props.team.student} />
+                    </div>
+                    <div className="form-group" style={{display: "flex"}}>
+                        <label>First-time MIT Students</label>
+                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="mit" checked={this.props.team.mit} />
+                    </div>
+                    <div className="form-group" style={{display: "flex"}}>
+                        <label>International Students</label>
+                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="international" checked={this.props.team.international} />
+                    </div>
+                    <div className="form-group" style={{display: "flex"}}>
+                        <label>High School Students</label>
+                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="high_school" checked={this.props.team.high_school} />
+                    </div>
+                     <button type="button" onClick={ this.props.update } className="btn btn-info btn-fill pull-right" dangerouslySetInnerHTML={{__html:this.props.up_but }}></button>
+                </div>
+            </div>
+        )
     }
 }
 

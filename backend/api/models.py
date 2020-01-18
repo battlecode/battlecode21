@@ -129,6 +129,12 @@ class Team(models.Model):
     losses               = models.IntegerField(default=0)
     draws                = models.IntegerField(default=0)
     
+    #eligibility
+    student = models.BooleanField(default=False)
+    mit = models.BooleanField(default=False)
+    high_school = models.BooleanField(default=False)
+    international = models.BooleanField(default=False)
+
     # metadata
     deleted = models.BooleanField(default=False)
 

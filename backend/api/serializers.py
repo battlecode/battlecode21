@@ -39,7 +39,8 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
-            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma', 'score')
+            'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma', 'score', 
+            'student', 'mit', 'high_school', 'international')
         read_only_fields = ('id',)
 
     def update(self, instance, validated_data):
@@ -49,6 +50,10 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         instance.auto_accept_ranked = validated_data.get('auto_accept_ranked', instance.auto_accept_ranked)
         instance.auto_accept_unranked = validated_data.get('auto_accept_unranked', instance.auto_accept_unranked)
         instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.student = validated_data.get('student', instance.student)
+        instance.mit = validated_data.get('mit', instance.mit)
+        instance.high_school = validated_data.get('high_school', instance.high_school)
+        instance.international = validated_data.get('international', instance.international)
         instance.save()
         return instance
 
