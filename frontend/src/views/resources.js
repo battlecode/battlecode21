@@ -84,11 +84,12 @@ class Resources extends Component {
                                 <p>
                                     Third-party tools:
                                 </p>
+                                <p>
                                 <ul>
                                     <li><a href='https://github.com/StoneT2000/BC20-MapBuilder'>Map builder</a>, by StoneT2000.</li>
                                     <li>Profiler (integrated into the official client), by jmerle.</li>
                                 </ul>
-
+                                </p>
 
                                 </div>
                             </div>
