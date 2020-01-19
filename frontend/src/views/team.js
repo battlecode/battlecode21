@@ -298,7 +298,7 @@ class EligibiltyOptions extends Component {
                         <label>First-time MIT Students</label>
                         <Floater content={
                             <div>
-                            <p>Teams of only active MIT students who have never competed in Battlecode (that is, never submitted a bot) are eligible for the Newbie Tournament.</p></div> } showCloseButton={true}>
+                            <p>Teams of only active MIT students who have never competed in Battlecode before (that is, never submitted a bot in previous years) are eligible for the Newbie Tournament.</p></div> } showCloseButton={true}>
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="mit" checked={this.props.team.mit} />
