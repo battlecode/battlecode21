@@ -273,7 +273,7 @@ class EligibiltyOptions extends Component {
             <div className="row">
                 <div className="col-md-12">
                     <div className="form-group" style={{display: "flex"}}>
-                        <label>Full-time Student</label>
+                        <label>Full-time Students</label>
                         <Floater content={
                             <div>
                             <p>Teams must consist entirely of active students to be eligible for the Seeding, Qualifying, and Final Tournaments. If you are unsure about whether you are an active student, read more about eligibilty under <a href="http://2020.battlecode.org/tournaments">tournaments</a> or reach out to one of Teh Devs on Discord or over email.</p></div> } showCloseButton={true}>
