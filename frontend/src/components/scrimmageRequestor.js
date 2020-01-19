@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Api from '../api';
 
 import TeamList from '../components/teamList';
+import RankingTeamList from '../components/rankingTeamList';
 
 class ScrimmageRequestor extends Component {
 
@@ -89,7 +90,7 @@ class ScrimmageRequestor extends Component {
                     </div>
                 </div>
                 <div className="col-md-12">
-                    <TeamList 
+                    <RankingTeamList 
                         teams={state.teams}
                         page = {state.teamPage}
                         pageLimit = {state.teamLimit}

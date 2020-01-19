@@ -12,8 +12,9 @@ class RankingTeamList extends TeamList {
     showTeamPage = (teamID) => {
         //this.props.history.push(`${process.env.PUBLIC_URL}/rankings/${teamID}`)
         //this.setState({showTeamID: teamID});
-        console.log(this)
-        this.props.history.push(`${process.env.PUBLIC_URL}/rankings/${teamID}`)
+        if (!this.props.canRequest) {
+            this.props.history.push(`${process.env.PUBLIC_URL}/rankings/${teamID}`);
+        }
         //this.router.transitionTo('/')
     }
 
@@ -50,6 +51,7 @@ class RankingTeamList extends TeamList {
                             <td>{ team.name }</td>
                             <td>{ team.users.join(", ") }</td>
                             <td>{ team.bio }</td>
+                            <td>{ team.student ? "✅" : "🛑"}{team.mit ? "MIT " : ""}{team.high_school ? "HS " : ""}{team.international ? "🌍" : "🇺🇸"}</td>
                             {props.canRequest && (
                                 <td><button className="btn btn-xs" onClick={() => this.onTeamRequest(team.id)}>{buttonContent}</button>  </td>
                             )}
@@ -71,6 +73,7 @@ class RankingTeamList extends TeamList {
                                     <th>Team</th>
                                     <th>Users</th>
                                     <th>Bio</th>
+                                    <th>Eligibility</th>
                                 </tr>
                                 </thead>
                                 <tbody>
