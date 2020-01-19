@@ -275,6 +275,18 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                             "player2": ratings[already_matched+j][2].id
                         })
                 already_matched += size
+
+            # add some scatter
+            # specifically, match team 1 with team 11, team 2 with team 12, etc
+            # where the offset is randomly determined between 5 and 15
+            scatter_step = random.randint(5,15)
+            for i in range(len(ratings)-scatter_step):
+                scrim_list.append({
+                    "player1": ratings[i][2].id,
+                    "player2": ratings[i+scatter_step][2].id
+                })
+
+
             return Response({'matches': scrim_list}, status.HTTP_200_OK)
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
