@@ -82,8 +82,12 @@ class Resources extends Component {
                                     All of the code powering Battlecode 2020 is open source on GitHub, in the <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
                                 </p>
                                 <p>
-                                    We will also list helpful third-party tools here, as they start popping up.
+                                    Third-party tools:
                                 </p>
+                                <ul>
+                                    <li><a href='https://github.com/StoneT2000/BC20-MapBuilder'>Map builder</a>, by StoneT2000.</li>
+                                    <li>Profiler (integrated into the official client), by jmerle.</li>
+                                </ul>
 
 
                                 </div>
