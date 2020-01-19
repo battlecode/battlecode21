@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Api from '../api';
 
 import TeamCard from '../components/teamCard';
+import Floater from 'react-floater';
 
 class YesTeam extends Component {
 
@@ -94,6 +95,7 @@ class YesTeam extends Component {
                     <div className="card">
                         <div className="header">
                             <h4 className="title">Tournament Eligibilty</h4>
+                            <p>We need to know a little about your team in order to determine which tournaments you are is eligible for.</p>
                         </div>
                         <div className="content">
                         <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up}/>
@@ -272,18 +274,38 @@ class EligibiltyOptions extends Component {
                 <div className="col-md-12">
                     <div className="form-group" style={{display: "flex"}}>
                         <label>Full-time Student</label>
+                        <Floater content={
+                            <div>
+                            <p>Teams must consist entirely of active students to be eligible for the Seeding, Qualifying, and Final Tournaments. If you are unsure about whether you are an active student, read more about eligibilty under <a href="http://2020.battlecode.org/tournaments">tournaments</a> or reach out to one of Teh Devs on Discord or over email.</p></div> } showCloseButton={true}>
+                             <i className="pe-7s-info pe-fw" />
+                        </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="student" checked={this.props.team.student} />
                     </div>
                     <div className="form-group" style={{display: "flex"}}>
                         <label>First-time MIT Students</label>
+                        <Floater content={
+                            <div>
+                            <p>Teams of only active MIT students who have never competed in Battlecode (that is, never submitted a bot) are eligible for the Newbie Tournament.</p></div> } showCloseButton={true}>
+                             <i className="pe-7s-info pe-fw" />
+                        </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="mit" checked={this.props.team.mit} />
                     </div>
                     <div className="form-group" style={{display: "flex"}}>
                         <label>International Students</label>
+                        <Floater content={
+                            <div>
+                            <p>Teams consisting entirely of US students compete in the US Qualifying Tournament. If a team has at least one non-US competitor, it will compete in the International Qualifying Tournament. A US student is a student who attends a school in the United States.</p></div> } showCloseButton={true}>
+                             <i className="pe-7s-info pe-fw" />
+                        </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="international" checked={this.props.team.international} />
                     </div>
                     <div className="form-group" style={{display: "flex"}}>
                         <label>High School Students</label>
+                        <Floater content={
+                            <div>
+                            <p>Teams of only high school (and earlier) students are eligible for the High School Tournament.</p></div> } showCloseButton={true}>
+                             <i className="pe-7s-info pe-fw" />
+                        </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="high_school" checked={this.props.team.high_school} />
                     </div>
                      <button type="button" onClick={ this.props.update } className="btn btn-info btn-fill pull-right" dangerouslySetInnerHTML={{__html:this.props.up_but }}></button>
