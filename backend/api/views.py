@@ -253,7 +253,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if team_sub.last_1_id is not None:
                     has_sub.add(team_sub.team_id)
             for team in teams:
-                if team.id in has_sub:
+                if team.id in has_sub and not team.deleted:
                     # The uniform random number prevents a sort from using a non-existent team comparator.
                     ratings.append((team.score, random.uniform(0, 1), team))
             ratings.sort()
