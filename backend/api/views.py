@@ -969,6 +969,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
 
+                    # if tournament, then return here
+                    if scrimmage.tournament_id is not None:
+                        scrimmage.save()
+                        return Response({'status': sc_status}, status.HTTP_200_OK)
+
                     # update rankings using elo
                     # get team info
                     rteam = self.get_team(league_id, scrimmage.red_team_id)
