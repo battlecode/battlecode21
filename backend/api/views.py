@@ -642,6 +642,12 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
+        # set ELO score to 1200
+        # we default the score to 0 for everyone who has not submitted anything
+        if team.score == settings.ELO_NULL:
+            team.score = settings.ELO_START
+            team.save()
+
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
         # call to compile server
