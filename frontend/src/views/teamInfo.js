@@ -41,8 +41,7 @@ class RankCard extends Component {
 					</div>
 					<br></br>
 					<p style={{textAlign: 'center'}}>
-						μ: {this.props.team.mu.toFixed(2)},
-						σ: {this.props.team.sigma.toFixed(2)}
+						Score: {this.props.team.score.toFixed(2)}
 					</p>
 				</div>
 			</div>

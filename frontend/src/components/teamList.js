@@ -85,7 +85,7 @@ class TeamList extends Component {
                 }
                 return (
                     <tr key={ team.id }>
-                        <td>{ team.mu }</td>
+                        <td>{ team.score }</td>
                         <td>{ team.name }</td>
                         <td>{ team.users.join(", ") }</td>
                         <td>{ team.bio }</td>
