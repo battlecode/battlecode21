@@ -95,7 +95,9 @@ class YesTeam extends Component {
                     <div className="card">
                         <div className="header">
                             <h4 className="title">Tournament Eligibilty</h4>
-                            <p>We need to know a little about your team in order to determine which tournaments you are is eligible for.</p>
+                            <p>We need to know a little about your team in order to determine which tournaments you are is eligible for.
+                                Check all boxes that apply to your team.
+                            </p>
                         </div>
                         <div className="content">
                         <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up}/>
