@@ -643,8 +643,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.save()
 
         # set ELO score to 1200
-        # we default the score to 0 for everyone who has not submitted anything
-        if team.score == settings.ELO_NULL:
+        # if there has not been any submission yet, then we should start at the start ELO
+        if team_sub.last_1_id is None:
             team.score = settings.ELO_START
             team.save()
 
