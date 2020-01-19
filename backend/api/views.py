@@ -270,13 +270,10 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             for size in block_sizes:
                 for i in range(size):
                     for j in range(i+1, size):
-                        # randomly ignore this match with probability 0.3 to get fewer matches
-                        # and hopefully same behavior
-                        if random.uniform(0,1) > 0.3:
-                            scrim_list.append({
-                                "player1": ratings[already_matched+i][2].id,
-                                "player2": ratings[already_matched+j][2].id
-                            })
+                        scrim_list.append({
+                            "player1": ratings[already_matched+i][2].id,
+                            "player2": ratings[already_matched+j][2].id
+                        })
                 already_matched += size
 
             # add some scatter
