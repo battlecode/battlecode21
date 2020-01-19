@@ -16,9 +16,8 @@ from api.permissions import *
 from google.cloud import storage
 from google.cloud import pubsub_v1
 from google.oauth2 import service_account
-import trueskill
 
-import os, tempfile, datetime, argparse, time, json, random, binascii, threading
+import os, tempfile, datetime, argparse, time, json, random, binascii, threading, math
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
 GCLOUD_SUB_BUCKET = "bc20-submissions"
@@ -256,7 +255,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             for team in teams:
                 if team.id in has_sub:
                     # The uniform random number prevents a sort from using a non-existent team comparator.
-                    ratings.append((trueskill.Rating(mu=team.mu, sigma=team.sigma), random.uniform(0, 1), team))
+                    ratings.append((team.score, random.uniform(0, 1), team))
             ratings.sort()
 
             # Partition into blocks, and round robin in each block
@@ -643,10 +642,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub.save()
 
-        team.sigma = 8.333
-        team.score = team.mu - 3 * team.sigma
-        team.save()
-
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
         # call to compile server
@@ -968,33 +963,29 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 if sc_status == "redwon" or sc_status == "bluewon":
                     scrimmage.status = sc_status
 
-                    # update rankings based on trueskill algoirthm
+                    # update rankings using elo
                     # get team info
                     rteam = self.get_team(league_id, scrimmage.red_team_id)
                     bteam = self.get_team(league_id, scrimmage.blue_team_id)
                     won = rteam if sc_status == "redwon" else bteam
                     lost = rteam if sc_status == "bluewon" else bteam
                         
-                    if scrimmage.ranked: # TODO check if ranked
-                        # store previous mu in scrimmage
-                        scrimmage.blue_mu = bteam.mu
-                        scrimmage.red_mu = rteam.mu
+                    if scrimmage.ranked: 
+                        # store previous score in scrimmage. NOTE: fields are called blue_mu and red_mu but they actually represent score
+                        scrimmage.blue_mu = bteam.score
+                        scrimmage.red_mu = rteam.score
 
-                        # get mu and sigma
-                        muW = won.mu
-                        sdW = won.sigma
-                        muL = lost.mu
-                        sdL = lost.sigma
+                        # ELO; see https://en.wikipedia.org/wiki/Elo_rating_system#Mathematical_details
+                        # get score
+                        sW = won.score
+                        sL = lost.score
 
-                        winner = trueskill.Rating(mu=muW, sigma=sdW)
-                        loser = trueskill.Rating(mu=muL, sigma=sdL)
+                        probW = 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (sL - sW) / 400))  # the probability that W would win
+                        probL = 1 - probW   # the probability that L would win
 
-                        # applies trueskill algorithm & update teams with new scores
-                        wScore, lScore = trueskill.rate_1vs1(winner, loser)
-                        won.mu = wScore.mu
-                        won.sigma = wScore.sigma
-                        lost.mu = lScore.mu
-                        lost.sigma = lScore.sigma
+                        # update W's score
+                        won.score = won.score + settings.ELO_K * (1 - probW)
+                        lost.score = lost.score + settings.ELO_K * (0 - probL)
 
                     # update wins and losses
                     won.wins = won.wins + 1

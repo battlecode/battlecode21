@@ -138,11 +138,6 @@ class Team(models.Model):
     # metadata
     deleted = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-        # update score
-        self.score = self.mu - 3*self.sigma
-        super(Team, self).save(*args, **kwargs)
-
     def __str__(self):
         return '{}: (#{}) {}'.format(self.league, self.id, self.name)
 

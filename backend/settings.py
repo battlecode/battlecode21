@@ -61,6 +61,9 @@ SERVER_MAPS = [
   "WateredDown",
 ]
 
+# this is the constant used in the ELO calculation
+ELO_K = 32
+
 
 # Application definition
 
