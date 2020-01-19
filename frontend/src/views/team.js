@@ -22,7 +22,7 @@ class YesTeam extends Component {
                 mit: false,
                 student: false,
                 high_school: false,
-                international: false
+                international: true
             },
             'up':'Update Info'
         };
@@ -44,6 +44,8 @@ class YesTeam extends Component {
         var val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
         if (!id) id = e.target.parentElement.id;
+
+        if (id === 'international') val = !val;
 
         this.setState(function(prevState, props) {
             prevState.team[id] = val;
@@ -284,6 +286,15 @@ class EligibiltyOptions extends Component {
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="student" checked={this.props.team.student} />
                     </div>
                     <div className="form-group" style={{display: "flex"}}>
+                        <label>US Students</label>
+                        <Floater content={
+                            <div>
+                            <p>Teams consisting entirely of US students compete in the US Qualifying Tournament. If a team has at least one non-US competitor, it will compete in the International Qualifying Tournament. A US student is a student who attends a school in the United States.</p></div> } showCloseButton={true}>
+                             <i className="pe-7s-info pe-fw" />
+                        </Floater>
+                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="international" checked={!this.props.team.international} />
+                    </div>
+                    <div className="form-group" style={{display: "flex"}}>
                         <label>First-time MIT Students</label>
                         <Floater content={
                             <div>
@@ -291,15 +302,6 @@ class EligibiltyOptions extends Component {
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="mit" checked={this.props.team.mit} />
-                    </div>
-                    <div className="form-group" style={{display: "flex"}}>
-                        <label>International Students</label>
-                        <Floater content={
-                            <div>
-                            <p>Teams consisting entirely of US students compete in the US Qualifying Tournament. If a team has at least one non-US competitor, it will compete in the International Qualifying Tournament. A US student is a student who attends a school in the United States.</p></div> } showCloseButton={true}>
-                             <i className="pe-7s-info pe-fw" />
-                        </Floater>
-                        <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="international" checked={this.props.team.international} />
                     </div>
                     <div className="form-group" style={{display: "flex"}}>
                         <label>High School Students</label>
