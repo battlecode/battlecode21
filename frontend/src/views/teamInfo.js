@@ -41,7 +41,7 @@ class RankCard extends Component {
 					</div>
 					<br></br>
 					<p style={{textAlign: 'center'}}>
-						Score: {Math.round(this.props.team.score)}
+						Score: {this.props.team.score === 0 ? "N/A" : Math.round(this.props.team.score)}
 					</p>
 				</div>
 			</div>
