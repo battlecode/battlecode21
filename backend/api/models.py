@@ -122,7 +122,7 @@ class Team(models.Model):
     # scrimmages
     mu                   = models.FloatField(default=25)
     sigma                = models.FloatField(default=8.333)
-    score                = models.FloatField(default=0.001)
+    score                = models.FloatField(default=settings.ELO_NULL)
     auto_accept_ranked   = models.BooleanField(default=False)
     auto_accept_unranked = models.BooleanField(default=False)
     wins                 = models.IntegerField(default=0)

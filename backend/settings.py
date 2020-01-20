@@ -67,7 +67,7 @@ ELO_K = 32
 ELO_START = 1200
 # this is the null rating
 # real elo will more or less never get to 0 so this is fine
-ELO_NULL = 0
+ELO_NULL = -1000000
 
 
 # Application definition
