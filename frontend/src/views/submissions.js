@@ -113,11 +113,11 @@ class Submissions extends Component {
                     break
                 case 'tour_seed':
                     index = 1
-                    add_data = ['Seed', data]
+                    add_data = ['Seeding', data]
                     break
                 case 'tour_qual':
                     index = 2
-                    add_data = ['Qual', data]
+                    add_data = ['Qualifying', data]
                     break
                 case 'tour_final':
                     index = 3
