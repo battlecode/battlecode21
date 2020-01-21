@@ -29,10 +29,9 @@ def monitor_command(command, cwd, timeout=0):
         to = threading.Timer(timeout, os.killpg, (os.getpgid(subproc.pid), signal.SIGKILL))
     try:
         to.start()
-        for line in subproc.stderr:
-            line = line.decode()[:-1] # Remove trailing newline
-            logging.info("[subprocess stderr]  {}".format(line))
         proc_stdout, proc_stderr = subproc.communicate()
+        for line in proc_stderr.decode().split('\n'):
+            logging.info("[subprocess stderr]  {}".format(line))
         return (subproc.returncode, proc_stdout.decode(), proc_stderr.decode())
     finally:
         to.cancel()
