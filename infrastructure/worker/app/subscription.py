@@ -25,8 +25,8 @@ def subscribe(subscription_name, worker, give_up=False):
                     client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
                     logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
                     time.sleep(SUB_SLEEP_TIME)
-                except:
-                    logging.warning('Could not reset ack deadline')
+                except Exception as e:
+                    logging.warning('Could not reset ack deadline', exc_info=e)
     watcher = threading.Thread(target=renew_deadline)
     watcher.start()
 
