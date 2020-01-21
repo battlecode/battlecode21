@@ -134,7 +134,7 @@ def get_match_result(match_id):
 
 def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
     """Generates the tournament bracket and publishes it to the queue"""
-    tournament = bracketlib.SingleEliminationTournament(num_players)
+    tournament = bracketlib.DoubleEliminationTournament(num_players)
     tournament.generate_bracket()
     manager = TournamentManager(tournament, team_pk, team_names)
 

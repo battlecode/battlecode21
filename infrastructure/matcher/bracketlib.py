@@ -399,7 +399,7 @@ class DoubleEliminationTournament(Tournament):
 def dump_json(n, inf, ouf):
     """Dumps the tournament bracket as JSON for use by bracket viewer"""
 
-    tournament = SingleEliminationTournament(n)
+    tournament = DoubleEliminationTournament(n)
     tournament.generate_bracket()
     data = { }
     data['tournament_name'] = input('Name of tournament: ')
