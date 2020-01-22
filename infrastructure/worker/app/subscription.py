@@ -13,6 +13,7 @@ def subscribe(subscription_name, worker, give_up=False):
     global shutdown_requested
 
     message = None # The current active message
+    lock = threading.Lock()
 
     client = pubsub_v1.SubscriberClient()
     subscription_path = client.subscription_path(GCLOUD_PROJECT_ID, subscription_name)
@@ -22,8 +23,9 @@ def subscribe(subscription_name, worker, give_up=False):
         while not (message == None and shutdown_requested):
             if message != None:
                 try:
-                    client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
-                    logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
+                    with lock:
+                        client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
+                        logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
                     time.sleep(SUB_SLEEP_TIME)
                 except Exception as e:
                     logging.warning('Could not reset ack deadline', exc_info=e)
@@ -44,7 +46,8 @@ def subscribe(subscription_name, worker, give_up=False):
             if len(response.received_messages) > 1:
                 logging.warning('Received more than one job when only one expected')
 
-            message = response.received_messages[0]
+            with lock:
+                message = response.received_messages[0]
 
             logging.info('Beginning: {}'.format(message.message.data.decode()))
             process = multiprocessing.Process(target=worker, args=(message.message.data.decode(),))
@@ -53,18 +56,25 @@ def subscribe(subscription_name, worker, give_up=False):
 
             if process.exitcode == 0:
                 # Success; acknowledge and return
-                client.acknowledge(subscription_path, [message.ack_id])
-                logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+                try:
+                    client.acknowledge(subscription_path, [message.ack_id])
+                    logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+                except Exception as e:
+                    logging.error('Could not end and acknowledge: {}'.format(message.message.data.decode()), exc_info=e)
             elif give_up and (int(time.time()) - message.message.publish_time.seconds) > 600:
                 # Failure; give up and acknowledge
-                client.acknowledge(subscription_path, [message.ack_id])
-                logging.info('Failed but acknowledged: {}'.format(message.message.data.decode()))
+                try:
+                    client.acknowledge(subscription_path, [message.ack_id])
+                    logging.error('Failed but acknowledged: {}'.format(message.message.data.decode()))
+                except Exception as e:
+                    logging.error('Failed but could not acknowledge: {}'.format(message.message.data.decode()), exc_info=e)
             else:
                 # Failure; refuse to acknowledge
                 logging.error('Failed, not acknowledged: {}'.format(message.message.data.decode()))
 
             # Stop extending this message's deadline in the "watcher" thread
-            message = None
+            with lock:
+                message = None
     except Exception as e:
         logging.critical('Exception encountered. ', exc_info=e)
     finally:
