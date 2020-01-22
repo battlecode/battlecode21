@@ -14,7 +14,7 @@ class Tournament extends Component {
                         </h5>
                     <div id={ this.props.name + '0' } className="collapse" data-parent={ '#' + this.props.name } style={{ 'margin-top':'-1em' }}>
                         <div className="card-body">
-                            <iframe title={ this.props.challonge } src={"https://challonge.com/" + this.props.challonge + "/module"} width="100%" height="400px" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+                            <iframe title={ this.props.challonge } src={this.props.challonge + "/module"} width="100%" height="400px" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
                         </div>
                     </div>
                     </div>
@@ -51,7 +51,7 @@ class Tournaments extends Component {
             associated with a particular match, click on "Attachments" next to it (while hovering over the match).
     </p>
                             { this.state.tournaments.map(t => 
-                                <Tournament name={ t.name } challonge={ t.challonge } blurb = {t.blurb} />
+                                <Tournament name={ t.name } challonge={ t.bracket_link } blurb = {t.blurb} />
                             )}
                                 </div>
                                 </div>

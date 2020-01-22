@@ -551,12 +551,20 @@ class Api {
   }
 
   static getTournaments(callback) {
-    const tournaments = [
-      { name: 'sprint', challonge: 'bc20_sprint', blurb: 'Congrats to <a href="rankings/1158">Bruteforcer</a> for winning the Sprint tournament!'},
-      { name: 'seeding', challonge: 'bc20_seeding', blurb: 'Join us on <a href="https://twitch.tv/mitbattlecode">Twitch</a> starting at 3 pm for a livestream starting from the winners round of 32!'},
-    ];
+    // const tournaments = [
+    //   { name: 'sprint', challonge: 'bc20_sprint', blurb: 'Congrats to <a href="rankings/1158">Bruteforcer</a> for winning the Sprint tournament!'},
+    //   { name: 'seeding', challonge: 'bc20_seeding', blurb: 'Join us on <a href="https://twitch.tv/mitbattlecode">Twitch</a> starting at 3 pm for a livestream starting from the winners round of 32!'},
+    // ];
 
-    callback(tournaments);
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    $.get(`${URL}/api/${LEAGUE}/tournament/`).done((data, status) => {
+      console.log(data);
+      callback(data.results);
+  });
+
+    // callback(tournaments);
   }
 
   //----AUTHENTICATION----
