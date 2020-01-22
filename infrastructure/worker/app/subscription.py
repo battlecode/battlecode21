@@ -53,12 +53,18 @@ def subscribe(subscription_name, worker, give_up=False):
 
             if process.exitcode == 0:
                 # Success; acknowledge and return
-                client.acknowledge(subscription_path, [message.ack_id])
-                logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+                try:
+                    client.acknowledge(subscription_path, [message.ack_id])
+                    logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
+                except Exception as e:
+                    logging.error('Could not end and acknowledge: {}'.format(message.message.data.decode()), exc_info=e)
             elif give_up and (int(time.time()) - message.message.publish_time.seconds) > 600:
                 # Failure; give up and acknowledge
-                client.acknowledge(subscription_path, [message.ack_id])
-                logging.info('Failed but acknowledged: {}'.format(message.message.data.decode()))
+                try:
+                    client.acknowledge(subscription_path, [message.ack_id])
+                    logging.error('Failed but acknowledged: {}'.format(message.message.data.decode()))
+                except Exception as e:
+                    logging.error('Failed but could not acknowledge: {}'.format(message.message.data.decode()), exc_info=e)
             else:
                 # Failure; refuse to acknowledge
                 logging.error('Failed, not acknowledged: {}'.format(message.message.data.decode()))
