@@ -534,10 +534,15 @@ class Api {
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
-      "est_date_str": '7 PM EST on January 20, 2020',
-      "seconds_until": (Date.parse(new Date('January 20, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Seeding Tournament"
+      "est_date_str": '7 PM EST on January 23, 2020',
+      "seconds_until": (Date.parse(new Date('January 23, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "International Qualifying Tournament"
     });
+    // callback({
+    //   "est_date_str": '7 PM EST on January 20, 2020',
+    //   "seconds_until": (Date.parse(new Date('January 20, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
+    //   "tournament_name": "Seeding Tournament"
+    // });
     // callback({
     //   "est_date_str": '7 PM EST on January 6, 2020',
     //   "seconds_until": (Date.parse(new Date('January 6, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
@@ -546,12 +551,20 @@ class Api {
   }
 
   static getTournaments(callback) {
-    const tournaments = [
-      { name: 'sprint', challonge: 'bc20_sprint', blurb: 'Congrats to <a href="rankings/1158">Bruteforcer</a> for winning the Sprint tournament!'},
-      { name: 'seeding', challonge: 'bc20_seeding', blurb: 'Join us on <a href="https://twitch.tv/mitbattlecode">Twitch</a> starting at 3 pm for a livestream starting from the winners round of 32!'},
-    ];
+    // const tournaments = [
+    //   { name: 'sprint', challonge: 'bc20_sprint', blurb: 'Congrats to <a href="rankings/1158">Bruteforcer</a> for winning the Sprint tournament!'},
+    //   { name: 'seeding', challonge: 'bc20_seeding', blurb: 'Join us on <a href="https://twitch.tv/mitbattlecode">Twitch</a> starting at 3 pm for a livestream starting from the winners round of 32!'},
+    // ];
 
-    callback(tournaments);
+    if ($.ajaxSettings && $.ajaxSettings.headers) {
+      delete $.ajaxSettings.headers.Authorization;
+    } // we should not require valid login for this. 
+    $.get(`${URL}/api/${LEAGUE}/tournament/`).done((data, status) => {
+      console.log(data);
+      callback(data.results);
+  });
+
+    // callback(tournaments);
   }
 
   //----AUTHENTICATION----
