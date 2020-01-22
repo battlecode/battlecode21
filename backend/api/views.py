@@ -304,7 +304,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 sub_1 = team_sub_1.last_1_id
                 sub_2 = team_sub_2.last_1_id
                 if match_type == "tour_scrimmage":
-                    tour = Tournament.object.get(pk=int(request.data.get("tournament_id")))
+                    tour = Tournament.objects.get(pk=int(request.data.get("tournament_id")))
                     column_name = tour.teamsubmission_column_name
                     sub_1 = getattr(team_sub_1, column_name)
                     sub_2 = getattr(team_sub_2, column_name)
