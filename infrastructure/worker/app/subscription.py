@@ -13,6 +13,7 @@ def subscribe(subscription_name, worker, give_up=False):
     global shutdown_requested
 
     message = None # The current active message
+    lock = threading.Lock()
 
     client = pubsub_v1.SubscriberClient()
     subscription_path = client.subscription_path(GCLOUD_PROJECT_ID, subscription_name)
@@ -20,13 +21,14 @@ def subscribe(subscription_name, worker, give_up=False):
     def renew_deadline():
         """Repeatedly give the active message more time to be processed to prevent it being resent"""
         while not (message == None and shutdown_requested):
-            if message != None:
-                try:
-                    client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
-                    logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
-                    time.sleep(SUB_SLEEP_TIME)
-                except Exception as e:
-                    logging.warning('Could not reset ack deadline', exc_info=e)
+            with lock:
+                if message != None:
+                    try:
+                        client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
+                        logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
+                        time.sleep(SUB_SLEEP_TIME)
+                    except Exception as e:
+                        logging.warning('Could not reset ack deadline', exc_info=e)
     watcher = threading.Thread(target=renew_deadline)
     watcher.start()
 
@@ -44,7 +46,8 @@ def subscribe(subscription_name, worker, give_up=False):
             if len(response.received_messages) > 1:
                 logging.warning('Received more than one job when only one expected')
 
-            message = response.received_messages[0]
+            with lock:
+                message = response.received_messages[0]
 
             logging.info('Beginning: {}'.format(message.message.data.decode()))
             process = multiprocessing.Process(target=worker, args=(message.message.data.decode(),))
@@ -70,7 +73,8 @@ def subscribe(subscription_name, worker, give_up=False):
                 logging.error('Failed, not acknowledged: {}'.format(message.message.data.decode()))
 
             # Stop extending this message's deadline in the "watcher" thread
-            message = None
+            with lock:
+                message = None
     except Exception as e:
         logging.critical('Exception encountered. ', exc_info=e)
     finally:
