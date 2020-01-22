@@ -21,14 +21,14 @@ def subscribe(subscription_name, worker, give_up=False):
     def renew_deadline():
         """Repeatedly give the active message more time to be processed to prevent it being resent"""
         while not (message == None and shutdown_requested):
-            with lock:
-                if message != None:
-                    try:
+            if message != None:
+                try:
+                    with lock:
                         client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
                         logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
-                        time.sleep(SUB_SLEEP_TIME)
-                    except Exception as e:
-                        logging.warning('Could not reset ack deadline', exc_info=e)
+                    time.sleep(SUB_SLEEP_TIME)
+                except Exception as e:
+                    logging.warning('Could not reset ack deadline', exc_info=e)
     watcher = threading.Thread(target=renew_deadline)
     watcher.start()
 
