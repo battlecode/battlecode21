@@ -1041,8 +1041,16 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 class TournamentViewSet(viewsets.GenericViewSet,
                         mixins.ListModelMixin,
                         mixins.RetrieveModelMixin):
+    model = Tournament
     queryset = Tournament.objects.all().exclude(hidden=True)
     serializer_class = TournamentSerializer
+    permission_classes = (LeagueActiveOrSafeMethods, )
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        context['league_id'] = self.kwargs.get('league_id', None)
+        return context
 
     @action(methods=['get'], detail=True)
     def bracket(self):
