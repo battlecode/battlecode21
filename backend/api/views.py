@@ -299,8 +299,15 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             if match_type == "scrimmage" or match_type == "tour_scrimmage":
                 team_1 = Team.objects.get(pk=request.data.get("player1"))
                 team_2 = Team.objects.get(pk=request.data.get("player2"))
-                sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
-                sub_2 = TeamSubmission.objects.get(pk=team_2.id).last_1_id
+                team_sub_1 = TeamSubmission.objects.get(pk=team_1.id)
+                team_sub_2 = TeamSubmission.objects.get(pk=team_2.id)
+                sub_1 = team_sub_1.last_1_id
+                sub_2 = team_sub_2.last_1_id
+                if match_type == "tour_scrimmage":
+                    tour = Tournament.object.get(pk=int(request.data.get("tournament_id")))
+                    column_name = tour.teamsubmission_column_name
+                    sub_1 = getattr(team_sub_1, column_name)
+                    sub_2 = getattr(team_sub_2, column_name)
                 scrimmage = {
                     'league': 0,
                     'red_team': team_1.name,

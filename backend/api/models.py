@@ -192,7 +192,10 @@ class TeamSubmission(models.Model):
     tour_sprint = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_sprint")
     tour_seed   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_seed")
     tour_qual   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_qual")
+    tour_intl_qual   = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_intl_qual")
     tour_final  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_final")
+    tour_hs  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_hs")
+    tour_newbie  = models.ForeignKey(Submission, on_delete=models.PROTECT, blank=True, null=True, related_name="tour_newbie")
 
     def __str__(self):
         return '{}: {}'.format(self.team, self.last_1)
