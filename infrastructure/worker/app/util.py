@@ -30,8 +30,13 @@ def monitor_command(command, cwd, timeout=0):
     try:
         to.start()
         proc_stdout, proc_stderr = subproc.communicate()
-        for line in proc_stderr.decode().split('\n'):
+        # Dump stderr to logs
+        outputs = proc_stderr.decode().split('\n')
+        if outputs[-1] == '':
+            outputs = outputs[:-1] # Strip final output, which is likely just the newline
+        for line in outputs:
             logging.info("[subprocess stderr]  {}".format(line))
+        # Return process metadata
         return (subproc.returncode, proc_stdout.decode(), proc_stderr.decode())
     finally:
         to.cancel()
