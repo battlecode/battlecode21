@@ -1,7 +1,7 @@
 # Battlecode 2020
 
 _The formal specification of this year's game._
-Current version: 2020.2.0.1
+Current version: 2020.2.0.2
 
 _Warning: This document and the game it describes will be tweaked as the competition progresses.
 We'll try to keep changes to a minimum, but will likely have to make modifications to keep the game balanced.
@@ -401,6 +401,11 @@ We'll update this spec as the competition progresses.
 
 # Changelog
 
+- 2020.2.0.2 (1/21/20)
+    - spec changes: none
+    - client changes: none
+    - engine changes:
+        - add seeding maps
 - 2020.2.0.1 (1/17/20)
     - spec changes:
         - change `rc.senseFlooded` (incorrect) to `rc.senseFlooding` (correct)
