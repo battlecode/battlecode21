@@ -2,7 +2,7 @@
 
 from config import *
 
-import threading, logging, time, signal
+import multiprocessing, threading, logging, time, signal
 from google.cloud import pubsub_v1
 
 
@@ -50,7 +50,7 @@ def subscribe(subscription_name, worker, give_up=False):
                 message = response.received_messages[0]
 
             logging.info('Beginning: {}'.format(message.message.data.decode()))
-            process = threading.Thread(target=worker, args=(message.message.data.decode(),))
+            process = multiprocessing.Process(target=worker, args=(message.message.data.decode(),))
             process.start()
             process.join()
 
