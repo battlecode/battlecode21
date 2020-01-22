@@ -106,7 +106,7 @@ class Tournaments extends Component {
                                 <div className="content">
                                     <p>
 
-Scrimmage rankings will be used to determine seeds for the Sprint and Seeding Tournaments. For all other tournaments, results from the previous tournament will be used to seed teams (where ties will be broken by the incoming seed in the previous tournament).
+Scrimmage rankings will be used to determine seeds for the Sprint and Seeding Tournaments. For all other tournaments, results from the previous tournament will be used to seed teams (where ties will be broken by the scrimmage ranking right before the tournament).
 </p><p>
 Tournaments will be in a <a href='https://en.wikipedia.org/wiki/Double-elimination_tournament'>double elimination</a> format, with the exception of the Sprint Tournament, which is single elimination. The Final Tournament will start with a blank slate (any losses from the Qualifying Tournament are reset).
 </p>
