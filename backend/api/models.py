@@ -103,6 +103,9 @@ class Tournament(models.Model):
     divisions   = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), blank=True, default=list)
     stream_link = models.TextField(blank=True)
     hidden      = models.BooleanField(default=True)
+    bracket_link = models.TextField(blank=True)
+    blurb       = models.TextField(blank=True)
+    teamsubmission_column_name = models.TextField(default='tour_sprint_id')
 
     def __str__(self):
         return '{}: {} {}'.format(self.league, self.name, self.date_time)
