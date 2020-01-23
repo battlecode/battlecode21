@@ -90,7 +90,7 @@ class Account extends Component {
         }
 
         let resume_status = null
-        if (this.state.user.verified === true) {
+        if (this.state.user.verified === false) {
             resume_status = (
                 <label style={{float: "right"}}> You have not uploaded a resume.
                 </label>
