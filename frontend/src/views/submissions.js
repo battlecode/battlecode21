@@ -54,7 +54,7 @@ class Submissions extends Component {
 
     //---GETTING TEAMS SUBMISSION DATA----
     KEYS_LAST = ['last_1', 'last_2', 'last_3']
-    KEYS_TOUR = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint']
+    KEYS_TOUR = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint', 'tour_hs', 'tour_intl_qual', 'tour_newbie']
 
     // called when status of teams compilation request is received 
     // 0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
@@ -66,8 +66,6 @@ class Submissions extends Component {
     // this will be maps of the label of type of submission to submission id
     // this function then makes calles to get the specific data for each submission
     gotSubmissions = (data) => {
-        console.log(Submissions.KEYS_LAST)
-
         this.setState({lastSubmissions: new Array(this.submissionHelper(this.KEYS_LAST, data)).fill({})})
         this.setState({tourSubmissions: new Array(this.submissionHelper(this.KEYS_TOUR, data)).fill([])})
     }
@@ -77,7 +75,7 @@ class Submissions extends Component {
     submissionHelper(keys, data) {
         let null_count = 0
         for (var i = 0; i < keys.length; i++) {
-            if (data[keys[i]] !== null) {
+            if (data[keys[i]] !== null && data[keys[i]] !== undefined) {
                 Api.getSubmission(data[keys[i]], this.setSubmissionData, keys[i])
                 null_count++
             }
@@ -89,10 +87,8 @@ class Submissions extends Component {
     // sets submission data for the given key, if all submissions have been found force updates state
     setSubmissionData = (key, data) => {
 
-        let state_key, index, add_data
+        let index, add_data
         if (this.KEYS_LAST.includes(key)) {
-            state_key = "lastSubmissions"
-            add_data = data
             switch (key) {
                 case 'last_1':
                     index = 0
@@ -104,33 +100,42 @@ class Submissions extends Component {
                     index = 2
                     break
             }
+
+            const arr = this.state["lastSubmissions"]
+            let newArr = arr.slice(0, index)
+            newArr.push(data)
+            this.setState({["lastSubmissions"]: newArr.concat(arr.slice(index + 1))})
         } else {
-            state_key = "tourSubmissions"
             switch (key) {
                 case 'tour_sprint':
-                    index = 0
                     add_data = ['Sprint', data]
                     break
                 case 'tour_seed':
-                    index = 1
                     add_data = ['Seeding', data]
                     break
                 case 'tour_qual':
-                    index = 2
                     add_data = ['Qualifying', data]
                     break
                 case 'tour_final':
-                    index = 3
                     add_data = ['Final', data]
                     break
+                case 'tour_hs':
+                    add_data = ['High School', data]
+                    break
+                case 'tour_intl_qual':
+                    add_data = ['International Qualifying', data]
+                    break
+                case 'tour_newbie':
+                    add_data = ['Newbie', data]
+                    break
             }
-        }
 
-        const arr = this.state[state_key]
-        let newArr = arr.slice(0, index)
-        newArr.push(add_data)
-        this.setState({[state_key]: newArr.concat(arr.slice(index + 1))})
-        console.log(this.state)
+            const arr = this.state["tourSubmissions"]
+            let end = arr.slice(1)
+            end.push(add_data)
+            this.setState({["tourSubmissions"]: end})
+
+        }
 
     }
 

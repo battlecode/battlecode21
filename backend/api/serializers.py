@@ -135,10 +135,14 @@ class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
     tour_seed = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_hs = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_intl_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
+    tour_newbie = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
 
     class Meta:
         model = TeamSubmission
-        fields = ('url', 'team', 'compiling', 'last_1', 'last_2', 'last_3', 'tour_sprint', 'tour_seed', 'tour_qual', 'tour_final')
+        fields = ('url', 'team', 'compiling', 'last_1', 'last_2', 'last_3', 'tour_sprint', 'tour_seed', 'tour_qual', 'tour_final', 'tour_hs', 'tour_intl_qual', 'tour_newbie')
 
 
 class ScrimmageSerializer(serializers.HyperlinkedModelSerializer):
