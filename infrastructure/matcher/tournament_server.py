@@ -166,8 +166,8 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                         manager.external_ids[match.internal_id][index] = util.enqueue({
                             'type': 'tour_scrimmage',
                             'tournament_id': tournament_id,
-                            'player1': match.player1_pk if index != 1 else match.player2_pk,
-                            'player2': match.player2_pk if index != 1 else match.player1_pk,
+                            'player1': match.player1_pk if index % 2 == 0 else match.player2_pk,
+                            'player2': match.player2_pk if index % 2 == 0 else match.player1_pk,
                             'map_ids': one_map
                         })
                         assert (manager.external_ids[match.internal_id][index] != None)
@@ -200,7 +200,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                         monitor.put(match)
                         break
                     else:
-                        if index != 1:
+                        if index % 2 == 0:
                             wins[winner] += 1
                         else:
                             wins[3-winner] += 1
