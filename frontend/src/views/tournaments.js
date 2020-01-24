@@ -8,11 +8,11 @@ class Tournament extends Component {
 <p dangerouslySetInnerHTML={{__html: this.props.blurb}}>
             </p>
                         <h5 className="mb-0">
-                            <button className="btn btn-default btn-block collapsed" type="button" data-toggle="collapse" data-target={ '#' + this.props.name + '0'}>
+                            <button className="btn btn-default btn-block collapsed" type="button" data-toggle="collapse" data-target={ '#' + this.props.name.replace(' ','') + '0'}>
                                 { this.props.name.charAt(0).toUpperCase() + this.props.name.slice(1) } Tournament Bracket
                             </button>
                         </h5>
-                    <div id={ this.props.name + '0' } className="collapse" data-parent={ '#' + this.props.name } style={{ 'margin-top':'-1em' }}>
+                    <div id={ this.props.name.replace(' ','') + '0' } className="collapse" data-parent={ '#' + this.props.name } style={{ 'margin-top':'-1em' }}>
                         <div className="card-body">
                             <iframe title={ this.props.challonge } src={this.props.challonge + "/module"} width="100%" height="400px" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
                         </div>
