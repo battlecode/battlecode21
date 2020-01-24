@@ -135,7 +135,6 @@ class TeamSubmissionSerializer(serializers.HyperlinkedModelSerializer):
     tour_seed = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
-    tour_final = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_hs = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_intl_qual = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
     tour_newbie = serializers.SlugRelatedField(allow_null=True, queryset=Submission.objects.all(), slug_field='id')
