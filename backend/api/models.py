@@ -141,6 +141,11 @@ class Team(models.Model):
     # metadata
     deleted = models.BooleanField(default=False)
 
+    # which users are verified
+    @property
+    def verified_users(self):
+        return [user for user in self.users.all() if user.verified]
+
     def __str__(self):
         return '{}: (#{}) {}'.format(self.league, self.id, self.name)
 
