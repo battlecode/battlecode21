@@ -136,7 +136,7 @@ class Team(models.Model):
     student = models.BooleanField(default=False)
     mit = models.BooleanField(default=False)
     high_school = models.BooleanField(default=False)
-    international = models.BooleanField(default=False)
+    international = models.BooleanField(default=True)
 
     # metadata
     deleted = models.BooleanField(default=False)
