@@ -19,10 +19,11 @@ class YesTeam extends Component {
                 bio:'',
                 avatar:'',
                 users:[],
+                verified_users:[],
                 mit: false,
                 student: false,
                 high_school: false,
-                international: true
+                international: true,
             },
             'up':'Update Info'
         };
@@ -97,12 +98,13 @@ class YesTeam extends Component {
                     <div className="card">
                         <div className="header">
                             <h4 className="title">Tournament Eligibilty</h4>
+                        </div>
+                        <div className="content">
+                            <ResumeStatus team={this.state.team} />
                             <p>We need to know a little about your team in order to determine which tournaments you are is eligible for.
                                 Check all boxes that apply to your team. We will verify student status for all teams that qualify for the finals.
                             </p>
-                        </div>
-                        <div className="content">
-                        <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up}/>
+                            <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up} />
                         </div>
                     </div>
 
@@ -270,11 +272,33 @@ class NoTeam extends Component {
     }
 }
 
+// pass team in props.team
+class ResumeStatus extends Component {
+    render() {
+
+        var resumestring;
+
+        var unverified_users = this.props.team.users.filter( ( el ) => !this.props.team.verified_users.includes( el ) );
+
+        console.log(this.props.team);
+
+        if (this.props.team.verified_users.length === this.props.team.users.length) {
+            resumestring = (<div><p style={{color:'green'}}>Everyone on your team has uploaded a resume!</p></div>);
+        } else {
+            resumestring = (<div><p style={{color:'red', fontWeight: 'bold'}}>Not everyone on your team has uploaded a resume, so you are currently not eligible for the qualifying or final tournaments.
+    Users who have not yet uploaded a resume: {unverified_users.join(", ")}</p>
+            </div>);
+        }
+
+        return resumestring;
+    }
+}
+
 // pass change handler in props.change and team in props.team
 class EligibiltyOptions extends Component {
     render() {
         return (
-            <div className="row">
+            <div className="row" style={{marginTop:'1em'}}>
                 <div className="col-md-12">
                     <div className="form-group" style={{display: "flex"}}>
                         <label>Full-time Students</label>

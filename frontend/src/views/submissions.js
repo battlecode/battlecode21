@@ -196,7 +196,7 @@ class Submissions extends Component {
                     </div>
                     <div className="content">
                         {/* <p>
-                            <b>The deadline for the International Qualifying Tournament is 7 pm EST on Thursday 1/23 (which is s o o n). Submit your code using the button below. <span style={{textTransform: 'uppercase'}}>Make sure you have filled out the eligibility information at <NavLink to='team'>the team page</NavLink>.</span></b> For peace of mind, submit 15 minutes before and make sure it compiles and shows up 
+                            <b>The deadline for the US Qualifying Tournament is 7 pm EST on Monday 1/27 (which is s o o n). Submit your code using the button below. <span style={{textTransform: 'uppercase'}}>Make sure everyone on your team has uploaded a resume and that you have filled out the eligibility information at <NavLink to='team'>the team page</NavLink>.</span></b> For peace of mind, submit 15 minutes before and make sure it compiles and shows up 
                             under "Latest Submissions."
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p> */}

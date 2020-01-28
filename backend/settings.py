@@ -34,6 +34,18 @@ THIS_URL = 'https://2020.battlecode.org'
 
 # TODO: update this every time we update maps
 SERVER_MAPS = [
+  "Maze",
+  "Squares",
+  "RealArt",
+  "DoesNotExist",
+  "IceCream",
+  "Constriction",
+  "Islands2",
+  "Prison",
+  "DisproportionatelySmallGap",
+  "Climb",
+  "TwoLakeLand",
+  "Europe",
   "AMaze",
   "BeachFrontProperty",
   "Egg",

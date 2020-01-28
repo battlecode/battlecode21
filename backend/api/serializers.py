@@ -35,13 +35,14 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     serializer_url_field = LeagueHyperlinkedIdentityField
     league = serializers.SlugRelatedField(queryset=League.objects.all(), slug_field='id')
     users = serializers.SlugRelatedField(queryset=get_user_model().objects.all(), slug_field='username', many=True)
+    verified_users = serializers.SlugRelatedField(slug_field='username', many=True, read_only=True)
 
     class Meta:
         model = Team
-        fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'wins', 'losses', 'draws',
+        fields = ('url', 'id', 'league', 'name', 'avatar', 'users', 'verified_users', 'wins', 'losses', 'draws',
             'bio', 'divisions', 'auto_accept_ranked', 'auto_accept_unranked', 'mu', 'sigma', 'score', 
             'student', 'mit', 'high_school', 'international')
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'verified_users')
 
     def update(self, instance, validated_data):
         #print(validated_data)

@@ -499,6 +499,9 @@ class TeamViewSet(viewsets.GenericViewSet,
                     'tour_seed': None,
                     'tour_qual': None,
                     'tour_final': None,
+                    'tour_intl_qual': None,
+                    'tour_newbie': None,
+                    'tour_hs': None
                 }
 
                 TeamSerializer = TeamSubmissionSerializer(data=team_data)
