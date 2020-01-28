@@ -26,16 +26,17 @@ def run(num_players, maps, replays, first_scrim, last_scrim):
     bracket.generate_bracket()
 
     for i, match in enumerate(bracket.matches):
-        for j in range(3):
-            replay = replays[i][j]
-            for scrim in scrims:
-                if scrim['replay'] == replay:
-                    print ('{} -vs- {} | {} {} replay {}'.format(
-                        scrim['red_team'].rjust(40),
-                        scrim['blue_team'].ljust(40),
-                        maps[match.round_str][j].ljust(30),
-                        scrim['status'].ljust(8),
-                        scrim['replay']))
+        if maps[match.round_str] != None:
+            for j, map_name in enumerate(maps[match.round_str]):
+                replay = replays[i][j]
+                for scrim in scrims:
+                    if scrim['replay'] == replay:
+                        print ('{} -vs- {} | {} {} replay {}'.format(
+                            scrim['red_team'].rjust(40),
+                            scrim['blue_team'].ljust(40),
+                            map_name.ljust(30),
+                            scrim['status'].ljust(8),
+                            scrim['replay']))
 
 if __name__ == '__main__':
     # Command-line usage: ./tournament_server.py argv, where:
