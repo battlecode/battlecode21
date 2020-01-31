@@ -202,9 +202,10 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                     else:
                         if index % 2 == 0:
                             wins[winner] += 1
+                            replays[index] = (match.player1_name, match.player2_name, one_map, winner, replay)
                         else:
                             wins[3-winner] += 1
-                        replays[index] = (match.player1_name, match.player2_name, one_map, winner, replay)
+                            replays[index] = (match.player2_name, match.player1_name, one_map, winner, replay)
                         complete = True
                         continue
                 except:
