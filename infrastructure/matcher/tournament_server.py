@@ -193,7 +193,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
             for index, one_map in enumerate(maps[match.round_name]):
                 complete = False
                 try:
-                    winner, replays[index] = get_match_result(manager.external_ids[match.internal_id][index])
+                    winner, replay = get_match_result(manager.external_ids[match.internal_id][index])
                     if winner == None:
                         logging.info('Winner not yet declared for match: map={} | {}'.format(one_map, match))
                         time.sleep(TOURNAMENT_WORKER_TIMEOUT) # Prevent spam
@@ -202,8 +202,10 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
                     else:
                         if index % 2 == 0:
                             wins[winner] += 1
+                            replays[index] = (match.player1_name, match.player2_name, one_map, winner, replay)
                         else:
                             wins[3-winner] += 1
+                            replays[index] = (match.player2_name, match.player1_name, one_map, winner, replay)
                         complete = True
                         continue
                 except:
