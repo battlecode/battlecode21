@@ -44,3 +44,15 @@ In GCloud > Compute Engine > Instance templates:
   export GOOGLE_APPLICATION_CREDENTIALS=worker/app/gcloud-key.json
   ./pub.py battlecode18 bc20-compile
   ```
+
+## Tournaments
+
+Here is a brief outline on how to run a tournament.
+- Determine seeds in some reasonable way.
+  Then, create two files, `team_names` and `team_pk`, containing the names and primary keys of all teams,
+  in decreasing order of seed.
+- Determine maps to use in each round, and create a JSON specifying this in a file `maps.json`.
+  An example of this is in `data/0-example/maps.json`; the round names **must** agree with the round names produced by `bracketlib.py`.
+- Check the tournament ID and update the Dockerfile command-line argument to match.
+- Deploy a single docker instance from the tournament Dockerfile.
+- When the match concludes, a list of replays will be output; feed this into `match_list.py` for human-readable data.
