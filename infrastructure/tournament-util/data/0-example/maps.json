@@ -1,0 +1,32 @@
+{
+  "Round 1 (Winners)": [
+    "Egg",
+    "Climb",
+    "DoesNotExist"
+  ],
+  "Round 1 (Losers)": [                                                             
+    "Waves",                                                                        
+    "Toothpaste",                                                                   
+    "Hourglass"
+  ],                                                                                
+  "Round 2 (Winners)": [                                                            
+    "NoU",
+    "Pokeball",
+    "Canyon"
+  ],                                                                                
+  "Round 2 (Losers A)": [                                                           
+    "Swirl",
+    "Spiral",
+    "Constriction"
+  ],                                                                                
+  "Round 3": [
+    "Hypnosis",
+    "ALandDivided",
+    "CentralLake"
+  ],
+  "Round 4 (if needed)": [
+    "CPU",
+    "Diagonals",
+    "Maze"
+  ]
+}
