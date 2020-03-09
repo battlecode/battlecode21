@@ -1,60 +1,89 @@
-from RestrictedPython import compile_restricted, safe_builtins, Guards
-import threading 
-import threader
 import sys
-from time import sleep
 import traceback
 import pdb
 
-class RobotThread(threading.Thread):
-    def __init__(self, robot):
-        threading.Thread.__init__(self)
-        
+from RestrictedPython import safe_builtins, Guards
+from threading import Thread, Event
+from time import sleep
+from engine.container.instrument import Instrument
+
+
+class RobotThread(Thread):
+    def __init__(self, runner):
+        Thread.__init__(self)
+        self.pause_event = Event()
+        self.paused = False
         self.stopped = False
-        self.robot = robot
+        self.runner = runner
 
     def run(self):
-        if not self.robot.initialized:
-            self.robot.init_robot()
+        if not self.runner.initialized:
+            self.runner.init_robot()
         else:
-            self.robot.do_turn()
+            self.runner.do_turn()
 
         self.stopped = True
 
-    def is_alive(self):
-        return not self.stopped
+    def wait(self):
+        self.paused = True
+        self.pause_event.wait()
+        if self.stopped:
+            self.kill()
 
-    def end(self):
-        if self.is_alive():
-            threader.killThread(self.ident)
-            self.stopped = True
+        self.pause_event.clear()
+        self.paused = False
 
-    def join(self):
-        while self.is_alive():
-            sleep(0.0001)
+    def stop(self):
+        self.stopped = True
 
-class RobotRunner():
+    def kill(self):
+        exit(0)
+
+
+class WrapperThread(Thread):
+    def __init__(self, thread):
+        Thread.__init__(self)
+        self.thread = thread
+
+    def run(self):
+        if self.thread.paused:
+            self.thread.pause_event.set()
+        else:
+            self.thread.start()
+        while True:
+            sleep(0.001)
+            if self.thread.paused or self.thread.stopped:
+                break
+
+
+class RobotRunner:
     STARTING_BYTECODE = 10000
-    EXTRA_BYTECODE    = 5000
-    
+    EXTRA_BYTECODE = 5000
+
     def __init__(self, code, game_methods, log_method, error_method, debug=False):
+        self.instrument = Instrument(self)
         self.locals = {}
         self.globals = {
             '__builtins__': dict(safe_builtins),
-            '__name__':'__main__'
+            '__name__': '__main__'
         }
 
         self.globals['__builtins__']['__metaclass__'] = type
         self.globals['__builtins__']['__instrument__'] = self.instrument_call
+        self.globals['__builtins__']['__multinstrument__'] = self.multinstrument_call
         self.globals['__builtins__']['__import__'] = self.import_call
         self.globals['__builtins__']['_getitem_'] = self.getitem_call
         self.globals['__builtins__']['_write_'] = self.write_call
         self.globals['__builtins__']['_getiter_'] = lambda i: i
-        self.globals['__builtins__']['_inplacevar_'] = self.inplacevar_cal
+        self.globals['__builtins__']['_inplacevar_'] = self.inplacevar_call
         self.globals['__builtins__']['_unpack_sequence_'] = Guards.guarded_unpack_sequence
         self.globals['__builtins__']['_iter_unpack_sequence_'] = Guards.guarded_iter_unpack_sequence
+
         self.globals['__builtins__']['log'] = log_method
         self.globals['__builtins__']['enumerate'] = enumerate
+
+        # instrumented methods
+        self.globals['__builtins__']['sorted'] = self.instrument.instrumented_sorted
 
         for key, value in game_methods.items():
             self.globals['__builtins__'][key] = value
@@ -66,11 +95,13 @@ class RobotRunner():
 
         self.bytecode = self.STARTING_BYTECODE
 
+        self.thread = None
         self.initialized = False
 
         self.debug = debug
 
-    def inplacevar_cal(self, op, x, y):
+    @staticmethod
+    def inplacevar_call(op, x, y):
         if not isinstance(op, str):
             raise SyntaxError('Unsupported in place op.')
 
@@ -89,16 +120,18 @@ class RobotRunner():
         else:
             raise SyntaxError('Unsupported in place op "' + op + '".')
 
-    def write_call(self, obj):
+    @staticmethod
+    def write_call(obj):
         if isinstance(obj, type(sys)):
             raise RuntimeError('Can\'t write to modules.')
 
-        elif isinstance(obj, type(lambda:1)):
+        elif isinstance(obj, type(lambda: 1)):
             raise RuntimeError('Can\'t write to functions.')
 
         return obj
 
-    def getitem_call(self, accessed, attribute):
+    @staticmethod
+    def getitem_call(accessed, attribute):
         if isinstance(attribute, str) and len(attribute) > 0:
             if attribute[0] == '_':
                 raise RuntimeError('Cannot access attributes that begin with "_".')
@@ -106,14 +139,19 @@ class RobotRunner():
         return accessed[attribute]
 
     def instrument_call(self):
-        if self.bytecode == 0:
-            self.error_method('Ran out of bytecode.')
-            
-            threading.current_thread().end()
-
-            while True:
-                sleep(0.0001)
         self.bytecode -= 1
+        self.check_bytecode()
+
+    def multinstrument_call(self, n):
+        if n < 0:
+            raise ValueError('n must be greater than 0')
+        self.bytecode -= n
+        self.check_bytecode()
+
+    def check_bytecode(self):
+        if self.bytecode <= 0:
+            self.error_method(f'Ran out of bytecode.Remaining bytecode: {self.bytecode}')
+            self.thread.wait()
 
     def import_call(self, name, globals=None, locals=None, fromlist=(), level=0, caller='robot'):
         if not isinstance(name, str) or not (isinstance(fromlist, tuple) or fromlist is None):
@@ -126,7 +164,7 @@ class RobotRunner():
         if not name in self.code:
             if self.debug and name == 'pdb':
                 return pdb
-            
+
             if name == 'random':
                 import random
                 return random
@@ -135,17 +173,18 @@ class RobotRunner():
 
         my_builtins = dict(self.globals['__builtins__'])
         my_builtins['__import__'] = lambda n, g, l, f, le: self.import_call(n, g, l, f, le, caller=name)
-        run_globals = { '__builtins__':my_builtins, '__name__':name }
+        run_globals = {'__builtins__': my_builtins, '__name__': name}
 
         # Loop check: keep dictionary of who imports who.  If loop, error.
         # First, we build a directed graph:
         if not caller in self.imports:
-            self.imports[caller] = { name }
+            self.imports[caller] = {name}
         else:
             self.imports[caller].add(name)
 
         # Next, we search for cycles.
         path = set()
+
         def visit(vertex):
             path.add(vertex)
             for neighbour in self.imports.get(vertex, ()):
@@ -165,29 +204,46 @@ class RobotRunner():
 
     def init_robot(self):
         try:
-            exec(self.code['robot'], self.globals, self.locals)            
+            exec(self.code['bot'], self.globals, self.locals)
             self.globals.update(self.locals)
             self.initialized = True
         except RuntimeError:
-            threading.current_thread().end()
+            self.force_kill()
+            # current_thread().kill()
         except Exception:
             self.error_method(traceback.format_exc(limit=5))
 
     def do_turn(self):
-        self.bytecode += self.EXTRA_BYTECODE
-        
-        if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda:1)):
+        if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda: 1)):
             try:
                 exec(self.locals['turn'].__code__, self.globals, self.locals)
             except RuntimeError:
-                threading.current_thread().end()
+                self.force_kill()
+                # current_thread().kill()
             except Exception:
                 self.error_method(traceback.format_exc(limit=5))
         else:
             self.error_method('Couldn\'t find turn function.')
-       
-        
+
     def run(self):
-        thread = RobotThread(self)
-        thread.start()
-        thread.join()
+        self.bytecode = min(self.bytecode, 0) + self.EXTRA_BYTECODE
+
+        if not self.thread:
+            self.thread = RobotThread(self)
+
+        self.wrapper = WrapperThread(self.thread)
+
+        self.wrapper.start()
+        self.wrapper.join()
+
+        if self.thread.stopped:
+            self.thread = None
+
+    def kill(self):
+        if self.thread:
+            self.thread.stop()
+            self.thread.pause_event.set()
+
+    def force_kill(self):
+        self.thread.wait()
+        self.kill()

@@ -1,10 +1,9 @@
 from os import listdir
 from os.path import isfile, join
-from engine.container.instrument import instrument
+from engine.container.instrument import Instrument
+
 import marshal, pickle
 from RestrictedPython import compile_restricted
-
-RESTRICTED = True
 
 
 class CodeContainer:
@@ -17,21 +16,14 @@ class CodeContainer:
 
         for filename in dic:
             module_name = filename.split('.py')[0]
-            
-            compiler = compile_restricted if RESTRICTED else compile
-
-            compiled = compiler(dic[filename], filename, 'exec')
-
-            code[module_name] = instrument(compiled)
+            compiled = compile_restricted(dic[filename], filename, 'exec')
+            code[module_name] = Instrument.instrument(compiled)
         
         return cls(code)
 
     @classmethod
     def from_directory(cls, dirname):
-        files = [
-            (f, join(dirname,f)) for f in listdir(dirname)
-            if f[-3:] == '.py' and isfile(join(dirname, f)) 
-        ]
+        files = [(f, join(dirname,f)) for f in listdir(dirname) if f[-3:] == '.py' and isfile(join(dirname, f))]
 
         code = {}
         for filename, location in files:

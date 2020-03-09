@@ -1,176 +1,163 @@
 import dis
-from types import CodeType, SimpleNamespace
+import math
+from types import CodeType
+from engine.container.instruction import Instruction
 
-def build(bytecode, new_code, new_names, new_co_consts):
-    return CodeType(bytecode.co_argcount,
-                    bytecode.co_kwonlyargcount,
-                    bytecode.co_nlocals,
-                    bytecode.co_stacksize,
-                    bytecode.co_flags,
-                    new_code,
-                    new_co_consts,
-                    new_names,
-                    bytecode.co_varnames,
-                    bytecode.co_filename,
-                    bytecode.co_name,
-                    bytecode.co_firstlineno,
-                    bytecode.co_lnotab,
-                    bytecode.co_freevars,
-                    bytecode.co_cellvars)
+class Instrument:
+    """
+    A class for instrumenting specific methods (e.g. sort) as well as instrumenting competitor code
+    """
+    def __init__(self, runner):
+        self.runner = runner
 
+    def instrumented_sorted(self, iterable, key=None, reverse=False):
+        cost = len(iterable) * int(math.log(len(iterable)))
+        self.runner.multinstrument_call(cost)
+        if not key and not reverse:
+            return sorted(iterable)
+        elif not reverse:
+            return sorted(iterable, key=key)
+        elif not key:
+            return sorted(iterable, reverse=reverse)
+        return sorted(iterable, key=key, reverse=reverse)
 
-class Instruction(SimpleNamespace):
-    def __init__(self, instruction, in_dict=None):
-        if in_dict is not None:
-            super().__init__(**in_dict)
-        else:
-            super().__init__(**{a:b for a,b in 
-                zip(dis.Instruction._fields+('jump_to',), instruction + (None,))
-            })
+    @staticmethod
+    def instrument(bytecode):
+        """
+        The primary method of instrumenting code, which involves injecting a bytecode counter between every instruction to be executed
 
-    def is_jumper(self):
-        return self.is_abs_jumper() or self.is_rel_jumper()
+        :param bytecode: a code object, the bytecode submitted by the player
+        :return: a new code object that has been injected with our bytecode counter
+        """
 
-    def is_rel_jumper(self):
-        return self.opcode in dis.hasjrel
+        # Ensure all code constants (e.g. list comprehensions) are also instrumented.
+        new_consts = []
+        for i, constant in enumerate(bytecode.co_consts):
+            if type(constant) == CodeType:
+                new_consts.append(Instrument.instrument(constant))
+            else:
+                new_consts.append(constant)
+        new_consts = tuple(new_consts)
 
-    def is_abs_jumper(self):
-        return self.opcode in dis.hasjabs
+        instructions = list(dis.get_instructions(bytecode))
 
-    @classmethod
-    def ExtendedArgs(self, value):
-        return Instruction(None, in_dict={
-            'opcode':144, 'opname':'EXTENDED_ARGS', 'arg':value,
-            'argval':value, 'argrepr':value, 'offset':None,
-            'starts_line':None, 'is_jump_target':False
-        })
+        function_name_index = len(bytecode.co_names)  # we will be inserting our __instrument__ call at the end of co_names
 
-    def calculate_offset(self, instructions):
-        # Return the offset (rel or abs) to self.jump_to in instructions
-        target_loc = 2 * instructions.index(self.jump_to)
-
-        if self.is_abs_jumper():
-            return target_loc
-
-        self_loc = 2 * instructions.index(self)
-
-        return target_loc - self_loc - 2
-
-
-def instrument(bytecode):
-    # Ensure all code constants (eg list comprehensions) are also
-    # instrumented.
-    new_co_consts = []
-    for i, constant in enumerate(bytecode.co_consts):
-        if type(constant) == CodeType:
-            new_co_consts.append(instrument(constant))
-        else:
-            new_co_consts.append(constant)
-    new_co_consts = tuple(new_co_consts)
-                        
-
-    instructions = list(dis.get_instructions(bytecode))
-
-    function_name_index = len(bytecode.co_names)
-
-    # First, we define our injection.
-    injection = [
-        dis.Instruction(opcode=116, opname='LOAD_GLOBAL', arg=function_name_index%256, argval=function_name_index%256, argrepr=function_name_index%256, offset=None, starts_line=None, is_jump_target=False),
-        dis.Instruction(opcode=131, opname='CALL_FUNCTION', arg=0, argval=0, argrepr=0, offset=None, starts_line=None, is_jump_target=False),
-        dis.Instruction(opcode=1, opname='POP_TOP', arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=False)
-    ]
-
-    while function_name_index > 255:
-        function_name_index >>= 8
+        # the injection, which consists of a function call to an __instrument__ method which increments bytecode
+        # these three instructions will be inserted between every line of instrumented code
         injection = [
-            dis.Instruction(
-                opcode=144,
-                opname='EXTENDED_ARGS',
-                arg=function_name_index%256,
-                argval=function_name_index%256,
-                argrepr=function_name_index%256,
-                offset=None,
-                starts_line=None,
-                is_jump_target=False
-            )
-        ] + injection
+            dis.Instruction(opcode=116, opname='LOAD_GLOBAL', arg=function_name_index%256, argval='__instrument__', argrepr='__instrument__', offset=None, starts_line=None, is_jump_target=False),
+            dis.Instruction(opcode=131, opname='CALL_FUNCTION', arg=0, argval=0, argrepr=0, offset=None, starts_line=None, is_jump_target=False),
+            dis.Instruction(opcode=1, opname='POP_TOP', arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=False)
+        ]
 
-    # For maintence we add an empty jump_to field to each instruction.
-    for i, instruction in enumerate(instructions):
-        instructions[i] = Instruction(instruction)
+        while function_name_index > 255:
+            function_name_index >>= 8
+            injection = [
+                dis.Instruction(
+                    opcode=144,
+                    opname='EXTENDED_ARGS',
+                    arg=function_name_index%256,
+                    argval=function_name_index%256,
+                    argrepr=function_name_index%256,
+                    offset=None,
+                    starts_line=None,
+                    is_jump_target=False
+                )
+            ] + injection
 
-    # Next, we cache a reference to the jumpers to each jump target in the targets.
-    for i, instruction in enumerate(instructions):
-        # We're only looking for jumpers.
-        if not instruction.is_jumper():
-            continue
+        # For maintenance we add an empty jump_to field to each instruction
+        for i, instruction in enumerate(instructions):
+            instructions[i] = Instruction(instruction)
 
-        target = [t for t in instructions if instruction.argval == t.offset][0]
-        instruction.jump_to = target
-
-        # If any targets jump to themselves, that's not kosher.
-        if instruction == target:
-            raise SyntaxError('No self-referential loops.')
-
-    # We then inject the injection before every call, except for those
-    # following an EXTENDED_ARGS.
-    for cur, last in zip(instructions[:], [None]+instructions[:-1]):        
-        cur_index = instructions.index(cur)
-
-        if last is not None and last.opcode == 144:
-            continue
-
-        for j, inject in enumerate(injection):
-            instructions.insert(cur_index + j, Instruction(inject))
-
-
-    fixed = False
-    while not fixed:
-        #
-        # Iterate through instructions.
-        #
-        #   If it's a jumper, calculate the new correct offset.
-        #
-        #   For each new offset, if it is too large to fit in the current
-        #   number of EXTENDED_ARGS, inject a new EXTENDED_ARG before it.
-        #
-        # If you never insert a new EXTENDED_ARGS, break out of the loop.
-
-        fixed = True
-
-        i = 0
-        for instruction in instructions[:]:
-            instruction.offset = 2*i
-            
+        # Next, we cache a reference to the jumpers to each jump target in the targets
+        for i, instruction in enumerate(instructions):
+            # We're only looking for jumpers
             if not instruction.is_jumper():
-                i += 1
                 continue
 
-            correct_offset = instruction.calculate_offset(instructions)
-            instruction.arg = correct_offset % 256
-            correct_offset >>= 8
+            target = [t for t in instructions if instruction.argval == t.offset][0]
+            instruction.jump_to = target
 
-            extended_args = 0
-            while correct_offset > 0:
-                # Check if there is already an EXTENDED_ARGS behind.
-                if i > extended_args and instructions[i-extended_args-1].opcode == 144:
-                    instructions[i-extended_args-1].arg = correct_offset % 256
+            # If any targets jump to themselves, that's not kosher.
+            if instruction == target:
+                raise SyntaxError('No self-referential loops.')
 
-                # Otherwise, insert a new one.
-                else:
-                    instructions.insert(i, Instruction.ExtendedArgs(correct_offset % 256))
-                    
+        unsafe = {110, 113, 114, 115, 116, 120, 124, 125, 131}  # bytecode ops that break the instrument
+
+        # We then inject the injection before every call, except for those following an EXTENDED_ARGS.
+        for cur, last in zip(instructions[:], [None]+instructions[:-1]):
+            cur_index = instructions.index(cur)
+
+            if last is not None and last.opcode == 144:
+                continue
+
+            if last is not None and last.opcode in unsafe:
+                continue
+
+            for j, inject in enumerate(injection):
+                instructions.insert(cur_index + j, Instruction(inject))
+
+        # Iterate through instructions. If it's a jumper, calculate the new correct offset. For each new offset, if it
+        # is too large to fit in the current number of EXTENDED_ARGS, inject a new EXTENDED_ARG before it. If you never
+        # insert a new EXTENDED_ARGS, break out of the loop.
+        fixed = False
+        while not fixed:
+            fixed = True
+
+            i = 0
+            for instruction in instructions[:]:
+                instruction.offset = 2 * i
+
+                if not instruction.is_jumper():
                     i += 1
-                    fixed = False
-                
+                    continue
+
+                correct_offset = instruction.calculate_offset(instructions)
+                instruction.arg = correct_offset % 256
                 correct_offset >>= 8
-                extended_args += 1
 
-            i += 1
+                extended_args = 0
+                while correct_offset > 0:
+                    # Check if there is already an EXTENDED_ARGS behind
+                    if i > extended_args and instructions[i - extended_args - 1].opcode == 144:
+                        instructions[i - extended_args - 1].arg = correct_offset % 256
 
-    # Finally, we repackage up our instructions into a bytestring, and send off.
-    byte_array = [[i.opcode, 0 if i.arg is None else i.arg%256] for i in instructions]
-    byte_string = bytes(sum(byte_array, []))
-    new_names = tuple(bytecode.co_names) + ('__instrument__', )
+                    # Otherwise, insert a new one
+                    else:
+                        instructions.insert(i, Instruction.ExtendedArgs(correct_offset % 256))
 
-    return build(bytecode, byte_string, new_names, new_co_consts)
+                        i += 1
+                        fixed = False
+
+                    correct_offset >>= 8
+                    extended_args += 1
+                i += 1
+
+        # Finally, we repackage up our instructions into a byte string and use it to build a new code object
+        byte_array = [[inst.opcode, 0 if inst.arg is None else inst.arg % 256] for inst in instructions]
+        new_code = bytes(sum(byte_array, []))
+
+        # Make sure our code can locate the __instrument__ call
+        new_names = tuple(bytecode.co_names) + ('__instrument__', )
+
+        return Instrument.build_code(bytecode, new_code, new_names, new_consts)
+
+    @staticmethod
+    def build_code(old_code, new_code, new_names, new_consts):
+        """Helper method to build a new code object because Python does not allow us to modify existing code objects"""
+        return CodeType(old_code.co_argcount,
+                        old_code.co_kwonlyargcount,
+                        old_code.co_nlocals,
+                        old_code.co_stacksize,
+                        old_code.co_flags,
+                        new_code,
+                        new_consts,
+                        new_names,
+                        old_code.co_varnames,
+                        old_code.co_filename,
+                        old_code.co_name,
+                        old_code.co_firstlineno,
+                        old_code.co_lnotab,
+                        old_code.co_freevars,
+                        old_code.co_cellvars)
