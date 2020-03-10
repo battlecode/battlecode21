@@ -1,7 +1,7 @@
 import random
-from engine.game.robot import Robot
-from engine.game.team import Team
-from engine.game.robottype import RobotType
+from .robot import Robot
+from .team import Team
+from .robottype import RobotType
 
 
 class Game:

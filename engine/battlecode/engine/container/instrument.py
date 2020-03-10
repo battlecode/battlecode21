@@ -1,7 +1,7 @@
 import dis
 import math
 from types import CodeType
-from engine.container.instruction import Instruction
+from .instruction import Instruction
 
 class Instrument:
     """

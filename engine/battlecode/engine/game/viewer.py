@@ -1,7 +1,7 @@
 import time
 import sys
 
-from engine.game.team import Team
+from .team import Team
 
 class BasicViewer:
     def __init__(self, board_size, board_states):

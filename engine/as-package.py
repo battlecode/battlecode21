@@ -1,10 +1,7 @@
 import time
-
-from battlecode.engine.container.code_container import CodeContainer
-from battlecode.engine.game.game import Game
-from battlecode.engine.game.viewer import BasicViewer
 import faulthandler
 
+from battlecode import CodeContainer, Game, BasicViewer
 
 if __name__ == '__main__':
 

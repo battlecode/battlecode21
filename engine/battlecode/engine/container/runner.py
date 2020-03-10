@@ -5,7 +5,7 @@ import pdb
 from RestrictedPython import safe_builtins, Guards
 from threading import Thread, Event
 from time import sleep
-from engine.container.instrument import Instrument
+from .instrument import Instrument
 
 
 class RobotThread(Thread):

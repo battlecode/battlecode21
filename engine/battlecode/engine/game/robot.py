@@ -1,5 +1,5 @@
-from engine.container.runner import RobotRunner
-from engine.game.robottype import RobotType
+from ..container.runner import RobotRunner
+from .robottype import RobotType
 
 class Robot:
     STARTING_HEALTH = 1

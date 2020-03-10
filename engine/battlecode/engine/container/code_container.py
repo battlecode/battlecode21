@@ -1,6 +1,6 @@
 from os import listdir
 from os.path import isfile, join
-from engine.container.instrument import Instrument
+from .instrument import Instrument
 
 import marshal, pickle
 from RestrictedPython import compile_restricted
