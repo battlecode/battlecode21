@@ -12,7 +12,7 @@ $ pip install --user .
 
 This will allow you to import battlecode as a package. Test it out by trying:
 
-```Python
+```
 $ python3
 >>> import battlecode
 >>> code = battlecode.CodeContainer.from_directory('./examplefuncsplayer')
