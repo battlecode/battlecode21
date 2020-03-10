@@ -11,13 +11,14 @@ def turn():
     """
     log('Starting Turn!')
 
-    log('My bytecode is: ' + str(get_bytecode()))
+    team = get_team()
+    log('Team: ' + str(team))
 
     robottype = get_type()
-    log('My type is: ' + str(robottype))
+    log('Type: ' + str(robottype))
 
-    team = get_team()
-    log('My team is: ' + str(team))
+    bytecode = get_bytecode()
+    log('Bytecode: ' + str(bytecode))
 
     if robottype == RobotType.PAWN:
         row, col = get_location()
@@ -30,19 +31,19 @@ def turn():
 
         try:
             capture(row + dir, col + 1)
-            log('Captured at: ' + str(row + dir) + ' ' + str(col + 1))
+            log('Captured at: (' + str(row + dir) + ', ' + str(col + 1) + ')')
         except RobotError:
             pass
 
         try:
             capture(row + dir, col - 1)
-            log('Captured at: ' + str(row + dir) + ' ' + str(col - 1))
+            log('Captured at: (' + str(row + dir) + ', ' + str(col - 1) + ')')
         except RobotError:
             pass
 
         try:
             move_forward()
-            log('Moved Forward!')
+            log('Moved forward!')
         except RobotError:
             pass
 
@@ -58,7 +59,7 @@ def turn():
             i = random.randint(0, board_size - 1)
             if not check_space(index, i):
                 spawn(index, i)
-                log('Spawned unit at: ' + str(index) + ' ' + str(i))
+                log('Spawned unit at: (' + str(index) + ', ' + str(i) + ')')
                 break
 
     log('done!')

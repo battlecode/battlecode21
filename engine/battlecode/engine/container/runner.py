@@ -19,8 +19,8 @@ class RobotThread(Thread):
     def run(self):
         if not self.runner.initialized:
             self.runner.init_robot()
-        else:
-            self.runner.do_turn()
+
+        self.runner.do_turn()
 
         self.stopped = True
 

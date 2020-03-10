@@ -32,9 +32,6 @@ class Game:
         self.board_states = []
 
     def turn(self):
-        if self.debug:
-            print(f'\u001b[32m[Game info] Turn {self.round}\u001b[0m')
-
         if self.running:
             self.round += 1
 
@@ -42,8 +39,9 @@ class Game:
                 self.check_over()
 
             if self.debug:
-                print(f'\u001b[32m[Game info] Queue: {self.queue}\u001b[0m')
-                print(f'\u001b[32m[Game info] Lords: {self.lords}\u001b[0m')
+                Game.log_info(f'Turn {self.round}')
+                Game.log_info(f'Queue: {self.queue}')
+                Game.log_info(f'Lords: {self.lords}')
 
             for i in range(self.robot_count):
                 if i in self.queue:
@@ -77,6 +75,10 @@ class Game:
             return {'id': robot.id, 'team': robot.team, 'health': robot.health, 'logs': robot.logs[:]}
 
         return [[serialize_robot(c) for c in r] for r in self.board]
+
+    @staticmethod
+    def log_info(msg):
+        print(f'\u001b[32m[Game info] {msg}\u001b[0m')
 
     def check_over(self):
         white, black = 0, 0
