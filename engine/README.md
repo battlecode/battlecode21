@@ -59,9 +59,12 @@ Make sure to install the required packages (RestrictedPython) by running
 ```
 $ pip install --user -r requirements.txt
 ```
+
+(note: you may not need to do the above if you have already installed the `battlecode` package as per the previous instructions.)
+
 Then, you can directly run
 ```
-$ python3 main.py
+$ python3 main.py examplefuncsplayer
 ```
 
-This will also run the example bot in `examplefuncsplayer`. If you would like to run a different bot, simply change `examplefuncsplayer` to a different directory.
+This will also the example bot in `examplefuncsplayer` against itself. If you want to run two bots against each other you can do `python3 main.py arvidplayer exampelfuncsplayer`.
