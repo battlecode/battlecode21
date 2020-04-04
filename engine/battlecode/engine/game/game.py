@@ -273,10 +273,10 @@ class Game:
         if self.board[new_row][new_col].team == robot.team:
             raise RobotError('you cannot capture your own piece')
 
-        if abs(row - new_row) != 1:
+        if abs(col - new_col) != 1:
             raise RobotError('you must capture diagonally')
 
-        if (robot.team == Team.WHITE and col - new_col != -1) or (robot.team == Team.BLACK and col - new_col != -1):
+        if (robot.team == Team.WHITE and row - new_row != -1) or (robot.team == Team.BLACK and row - new_row != 1):
             raise RobotError('you must capture diagonally forwards')
 
         captured_robot = self.board[new_row][new_col]
