@@ -19,6 +19,9 @@ class BasicViewer:
                 sys.stdout.write("\033[K")  # clear line
 
         print(self.view_board(self.board_states[-1]))
+    
+    def view(self, index=-1):
+        print(self.view_board(self.board_states[index]))
 
     def view_board(self, board, colors=True):
         new_board = ''
