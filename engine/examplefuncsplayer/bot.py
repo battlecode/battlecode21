@@ -47,6 +47,8 @@ def turn():
         except RobotError:
             pass
 
+        log('uncomment this line to get a segfault')
+
     else:
         board_size = get_board_size()
 
