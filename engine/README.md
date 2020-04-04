@@ -10,6 +10,8 @@ To install the engine as a package, run
 $ pip install --user .
 ```
 
+(note for mac people: you may need to replace `pip` with `pip3`.)
+
 This will allow you to import battlecode as a package. Test it out by trying:
 
 ```
