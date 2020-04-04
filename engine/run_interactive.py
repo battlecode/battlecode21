@@ -17,3 +17,7 @@ code_container2 = CodeContainer.from_directory(args.player[1] if len(args.player
 game = Game([code_container1, code_container2], debug=True)
 
 viewer = BasicViewer(8, game.board_states)
+
+def step():
+    game.turn()
+    viewer.view()

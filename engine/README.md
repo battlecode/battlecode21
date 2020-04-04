@@ -76,4 +76,4 @@ Running the game interactively is an excellent way to debug. First execute
 $ python3 -i run_interactive.py examplefuncsplayer
 ```
 
-This will open a Python shell. There, you can run `game.turn()` to advance the game one turn, and `viewer.view()` to view the current board state. To view a specific board state you can do `viewer.view(index)`, and to play the entire game so far you can do `viewer.play()`.
+This will open a Python shell. There, you can run `game.turn()` to advance the game one turn, and `viewer.view()` to view the current board state. To view a specific board state you can do `viewer.view(index)`, and to play the entire game so far you can do `viewer.play()`. It also defines a simple `step()` method which runs 1 turn and then views it.
