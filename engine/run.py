@@ -3,7 +3,7 @@ import argparse
 import faulthandler
 import sys
 
-from battlecode import CodeContainer, Game, BasicViewer
+from battlehack20 import CodeContainer, Game, BasicViewer
 
 """
 This is a simple script for running bots and debugging them.

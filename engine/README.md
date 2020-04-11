@@ -29,7 +29,7 @@ $ python3 run.py examplefuncsplayer ~/yourcode/coolplayer
 
 If you would like to uninstall, simply run
 ```
-$ pip uninstall battlecode
+$ pip uninstall battlehack20
 ```
 
 ### Running Interactively
@@ -51,13 +51,13 @@ which advances the game 1 turn. This is very useful for debugging.
 
 ### Advanced Usage
 
-Interacting directly with the battlecode API will give you more freedom and might make it easier to debug your code. The following is a minimal example of how to do that.
+Interacting directly with the `battlehack20` API will give you more freedom and might make it easier to debug your code. The following is a minimal example of how to do that.
 
 ```
 $ python3
->>> import battlecode
->>> code = battlecode.CodeContainer.from_directory('./examplefuncsplayer')
->>> game = battlecode.Game([code, code], debug=True)
+>>> import battlehack20 as bh20
+>>> code = bh20.CodeContainer.from_directory('./examplefuncsplayer')
+>>> game = bh20.Game([code, code], debug=True)
 >>> game.turn()
 ```
 

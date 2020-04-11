@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-setup(name='battlecode',
+setup(name='battlehack20',
       version=0.1,
-      description='battlecode python engine',
+      description='Battlehack SP20 game engine.',
       url=None,
       author='Battlecode',
       author_email='battlecode@mit.edu',
