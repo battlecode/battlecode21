@@ -4,15 +4,54 @@ This repository contains all the code for the Battlecode Python engine.
 
 ## Installation and Usage
 
-### As a Package
-To install the engine as a package, run
+### Installation
+To install the engine as a local package, run
 ```
-$ pip install --user .
+$ pip install --user -e .
 ```
 
-(note for mac people: you may need to replace `pip` with `pip3`.)
+(Note for mac people: you may need to replace `pip` with `pip3`.) 
 
-This will allow you to import battlecode as a package. Test it out by trying:
+The `-e` flag allows you to change the source code and have the changes be automatically reflected without needing to reinstall.
+
+Test it out by trying:
+
+```
+$ python3 run.py examplefuncsplayer examplefuncsplayer
+```
+
+You should see a game between `examplefuncsplayer` and `examplefuncsplayer` being played.
+If your code is in a directory `~/yourcode/coolplayer` then you can run it against examplefuncsplayer using
+
+```
+$ python3 run.py examplefuncsplayer ~/yourcode/coolplayer
+```
+
+If you would like to uninstall, simply run
+```
+$ pip uninstall battlecode
+```
+
+### Running Interactively
+
+Run
+
+```
+$ python3 -i run.py examplefuncsplayer examplefuncsplayer
+```
+
+This will open an interactive Python shell. There, you can run
+
+```
+>>> step()
+```
+
+which advances the game 1 turn. This is very useful for debugging.
+
+
+### Advanced Usage
+
+Interacting directly with the battlecode API will give you more freedom and might make it easier to debug your code. The following is a minimal example of how to do that.
 
 ```
 $ python3
@@ -43,37 +82,4 @@ You should see the output:
 [Robot BLACK HQ info] Remaining bytecode: 4954
 ```
 
-You can also try running:
-```
-$ python3 as-package.py
-```
-
-If you would like to uninstall, simply run
-```
-$ pip uninstall battlecode
-```
-
-### Running directly
-Make sure to install the required packages (RestrictedPython) by running
-
-```
-$ pip install --user -r requirements.txt
-```
-
-(note: you may not need to do the above if you have already installed the `battlecode` package as per the previous instructions.)
-
-Then, you can directly run
-```
-$ python3 main.py examplefuncsplayer
-```
-
-This will also the example bot in `examplefuncsplayer` against itself. If you want to run two bots against each other you can do `python3 main.py arvidplayer exampelfuncsplayer`.
-
-### Running interactively
-
-Running the game interactively is an excellent way to debug. First execute
-```
-$ python3 -i run_interactive.py examplefuncsplayer
-```
-
-This will open a Python shell. There, you can run `game.turn()` to advance the game one turn, and `viewer.view()` to view the current board state. To view a specific board state you can do `viewer.view(index)`, and to play the entire game so far you can do `viewer.play()`. It also defines a simple `step()` method which runs 1 turn and then views it.
+If you're curious, this is how the `run.py` script works. Study the source code of `run.py` to figure out how to set up a viewer.

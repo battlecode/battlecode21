@@ -1,2 +1,0 @@
- RestrictedPython==4.0b4
- 
