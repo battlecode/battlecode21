@@ -1,5 +1,8 @@
 # A Prance of Pawns
 
+_The formal specification of the Battlehack SP20 game._
+Current version: 2020.2.0.3
+
 You are one of the noble houses, manipulating your pawns around Westeros.
 
 # Game Overview
@@ -65,3 +68,5 @@ The per-turn bytecode limits for various robots are as follows:
 
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the thurn.
 
+
+# Changelog
