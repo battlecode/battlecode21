@@ -82,3 +82,10 @@ git pull ../battlecode20 —allow-unrelated-histories
 ```
 
 Note that if you want to rename directories, that is also possible.
+
+For the engine, the same procedure was followed, but the `filter-repo` commands were as follows instead:
+
+```
+git filter-repo --invert-paths --path-regex '(arvidplayer)|(ezouplayer)|(lectureplayer)|(testplayer)'
+git filter-repo --to-subdirectory-filter engine
+```
