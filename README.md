@@ -63,19 +63,22 @@ This will create a `zip` file. Unzip and open the `index.html` file in it to vie
 
 ## Notes for porting this to battlecode21
 
-When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Mainting git history is nice, but not trivial. The following steps were taken to port `battlecode19` to this repo and maintain history (assuming we start in this repo):
+When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Mainting git history is nice. Use `git-filter-repo` for this:
+```
+pip3 install git-filter-repo
+```
+
+Make sure you have a recent git version (run `git --version` and make sure it's compatible with git-filter-repo). The following steps were taken to port from `battlecode20` to this repo:
 
 ```
 cd ..
-git clone https://github.com/battlecode/battlecode19
-cd battlecode19
-git checkout -b battlecode20export
-git filter-branch --prune-empty --index-filter 'var=$(git ls-files | grep -v "^api\|^app") && test "$var" && git rm $var --cached'
-cd ..
+git clone https://github.com/battlecode/battlecode20
 cd battlecode20
-git pull ../battlecode19 --allow-unrelated-histories
-mv api backend
-mv app frontend
+git checkout -b battlecode20export
+git filter-repo --path backend --path frontend --path infrastructure --path specs --path docker-compose-b.yml --path docker-compose.yml --path README.md --path pre_release.py --path post_release.py --tag-rename '':'bc20-'
+cd ..
+cd battlehack20
+git pull ../battlecode20 —allow-unrelated-histories
 ```
 
-This procedure keeps the history nicely.
+Note that if you want to rename directories, that is also possible.
