@@ -10,7 +10,9 @@ To install the engine as a local package, run
 $ pip install --user -e .
 ```
 
-(Note for mac people: you may need to replace `pip` with `pip3`. Also, the `-e` flag allows you to change the source code and have the changes be automatically reflected.)
+(Note for mac people: you may need to replace `pip` with `pip3`.) 
+
+The `-e` flag allows you to change the source code and have the changes be automatically reflected without needing to reinstall.
 
 Test it out by trying:
 
