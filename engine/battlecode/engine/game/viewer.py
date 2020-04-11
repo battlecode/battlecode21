@@ -10,15 +10,18 @@ class BasicViewer:
 
     def play(self, delay=0.5):
         print('Visualizer: ')
-        for state in self.board_states:
-            pretty = self.view_board(state)
-            print(pretty)
-            time.sleep(delay)
-            for i in range(self.board_size + 1):
-                sys.stdout.write("\033[F")  # back to previous line
-                sys.stdout.write("\033[K")  # clear line
 
-        print(self.view_board(self.board_states[-1]))
+        for state_index in range(len(self.board_states)):
+            self.view(state_index)
+            time.sleep(delay)
+            self.clear()
+
+        self.view(-1)
+
+    def clear(self):
+        for i in range(self.board_size + 1):
+            sys.stdout.write("\033[F")  # back to previous line
+            sys.stdout.write("\033[K")  # clear line
     
     def view(self, index=-1):
         print(self.view_board(self.board_states[index]))
