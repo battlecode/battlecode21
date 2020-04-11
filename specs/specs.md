@@ -69,4 +69,14 @@ The per-turn bytecode limits for various robots are as follows:
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the thurn.
 
 
+
+# Known Limitations and Bugs
+
+The Battlecode Python engine is a work in progress. Please report any weird behavior or bugs by submitting an issue in the [battlehack20 repo](https://github.com/battlecode/battlehack20/issues).
+
+Known limitations:
+
+- `sum()`, `list()`, `dict()` are not supported
+
+
 # Changelog
