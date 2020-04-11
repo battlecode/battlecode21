@@ -43,7 +43,7 @@ $ python3 -i run.py examplefuncsplayer examplefuncsplayer
 This will open an interactive Python shell. There, you can run
 
 ```
-step()
+>>> step()
 ```
 
 which advances the game 1 turn. This is very useful for debugging.
