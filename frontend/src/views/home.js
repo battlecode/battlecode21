@@ -97,7 +97,7 @@ class InstrCard extends UpdateCard {
         return (
             <div className="card ">
                 <div className="header">
-                    <h4 className="title">Welcome to Battlecode 2020!</h4>
+                    <h4 className="title">Welcome to Battlehack 2020!</h4>
                 </div>
                 <div className="content">
                     <p>
