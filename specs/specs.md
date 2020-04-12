@@ -69,6 +69,32 @@ The per-turn bytecode limits for various robots are as follows:
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the thurn.
 
 
+# API Reference
+
+Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.
+
+To view the implementation of these methods, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py).
+
+#### Type-agnostic methods
+
+- `get_board_size()`: returns the board size
+- `get_bytecode()`: returns the number of bytecodes left
+- `get_team()`: returns the robot's team, either `Team.WHITE` or `Team.BLACK`
+- `get_type()`: returns the robot's type, either `RobotType.OVERLORD` or `RobotType.PAWN`
+- `check_space(row, col)`: returns `False` if there is no robot at the location, the robot type of the robot if there is one there, and throws a `RobotError` if outside the vision range
+
+#### Overlord methods
+
+- `get_board()`: returns the current state of the board as an array of Team.WHITE, Team.BLACK, and None, representing white-occupied, black-occupied, and empty squares, respectively
+- `spawn(row, col)`: spawns a pawn at the given location, but throws a `RobotError` if the pawn is not spawned at the edge on your side of the board, or if you have already spawned a pawn in this turn
+
+#### Pawn methods
+
+- `capture(row, col)`: captures an enemy piece at the given location, but throws a `RobotError` if the there is not an enemy pawn there or if the location is not diagonally in front of you
+- `get_location()`: returns a `(row, col)` tuple of the robot's location
+- `move_forward()`: moves forward one step, but throws a `RobotError` if you have already moved, if the location is outside the board or if there is another pawn in front of you
+- `sense()`: returns a list of tuples of the form `(row, col, robot.team)` visible to this robot (excluding yourself), that is, if `max(|robot.x - other.x|, |robot.y - other.y|) <= 2`
+
 
 # Known Limitations and Bugs
 

@@ -143,11 +143,15 @@ border-radius: 50%;
           <li><a href="#movement">Movement</a></li>
           </ul></li>
           <li><a href="#bytecode-limits">Bytecode Limits</a></li>
+          <li><a href="#api-reference">API Reference</a></li>
+          <li><a href="#known-limitations-and-bugs">Known Limitations and Bugs</a></li>
+          <li><a href="#changelog">Changelog</a></li>
           </ul>
         </div>
         <div class="main">
         
 <h1 id="a-prance-of-pawns">A Prance of Pawns</h1>
+<p><em>The formal specification of the Battlehack SP20 game.</em> Current version: 2020.2.0.3</p>
 <p>You are one of the noble houses, manipulating your pawns around Westeros.</p>
 <h1 id="game-overview">Game Overview</h1>
 <p>The game takes place on an <span class="math inline"><em>N</em></span> by <span class="math inline"><em>N</em></span> chess board (<span class="math inline">8 ≤ <em>N</em> ≤ 32</span>), and the only pieces available are pawns. Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row. The objective of the game is to get <span class="math inline"><em>N</em>/2</span> of your pawns to your opponent’s back row before they do the same to you.</p>
@@ -168,6 +172,36 @@ border-radius: 50%;
 <p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, simply return from the <code>turn()</code> function to end your turn. This will pause computation where you choose, and resume on the next line next turn.</p>
 <p>The per-turn bytecode limits for various robots are as follows: - Overlord: 10000 on first turn, 5000 per turn after - Pawn: 10000 on first turn, 5000 per turn after</p>
 <p>Robots can get their current bytecode with <code>get_bytecode()</code>. This is the amount of bytecode the robots have remaining for the thurn.</p>
+<h1 id="api-reference">API Reference</h1>
+<p>Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.</p>
+<p>To view the implementation of these methods, check out <a href="https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py">battlehack20/engine/game/game.py</a>.</p>
+<h4 id="type-agnostic-methods">Type-agnostic methods</h4>
+<ul>
+<li><code>get_board_size()</code>: returns the board size</li>
+<li><code>get_bytecode()</code>: returns the number of bytecodes left</li>
+<li><code>get_team()</code>: returns the robot’s team, either <code>Team.WHITE</code> or <code>Team.BLACK</code></li>
+<li><code>get_type()</code>: returns the robot’s type, either <code>RobotType.OVERLORD</code> or <code>RobotType.PAWN</code></li>
+<li><code>check_space(row, col)</code>: returns <code>False</code> if there is no robot at the location, the robot type of the robot if there is one there, and throws a <code>RobotError</code> if outside the vision range</li>
+</ul>
+<h4 id="overlord-methods">Overlord methods</h4>
+<ul>
+<li><code>get_board()</code>: returns the current state of the board as an array of Team.WHITE, Team.BLACK, and None, representing white-occupied, black-occupied, and empty squares, respectively</li>
+<li><code>spawn(row, col)</code>: spawns a pawn at the given location, but throws a <code>RobotError</code> if the pawn is not spawned at the edge on your side of the board, or if you have already spawned a pawn in this turn</li>
+</ul>
+<h4 id="pawn-methods">Pawn methods</h4>
+<ul>
+<li><code>capture(row, col)</code>: captures an enemy piece at the given location, but throws a <code>RobotError</code> if the there is not an enemy pawn there or if the location is not diagonally in front of you</li>
+<li><code>get_location()</code>: returns a <code>(row, col)</code> tuple of the robot’s location</li>
+<li><code>move_forward()</code>: moves forward one step, but throws a <code>RobotError</code> if you have already moved, if the location is outside the board or if there is another pawn in front of you</li>
+<li><code>sense()</code>: returns a list of tuples of the form <code>(row, col, robot.team)</code> visible to this robot (excluding yourself), that is, if <code>max(|robot.x - other.x|, |robot.y - other.y|) &lt;= 2</code></li>
+</ul>
+<h1 id="known-limitations-and-bugs">Known Limitations and Bugs</h1>
+<p>The Battlecode Python engine is a work in progress. Please report any weird behavior or bugs by submitting an issue in the <a href="https://github.com/battlecode/battlehack20/issues">battlehack20 repo</a>.</p>
+<p>Known limitations:</p>
+<ul>
+<li><code>sum()</code>, <code>list()</code>, <code>dict()</code> are not supported</li>
+</ul>
+<h1 id="changelog">Changelog</h1>
         </div>
     </div>
     
