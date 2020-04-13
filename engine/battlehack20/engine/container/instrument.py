@@ -50,8 +50,8 @@ class Instrument:
             dis.Instruction(opcode=131, opname='CALL_FUNCTION', arg=0, argval=0, argrepr=0, offset=None, starts_line=None, is_jump_target=False),
             dis.Instruction(opcode=1, opname='POP_TOP', arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=False)
         ]
-
-        while function_name_index > 255:
+        #extends the opargs so that it can store the index of __instrument__
+        while function_name_index > 255: #(255 = 2^8 -1 = 1 oparg)
             function_name_index >>= 8
             injection = [
                 dis.Instruction(
@@ -86,17 +86,21 @@ class Instrument:
         unsafe = {110, 113, 114, 115, 116, 120, 124, 125, 131}  # bytecode ops that break the instrument
 
         # We then inject the injection before every call, except for those following an EXTENDED_ARGS.
-        for cur, last in zip(instructions[:], [None]+instructions[:-1]):
-            cur_index = instructions.index(cur)
-
-            if last is not None and last.opcode == 144:
+        cur_index = -1
+        for (cur, last) in zip(instructions[:], [None]+instructions[:-1]):
+            cur_index += 1
+            if last is not None and last.opcode == 144: #EXTEND_ARG
                 continue
 
             if last is not None and last.opcode in unsafe:
                 continue
 
             for j, inject in enumerate(injection):
-                instructions.insert(cur_index + j, Instruction(inject))
+                injected_instruction = Instruction(inject)
+                injected_instruction.was_there = False # keeping track of the instructions added by us
+                instructions.insert(cur_index + j, injected_instruction)
+            cur_index += len(injection)
+
 
         # Iterate through instructions. If it's a jumper, calculate the new correct offset. For each new offset, if it
         # is too large to fit in the current number of EXTENDED_ARGS, inject a new EXTENDED_ARG before it. If you never
@@ -126,13 +130,59 @@ class Instrument:
                     # Otherwise, insert a new one
                     else:
                         instructions.insert(i, Instruction.ExtendedArgs(correct_offset % 256))
-
                         i += 1
                         fixed = False
 
                     correct_offset >>= 8
                     extended_args += 1
                 i += 1
+        #Maintaining correct line info ( traceback bug fix)
+        #co_lnotab stores line information in Byte form
+        # It stores alterantively, the number of instructions to the next increase in line number and
+        # the increase in line number then
+        #We need to ensure that these are bytes (You might want to break an increase into two see the article or code below)
+        #The code did not update these bytes, we need to update the number of instructions before the beginning of each line
+        #It should be similar to the way the jump to statement were fixed, I tried to mimick them but failed, I feel like I do not inderstand instruction.py
+        # I am overestimating the number of instructions before the start of the line in this fix
+        # you might find the end of this article helpful: https://towardsdatascience.com/understanding-python-bytecode-e7edaae8734d
+        old_lnotab = {} #stores the old right info in a more usefull way (maps instruction num to line num)
+        i = 0
+        line_num = 0 #maintains line number by adding differences
+        instruction_num = 0 #maintains the instruction num by addind differences
+        while 2*i < len(bytecode.co_lnotab):
+            instruction_num += bytecode.co_lnotab[2 * i]
+            line_num += bytecode.co_lnotab[2 * i + 1]
+            old_lnotab[instruction_num] = line_num
+            i += 1
+        #Construct a map from old instruction numbers, to new ones.
+        num_injected = 0
+        instruction_index = 0
+        old_to_new_instruction_num = {}
+        for instruction in instructions:
+            if instruction.was_there:
+                old_to_new_instruction_num[2 * (instruction_index - num_injected)] = 2 * instruction_index
+            instruction_index += 1
+            if not instruction.was_there:
+                num_injected += 1
+        new_lnotab = {}
+        for key in old_lnotab:
+            new_lnotab[old_to_new_instruction_num[key]] = old_lnotab[key]
+
+        #Creating a differences list of integers, while ensuring integers in it are bytes
+        pairs = sorted(new_lnotab.items())
+        new_lnotab = []
+        previous_pair = (0, 0)
+        for pair in pairs:
+            num_instructions = pair[0] - previous_pair[0]
+            while num_instructions > 255:
+                new_lnotab.append(255)
+                new_lnotab.append(0)
+                num_instructions -= 255
+            new_lnotab.append(num_instructions)
+            new_lnotab.append(pair[1] - previous_pair[1])
+            previous_pair = pair
+        #tranfer to bytes and we are good :)
+        new_lnotab = bytes(new_lnotab)
 
         # Finally, we repackage up our instructions into a byte string and use it to build a new code object
         byte_array = [[inst.opcode, 0 if inst.arg is None else inst.arg % 256] for inst in instructions]
@@ -141,10 +191,10 @@ class Instrument:
         # Make sure our code can locate the __instrument__ call
         new_names = tuple(bytecode.co_names) + ('__instrument__', )
 
-        return Instrument.build_code(bytecode, new_code, new_names, new_consts)
+        return Instrument.build_code(bytecode, new_code, new_names, new_consts, new_lnotab)
 
     @staticmethod
-    def build_code(old_code, new_code, new_names, new_consts):
+    def build_code(old_code, new_code, new_names, new_consts, new_lnotab):
         """Helper method to build a new code object because Python does not allow us to modify existing code objects"""
         return CodeType(old_code.co_argcount,
                         old_code.co_kwonlyargcount,
@@ -158,6 +208,6 @@ class Instrument:
                         old_code.co_filename,
                         old_code.co_name,
                         old_code.co_firstlineno,
-                        old_code.co_lnotab,
+                        new_lnotab,
                         old_code.co_freevars,
                         old_code.co_cellvars)
