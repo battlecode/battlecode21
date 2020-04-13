@@ -151,10 +151,10 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="a-prance-of-pawns">A Prance of Pawns</h1>
-<p><em>The formal specification of the Battlehack SP20 game.</em> Current version: 2020.2.0.3</p>
+<p><em>The formal specification of the Battlehack SP20 game.</em> Current version: 1.0.0</p>
 <p>You are one of the noble houses, manipulating your pawns around Westeros.</p>
 <h1 id="game-overview">Game Overview</h1>
-<p>The game takes place on an <span class="math inline"><em>N</em></span> by <span class="math inline"><em>N</em></span> chess board (<span class="math inline">8 ≤ <em>N</em> ≤ 32</span>), and the only pieces available are pawns. Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row. The objective of the game is to get <span class="math inline"><em>N</em>/2</span> of your pawns to your opponent’s back row before they do the same to you.</p>
+<p>The game takes place on an <span class="math inline"><em>N</em></span> by <span class="math inline"><em>N</em></span> chess board (<span class="math inline"><em>N</em> = 16</span>), and the only pieces available are pawns. Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row. The objective of the game is to get <span class="math inline"><em>N</em>/2</span> of your pawns to your opponent’s back row before they do the same to you.</p>
 <h1 id="game-mechanics">Game Mechanics</h1>
 <p>Each robot in the game (pawn or Overlord) runs a completely distinct copy of your code, and they may not communicate with each other. Robots have to decide what to do ONLY based on what they can see on the board, so you must find a way to implement your strategy as a collection of independent actions from your pawns.</p>
 <p>If no one has won (gotten <span class="math inline"><em>N</em>/2</span> pawns to the opponent’s back row) after 50 rounds, the game ends and ties are broken by: 1. Number of pawns on opponent’s back row 2. Coin flip</p>
@@ -170,7 +170,7 @@ border-radius: 50%;
 <h1 id="bytecode-limits">Bytecode Limits</h1>
 <p>Robots are also very limited in the amount of computation they are allowed to perform per <strong>turn</strong>. <strong>Bytecodes</strong> are a convenient measure of computation in languages like Python, where one bytecode corresponds roughly to one operation, and a single line of code generally contains several bytecodes. Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs. This is great, because it allows us to avoid using <em>time</em> as a measure of computation, which leads to problems such as nondeterminism. With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results–a feature you will find very useful for debugging.</p>
 <p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, simply return from the <code>turn()</code> function to end your turn. This will pause computation where you choose, and resume on the next line next turn.</p>
-<p>The per-turn bytecode limits for various robots are as follows: - Overlord: 10000 on first turn, 5000 per turn after - Pawn: 10000 on first turn, 5000 per turn after</p>
+<p>The per-turn bytecode limits for various robots are as follows: - Overlord: 20000 on first turn, 20000 per turn after - Pawn: 20000 on first turn, 20000 per turn after</p>
 <p>Robots can get their current bytecode with <code>get_bytecode()</code>. This is the amount of bytecode the robots have remaining for the thurn.</p>
 <h1 id="api-reference">API Reference</h1>
 <p>Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.</p>
