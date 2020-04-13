@@ -174,12 +174,17 @@ class Instrument:
         previous_pair = (0, 0)
         for pair in pairs:
             num_instructions = pair[0] - previous_pair[0]
+            num_lines = pair[1] - previous_pair[1]
             while num_instructions > 255:
                 new_lnotab.append(255)
                 new_lnotab.append(0)
                 num_instructions -= 255
+            while num_lines > 255:
+                new_lnotab.append(0)
+                new_lnotab.append(255)
+                num_lines -= 255
             new_lnotab.append(num_instructions)
-            new_lnotab.append(pair[1] - previous_pair[1])
+            new_lnotab.append(num_lines)
             previous_pair = pair
         #tranfer to bytes and we are good :)
         new_lnotab = bytes(new_lnotab)
