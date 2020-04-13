@@ -57,8 +57,8 @@ class WrapperThread(Thread):
 
 
 class RobotRunner:
-    STARTING_BYTECODE = 10000
-    EXTRA_BYTECODE = 5000
+    STARTING_BYTECODE = 20000
+    EXTRA_BYTECODE = 20000
 
     def __init__(self, code, game_methods, log_method, error_method, debug=False):
         self.instrument = Instrument(self)

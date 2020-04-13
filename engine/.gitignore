@@ -2,5 +2,5 @@ __pycache__/
 build/
 *.pyc
 *.bcpx
-threader/Threader.egg-info/
+*.egg-info/
 threader/threader.cpython-36m-x86_64-linux-gnu.so
