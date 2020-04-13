@@ -101,7 +101,7 @@ class InstrCard extends UpdateCard {
                 </div>
                 <div className="content">
                     <p>
-                        🍜. Be sure to look at the getting started section for information on how to get the game and your first bot running! 
+                        ♟️. Be sure to look at the getting started section for information on how to get the game and your first bot running! 
                     </p>
                 </div>
             </div>

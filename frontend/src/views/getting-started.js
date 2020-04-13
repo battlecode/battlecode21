@@ -142,8 +142,8 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <div className="content">
 
                                 <p>
-                                    This is the Battlecode 2020 contest website, which will be your main hub for all Battlecode-related things
-                                    for the duration of the contest. For a general overview of what Battlecode is, visit <a href='https://battlecode.org'>
+                                    This is the Battlehack 2020 contest website, which will be your main hub for all Battlehack-related things
+                                    for the duration of the contest. For a general overview of what Battlehack / Battlecode is, visit <a href='https://battlecode.org'>
                                         our landing page</a>.
 
                                 </p>
@@ -151,7 +151,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     This year's game is a thrilling survival adventure involving 🍲, ▀⛓, 🐮, 🤖, and more. You will write bots in Java.
                                 </p>
                                 <p>
-                                    Battlecode 2020 is released! Read the <a href="specs.html">game specifications</a>. Check out <a href="https://2020.battlecode.org/visualizer.html?https://2020.battlecode.org/replays/7af61a1f891466628921dca098b895.bc20">this example replay</a> for a demo of the game!
+                                    Battlehack 2020 is released! Read the <a href="specs.html">game specifications</a>. Check out <a href="https://2020.battlecode.org/visualizer.html?https://2020.battlecode.org/replays/7af61a1f891466628921dca098b895.bc20">this example replay</a> for a demo of the game!
                                 </p>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 </div>
                                 <div className="content">
                                 <p>
-                                    To participate in Battlecode, you need an account and a team. Each team can consist of 1 to 4 people.
+                                    To participate in Battlehack, you need an account and a team. Each team can consist of 1 to 2 people.
                                 </p>
                                 <p>
                                     Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create

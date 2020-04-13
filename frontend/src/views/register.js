@@ -140,12 +140,12 @@ class Register extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Battlecode 2020</h1>
+        }}>Battlehack 2020</h1>
         <p style={{
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Register below to participate in Battlecode 2020!</p>
+        }}>Register below to participate in Battlehack 2020!</p>
         {errorDiv}
         {successDiv}
         <form onSubmit={this.formSubmit}>
