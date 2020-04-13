@@ -99,7 +99,10 @@ def deploy_frontend():
     os.chdir('..')
 
 def publish_pypi():
-    pass
+    os.chdir('engine')
+    subprocess.call('python3 setup.py sdist bdist_wheel')
+    subprocess.call('twine upload --skip-existing dist/*')
+    os.chdir('..')
 
 def commit_tag_push(version):
     subprocess.call(f'git tag v{version}', shell=True)
