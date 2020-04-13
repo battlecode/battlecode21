@@ -50,8 +50,8 @@ class Instrument:
             dis.Instruction(opcode=131, opname='CALL_FUNCTION', arg=0, argval=0, argrepr=0, offset=None, starts_line=None, is_jump_target=False),
             dis.Instruction(opcode=1, opname='POP_TOP', arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=False)
         ]
-
-        while function_name_index > 255:
+        #extends the opargs so that it can store the index of __instrument__
+        while function_name_index > 255: #(255 = 2^8 -1 = 1 oparg)
             function_name_index >>= 8
             injection = [
                 dis.Instruction(
@@ -87,7 +87,7 @@ class Instrument:
 
         # We then inject the injection before every call, except for those following an EXTENDED_ARGS.
         for cur, last in zip(instructions[:], [None]+instructions[:-1]):
-            cur_index = instructions.index(cur)
+            cur_index = instructions.index(cur) #POTENTIAL BUG IF THE CURRENT INSTRUCTION APPEARS MULTIPLE TIMES?!
 
             if last is not None and last.opcode == 144:
                 continue
@@ -133,6 +133,56 @@ class Instrument:
                     correct_offset >>= 8
                     extended_args += 1
                 i += 1
+        #Maintaining correct line info ( traceback bug fix)
+        #co_lnotab stores line information in Byte form
+        # It stores alterantively, the number of instructions to the next increase in line number and
+        # the increase in line number then
+        #We need to ensure that these are bytes (You might want to break an increase into two see the article or code below)
+        #The code did not update these bytes, we need to update the number of instructions before the beginning of each line
+        #It should be similar to the way the jump to statement were fixed, I tried to mimick them but failed, I feel like I do not inderstand instruction.py
+        # I am overestimating the number of instructions before the start of the line in this fix
+        # you might find the end of this article helpful: https://towardsdatascience.com/understanding-python-bytecode-e7edaae8734d
+        old_lnotab = {} #stores the old right info in a more usefull way (maps instruction num to line num)
+        i = 0
+        line_num = 0 #maintains line number by adding differences
+        instruction_num = 0 #maintains the instruction num by addind differences
+        while 2*i < len(bytecode.co_lnotab):
+            instruction_num += bytecode.co_lnotab[2 * i]
+            line_num += bytecode.co_lnotab[2 * i + 1]
+            old_lnotab[instruction_num] = line_num
+            i += 1
+        num_non_jumpers = 0
+        new_lnotab = {} #uses same format for new line info
+        for i in  range(len(instructions)):
+            instruction = instructions[i]
+            if (i  - num_non_jumpers)//2 in old_lnotab and i-1 not in new_lnotab: #something wrong here, it seems like all instructions all non-jumpers which does not make sense given the way jumping was handeled
+                new_lnotab[i ] = old_lnotab[(i - num_non_jumpers)//2]
+            #if not instruction.is_jumper(): (FIX ME)
+            #    num_non_jumpers += 1
+        if len(new_lnotab) != len(old_lnotab): # for debugging
+            print(len(new_lnotab), len(old_lnotab))
+            print(bytecode)
+            print(new_lnotab)
+            print(old_lnotab)
+            raise BrokenPipeError
+        #Creating a differences list of integers, while ensuring integers in it are bytes
+        pairs = sorted(new_lnotab.items())
+        new_lnotab = []
+        previous_pair = (0, 0)
+        for pair in pairs:
+            new_lnotab.append(min(255, pair[0] - previous_pair[0]))
+            new_lnotab.append(pair[1] - previous_pair[1])
+            x = pair[0] - previous_pair[0] - 255
+            while x > 256:
+                new_lnotab.append(255)
+                new_lnotab.append(0)
+                x -= 255
+            if x > 0:
+                new_lnotab.append(x)
+                new_lnotab.append(0)
+            previous_pair = pair
+        #tranfer to bytes and we are good :)
+        new_lnotab = bytes(new_lnotab)
 
         # Finally, we repackage up our instructions into a byte string and use it to build a new code object
         byte_array = [[inst.opcode, 0 if inst.arg is None else inst.arg % 256] for inst in instructions]
@@ -141,10 +191,10 @@ class Instrument:
         # Make sure our code can locate the __instrument__ call
         new_names = tuple(bytecode.co_names) + ('__instrument__', )
 
-        return Instrument.build_code(bytecode, new_code, new_names, new_consts)
+        return Instrument.build_code(bytecode, new_code, new_names, new_consts, new_lnotab)
 
     @staticmethod
-    def build_code(old_code, new_code, new_names, new_consts):
+    def build_code(old_code, new_code, new_names, new_consts, new_lnotab):
         """Helper method to build a new code object because Python does not allow us to modify existing code objects"""
         return CodeType(old_code.co_argcount,
                         old_code.co_kwonlyargcount,
@@ -158,6 +208,6 @@ class Instrument:
                         old_code.co_filename,
                         old_code.co_name,
                         old_code.co_firstlineno,
-                        old_code.co_lnotab,
+                        new_lnotab,
                         old_code.co_freevars,
                         old_code.co_cellvars)
