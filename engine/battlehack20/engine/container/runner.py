@@ -2,7 +2,7 @@ import sys
 import traceback
 import pdb
 
-from RestrictedPython import safe_builtins, Guards
+from RestrictedPython import safe_builtins, limited_builtins, utility_builtins, Guards
 from threading import Thread, Event
 from time import sleep
 from .instrument import Instrument
@@ -64,7 +64,7 @@ class RobotRunner:
         self.instrument = Instrument(self)
         self.locals = {}
         self.globals = {
-            '__builtins__': dict(safe_builtins),
+            '__builtins__': dict(i for dct in [safe_builtins, limited_builtins, utility_builtins] for i in dct.items()),
             '__name__': '__main__'
         }
 

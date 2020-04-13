@@ -6,7 +6,7 @@ Fully static frontend in React, based on `battlecode19/app`, using modified temp
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of `battlecode20` to run the entire website stack. If for some reason you want to run the frontend outside of Docker, follow the instructions below.
+You can run `docker-compose up --build` in the root directory of `battlehack20` to run the entire website stack. If you want to run the frontend outside of Docker, follow the instructions below.
 
 ### First-Time Setup
 
@@ -15,8 +15,6 @@ In this directory, run:
 ```
 npm install
 ```
-
-Also, run `npm install` in `../schema`, `../client/playback` and `../client/visualizer`.
 
 ### Running
 
