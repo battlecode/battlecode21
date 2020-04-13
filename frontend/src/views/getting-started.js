@@ -148,7 +148,7 @@ If you are unable to find this option, you may be using an old version of Eclips
 
                                 </p>
                                 <p>
-                                    This year's game is a thrilling survival adventure involving 🍲, ▀⛓, 🐮, 🤖, and more. You will write bots in Java.
+                                   In this year's Battlehack game, you are one of the noble houses, manipulating your pawns around Westeros. You will write bots in Python.
                                 </p>
                                 <p>
                                     Battlehack 2020 is released! Read the <a href="specs.html">game specifications</a>. Check out <a href="https://2020.battlecode.org/visualizer.html?https://2020.battlecode.org/replays/7af61a1f891466628921dca098b895.bc20">this example replay</a> for a demo of the game!
