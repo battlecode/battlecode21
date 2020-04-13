@@ -16,7 +16,7 @@ The objective of the game is to get $N/2$ of your pawns to your opponent’s bac
 Each robot in the game (pawn or Overlord) runs a completely distinct copy of your code, and they may not communicate with each other.
 Robots have to decide what to do ONLY based on what they can see on the board, so you must find a way to implement your strategy as a collection of independent actions from your pawns.
 
-If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 50 rounds, the game ends and ties are broken by:
+If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 250 rounds, the game ends and ties are broken by:
 1. Number of pawns on opponent’s back row
 2. Coin flip
 
