@@ -86,17 +86,21 @@ class Instrument:
         unsafe = {110, 113, 114, 115, 116, 120, 124, 125, 131}  # bytecode ops that break the instrument
 
         # We then inject the injection before every call, except for those following an EXTENDED_ARGS.
-        for cur, last in zip(instructions[:], [None]+instructions[:-1]):
-            cur_index = instructions.index(cur) #POTENTIAL BUG IF THE CURRENT INSTRUCTION APPEARS MULTIPLE TIMES?!
-
-            if last is not None and last.opcode == 144:
+        cur_index = -1
+        for (cur, last) in zip(instructions[:], [None]+instructions[:-1]):
+            cur_index += 1
+            if last is not None and last.opcode == 144: #EXTEND_ARG
                 continue
 
             if last is not None and last.opcode in unsafe:
                 continue
 
             for j, inject in enumerate(injection):
-                instructions.insert(cur_index + j, Instruction(inject))
+                injected_instruction = Instruction(inject)
+                injected_instruction.was_there = False # keeping track of the instructions added by us
+                instructions.insert(cur_index + j, injected_instruction)
+            cur_index += len(injection)
+
 
         # Iterate through instructions. If it's a jumper, calculate the new correct offset. For each new offset, if it
         # is too large to fit in the current number of EXTENDED_ARGS, inject a new EXTENDED_ARG before it. If you never
@@ -126,7 +130,6 @@ class Instrument:
                     # Otherwise, insert a new one
                     else:
                         instructions.insert(i, Instruction.ExtendedArgs(correct_offset % 256))
-
                         i += 1
                         fixed = False
 
@@ -151,35 +154,32 @@ class Instrument:
             line_num += bytecode.co_lnotab[2 * i + 1]
             old_lnotab[instruction_num] = line_num
             i += 1
-        num_non_jumpers = 0
-        new_lnotab = {} #uses same format for new line info
-        for i in  range(len(instructions)):
-            instruction = instructions[i]
-            if (i  - num_non_jumpers)//2 in old_lnotab and i-1 not in new_lnotab: #something wrong here, it seems like all instructions all non-jumpers which does not make sense given the way jumping was handeled
-                new_lnotab[i ] = old_lnotab[(i - num_non_jumpers)//2]
-            #if not instruction.is_jumper(): (FIX ME)
-            #    num_non_jumpers += 1
-        if len(new_lnotab) != len(old_lnotab): # for debugging
-            print(len(new_lnotab), len(old_lnotab))
-            print(bytecode)
-            print(new_lnotab)
-            print(old_lnotab)
-            raise BrokenPipeError
+        #Construct a map from old instruction numbers, to new ones.
+        num_injected = 0
+        instruction_index = 0
+        old_to_new_instruction_num = {}
+        for instruction in instructions:
+            if instruction.was_there:
+                old_to_new_instruction_num[2 * (instruction_index - num_injected)] = 2 * instruction_index
+            instruction_index += 1
+            if not instruction.was_there:
+                num_injected += 1
+        new_lnotab = {}
+        for key in old_lnotab:
+            new_lnotab[old_to_new_instruction_num[key]] = old_lnotab[key]
+
         #Creating a differences list of integers, while ensuring integers in it are bytes
         pairs = sorted(new_lnotab.items())
         new_lnotab = []
         previous_pair = (0, 0)
         for pair in pairs:
-            new_lnotab.append(min(255, pair[0] - previous_pair[0]))
-            new_lnotab.append(pair[1] - previous_pair[1])
-            x = pair[0] - previous_pair[0] - 255
-            while x > 256:
+            num_instructions = pair[0] - previous_pair[0]
+            while num_instructions > 255:
                 new_lnotab.append(255)
                 new_lnotab.append(0)
-                x -= 255
-            if x > 0:
-                new_lnotab.append(x)
-                new_lnotab.append(0)
+                num_instructions -= 255
+            new_lnotab.append(num_instructions)
+            new_lnotab.append(pair[1] - previous_pair[1])
             previous_pair = pair
         #tranfer to bytes and we are good :)
         new_lnotab = bytes(new_lnotab)

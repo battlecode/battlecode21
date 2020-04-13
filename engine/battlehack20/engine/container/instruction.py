@@ -6,7 +6,7 @@ class Instruction(SimpleNamespace):
         if in_dict is not None:
             super().__init__(**in_dict)
         else:
-            super().__init__(**{a:b for a,b in zip(dis.Instruction._fields+('jump_to',), instruction + (None,))})
+            super().__init__(**{a:b for a,b in zip(dis.Instruction._fields+('jump_to', 'was_there'), instruction + (None, True))})
 
     def is_jumper(self):
         return self.is_abs_jumper() or self.is_rel_jumper()
@@ -22,7 +22,7 @@ class Instruction(SimpleNamespace):
         return Instruction(None, in_dict={
             'opcode':144, 'opname':'EXTENDED_ARGS', 'arg':value,
             'argval':value, 'argrepr':value, 'offset':None,
-            'starts_line':None, 'is_jump_target':False
+            'starts_line':None, 'is_jump_target':False, 'was_there': False
         })
 
     def calculate_offset(self, instructions):
