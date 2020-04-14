@@ -1,3 +1,7 @@
+body {
+	background-color: #F7E5CD;
+}
+
 /* a centered row of things used in team page for checkboxes */
 .center-row {
 	display: flex;
@@ -68,7 +72,7 @@ h5 {
 }
 
 .selected-ide-button {
-	background-color: #888888 !important;
+	background-color: #9A6D4C !important;
 	color: white !important;
 }
 .ide-button-getting-started {
