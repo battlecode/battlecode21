@@ -468,7 +468,7 @@ body > .navbar-collapse[data-color="purple"]:after {
   background-size: 150% 150%;
 }
 .sidebar[data-color="chess"],
-body > .navbar-collapse[data-color="chess"]:after {
+body > .navbar-collapse[data-color="chess"]:after, .chessBackground {
   background: #9A6D4C;
   background: -moz-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9A6D4C), color-stop(100%, #8F6647));
@@ -622,33 +622,33 @@ body > .navbar-collapse[data-color="chess"]:after {
 }
 
 .btn-info {
-  border-color: #9A6D4C;
-  color: #9A6D4C;
+  border-color: #1DC7EA;
+  color: #1DC7EA;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {
   background-color: transparent;
-  color: #AC7C58;
-  border-color: #AC7C58;
+  color: #42d0ed;
+  border-color: #42d0ed;
 }
 .btn-info.disabled, .btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled.focus, .btn-info.disabled:active, .btn-info.disabled.active, .btn-info:disabled, .btn-info:disabled:hover, .btn-info:disabled:focus, .btn-info:disabled.focus, .btn-info:disabled:active, .btn-info:disabled.active, .btn-info[disabled], .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled].focus, .btn-info[disabled]:active, .btn-info[disabled].active, fieldset[disabled] .btn-info, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info.focus, fieldset[disabled] .btn-info:active, fieldset[disabled] .btn-info.active {
   background-color: transparent;
-  border-color: #9A6D4C;
+  border-color: #1DC7EA;
 }
 .btn-info.btn-fill {
   color: #FFFFFF;
-  background-color: #9A6D4C;
+  background-color: #1DC7EA;
   opacity: 1;
   filter: alpha(opacity=100);
 }
 .btn-info.btn-fill:hover, .btn-info.btn-fill:focus, .btn-info.btn-fill:active, .btn-info.btn-fill.active, .open > .btn-info.btn-fill.dropdown-toggle {
-  background-color: #AC7C58;
+  background-color: #42d0ed;
   color: #FFFFFF;
 }
 .btn-info.btn-fill .caret {
   border-top-color: #FFFFFF;
 }
 .btn-info .caret {
-  border-top-color: #9A6D4C;
+  border-top-color: #1DC7EA;
 }
 
 .btn-warning {

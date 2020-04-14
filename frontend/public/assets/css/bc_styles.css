@@ -3,11 +3,21 @@ body {
 }
 
 a {
-	color: #9A6D4C;
+	color: #AF805D;
 }
 
 a:hover {
-	color: #AF805D;
+	color: #9A6D4C;
+}
+
+.btn {
+	background-color: #AF805D !important;
+	border-color: #AF805D !important;
+}
+
+.btn:hover {
+	background-color: #9A6D4C !important;
+	border-color: #9A6D4C !important;
 }
 
 /* a centered row of things used in team page for checkboxes */
