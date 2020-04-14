@@ -5,7 +5,7 @@ from .robottype import RobotType
 
 
 class Game:
-    MAX_ROUNDS = 50
+    MAX_ROUNDS = 250
 
     def __init__(self, code, board_size=8, seed=10, sensor_radius=2, debug=False):
         random.seed(seed)

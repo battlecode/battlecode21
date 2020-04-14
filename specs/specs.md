@@ -1,13 +1,13 @@
 # A Prance of Pawns
 
 _The formal specification of the Battlehack SP20 game._
-Current version: 2020.2.0.3
+Current version: 1.0.0
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
 # Game Overview
 
-The game takes place on an $N$ by $N$ chess board ($8 \le N \le 32$), and the only pieces available are pawns.
+The game takes place on an $N$ by $N$ chess board ($N = 16$), and the only pieces available are pawns.
 Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row.
 The objective of the game is to get $N/2$ of your pawns to your opponent’s back row before they do the same to you.
 
@@ -16,7 +16,7 @@ The objective of the game is to get $N/2$ of your pawns to your opponent’s bac
 Each robot in the game (pawn or Overlord) runs a completely distinct copy of your code, and they may not communicate with each other.
 Robots have to decide what to do ONLY based on what they can see on the board, so you must find a way to implement your strategy as a collection of independent actions from your pawns.
 
-If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 50 rounds, the game ends and ties are broken by:
+If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 250 rounds, the game ends and ties are broken by:
 1. Number of pawns on opponent’s back row
 2. Coin flip
 
@@ -63,8 +63,8 @@ Instead, simply return from the `turn()` function to end your turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
 The per-turn bytecode limits for various robots are as follows:
-- Overlord: 10000 on first turn, 5000 per turn after
-- Pawn: 10000 on first turn, 5000 per turn after
+- Overlord: 20000 on first turn, 20000 per turn after
+- Pawn: 20000 on first turn, 20000 per turn after
 
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the thurn.
 
