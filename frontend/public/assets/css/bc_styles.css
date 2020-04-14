@@ -2,6 +2,14 @@ body {
 	background-color: #F7E5CD;
 }
 
+a {
+	color: #9A6D4C;
+}
+
+a:hover {
+	color: #AF805D;
+}
+
 /* a centered row of things used in team page for checkboxes */
 .center-row {
 	display: flex;
