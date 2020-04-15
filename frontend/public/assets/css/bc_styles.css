@@ -1,3 +1,25 @@
+body {
+	background-color: #F7E5CD;
+}
+
+a {
+	color: #AF805D;
+}
+
+a:hover {
+	color: #9A6D4C;
+}
+
+.btn {
+	background-color: #AF805D !important;
+	border-color: #AF805D !important;
+}
+
+.btn:hover {
+	background-color: #9A6D4C !important;
+	border-color: #9A6D4C !important;
+}
+
 /* a centered row of things used in team page for checkboxes */
 .center-row {
 	display: flex;
@@ -68,7 +90,7 @@ h5 {
 }
 
 .selected-ide-button {
-	background-color: #888888 !important;
+	background-color: #9A6D4C !important;
 	color: white !important;
 }
 .ide-button-getting-started {

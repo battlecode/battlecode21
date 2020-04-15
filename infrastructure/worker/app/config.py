@@ -25,7 +25,7 @@ TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 
 GAME_WINNER = 'Team.[White|Black] wins !'
 
-API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
+API_AUTHENTICATE = 'https://bh2020.battlecode.org/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
 API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
 
@@ -40,7 +40,7 @@ def api_compile_update(submissionid):
     Returns the API link for reporting the compilation status
     submissionid: the ID of the submission
     """
-    return 'https://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
+    return 'https://bh2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
 
 # Game running API specifications
 
@@ -53,4 +53,4 @@ def api_game_update(gametype, gameid):
     gametype: 'scrimmage' or 'tournament'
     gameid: the ID of the game
     """
-    return 'https://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)
+    return 'https://bh2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)

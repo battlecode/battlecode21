@@ -467,6 +467,17 @@ body > .navbar-collapse[data-color="purple"]:after {
   background: linear-gradient(to bottom, #9368E9 0%, #943bea 100%);
   background-size: 150% 150%;
 }
+.sidebar[data-color="chess"],
+body > .navbar-collapse[data-color="chess"]:after, .chessBackground {
+  background: #9A6D4C;
+  background: -moz-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9A6D4C), color-stop(100%, #8F6647));
+  background: -webkit-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
+  background: -o-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
+  background: -ms-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
+  background: linear-gradient(to bottom, #9A6D4C 0%, #8F6647 100%);
+  background-size: 150% 150%;
+}
 
 .main-panel {
   background: rgba(203, 203, 210, 0.15);
