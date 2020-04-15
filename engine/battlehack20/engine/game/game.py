@@ -130,7 +130,6 @@ class Game:
             'get_bytecode' : lambda : robot.runner.bytecode,
             'get_team': lambda : self.get_team(robot),
             'get_type': lambda: self.get_type(robot),
-            'view_board': lambda : self.view_board(),  # remove this for actual competition purposes
         }
 
         if robot_type == RobotType.OVERLORD:
