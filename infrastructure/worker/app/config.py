@@ -10,10 +10,10 @@ logging.getLogger().setLevel(logging.INFO)
 # Constants, parameters and configurations
 
 GCLOUD_PROJECT_ID        = 'battlecode18'
-GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
-GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
-GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
-GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
+GCLOUD_SUB_COMPILE_NAME  = 'bh20-compile-sub'
+GCLOUD_SUB_GAME_NAME     = 'bh20-game-sub'
+GCLOUD_BUCKET_SUBMISSION = 'bh20-submissions'
+GCLOUD_BUCKET_REPLAY     = 'bh20-replays'
 
 SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
@@ -23,7 +23,7 @@ TIMEOUT_PULL    = 150   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 
-GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
+GAME_WINNER = 'Team.[White|Black] wins !'
 
 API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
