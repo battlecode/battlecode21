@@ -19,7 +19,7 @@ repositories {
         url "https://maven.pkg.github.com/battlecode/battlecode20"
         credentials {
             username = project.findProperty("gpr.user")
-            password = new URL("https://2020.battlecode.org/access.txt").text.trim()
+            password = new URL("https://bh2020.battlecode.org/access.txt").text.trim()
         }
     }
     // Use the JCenter repo to resolve Scala dependencies.
@@ -92,7 +92,7 @@ task update {
     group 'battlecode'
     doLast {
         //overwrites stored version number
-        new File(projectDir, "version.txt").text = new URL("https://2020.battlecode.org/version.txt").text
+        new File(projectDir, "version.txt").text = new URL("https://bh2020.battlecode.org/version.txt").text
 
         //overwrites cached version number
         versions.battlecode = new File(projectDir, "version.txt").text
