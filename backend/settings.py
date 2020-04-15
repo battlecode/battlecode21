@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 
 # The URL of the application
-THIS_URL = 'https://2020.battlecode.org'
+THIS_URL = 'https://bh2020.battlecode.org'
 
 # TODO: update this every time we update maps
 SERVER_MAPS = [
