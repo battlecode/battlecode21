@@ -73,7 +73,7 @@ Robots can get their current bytecode with `get_bytecode()`. This is the amount 
 
 Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.
 
-To view the implementation of these methods, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py).
+To view the implementation of these methods and the full list of what's available, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124).
 
 #### Type-agnostic methods
 
