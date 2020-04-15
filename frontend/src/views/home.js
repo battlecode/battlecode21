@@ -100,6 +100,9 @@ class InstrCard extends UpdateCard {
                     <h4 className="title">Welcome to Battlehack 2020!</h4>
                 </div>
                 <div className="content">
+            <p>
+            <i>Sponsored by <a href="https://hudsonrivertrading.com">HRT</a>!</i>
+            </p>
                     <p>
                         ♟️. Be sure to look at the getting started section for information on how to get the game and your first bot running! 
                     </p>
