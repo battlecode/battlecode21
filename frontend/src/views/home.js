@@ -101,7 +101,7 @@ class InstrCard extends UpdateCard {
                 </div>
                 <div className="content">
             <p>
-            <i>Sponsored by <a href="https://hudsonrivertrading.com">HRT</a>!</i>
+            <i>Sponsored by <a href="https://www.hudsonrivertrading.com">HRT</a>!</i>
             </p>
                     <p>
                         ♟️. Be sure to look at the getting started section for information on how to get the game and your first bot running! 
