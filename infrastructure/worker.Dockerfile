@@ -23,13 +23,14 @@ RUN pip3 install --upgrade \
     requests
 
 # Initialise box, copy files and worker apps
-COPY box box/
+# COPY box box/
 COPY app/config.py app/subscription.py app/util.py app/id_rsa app/
 
 # Copy github's RSA key
 COPY .ssh /root/.ssh
 # Init ssh and clone the repo with the deploy key
 RUN eval "$(ssh-agent -s)" && ssh-add /app/id_rsa \
+    && mkdir box \
     && cd box && git clone git@github.com:battlecode/battlehack20.git /box/
 
 # Install battlecode python package from source
