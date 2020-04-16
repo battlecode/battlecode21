@@ -67,7 +67,6 @@ if __name__ == '__main__':
     parser.add_argument('--debug', default='true', choices=('true','false'), help="In debug mode (defaults to true), bot logs and additional information are displayed.")
     args = parser.parse_args()
     args.debug = args.debug == 'true'
-    print(args.debug)
 
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
     faulthandler.enable() 
