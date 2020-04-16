@@ -23,7 +23,7 @@ TIMEOUT_PULL    = 150   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300   # Maximum execution time for submission compilation
 TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 
-GAME_WINNER = 'Team.[White|Black] wins !'
+GAME_WINNER = 'Team.[White|Black] wins !' #unused
 
 API_AUTHENTICATE = 'https://bh2020.battlecode.org/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')

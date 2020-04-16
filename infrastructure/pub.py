@@ -67,20 +67,6 @@ def pub(project_id, topic_name):
         time.sleep(0.5)
         print("Published {} message(s).".format(ref["num_messages"]))
 
-
-def test():
-    response = requests.post(url="https://bh2020.battlecode.org/auth/token", data={
-        'username': "battlecode",
-        'password': "369c6468e9dfc4742b6068d080fca83c508706d0170970658d"
-    })
-    response.raise_for_status()
-    # print(response)
-    # #return response.json()['access']
-    # client = storage.Client()
-    # bucket = client.get_bucket('bh20-submissions')
-    # with open(os.path.join('player1.zip'), 'wb') as file_obj:
-    #     bucket.get_blob(os.path.join("bing1", 'player.zip')).download_to_file(file_obj)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -91,6 +77,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    test()
-    #pub(args.project_id, args.topic_name)
+    # test()
+    pub(args.project_id, args.topic_name)
 # [END pubsub_quickstart_pub_all]
