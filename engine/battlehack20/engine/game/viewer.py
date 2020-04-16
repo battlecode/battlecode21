@@ -40,7 +40,8 @@ class BasicViewer:
                             new_board += '\033[1m\u001b[36m'
                     new_board += str(board[i][j])
                     if self.colors:
-                        new_board += '\033[0m\u001b[0m] '
+                        new_board += '\033[0m\u001b[0m'
+                    new_board += '] '
                 else:
                     new_board += '[    ] '
             new_board += '\n'
