@@ -62,6 +62,7 @@ if __name__ == '__main__':
     # This is just for parsing the input to the script. Not important.
     parser = argparse.ArgumentParser()
     parser.add_argument('player', nargs='+', help="Player")
+    parser.add_argument('--no-color', action='store_true')
     args = parser.parse_args()
 
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
@@ -80,7 +81,7 @@ if __name__ == '__main__':
     game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True)
     
     # ... and the viewer.
-    viewer = BasicViewer(BOARD_SIZE, game.board_states)
+    viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.no_color)
 
 
     # Here we check if the script is run using the -i flag.
