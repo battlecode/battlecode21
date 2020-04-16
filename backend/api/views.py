@@ -20,10 +20,10 @@ from google.oauth2 import service_account
 import os, tempfile, datetime, argparse, time, json, random, binascii, threading, math
 
 GCLOUD_PROJECT = "battlecode18" #not nessecary???
-GCLOUD_SUB_BUCKET = "bc20-submissions"
-GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile'
-GCLOUD_SUB_SCRIMMAGE_NAME = 'bc20-game'
-GCLOUD_RES_BUCKET = "bc20-resumes"
+GCLOUD_SUB_BUCKET = "bh20-submissions"
+GCLOUD_SUB_COMPILE_NAME  = 'bh20-compile'
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bh20-game'
+GCLOUD_RES_BUCKET = "bh20-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
