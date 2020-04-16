@@ -4,10 +4,20 @@ import random
 # This is an example bot written by the developers!
 # Use this to help write your own code, or run it against your bot to see how well you can do!
 
-DEBUG = 0
+DEBUG = 1
 def dlog(str):
     if DEBUG > 0:
         log(str)
+
+
+def check_space_wrapper(r, c, board_size):
+    # check space, except doesn't hit you with game errors
+    if r < 0 or c < 0 or c >= board_size or r >= board_size:
+        return False
+    try:
+        return check_space(r, c)
+    except:
+        return None
 
 def turn():
     """
@@ -15,48 +25,43 @@ def turn():
     This function will be called at the beginning of every turn and should contain the bulk of your robot commands
     """
     dlog('Starting Turn!')
+    board_size = get_board_size()
 
     team = get_team()
+    opp_team = Team.WHITE if team == Team.BLACK else team.BLACK
     dlog('Team: ' + str(team))
 
     robottype = get_type()
     dlog('Type: ' + str(robottype))
-
-    bytecode = get_bytecode()
-    dlog('Bytecode: ' + str(bytecode))
 
     if robottype == RobotType.PAWN:
         row, col = get_location()
         dlog('My location is: ' + str(row) + ' ' + str(col))
 
         if team == Team.WHITE:
-            dir = 1
+            forward = 1
         else:
-            dir = -1
+            forward = -1
 
-        try:
-            capture(row + dir, col + 1)
-            dlog('Captured at: (' + str(row + dir) + ', ' + str(col + 1) + ')')
-        except RobotError:
-            pass
+        # try catpuring pieces
+        if check_space_wrapper(row + forward, col + 1, board_size) == opp_team: # up and right
+            capture(row + forward, col + 1)
+            dlog('Captured at: (' + str(row + forward) + ', ' + str(col + 1) + ')')
 
-        try:
-            capture(row + dir, col - 1)
-            dlog('Captured at: (' + str(row + dir) + ', ' + str(col - 1) + ')')
-        except RobotError:
-            pass
+        elif check_space_wrapper(row + forward, col - 1, board_size) == opp_team: # up and left
+            capture(row + forward, col - 1)
+            dlog('Captured at: (' + str(row + forward) + ', ' + str(col - 1) + ')')
 
-        try:
+        # otherwise try to move forward
+        elif row + forward != -1 and row + forward != board_size and not check_space_wrapper(row + forward, col, board_size):
+            #               ^  not off the board    ^            and    ^ directly forward is empty
             move_forward()
             dlog('Moved forward!')
-        except RobotError:
-            pass
 
-        dlog('uncomment this line to get a segfault')
+        confusion = "you need a line here to avoid segfault. we aren't sure why but are working on it"
+        # ^ I think this is related to the potential ambiguity of what the following else is referring to?
 
     else:
-        board_size = get_board_size()
-
         if team == Team.WHITE:
             index = 0
         else:
@@ -69,4 +74,6 @@ def turn():
                 dlog('Spawned unit at: (' + str(index) + ', ' + str(i) + ')')
                 break
 
-    dlog('done!')
+    bytecode = get_bytecode()
+    dlog('Done! Bytecode left: ' + str(bytecode))
+

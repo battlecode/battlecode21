@@ -7,12 +7,13 @@ from .robottype import RobotType
 class Game:
     MAX_ROUNDS = 250
 
-    def __init__(self, code, board_size=8, seed=10, sensor_radius=2, debug=False):
+    def __init__(self, code, board_size=8, seed=10, sensor_radius=2, debug=False, colored_logs=True):
         random.seed(seed)
 
         self.code = code
 
         self.debug = debug
+        self.colored_logs = colored_logs
         self.running = True
         self.winner = None
 
@@ -39,9 +40,9 @@ class Game:
                 self.check_over()
 
             if self.debug:
-                Game.log_info(f'Turn {self.round}')
-                Game.log_info(f'Queue: {self.queue}')
-                Game.log_info(f'Lords: {self.lords}')
+                self.log_info(f'Turn {self.round}')
+                self.log_info(f'Queue: {self.queue}')
+                self.log_info(f'Lords: {self.lords}')
 
             for i in range(self.robot_count):
                 if i in self.queue:
@@ -76,9 +77,11 @@ class Game:
 
         return [[serialize_robot(c) for c in r] for r in self.board]
 
-    @staticmethod
-    def log_info(msg):
-        print(f'\u001b[32m[Game info] {msg}\u001b[0m')
+    def log_info(self, msg):
+        if self.colored_logs:
+            print(f'\u001b[32m[Game info] {msg}\u001b[0m')
+        else:
+            print(f'[Game info] {msg}')
 
     def check_over(self):
         white, black = 0, 0

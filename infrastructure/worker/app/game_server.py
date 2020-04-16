@@ -117,18 +117,23 @@ def game_worker(gameinfo):
         # util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
 
         # Execute game
+
+        
         result = util.monitor_command(
             ['python', 'engine/run.py',
                 package1,
                 package2,
-
-                '>> replay.txt'
             ],
             cwd=rootdir,
-            timeout=TIMEOUT_GAME)
+            timeout=TIMEOUT_GAME
+        )
 
         if result[0] != 0:
             game_log_error(gametype, gameid, 'Game execution had non-zero return code')
+
+        # "make replay"        
+        with open(os.path.join(rootdir, 'replay.txt'), 'w') as file_obj:
+            file_obj.write(result[1])
 
         # Upload replay file
         bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
@@ -145,10 +150,10 @@ def game_worker(gameinfo):
         try:
             # Read the winner of each game from the engine
             for line in server_output:
-                if re.fullmatch('Team.White wins!', line):
+                if re.fullmatch('Team.WHITE wins!', line):
                     game_winner = 'A'
                     wins[0] += 1
-                elif re.fullmatch('Team.Black wins!', line):
+                elif re.fullmatch('Team.BLACK wins!', line):
                     game_winner = 'B'
                     wins[1] += 0
                     assert (game_winner == 'A' or game_winner == 'B')
