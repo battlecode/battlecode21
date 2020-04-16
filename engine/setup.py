@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 setup(name='battlehack20',
       version=0.1,
-      description='Battlehack SP20 game engine.',
+      description='Battlehack 2020 game engine.',
       author='Battlecode',
       author_email='battlecode@mit.edu',
       url="https://bh2020.battlecode.org",
@@ -16,4 +16,6 @@ setup(name='battlehack20',
       install_requires=[
             'RestrictedPython==4.0b4'
       ],
-      zip_safe=False)
+      python_requires='>=3, <3.8',
+      zip_safe=False,
+)
