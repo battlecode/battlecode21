@@ -32,23 +32,6 @@ class Resources extends Component {
 
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Visualizer</h4>
-                                </div>
-                                <div className="content">
-                                <p className='text-center' style={{
-                                    marginBottom: 20
-                                }}>
-                                    <a type="button" className="btn btn-info btn-fill text-center" href='/visualizer.html'>Go to the Visualizer</a>
-                                </p>
-                                <p>
-                                    It is recommmended to run the client locally (see <NavLink to='getting-started'>getting started</NavLink>).
-                                </p>
-
-
-                                </div>
-                            </div>
-                            <div className="card">
-                                <div className="header">
                                     <h4 className="title">Lectures</h4>
                                 </div>
                                 <div className="content">
@@ -59,37 +42,7 @@ class Resources extends Component {
 
                                 </div>
                             </div>
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Other Resources</h4>
-                                </div>
-                                <div className="content">
-                                    <p>
-                                        <p><b>
-                                        Note: These resources were originally for Battlecode 2020, where Java was used. However, you may still find some tidbits about debugging/etc that might be useful.
-                                        </b></p>
-                                <ul>
-                                    <li><a href='https://2020.battlecode.org/javadoc/index.html'>Javadocs</a>: the documentation of <code>RobotController</code> methods. Very helpful.</li>
-                                    <li><NavLink to='common-issues'>Common Issues</NavLink>: a non-exhaustive collection of common problems, and fixes.</li>
-                                    <li><NavLink to='debugging'>Debugging</NavLink>: a guide for how to debug your code.</li>
-                                </ul>
-                                </p>
-                                <p>
-                                    All of the code powering Battlecode 2020 is open source on GitHub, in the <a href='https://github.com/battlecode/battlecode20'>battlecode20 repository</a>.
-                                </p>
-                                <p>
-                                    Third-party tools:
-                                </p>
-                                <p>
-                                <ul>
-                                    <li><a href='https://github.com/StoneT2000/BC20-MapBuilder'>Map builder</a>, by StoneT2000.</li>
-                                    <li>Profiler (integrated into the official client), by jmerle.</li>
-                                </ul>
-                                </p>
-
-                                </div>
-                            </div>
-
+                            
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Inspirational Quotes</h4>
