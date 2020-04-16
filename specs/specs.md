@@ -1,6 +1,6 @@
 # A Prance of Pawns
 
-_The formal specification of the Battlehack SP20 game._
+_The formal specification of the Battlehack 2020 game._
 Current version: 1.0.0
 
 You are one of the noble houses, manipulating your pawns around Westeros.
@@ -100,9 +100,9 @@ To view the implementation of these methods and the full list of what's availabl
 
 The Battlecode Python engine is a work in progress. Please report any weird behavior or bugs by submitting an issue in the [battlehack20 repo](https://github.com/battlecode/battlehack20/issues).
 
-Known limitations:
+We also have a [Google Doc](https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit) where we will keep an updated list of known bugs.
 
-- `sum()`, `list()`, `dict()` are not supported
+If you are able to escape the sandbox and get into our servers, please send us an email at [battlecode@mit.edu](mailto:battlecode@mit.edu) — do not post it publicly on GitHub.
 
 
 # Changelog

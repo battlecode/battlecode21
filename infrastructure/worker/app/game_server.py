@@ -123,6 +123,9 @@ def game_worker(gameinfo):
             ['python', 'engine/run.py',
                 package1,
                 package2,
+                '--raw-text',
+                '--delay',
+                '0'
             ],
             cwd=rootdir,
             timeout=TIMEOUT_GAME
