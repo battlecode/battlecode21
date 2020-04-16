@@ -102,7 +102,7 @@ class Tournaments extends Component {
                                         <ul>
                                             <li><b>$500 1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed)</li>
                                             
-                                            <li><b>$750 Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlehack20/issues">here</a>.</li>
+                                            <li><b>$750 Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). A list of bugs known before launch can be found <a href="https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit?usp=sharing">here</a>; duplicating these bugs will not result in any prizes awarded. This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlehack20/issues">here</a>.</li>
                                             
                                             <li><b>$750 L33t H4ck3r prize:</b> escape the sandbox into our servers. Split across all teams who contact us and demonstrate a unique exploit. Please do NOT submit them publicly (i.e. no GitHub issue).</li>
                                             
