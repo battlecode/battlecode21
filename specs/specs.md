@@ -106,3 +106,7 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 
 # Changelog
+
+- 1.0.0 (4/17/20)
+    - spec changes: none
+    - engine changes: none
