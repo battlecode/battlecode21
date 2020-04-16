@@ -9,13 +9,14 @@ class BasicViewer:
         self.board_states = board_states
         self.colors = colors
 
-    def play(self, delay=0.5):
+    def play(self, delay=0.5, keep_history=False):
         print('Visualizer: ')
 
         for state_index in range(len(self.board_states)):
             self.view(state_index)
             time.sleep(delay)
-            self.clear()
+            if not keep_history:
+                self.clear()
 
         self.view(-1)
 

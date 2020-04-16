@@ -41,7 +41,7 @@ def step(number_of_turns=1):
 
 
 
-def play_all():
+def play_all(delay=0.8, keep_history=False):
     """
     This function plays the entire game, and views it in a nice animated way.
     """
@@ -51,7 +51,7 @@ def play_all():
             break
         game.turn()
 
-    viewer.play(delay=0.8)
+    viewer.play(delay=delay, keep_history=keep_history)
 
     print(f'{game.winner} wins!')
 
@@ -61,8 +61,9 @@ if __name__ == '__main__':
 
     # This is just for parsing the input to the script. Not important.
     parser = argparse.ArgumentParser()
-    parser.add_argument('player', nargs='+', help="Player")
-    parser.add_argument('--no-color', action='store_true')
+    parser.add_argument('player', nargs='+', help="Path to a folder containing a bot.py file.")
+    parser.add_argument('--raw-text', action='store_true', help="Makes playback text-only by disabling colors and cursor movements.")
+    parser.add_argument('--delay', default=0.8, help="Playback delay in seconds.")
     args = parser.parse_args()
 
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
@@ -81,12 +82,12 @@ if __name__ == '__main__':
     game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True)
     
     # ... and the viewer.
-    viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.no_color)
+    viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.raw_text)
 
 
     # Here we check if the script is run using the -i flag.
     # If it is not, then we simply play the entire game.
     if not sys.flags.interactive:
-        play_all()
+        play_all(delay = float(args.delay), keep_history = args.raw_text)
 
 
