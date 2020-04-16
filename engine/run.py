@@ -14,14 +14,16 @@ Usage:
 
     python3 run.py examplefuncsplayer examplefuncsplayer
 
-    This runs examplefuncsplayer against itself. (You can omit the second argument if you want to.)
-
-
+        This runs examplefuncsplayer against itself. (You can omit the second argument if you want to.)
 
     python3 -i run.py examplefuncsplayer examplefuncsplayer
 
-    This launches an interactive shell where you can step through the game using step().
-    This is great for debugging.
+        This launches an interactive shell where you can step through the game using step().
+        This is great for debugging.
+
+    python3 run.py -h
+
+        Shows a help message with more advanced options.
 """
 
 
