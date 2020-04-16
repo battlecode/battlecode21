@@ -19,7 +19,7 @@ from google.oauth2 import service_account
 
 import os, tempfile, datetime, argparse, time, json, random, binascii, threading, math
 
-GCLOUD_PROJECT = "battlecode18" #not nessecary???
+GCLOUD_PROJECT = "battlecode18"
 GCLOUD_SUB_BUCKET = "bh20-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bh20-compile'
 GCLOUD_SUB_SCRIMMAGE_NAME = 'bh20-game'
@@ -656,7 +656,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        serializer.save() #save it once, link will be undefined since we don't have anyway to know id
+        serializer.save() #save it once, link will be undefined since we don't have any way to know id
         serializer.save() #save again, link automatically set
 
         
@@ -673,12 +673,13 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
         # call to compile server
-        print('attempting call to compile server')
-        print('id:', serializer.data['id'])
-        data = str(serializer.data['id'])
-        data_bytestring = data.encode('utf-8')
-        print(type(data_bytestring))
-        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
+        # TODO can prob safely be deleted??
+        # print('attempting call to compile server')
+        # print('id:', serializer.data['id'])
+        # data = str(serializer.data['id'])
+        # data_bytestring = data.encode('utf-8')
+        # print(type(data_bytestring))
+        # pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
 
