@@ -79,7 +79,7 @@ if __name__ == '__main__':
     code_container2 = CodeContainer.from_directory(args.player[1] if len(args.player) > 1 else args.player[0])
 
     # This is how you initialize a game,
-    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True)
+    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True, colored_logs=not args.raw_text)
     
     # ... and the viewer.
     viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.raw_text)
