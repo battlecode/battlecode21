@@ -1,5 +1,6 @@
 import time
 import sys
+import datetime
 
 from .team import Team
 
@@ -10,7 +11,7 @@ class BasicViewer:
         self.colors = colors
 
     def play(self, delay=0.5, keep_history=False):
-        print('Visualizer: ')
+        print('')
 
         for state_index in range(len(self.board_states)):
             self.view(state_index)
@@ -19,6 +20,24 @@ class BasicViewer:
                 self.clear()
 
         self.view(-1)
+
+    def play_synchronized(self, poison_pill, delay=0.5, keep_history=False):
+        print('')
+        
+        state_index = 0
+        last_time = datetime.datetime.now().timestamp()
+        while state_index < len(self.board_states) or not poison_pill.is_set():
+            while len(self.board_states) <= state_index or datetime.datetime.now().timestamp() - last_time < delay:
+                time.sleep(0.1)
+            if not keep_history and state_index > 0:
+                self.clear()
+            self.view(state_index)
+            last_time = datetime.datetime.now().timestamp()
+            state_index += 1
+            
+            
+
+
 
     def clear(self):
         for i in range(self.board_size + 1):
