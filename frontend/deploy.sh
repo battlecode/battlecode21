@@ -15,25 +15,15 @@ then
 		esac
 	done
 	echo "Proceding with deploy!"
-    npm install
+        npm install
 	npm run build
 	cd build
-	gsutil -m rm gs://battlecode20-frontend/**
-	gsutil -m cp -r * gs://battlecode20-frontend
+	gsutil -m rm gs://battlehack20-frontend/**
+	gsutil -m cp -r * gs://battlehack20-frontend
 	cd ..
 elif [ "$1" == "clean" ]
 then
-	gsutil -m rm gs://battlecode20-frontend/**
-# DISABLED AFTER RELEASE
-# elif [ "$1" == "deploynogame" ]
-# then
-# 	echo "WARNING: DON'T "
-#     npm install
-# 	npm run buildnogame
-# 	cd build
-# 	gsutil -m rm gs://battlecode20-frontend/**
-# 	gsutil -m cp -r * gs://battlecode20-frontend
-# 	cd ..
+	gsutil -m rm gs://battlehack20-frontend/**
 else
 	echo "Unsupported instruction"
 fi
