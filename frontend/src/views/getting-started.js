@@ -151,7 +151,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                    In this year's Battlehack game, you are one of the noble houses, manipulating your pawns around Westeros. You will write bots in Python.
                                 </p>
                                 <p>
-                                    Battlehack 2020 is released! Read the <a href="specs.html">game specifications</a>. Check out <a href="https://2020.battlecode.org/visualizer.html?https://2020.battlecode.org/replays/7af61a1f891466628921dca098b895.bc20">this example replay</a> for a demo of the game!
+                                    Battlehack 2020 is released! Read the <a href="specs.html">game specifications</a>. 
                                 </p>
                                 </div>
                             </div>
@@ -230,7 +230,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     Create a zip file containing only your robot code (only 1 package), and uploaded it to the <NavLink to='submissions'>submissions</NavLink> page.
                                 </p>
                                 <p>
-                                    Your bot will automatically be ran against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
+                                    Your bot will automatically be run against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
                                 </p>
 
                                 </div>
@@ -242,9 +242,6 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <div className="content">
                                 <p>
                                     Now, read the <a href='specs.html'>game specs</a> carefully.
-                                </p>
-                                <p>
-                                    Bugs will happen eventually; read about our <NavLink to='debugging'>debugging tools here</NavLink>.
                                 </p>
                                 </div>
                             </div>

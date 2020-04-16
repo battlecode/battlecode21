@@ -65,13 +65,16 @@ class Tournaments extends Component {
                                 <div className="content">
 
                                     <p>
-                                        Battlehack 2020 will consist of one tournament at the end of the week-long event! We will stream and commentate this tournament.
+                                        Battlehack 2020 will start on <b>Thursday, April 16th at 8pm MIT time (EDT +5mins)</b> and consist of one tournament at the end of the week-long event.
                                     </p>
+
                                     <p>
-                                        The deadline to submit code for this final tournament is <b>Wednesday, April 22nd at 8 pm EDT</b>.
-                                       </p> 
+                                        The deadline to submit code for this final tournament is <b>Wednesday, April 22nd at 8pm EDT</b>.
+                                    </p>
 
-
+                                    <p>
+                                        We will stream and commentate this tournament on <b>Friday, April 24th at 8pm EDT</b>.
+                                    </p>
                                 </div>
                             </div>
 
@@ -82,12 +85,10 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Battlehack 2020 tournament info coming soon!
+                                        The competition format is optional ELO-based ranked scrimmages during the week of competition, then we'll reset all the rankings and do tons of autoscrims for a while and whomever has the best ELO at the end will win. We'll announce prizewinners, show highlights, etc. in the livestream on Friday.
                                     </p>
                                 </div>
                             </div>
-
-
 
 
                             <div className="card">
@@ -96,9 +97,18 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Final prize amounts are coming soon! Prizes will include rewards for some L33t h4ck3rs...
+                                        Thanks to our sponsor HRT!
+                                        
+                                        <ul>
+                                            <li><b>$500 1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed)</li>
+                                            
+                                            <li><b>$750 Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlehack20/issues">here</a>.</li>
+                                            
+                                            <li><b>$750 L33t H4ck3r prize:</b> escape the sandbox into our servers. Split across all teams who contact us and demonstrate a unique exploit. Please do NOT submit them publicly (i.e. no GitHub issue).</li>
+                                            
+                                            <li><b>More prizes???</b> TBA, maybe</li>
+                                        </ul>
                                     </p>
-
                                 </div>
                             </div>
 
@@ -110,11 +120,15 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. 
-</p><p>
-Eligibility for certain prize categories is coming soon...
-</p><p>
-Contact us on <a href='https://discordapp.com/channels/386965718572466197/650097270804709436'>Discord</a> or at <a href='mailto:battlecode@mit.edu'>battlecode@mit.edu</a> if you are unsure of your eligibility.
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. 
+                                    </p>
+                                    
+                                    <p>
+                                        Only current full-time students (both college and high school) are eligible for prizes.
+                                    </p>
+                                    
+                                    <p>
+                                        Contact us on <a href='https://discordapp.com/channels/386965718572466197/650097270804709436'>Discord</a> or at <a href='mailto:battlecode@mit.edu'>battlecode@mit.edu</a> if you are unsure of your eligibility.
                                     </p>
 
                                 </div>
