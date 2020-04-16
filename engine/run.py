@@ -2,6 +2,7 @@ import time
 import argparse
 import faulthandler
 import sys
+import threading
 
 from battlehack20 import CodeContainer, Game, BasicViewer
 
@@ -14,12 +15,16 @@ Usage:
 
     python3 run.py examplefuncsplayer examplefuncsplayer
 
-        This runs examplefuncsplayer against itself. (You can omit the second argument if you want to.)
+        Runs examplefuncsplayer against itself. (You can omit the second argument if you want to.)
 
     python3 -i run.py examplefuncsplayer examplefuncsplayer
 
-        This launches an interactive shell where you can step through the game using step().
+        Launches an interactive shell where you can step through the game using step().
         This is great for debugging.
+    
+    python3 -i run.py examplefuncsplayer exampelfuncsplayer --debug false
+
+        Runs the script without printing logs. Instead shows the viewer in real time.
 
     python3 run.py -h
 
@@ -42,18 +47,29 @@ def step(number_of_turns=1):
         viewer.view()
 
 
-
-def play_all(delay=0.8, keep_history=False):
+def play_all(delay=0.8, keep_history=False, real_time=False):
     """
     This function plays the entire game, and views it in a nice animated way.
+
+    If played in real time, make sure that the game does not print anything.
     """
+
+    if real_time:
+        viewer_poison_pill = threading.Event()
+        viewer_thread = threading.Thread(target=viewer.play_synchronized, args=(viewer_poison_pill,), kwargs={'delay': delay, 'keep_history': keep_history})
+        viewer_thread.daemon = True
+        viewer_thread.start()
 
     while True:
         if not game.running:
             break
         game.turn()
 
-    viewer.play(delay=delay, keep_history=keep_history)
+    if real_time:
+        viewer_poison_pill.set()
+        viewer_thread.join()
+    else:
+        viewer.play(delay=delay, keep_history=keep_history)
 
     print(f'{game.winner} wins!')
 
@@ -92,6 +108,10 @@ if __name__ == '__main__':
     # Here we check if the script is run using the -i flag.
     # If it is not, then we simply play the entire game.
     if not sys.flags.interactive:
-        play_all(delay = float(args.delay), keep_history = args.raw_text)
+        play_all(delay = float(args.delay), keep_history = args.raw_text, real_time = not args.debug)
 
+    else:
+        # print out help message!
+        print("Run step() to step through the game.")
+        print("You also have access to the variables: game, viewer")
 
