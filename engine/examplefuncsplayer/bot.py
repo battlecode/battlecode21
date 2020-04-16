@@ -52,9 +52,9 @@ def turn():
             capture(row + forward, col - 1)
             dlog('Captured at: (' + str(row + forward) + ', ' + str(col - 1) + ')')
 
-        # otherwise try to move forward, but not off the board
-        elif row + forward != -1 and row + forward != board_size and \
-                not check_space_wrapper(row + forward, col, board_size): # directly forward is empty
+        # otherwise try to move forward
+        elif row + forward != -1 and row + forward != board_size and not check_space_wrapper(row + forward, col, board_size):
+            #               ^  not off the board    ^            and    ^ directly forward is empty
             move_forward()
             dlog('Moved forward!')
 
