@@ -17,7 +17,7 @@ import os
 import datetime
 
 def main(version):
-    # generate_comparison_link()
+    generate_comparison_link()
 
     specs(version)
 
@@ -27,7 +27,7 @@ def main(version):
 
     publish_pypi()
 
-    commit_tag_push()
+    commit_tag_push(version)
 
 
 def generate_comparison_link():
@@ -101,14 +101,14 @@ def deploy_frontend():
 
 def publish_pypi():
     os.chdir('engine')
-    subprocess.call('python3 setup.py sdist bdist_wheel')
-    subprocess.call('twine upload --skip-existing dist/*')
+    subprocess.call('python3 setup.py sdist bdist_wheel', shell=True)
+    subprocess.call('twine upload --skip-existing dist/*', shell=True)
     os.chdir('..')
 
 def commit_tag_push(version):
+    subprocess.call(f'git commit -am "release {version}"', shell=True)
     subprocess.call(f'git tag v{version}', shell=True)
     subprocess.call('git push --tags', shell=True)
-    subprocess.call(f'git commit -am release {version}', shell=True)
 
 
 if __name__ == '__main__':

@@ -6,9 +6,10 @@ Read more at the Battlehack website: https://bh2020.battlecode.org.
 """
 
 setup(name='battlehack20',
-      version=0.1,
+      version="1.0.0",
       description='Battlehack 2020 game engine.',
       author='Battlecode',
+      long_description=long_description,
       author_email='battlecode@mit.edu',
       url="https://bh2020.battlecode.org",
       license='GNU General Public License v3.0',
