@@ -102,7 +102,7 @@ The Battlecode Python engine is a work in progress. Please report any weird beha
 
 We also have a [Google Doc](https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit) where we will keep an updated list of known bugs.
 
-If you are able to escape the sandbox and get into our servers, please send us an email at [battlecode@mit.edu] — do not post it publicly on GitHub.
+If you are able to escape the sandbox and get into our servers, please send us an email at [battlecode@mit.edu](mailto:battlecode@mit.edu) — do not post it publicly on GitHub.
 
 
 # Changelog
