@@ -27,9 +27,6 @@ class Resources extends Component {
                                 <p className='text-center'>
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Read the Game Specifications</a>
                                 </p>
-                                <p>
-                                    For documentation on all methods you can call, <a href='https://2020.battlecode.org/javadoc/index.html'>read the Javadocs</a>.
-                                </p>
                                 </div>
                             </div>
 
@@ -56,11 +53,7 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Lectures are held at MIT every weekday the first two weeks of IAP, in 32-123 from 7 pm to 10 pm.
-                                </p>
-                                <p>
-                                    All lectures are streamed live on <a href='https://twitch.tv/mitbattlecode'>our Twitch account</a>, and
-                                    are later uploaded to <a href='https://youtube.com/channel/UCOrfTSnyimIXfYzI8j_-CTQ'>our YouTube channel</a>.
+                                    Battlehack 2020 will not be holding official lectures. However, if you are experiencing issues with anything, join the Discord (see Getting Started)!
                                 </p>
 
 
@@ -72,6 +65,9 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
+                                        <p><b>
+                                        Note: These resources were originally for Battlecode 2020, where Java was used. However, you may still find some tidbits about debugging/etc that might be useful.
+                                        </b></p>
                                 <ul>
                                     <li><a href='https://2020.battlecode.org/javadoc/index.html'>Javadocs</a>: the documentation of <code>RobotController</code> methods. Very helpful.</li>
                                     <li><NavLink to='common-issues'>Common Issues</NavLink>: a non-exhaustive collection of common problems, and fixes.</li>
