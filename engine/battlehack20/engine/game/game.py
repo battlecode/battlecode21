@@ -2,12 +2,13 @@ import random
 from .robot import Robot
 from .team import Team
 from .robottype import RobotType
+from .constants import GameConstants
 
 
 class Game:
-    MAX_ROUNDS = 250
 
-    def __init__(self, code, board_size=8, seed=10, sensor_radius=2, debug=False, colored_logs=True):
+    def __init__(self, code, board_size=GameConstants.BOARD_SIZE, max_rounds=GameConstants.MAX_ROUNDS, 
+                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False, colored_logs=True):
         random.seed(seed)
 
         self.code = code
@@ -25,6 +26,7 @@ class Game:
         self.board_size = board_size
         self.board = [[None] * self.board_size for _ in range(self.board_size)]
         self.round = 0
+        self.max_rounds = max_rounds
 
         self.lords = []
         self.new_robot(None, None, Team.WHITE, RobotType.OVERLORD)
@@ -32,11 +34,13 @@ class Game:
 
         self.board_states = []
 
+        self.log_info(f'Seed: {seed}')
+
     def turn(self):
         if self.running:
             self.round += 1
 
-            if self.round > Game.MAX_ROUNDS:
+            if self.round > self.max_rounds:
                 self.check_over()
 
             if self.debug:
@@ -89,7 +93,7 @@ class Game:
             if self.board[0][col] and self.board[0][col].team == Team.BLACK: black += 1
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
-        if self.round > Game.MAX_ROUNDS:
+        if self.round > self.max_rounds:
             self.running = False
             if white == black:
                 self.winner = random.choice([Team.WHITE, Team.BLACK])
