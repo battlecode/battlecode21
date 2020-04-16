@@ -58,12 +58,6 @@ class Robot:
         self.has_moved = False
 
         self.runner.run()
-        if self.debug:
-            if self.type == RobotType.OVERLORD:
-                print(f'[Robot {self.id} info] Remaining bytecode: {self.runner.bytecode}')
-            else:
-                team = 'BLACK' if self.team.value else 'WHITE'
-                print(f'[Robot {self.id} {team} info] Remaining bytecode: {self.runner.bytecode}')
 
     def __str__(self):
         team = 'B' if self.team.value else 'W'
