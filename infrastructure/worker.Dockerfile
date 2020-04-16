@@ -1,7 +1,7 @@
 FROM bh20-env
 
 # Private key for gcloud authentication
-# ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
+ENV GOOGLE_APPLICATION_CREDENTIALS /app/gcloud-key.json
 
 # Install software dependencies
 # Need g++ for pip to successfully install google cloud dependencies
@@ -24,7 +24,7 @@ RUN pip3 install --upgrade \
 
 # Initialise box, copy files and worker apps
 # COPY box box/
-COPY app/config.py app/subscription.py app/util.py app/id_rsa app/
+COPY app/config.py app/subscription.py app/util.py app/id_rsa app/gcloud-key.json app/
 
 # Copy github's RSA key
 COPY .ssh /root/.ssh

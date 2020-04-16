@@ -60,8 +60,8 @@ def game_worker(gameinfo):
         gameinfo = json.loads(gameinfo)
         gametype = gameinfo['gametype']
         gameid   = gameinfo['gameid']
-        teamname1  = gameinfo['player1']
-        teamname2  = gameinfo['player2']
+        player1  = gameinfo['player1']
+        player2  = gameinfo['player2']
         replay   = gameinfo['replay']
 
         # For reverse-compatibility
@@ -118,14 +118,13 @@ def game_worker(gameinfo):
 
         # Execute game
         result = util.monitor_command(
-            ['python', 'engine/main.py',
+            ['python', 'engine/run.py',
                 package1,
                 package2,
 
-                '>>',
-                'replay.txt'
+                '>> replay.txt'
             ],
-            cwd=os.path.join(rootdir),
+            cwd=rootdir,
             timeout=TIMEOUT_GAME)
 
         if result[0] != 0:
@@ -168,8 +167,8 @@ def game_worker(gameinfo):
     finally:
         # Clean up working directory
         try:
-            shutil.rmtree(botdir/)
-            os.remove(os.path.join(rootdir, 'replay.bc20'))
+            shutil.rmtree(botdir)
+            # os.remove(os.path.join(rootdir, 'replay.bc20'))
         except:
             logging.warning('Could not clean up game execution directory')
 
