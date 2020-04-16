@@ -230,7 +230,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     Create a zip file containing only your robot code (only 1 package), and uploaded it to the <NavLink to='submissions'>submissions</NavLink> page.
                                 </p>
                                 <p>
-                                    Your bot will automatically be ran against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
+                                    Your bot will automatically be run against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
                                 </p>
 
                                 </div>
