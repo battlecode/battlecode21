@@ -64,7 +64,10 @@ if __name__ == '__main__':
     parser.add_argument('player', nargs='+', help="Path to a folder containing a bot.py file.")
     parser.add_argument('--raw-text', action='store_true', help="Makes playback text-only by disabling colors and cursor movements.")
     parser.add_argument('--delay', default=0.8, help="Playback delay in seconds.")
+    parser.add_argument('--debug', default='true', choices=('true','false'), help="In debug mode (defaults to true), bot logs and additional information are displayed.")
     args = parser.parse_args()
+    args.debug = args.debug == 'true'
+    print(args.debug)
 
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
     faulthandler.enable() 
@@ -79,7 +82,7 @@ if __name__ == '__main__':
     code_container2 = CodeContainer.from_directory(args.player[1] if len(args.player) > 1 else args.player[0])
 
     # This is how you initialize a game,
-    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True, colored_logs=not args.raw_text)
+    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=args.debug, colored_logs=not args.raw_text)
     
     # ... and the viewer.
     viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.raw_text)
