@@ -36,42 +36,9 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Battlehack 2020 will not be holding official lectures. However, if you are experiencing issues with anything, join the Discord (see Getting Started)!
+                                    Battlehack 2020 will not be holding official lectures. However, if you are experiencing issues with anything, join the Discord (see <a href="getting-started">Getting Started</a>)!
                                 </p>
 
-
-                                </div>
-                            </div>
-                            
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Inspirational Quotes</h4>
-                                </div>
-                                <div className="content">
-                                    <p>
-                                        <ul>
-                                            <li>"don't die" — arvid.</li>
-
-                                            <li>"stay alive" - ivy</li>
-
-                                            <li>"smh my head" — marco</li>
-
-                                            <li>"read the readme" — Quinn.</li>
-
-                                            <li>"follow your dreams"</li>
-
-                                            <li>"All successful people started with nothing more than a goal." - ezou.</li>
-
-                                            <li>"Never give up" — Diuven.</li>
-
-                                            <li>"we should get campbell's as a sponsor this year" - stephanie.</li>
-
-                                            <li>"keep trying"</li>
-
-					                        <li>"The best way to realize your dreams is to wake up." -jett.</li>
-
-                                        </ul>
-                                    </p>
                                 </div>
                             </div>
                         </div>
