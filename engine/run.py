@@ -4,7 +4,7 @@ import faulthandler
 import sys
 import threading
 
-from battlehack20 import CodeContainer, Game, BasicViewer
+from battlehack20 import CodeContainer, Game, BasicViewer, GameConstants
 
 """
 This is a simple script for running bots and debugging them.
@@ -83,14 +83,14 @@ if __name__ == '__main__':
     parser.add_argument('--raw-text', action='store_true', help="Makes playback text-only by disabling colors and cursor movements.")
     parser.add_argument('--delay', default=0.8, help="Playback delay in seconds.")
     parser.add_argument('--debug', default='true', choices=('true','false'), help="In debug mode (defaults to true), bot logs and additional information are displayed.")
+    parser.add_argument('--max-rounds', default=GameConstants.MAX_ROUNDS, type=int, help="Override the max number of rounds for faster games.")
+    parser.add_argument('--board-size', default=GameConstants.BOARD_SIZE, type=int, help="Override the board size for faster games.")
+    parser.add_argument('--seed', default=GameConstants.DEFAULT_SEED, type=int, help="Override the seed used for random.")
     args = parser.parse_args()
     args.debug = args.debug == 'true'
 
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
     faulthandler.enable() 
-
-    # this is the standard board size used in the Battlehack competition
-    BOARD_SIZE = 16 
 
     # This is where the interesting things start!
 
@@ -99,10 +99,11 @@ if __name__ == '__main__':
     code_container2 = CodeContainer.from_directory(args.player[1] if len(args.player) > 1 else args.player[0])
 
     # This is how you initialize a game,
-    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=args.debug, colored_logs=not args.raw_text)
+    game = Game([code_container1, code_container2], board_size=args.board_size, max_rounds=args.max_rounds, 
+                seed=args.seed, debug=args.debug, colored_logs=not args.raw_text)
     
     # ... and the viewer.
-    viewer = BasicViewer(BOARD_SIZE, game.board_states, colors=not args.raw_text)
+    viewer = BasicViewer(args.board_size, game.board_states, colors=not args.raw_text)
 
 
     # Here we check if the script is run using the -i flag.
