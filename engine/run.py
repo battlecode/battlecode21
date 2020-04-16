@@ -67,6 +67,8 @@ if __name__ == '__main__':
     # The faulthandler makes certain errors (segfaults) have nicer stacktraces.
     faulthandler.enable() 
 
+    # this is the standard board size used in the Battlehack competition
+    BOARD_SIZE = 16 
 
     # This is where the interesting things start!
 
@@ -75,10 +77,10 @@ if __name__ == '__main__':
     code_container2 = CodeContainer.from_directory(args.player[1] if len(args.player) > 1 else args.player[0])
 
     # This is how you initialize a game,
-    game = Game([code_container1, code_container2], board_size=16, debug=True)
+    game = Game([code_container1, code_container2], board_size=BOARD_SIZE, debug=True)
     
     # ... and the viewer.
-    viewer = BasicViewer(16, game.board_states)
+    viewer = BasicViewer(BOARD_SIZE, game.board_states)
 
 
     # Here we check if the script is run using the -i flag.
