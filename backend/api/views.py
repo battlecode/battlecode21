@@ -99,8 +99,7 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'player1': str(red_submission_id),
         'player2': str(blue_submission_id),
         'name1': str(red_team_name),
-        'name2': str(blue_team_name), 
-        'maps': ','.join(get_random_maps(3)),
+        'name2': str(blue_team_name),
         'replay': scrimmage_replay
     }
     if not map_ids is None:
