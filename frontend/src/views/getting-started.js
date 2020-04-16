@@ -177,57 +177,36 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <p>
                                     If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
                                 </p>
-                                    <h6 class="installation-steps">Step 1: Install Java</h6>
+                                    <h6 class="installation-steps">Step 1: Install pip</h6>
                                 <p>
-                                You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
-                                work. <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" style={{fontWeight:700}}>Download it here</a></b>.
-                                You may need to create an Oracle account.
+                                You'll need to install pip - usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip &nbsp; <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
 
-                                <Floater content={
-                                    <div>
-                                    <p>
-Alternatively, you can install a JDK yourself using your favorite package manager. Make sure it's an Oracle JDK — we don't support anything else — and is compatible with Java 8.
-</p></div>
-} showCloseButton={true}>
-                                    <i className="pe-7s-info pe-fw" />
-</Floater>
                                 </p>
                                 <p>
-</p><p>
-If you're unsure how to install the JDK, you can find instructions for all operating systems <a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html'>here</a> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
 </p>
-<h6 class='installation-steps'>Step 2: Download Battlecode</h6>
+
+<h6 class="installation-steps">Step 2: Install packages</h6>
+    <p>
+        Next, run <code>pip install battlehack20</code> (or <code>pip3 install battlehack20</code>, depending on how your pip is set up). 
+        This will get you set up with the necessary Python packages for proper engine function.
+        </p>
+        
+<h6 class='installation-steps'>Step 3: Download Battlehack</h6>
 <p>
 
-    Next, you should download the <a href="https://github.com/battlecode/battlecode20-scaffold">Battlecode 2020 scaffold</a>.
+    Next, you should get the starter code by downloading the <a href="https://github.com/battlecode/battlehack20-scaffold">Battlehack 2020 scaffold</a>.
 
     To get up and running quickly, you can click "Clone or download" and then "Download ZIP," and move on to the next step.
 
     </p><p>
-    We recommend, however, that you instead use Git to organize your code. If you haven't used Git before, read <a href='https://guides.github.com/introduction/git-handbook/'>this guide</a> (or
-    wait for our lecture covering it). On the <a href="https://github.com/battlecode/battlecode20-scaffold">scaffold page</a>, click "Use this template." Importantly, on the next page, make your new repo <b>private</b> (you don't want other teams to steal your code!). You can then clone your newly created repo and invite your team members to collaborate on it.
+    We recommend, however, that you instead use Git to organize your code. If you haven't used Git before, read <a href='https://guides.github.com/introduction/git-handbook/'>this guide</a>. On the <a href="https://github.com/battlecode/battlehack20-scaffold">scaffold page</a>, click "Use this template." Importantly, on the next page, make your new repo <b>private</b> (you don't want other teams to steal your code!). You can then clone your newly created repo and invite your team members to collaborate on it.
     </p>
+
     
-                                    <h6 class="installation-steps">Step 3: Local Setup</h6>
+                                    <h6 class="installation-steps">Step 4: Hack!</h6>
     <p>
-        We recommend using an IDE like IntelliJ IDEA or Eclipse to work on Battlecode, but you can also use your favorite text editor combined with a terminal.
-        Battlecode 2020 uses Gradle to run tasks like <code>run</code>, <code>debug</code> and <code>jarForUpload</code> (but don't worry about that — you don't need to install it).
-        </p><p>
-View instructions for: 
-
-<div class="btn-group" role="group" style={{marginLeft: '10px'}}>
-  <button type="button" class={this.getSelectionButtons('intellij')} onClick={this.intellijButton}>IntelliJ IDEA</button>
-  <button type="button" class={this.getSelectionButtons('eclipse')} onClick={this.eclipseButton}>Eclipse</button>
-  <button type="button" class={this.getSelectionButtons('terminal')} onClick = {this.terminalButton}>Terminal</button>
-</div>
-</p>
-<p>
-    {this.getIDEInstallation()}
-
-</p>
-<p>There should now be a folder called <code>client</code> in your scaffold folder; if you go in there, and double click the <code>Battlecode Client</code> application, you should be able to run and watch matches. (Please don't move that application, it will be sad.) 
-If you're on Linux, navigate to the <code>client</code> folder and run <code>./battlecode-visualizer</code> to launch the client.</p>
-
+        We recommend using an IDE like Pycharm or an editor like VS Code to work on Battlecode, but you can also use your favorite text editor combined with a terminal.
+        </p>
                                 </div>
                             </div>
                             <div className="card">
@@ -236,24 +215,7 @@ If you're on Linux, navigate to the <code>client</code> folder and run <code>./b
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Player code is in the <code>src</code> directory of the scaffold: each package inside <code>src</code> corresponds to one distinct player.
-                                        We have provided <code>examplefuncsplayer</code>, and you can create your own player by either modifying it or copying and renaming it.
-                                <Floater content={
-                                    <div>
-                                    <p>
-                                        The only restriction is that each player must have a file named <code>RobotPlayer.java</code> which implements a <code>run(RobotController rc)</code> method.
-</p></div>
-} showCloseButton={true}>
-                                    <i className="pe-7s-info pe-fw" />
-</Floater>
-                                    </p>
-                                <p>
-                                    You should have a client application in the <code>client</code> folder. Launch it, and go to the <code>Runner</code> section. 
-                                    There, you can specify which players to run against each other, and on which map, and you can view the match as it is running.
-                                </p>
-                                <p>
-                                    You can also run a match without the client, by invoking the Gradle task <code>run</code>. 
-                                    For example, <code>gradle run -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer -Pmaps=FourLakeLand</code> runs <code>examplefuncsplayer</code> against itself on the <code>FourLakeLand</code> map. This produces a replay file in the <code>matches</code> directory of the scaffold, which you can upload to the client to view.
+                                        To run a match, use the command <code>python3 run.py path/to/bot1_folder path/to/bot2_folder</code>. You should see a game between the two specified bots being played out.
                                 </p>
 
 
@@ -279,7 +241,7 @@ If you're on Linux, navigate to the <code>client</code> folder and run <code>./b
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Now, read the <a href='specs.html'>game specs</a> carefully and consult the <a href='javadoc/index.html'>javadocs</a> to learn about the API.
+                                    Now, read the <a href='specs.html'>game specs</a> carefully.
                                 </p>
                                 <p>
                                     Bugs will happen eventually; read about our <NavLink to='debugging'>debugging tools here</NavLink>.

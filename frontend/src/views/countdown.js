@@ -92,7 +92,7 @@ class Countdown extends Component {
 
     render() {
         const countDown = this.state;
-        let title = 'Next Submission Deadline in';
+        let title = 'Submission Deadline in';
         if (this.state.tournament_name == 'START') {
           title = 'Game Specs are now released!';
         }
