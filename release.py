@@ -14,9 +14,10 @@ Here's what this script does:
 import argparse
 import subprocess
 import os
+import datetime
 
 def main(version):
-    generate_comparison_link()
+    # generate_comparison_link()
 
     specs(version)
 
@@ -66,7 +67,7 @@ def specs(version):
             if x == "":
                 break
             d[i].append(x)
-    now = datetime.now()
+    now = datetime.datetime.now()
     changelogstring = "- " + version + " (" + str(now.month) + "/" + str(now.day) + "/" + str(now.year)[2:] + ")\n"
     for i in l:
         changelogstring += "    - " + i + " changes:"
