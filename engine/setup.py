@@ -1,6 +1,10 @@
 from setuptools import setup, find_packages
 from collections import OrderedDict
 
+long_description="""
+Read more at the Battlehack website: https://bh2020.battlecode.org.
+"""
+
 setup(name='battlehack20',
       version=0.1,
       description='Battlehack 2020 game engine.',
