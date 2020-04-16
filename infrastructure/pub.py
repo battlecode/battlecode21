@@ -16,7 +16,10 @@
 
 import argparse
 import time
+import requests
 from google.cloud import pubsub_v1
+from google.cloud import storage
+import os
 
 
 def get_callback(api_future, data, ref):
@@ -45,7 +48,7 @@ def pub(project_id, topic_name):
 
     # Data sent to Cloud Pub/Sub must be a bytestring.
     #data = b"examplefuncs"
-    data = b"{\"gametype\":\"scrimmage\",\"gameid\":\"1\",\"player1\":\"examplefuncs\",\"player2\":\"examplefuncs\",\"maps\":\"maptestsmall\",\"replay\":\"abcdefg\"}"
+    data = b"{\"gametype\":\"scrimmage\",\"gameid\":\"1\",\"player1\":\"bing1\",\"player2\":\"bing2\",\"replay\":\"abcdefg\"}"
 
     # Keep track of the number of published messages.
     ref = dict({"num_messages": 0})
@@ -54,12 +57,29 @@ def pub(project_id, topic_name):
     api_future = client.publish(topic_path, data=data)
     api_future.add_done_callback(get_callback(api_future, data, ref))
 
+    response = client.pull(topic_path, max_messages=1, return_immediately=True)
+    print(response.recieved_messages)
+    print(response)
+
     # Keep the main thread from exiting while the message future
     # gets resolved in the background.
     while api_future.running():
         time.sleep(0.5)
         print("Published {} message(s).".format(ref["num_messages"]))
 
+
+def test():
+    response = requests.post(url="https://bh2020.battlecode.org/auth/token", data={
+        'username': "battlecode",
+        'password': "369c6468e9dfc4742b6068d080fca83c508706d0170970658d"
+    })
+    response.raise_for_status()
+    # print(response)
+    # #return response.json()['access']
+    # client = storage.Client()
+    # bucket = client.get_bucket('bh20-submissions')
+    # with open(os.path.join('player1.zip'), 'wb') as file_obj:
+    #     bucket.get_blob(os.path.join("bing1", 'player.zip')).download_to_file(file_obj)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -71,5 +91,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    pub(args.project_id, args.topic_name)
+    test()
+    #pub(args.project_id, args.topic_name)
 # [END pubsub_quickstart_pub_all]
