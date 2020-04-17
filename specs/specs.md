@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
 _The formal specification of the Battlehack 2020 game._
-Current version: 1.0.2
+Current version: 1.0.3
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -77,6 +77,7 @@ To view the implementation of these methods and the full list of what's availabl
 
 #### Type-agnostic methods
 
+- `log()`: to print anything out, e.g. for debugging. Python's `print` will NOT work
 - `get_board_size()`: returns the board size
 - `get_bytecode()`: returns the number of bytecodes left
 - `get_team()`: returns the robot's team, either `Team.WHITE` or `Team.BLACK`
@@ -107,6 +108,9 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.0.3 (4/17/20)
+    - spec changes: mention `log` function
+    - engine changes: none
 - 1.0.2 (4/17/20)
     - spec changes:
         - check_space returns team, not robot type
