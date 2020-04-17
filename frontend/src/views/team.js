@@ -101,7 +101,7 @@ class YesTeam extends Component {
                         </div>
                         <div className="content">
                             {/* <ResumeStatus team={this.state.team} /> */}
-                            <p>We need to know a little about your team in order to determine which tournaments you are is eligible for.
+                            <p>We need to know a little about your team in order to determine which prizes your team is eligible for.
                                 Check all boxes that apply to your team. 
                             </p>
                             <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up} />
