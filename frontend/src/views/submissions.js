@@ -203,6 +203,11 @@ class Submissions extends Component {
                         <p>
                             Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
                         </p>
+
+                        <p>
+                        <b> For best chances at successful uploading, please stay on this page for ~15 seconds after pressing the "Submit" button.</b> You can refresh the page and check "Latest Submissions" to see if your code has been submitted.
+
+                        </p>
                         <label htmlFor="file_upload">
                             <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
                         </label>
@@ -239,7 +244,7 @@ class Submissions extends Component {
             if (this.state.status == 0) {
                 return (
                     <p>
-                    Your code is currently compiling—you'll see it here if it finishes successfully.
+                    Your code has been submitted; refresh to see it here!
                     </p>
                 )  
             } else { 

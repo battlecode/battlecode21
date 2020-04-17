@@ -658,9 +658,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         serializer.save() #save it once, link will be undefined since we don't have any way to know id
         serializer.save() #save again, link automatically set
 
-        
+        submission_id = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub = TeamSubmission.objects.all().get(team=team)
-        team_sub.compiling_id = Submission.objects.all().get(pk=serializer.data['id'])
+        team_sub.compiling_id = submission_id
         team_sub.save()
 
         # set ELO score to 1200
@@ -680,6 +680,27 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # print(type(data_bytestring))
         # pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
+        # This is problematic: if the IDs are recorded, before the code is actually uploaded, then code that fails to upload will have dead IDs associated with it, and the team will be sad
+        # Also, if user navigates away before the upload_url is returned,
+        # then no code makes it into the bucket
+        # This is fixed(?) by uploading in the backend,
+        # or by uploading the file and then pressing another button to officialy submit
+        # The best way for now would be to have the upload, when done,
+        # call a function in the backend that adjusts sub IDs
+        # TODO somehow fix this problem
+
+        # record as team sub, and push everything down 1
+        team_sub.compilation_status = 2
+
+        team_sub.compiling_id = None
+        team_sub.last_3_id = team_sub.last_2_id
+        team_sub.last_2_id = team_sub.last_1_id
+        team_sub.last_1_id = submission_id
+        # submission.compilation_status = 2
+
+        team_sub.save()
+
+        # return Response({'upload_url': 'borked'}, status.HTTP_201_CREATED)
         return Response({'upload_url': upload_url}, status.HTTP_201_CREATED)
 
 
