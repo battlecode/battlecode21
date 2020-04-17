@@ -34,7 +34,8 @@ class Game:
 
         self.board_states = []
 
-        self.log_info(f'Seed: {seed}')
+        if self.debug:
+            self.log_info(f'Seed: {seed}')
 
     def turn(self):
         if self.running:

@@ -126,7 +126,7 @@ class Team(models.Model):
     mu                   = models.FloatField(default=25)
     sigma                = models.FloatField(default=8.333)
     score                = models.FloatField(default=settings.ELO_NULL)
-    auto_accept_ranked   = models.BooleanField(default=False)
+    auto_accept_ranked   = models.BooleanField(default=True)
     auto_accept_unranked = models.BooleanField(default=True)
     wins                 = models.IntegerField(default=0)
     losses               = models.IntegerField(default=0)
