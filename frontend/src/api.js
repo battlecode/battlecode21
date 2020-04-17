@@ -56,7 +56,7 @@ class Api {
   static downloadSubmission(submissionId, fileNameAddendum, callback) {
     $.get(`${URL}/api/${LEAGUE}/submission/${submissionId}/retrieve_file/`).done((data, status) => {
       // have to use fetch instead of ajax here since we want to download file
-      fetch(data['download_url'], {mode:'no-cors'}).then(resp => resp.blob())
+      fetch(data['download_url']).then(resp => resp.blob())
       .then(blob => {
         //code to download the file given by the url
         const objUrl = window.URL.createObjectURL(blob);
