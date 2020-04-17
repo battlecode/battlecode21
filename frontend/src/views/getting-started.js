@@ -177,17 +177,22 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <p>
                                     If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
                                 </p>
-                                    <h6 class="installation-steps">Step 1: Install pip</h6>
+                                    <h6 class="installation-steps">Step 1: Install Python and pip</h6>
+                                    <p>
+                                        Install Python! Note that <b>we only support Python 3.6 and 3.7</b> (in particular, not 3.8).
+                                    </p>
                                 <p>
-                                You'll need to install pip - usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip &nbsp; <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
-
+                                You'll also need <code>pip</code> — usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
+</p><p>
+                                You'll need to use your terminal. On Mac and Linux, that will be a pre-installed program called <code>Terminal</code>. On Windows, it is called <code>Command Line</code>.
+When you open your terminal you can paste in the commands you see on this page to get stuff to happen!
                                 </p>
                                 <p>
 </p>
 
 <h6 class="installation-steps">Step 2: Install packages</h6>
     <p>
-        Next, run <code>pip install --user battlehack20</code> (or <code>pip3 install --user battlehack20</code>, depending on how your pip is set up). 
+        Next, run <code>pip install --user --upgrade battlehack20</code> (or <code>pip3 install --user --upgrade battlehack20</code>, depending on how your pip is set up). 
         This will get you set up with the necessary Python packages for proper engine function.
         </p>
         
@@ -214,6 +219,10 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <div className="content">
                                     <p>
                                         To run a match, use the command <code>python3 run.py path/to/bot1_folder path/to/bot2_folder</code>. You should see a game between the two specified bots being played out.
+                                        If you're on Windows you may need to run <code>python3 run.py path/to/bot1_folder path/to/bot2_folder --raw-text</code> to get reasonable output.
+                                </p>
+                                <p>
+                                    <b><a href="https://github.com/battlecode/battlehack20-scaffold#battlehack20-scaffold">Go here</a></b> for more in-depth instructions!
                                 </p>
 
 

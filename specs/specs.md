@@ -63,8 +63,8 @@ Instead, simply return from the `turn()` function to end your turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
 The per-turn bytecode limits for various robots are as follows:
-- Overlord: 20000 on first turn, 20000 per turn after
-- Pawn: 20000 on first turn, 20000 per turn after
+- Overlord: 20000 per turn
+- Pawn: 20000 per turn
 
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the turn.
 
