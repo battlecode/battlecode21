@@ -198,10 +198,8 @@ If you are unable to find this option, you may be using an old version of Eclips
 
     To get up and running quickly, you can click "Clone or download" and then "Download ZIP," and move on to the next step.
 
-    </p><p>
-    We recommend, however, that you instead use Git to organize your code. If you haven't used Git before, read <a href='https://guides.github.com/introduction/git-handbook/'>this guide</a>. On the <a href="https://github.com/battlecode/battlehack20-scaffold">scaffold page</a>, click "Use this template." Importantly, on the next page, make your new repo <b>private</b> (you don't want other teams to steal your code!). You can then clone your newly created repo and invite your team members to collaborate on it.
-    </p>
-
+    You can also do fork the repo and do <code>git clone</code> if you know how to do that.
+</p>
     
                                     <h6 class="installation-steps">Step 4: Hack!</h6>
     <p>
