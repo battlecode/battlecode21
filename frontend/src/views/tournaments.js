@@ -40,7 +40,6 @@ class Tournaments extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
-            <div className="accordion" id={ this.props.name }>
 
 
                             <div className="card">
