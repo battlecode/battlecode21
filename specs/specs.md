@@ -81,7 +81,7 @@ To view the implementation of these methods and the full list of what's availabl
 - `get_bytecode()`: returns the number of bytecodes left
 - `get_team()`: returns the robot's team, either `Team.WHITE` or `Team.BLACK`
 - `get_type()`: returns the robot's type, either `RobotType.OVERLORD` or `RobotType.PAWN`
-- `check_space(row, col)`: returns `False` if there is no robot at the location, the robot type of the robot if there is one there, and throws a `RobotError` if outside the vision range
+- `check_space(row, col)`: returns `False` if there is no robot at the location, the team of the robot if there is one there, and throws a `RobotError` if outside the vision range
 
 #### Overlord methods
 
