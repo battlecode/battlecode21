@@ -690,7 +690,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # TODO somehow fix this problem
 
         # record as team sub, and push everything down 1
-        team_sub.compilation_status = 2
+        #team_sub.compilation_status = 2
 
         team_sub.compiling_id = None
         team_sub.last_3_id = team_sub.last_2_id
