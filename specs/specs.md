@@ -110,9 +110,6 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
-- 1.0.3 (4/17/20)
-    - spec changes: mention `log` function
-    - engine changes: none
 - 1.0.2 (4/17/20)
     - spec changes:
         - check_space returns team, not robot type
