@@ -181,13 +181,15 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <p>
                                 You'll need to install pip - usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip &nbsp; <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
 
+                                You'll need to use your terminal. On Mac and Linux, that will be a pre-installed program called `Terminal`. On Windows, it is called `Command Line`.
+
                                 </p>
                                 <p>
 </p>
 
 <h6 class="installation-steps">Step 2: Install packages</h6>
     <p>
-        Next, run <code>pip install --user battlehack20</code> (or <code>pip3 install --user battlehack20</code>, depending on how your pip is set up). 
+        Next, run <code>pip install --user --upgrade battlehack20</code> (or <code>pip3 install --user --upgrade battlehack20</code>, depending on how your pip is set up). 
         This will get you set up with the necessary Python packages for proper engine function.
         </p>
         
