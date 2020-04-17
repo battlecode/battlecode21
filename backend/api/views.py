@@ -895,7 +895,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
             # ranked = request.data['ranked'] == 'True'
-            ranked = False
+            ranked = True
 
             # Validate teams
             team = self.kwargs['team']
