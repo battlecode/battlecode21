@@ -6,6 +6,9 @@ from battlehack20.engine.game.game import Team, RobotType
 # They can be imported using "from battlehack20.stubs import *"
 # This import is preprocessed away before instrumenting the code
 
+# The dummy implementations in this file exist so that editors won't give warnings like
+# "Assigning result of a function call, where the function has no return"
+
 
 def log(msg: str) -> None:
     """
