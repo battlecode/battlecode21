@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
 _The formal specification of the Battlehack 2020 game._
-Current version: 1.0.3
+Current version: 1.0.4
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -110,6 +110,11 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.0.4 (4/18/20)
+    - spec changes: none
+    - engine changes:
+        - allow math to be imported
+        - catch all exceptions (removes some potential exploits)
 - 1.0.3 (4/17/20)
     - spec changes:
         - add documentation of `log()`
