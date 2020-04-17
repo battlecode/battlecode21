@@ -108,6 +108,7 @@ def publish_pypi():
 def commit_tag_push(version):
     subprocess.call(f'git commit -am "release {version}"', shell=True)
     subprocess.call(f'git tag v{version}', shell=True)
+    subprocess.call('git push', shell=True)
     subprocess.call('git push --tags', shell=True)
 
 
