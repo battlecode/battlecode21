@@ -58,9 +58,6 @@ def turn():
             move_forward()
             dlog('Moved forward!')
 
-        confusion = "you need a line here to avoid segfault. we aren't sure why but are working on it"
-        # ^ I think this is related to the potential ambiguity of what the following else is referring to?
-
     else:
         if team == Team.WHITE:
             index = 0
