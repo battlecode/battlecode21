@@ -25,22 +25,38 @@ class Api {
       team: Cookies.get('team_id')
     }).done((data, status) => {
       $.ajax({
+        // url: 'broekn', 
         url: data['upload_url'], 
         method: "PUT",
         data: submissionfile,
         processData: false,
         contentType: false
       })
+      .done((data, status) => {
+        console.log(data, status)
+      })
+      // Even when upload succeeds, an error is thrown...
+      // We make the dangerous assumption that the upload succeeded,
+      // ie that the submission exists in a bucket
+      // TODO this is a dangerous assumption, find a better solution
+      // (maybe revolving around the upload working error-free, 
+      // and hooking callbacks to done rather than fail)
+      .fail((xhr, status, error) => {
+        console.log(xhr, status, error)
+        // TODO ping the backend to bump submission IDs, log as success, etc
+        // then, once the backend call returns,
+        // have a callback that displays success! on screen
+      })
     }).fail((xhr, status, error) => {
-      console.log(error)
-      callback('there was an error', false);
+      console.log("Error in post:", error)
+      
     });
   }
 
   static downloadSubmission(submissionId, fileNameAddendum, callback) {
     $.get(`${URL}/api/${LEAGUE}/submission/${submissionId}/retrieve_file/`).done((data, status) => {
       // have to use fetch instead of ajax here since we want to download file
-      fetch(data['download_url']).then(resp => resp.blob())
+      fetch(data['download_url'], {mode:'no-cors'}).then(resp => resp.blob())
       .then(blob => {
         //code to download the file given by the url
         const objUrl = window.URL.createObjectURL(blob);
