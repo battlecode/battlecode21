@@ -187,7 +187,7 @@ If you are unable to find this option, you may be using an old version of Eclips
 
 <h6 class="installation-steps">Step 2: Install packages</h6>
     <p>
-        Next, run <code>pip install battlehack20</code> (or <code>pip3 install battlehack20</code>, depending on how your pip is set up). 
+        Next, run <code>pip install --user battlehack20</code> (or <code>pip3 install --user battlehack20</code>, depending on how your pip is set up). 
         This will get you set up with the necessary Python packages for proper engine function.
         </p>
         
