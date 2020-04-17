@@ -213,20 +213,14 @@ class RobotRunner:
             exec(self.code['bot'], self.globals, self.locals)
             self.globals.update(self.locals)
             self.initialized = True
-        except RuntimeError:
-            self.force_kill()
-            # current_thread().kill()
-        except Exception:
+        except:
             self.error_method(traceback.format_exc(limit=5))
 
     def do_turn(self):
         if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda: 1)):
             try:
                 exec(self.locals['turn'].__code__, self.globals, self.locals)
-            except RuntimeError:
-                self.force_kill()
-                # current_thread().kill()
-            except Exception:
+            except:
                 self.error_method(traceback.format_exc(limit=5))
         else:
             self.error_method('Couldn\'t find turn function.')
