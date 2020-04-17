@@ -81,6 +81,8 @@ class RobotRunner:
 
         self.globals['__builtins__']['log'] = log_method
         self.globals['__builtins__']['enumerate'] = enumerate
+        self.globals['__builtins__']['set'] = set
+        self.globals['__builtins__']['frozenset'] = frozenset
 
         # instrumented methods
         self.globals['__builtins__']['sorted'] = self.instrument.instrumented_sorted
