@@ -71,10 +71,10 @@ class CodeContainer:
         - from battlehack20.stubs import a,b,c
         - from  battlehack20.stubs  import  a,  b,  c
 
-        Go to https://regex101.com/r/bhAqFE/5 to test the regular expression with custom input.
+        Go to https://regex101.com/r/bhAqFE/6 to test the regular expression with custom input.
         """
 
-        pattern = r'^([ \t]*)from([ \t]+)battlehack20\.stubs([ \t]+)import([ \t]+)(\*|([a-zA-Z_]+([ \t]*),?([ \t]*))+)([ \t]*)$'
+        pattern = r'^([ \t]*)from([ \t]+)battlehack20\.stubs([ \t]+)import([ \t]+)(\*|([a-zA-Z_]+([ \t]*),([ \t]*))*[a-zA-Z_]+)([ \t]*)$'
 
         # Replace all stub imports
         while True:
