@@ -92,7 +92,7 @@ def specs(version):
 
 def fancy_specs():
     os.chdir('specs')
-    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack SP20 Specs"', shell=True)
+    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack 2020 Specs"', shell=True)
     os.chdir('..')
     subprocess.call('cp specs/specs.html frontend/public/specs.html', shell=True)
 
