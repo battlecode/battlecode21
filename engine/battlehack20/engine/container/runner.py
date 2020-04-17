@@ -64,7 +64,7 @@ class RobotRunner:
         self.instrument = Instrument(self)
         self.locals = {}
         self.globals = {
-            '__builtins__': dict(i for dct in [safe_builtins, limited_builtins, utility_builtins] for i in dct.items()),
+            '__builtins__': dict(i for dct in [safe_builtins, limited_builtins] for i in dct.items()),
             '__name__': '__main__'
         }
 
@@ -81,6 +81,8 @@ class RobotRunner:
 
         self.globals['__builtins__']['log'] = log_method
         self.globals['__builtins__']['enumerate'] = enumerate
+        self.globals['__builtins__']['set'] = set
+        self.globals['__builtins__']['frozenset'] = frozenset
 
         # instrumented methods
         self.globals['__builtins__']['sorted'] = self.instrument.instrumented_sorted
@@ -168,6 +170,10 @@ class RobotRunner:
             if name == 'random':
                 import random
                 return random
+            
+            if name == 'math':
+                import math
+                return math
 
             raise ImportError('Module "' + name + '" does not exist.')
 
