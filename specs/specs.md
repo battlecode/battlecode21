@@ -75,6 +75,8 @@ Below is a quick reference of all methods available to robots. Make sure not to 
 
 To view the implementation of these methods and the full list of what's available, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124).
 
+To get auto-completion on these methods in your editor (if your editor supports it), add `from battlehack20.stubs import *` to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.
+
 #### Type-agnostic methods
 
 - `log()`: to print anything out, e.g. for debugging. Python's `print` will NOT work
