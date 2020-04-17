@@ -197,8 +197,8 @@ If you are unable to find this option, you may be using an old version of Eclips
     Next, you should get the starter code by downloading the <a href="https://github.com/battlecode/battlehack20-scaffold">Battlehack 2020 scaffold</a>.
 
     To get up and running quickly, you can click "Clone or download" and then "Download ZIP," and move on to the next step.
-
-    You can also do fork the repo and do <code>git clone</code> if you know how to do that.
+</p><p>
+    You can also make a copy of the repo and do <code>git clone</code> if you know how to do that. Read <a href='https://guides.github.com/introduction/git-handbook/'>this guide</a> if you want to learn more about git!
 </p>
     
                                     <h6 class="installation-steps">Step 4: Hack!</h6>
