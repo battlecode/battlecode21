@@ -7,13 +7,13 @@ then
 			No ) exit;;
 		esac
 	done
-	echo "WARNING: Do you have an up-to-date version of frontend/public/access.txt? If not, make sure to obtain it from someone who has it."
-	select yn in "Yes" "No"; do
-		case $yn in
-			Yes ) break;;
-			No ) exit;;
-		esac
-	done
+	# echo "WARNING: Do you have an up-to-date version of frontend/public/access.txt? If not, make sure to obtain it from someone who has it."
+	# select yn in "Yes" "No"; do
+	# 	case $yn in
+	# 		Yes ) break;;
+	# 		No ) exit;;
+	# 	esac
+	# done
 	echo "Proceding with deploy!"
         npm install
 	npm run build
