@@ -175,6 +175,7 @@ border-radius: 50%;
 <h1 id="api-reference">API Reference</h1>
 <p>Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.</p>
 <p>To view the implementation of these methods and the full list of what’s available, check out <a href="https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124">battlehack20/engine/game/game.py</a>.</p>
+<p>To get auto-completion on these methods in your editor (if your editor supports it), add <code>from battlehack20.stubs import *</code> to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.</p>
 <h4 id="type-agnostic-methods">Type-agnostic methods</h4>
 <ul>
 <li><code>log()</code>: to print anything out, e.g. for debugging. Python’s <code>print</code> will NOT work</li>
@@ -204,8 +205,14 @@ border-radius: 50%;
 <ul>
 <li>1.0.3 (4/17/20)
 <ul>
-<li>spec changes: mention <code>log</code> function</li>
-<li>engine changes: none</li>
+<li>spec changes:
+<ul>
+<li>add documentation of <code>log()</code></li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>add stubs for api methods</li>
+</ul></li>
 </ul></li>
 <li>1.0.2 (4/17/20)
 <ul>
