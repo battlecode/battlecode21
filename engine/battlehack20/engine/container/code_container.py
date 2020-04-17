@@ -61,7 +61,7 @@ class CodeContainer:
     @classmethod
     def preprocess(cls, content):
         """
-        Strips stub imports from the code.
+        Strips battlehack20.stubs imports from the code.
 
         It removes lines containing one of the following imports:
         - from battlehack20.stubs import *
