@@ -52,7 +52,7 @@ class RankingTeamList extends TeamList {
                             <td>{ team.users.join(", ") }</td>
                             <td>{ team.bio }</td>
                             <td>{ team.student ? "✅" : "🛑"}{(team.student && team.mit) ? "🐥" : ""}</td>
-                            <td>{ team.auto_accept_unranked ? "Yes" : "No"}</td>
+                            <td>{ team.auto_accept_ranked ? "Yes" : "No"}</td>
                             {props.canRequest && (
                                 <td><button className="btn btn-xs" onClick={() => this.onTeamRequest(team.id)}>{buttonContent}</button>  </td>
                             )}
