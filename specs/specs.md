@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
 _The formal specification of the Battlehack 2020 game._
-Current version: 1.0.1
+Current version: 1.0.2
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -107,6 +107,12 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.0.2 (4/17/20)
+    - spec changes:
+        - check_space returns team, not robot type
+    - engine changes:
+        - fix bug causing segmentation fault sometimes
+        - fix sense() function to actually do what it's supposed to do
 - 1.0.1 (4/17/20)
     - spec changes: none
     - engine changes: none

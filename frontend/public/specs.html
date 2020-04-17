@@ -151,7 +151,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="a-prance-of-pawns">A Prance of Pawns</h1>
-<p><em>The formal specification of the Battlehack 2020 game.</em> Current version: 1.0.1</p>
+<p><em>The formal specification of the Battlehack 2020 game.</em> Current version: 1.0.2</p>
 <p>You are one of the noble houses, manipulating your pawns around Westeros.</p>
 <h1 id="game-overview">Game Overview</h1>
 <p>The game takes place on an <span class="math inline"><em>N</em></span> by <span class="math inline"><em>N</em></span> chess board (<span class="math inline"><em>N</em> = 16</span>), and the only pieces available are pawns. Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row. The objective of the game is to get <span class="math inline"><em>N</em>/2</span> of your pawns to your opponent’s back row before they do the same to you.</p>
@@ -170,7 +170,7 @@ border-radius: 50%;
 <h1 id="bytecode-limits">Bytecode Limits</h1>
 <p>Robots are also very limited in the amount of computation they are allowed to perform per <strong>turn</strong>. <strong>Bytecodes</strong> are a convenient measure of computation in languages like Python, where one bytecode corresponds roughly to one operation, and a single line of code generally contains several bytecodes. Because bytecodes are a feature of the compiled code itself, the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs. This is great, because it allows us to avoid using <em>time</em> as a measure of computation, which leads to problems such as nondeterminism. With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results–a feature you will find very useful for debugging.</p>
 <p>Every round each robot sequentially takes its turn. If a robot attempts to exceed its bytecode limit (usually unexpectedly, if you have too big of a loop or something), its computation will be paused and then resumed at exactly that point next turn. The code will resume running just fine, but this can cause problems if, for example, you check if a tile is empty, then the robot is cut off and the others take their turns, and then you attempt to move into a now-occupied tile. Instead, simply return from the <code>turn()</code> function to end your turn. This will pause computation where you choose, and resume on the next line next turn.</p>
-<p>The per-turn bytecode limits for various robots are as follows: - Overlord: 20000 on first turn, 20000 per turn after - Pawn: 20000 on first turn, 20000 per turn after</p>
+<p>The per-turn bytecode limits for various robots are as follows: - Overlord: 20000 per turn - Pawn: 20000 per turn</p>
 <p>Robots can get their current bytecode with <code>get_bytecode()</code>. This is the amount of bytecode the robots have remaining for the turn.</p>
 <h1 id="api-reference">API Reference</h1>
 <p>Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.</p>
@@ -181,7 +181,7 @@ border-radius: 50%;
 <li><code>get_bytecode()</code>: returns the number of bytecodes left</li>
 <li><code>get_team()</code>: returns the robot’s team, either <code>Team.WHITE</code> or <code>Team.BLACK</code></li>
 <li><code>get_type()</code>: returns the robot’s type, either <code>RobotType.OVERLORD</code> or <code>RobotType.PAWN</code></li>
-<li><code>check_space(row, col)</code>: returns <code>False</code> if there is no robot at the location, the robot type of the robot if there is one there, and throws a <code>RobotError</code> if outside the vision range</li>
+<li><code>check_space(row, col)</code>: returns <code>False</code> if there is no robot at the location, the team of the robot if there is one there, and throws a <code>RobotError</code> if outside the vision range</li>
 </ul>
 <h4 id="overlord-methods">Overlord methods</h4>
 <ul>
@@ -201,6 +201,18 @@ border-radius: 50%;
 <p>If you are able to escape the sandbox and get into our servers, please send us an email at <a href="mailto:battlecode@mit.edu">battlecode@mit.edu</a> — do not post it publicly on GitHub.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>1.0.2 (4/17/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>check_space returns team, not robot type</li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>fix bug causing segmentation fault sometimes</li>
+<li>fix sense() function to actually do what it’s supposed to do</li>
+</ul></li>
+</ul></li>
 <li>1.0.1 (4/17/20)
 <ul>
 <li>spec changes: none</li>
