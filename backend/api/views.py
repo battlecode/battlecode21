@@ -88,11 +88,11 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
 
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
-        return Response({'message': 'Both teams\' submissions never compiled.'}, status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Both teams do not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     if red_submission_id is None:
-        return Response({'message': 'Red team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Red team does not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     if blue_submission_id is None:
-        return Response({'message': 'Blue team\'s submission never compiled.'}, status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Blue team does not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     scrimmage_server_data = {
         'gametype': 'scrimmage',
         'gameid': str(scrimmage_id),
