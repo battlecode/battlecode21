@@ -50,8 +50,8 @@ class Api {
         $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
           team: Cookies.get('team_id')
         }).done((data, status) => {
-          console.log("Done!")
-          console.log(data, status)
+          console.log("Definitely done!")
+          // console.log(data, status)
           Cookies.set('submitting', 0)
           // TODO make this display done on screen
         })

@@ -37,6 +37,11 @@ class Submissions extends Component {
         }.bind(this));
     }
 
+    componentWillUnmount() {
+        // don't leak memory
+        clearInterval(this.interval)
+    }
+
     //----UPLOADING FILES----
 
 
@@ -44,41 +49,25 @@ class Submissions extends Component {
     uploadData = () => {
         // let status_str = "Submitting..."
         Cookies.set('submitting', 1)
-        console.log("submitting...")
+        // console.log("submitting...")
         this.setState({sub_status: 0})
         this.renderHelperSubmissionForm()
+        this.renderHelperSubmissionStatus()
 
         Api.newSubmission(this.state.selectedFile, null)
 
-        // let counter = 0
-        // let counter2 = 0
-        // while (Cookies.get('submitting') == 1) {
-        //     counter +=1 
-        //     counter2 += 1
-        //     if (counter >= 1000) {
-        //         console.log('counter 1000')
-        //         counter = 0
-        //     }
-        //     if (counter2 >= 100000) {
-        //         break
-        //     }
-        // }
-
         this.interval = setInterval(() => {
             if (Cookies.get('submitting') != 1) {
-                console.log("out of time loop")
-                console.log(Cookies.get('submitting'))
+                // console.log("out of time loop")
                 this.setState({sub_status: 1})
                 this.renderHelperSubmissionForm()
+                this.renderHelperSubmissionStatus()
                 clearInterval(this.interval)
             }
             else {
-                console.log("in time loop")
+                // console.log("in time loop")
             }
         }, 1000);
-
-
-
     }
 
     // change handler called when file is selected
@@ -209,9 +198,10 @@ class Submissions extends Component {
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
-                button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+                if (this.state.sub_status != 0) { 
+                    button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+                }
             }
-
 
             return (
                 <div className="card">
