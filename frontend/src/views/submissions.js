@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import Api from '../api';
+import * as Cookies from 'js-cookie';
 
 
 
@@ -19,7 +20,8 @@ class Submissions extends Component {
             numTourSubmissions: 0,
             numTourLoaded: 0,
             user: {},
-            league: {}
+            league: {},
+            sub_status: -1
         };
         Api.getUserProfile(function (u) {
             this.setState({ user: u });
@@ -37,9 +39,46 @@ class Submissions extends Component {
 
     //----UPLOADING FILES----
 
+
     // makes an api call to upload the selected file
     uploadData = () => {
+        // let status_str = "Submitting..."
+        Cookies.set('submitting', 1)
+        console.log("submitting...")
+        this.setState({sub_status: 0})
+        this.renderHelperSubmissionForm()
+
         Api.newSubmission(this.state.selectedFile, null)
+
+        // let counter = 0
+        // let counter2 = 0
+        // while (Cookies.get('submitting') == 1) {
+        //     counter +=1 
+        //     counter2 += 1
+        //     if (counter >= 1000) {
+        //         console.log('counter 1000')
+        //         counter = 0
+        //     }
+        //     if (counter2 >= 100000) {
+        //         break
+        //     }
+        // }
+
+        this.interval = setInterval(() => {
+            if (Cookies.get('submitting') != 1) {
+                console.log("out of time loop")
+                console.log(Cookies.get('submitting'))
+                this.setState({sub_status: 1})
+                this.renderHelperSubmissionForm()
+                clearInterval(this.interval)
+            }
+            else {
+                console.log("in time loop")
+            }
+        }, 1000);
+
+
+
     }
 
     // change handler called when file is selected
@@ -48,7 +87,9 @@ class Submissions extends Component {
         this.setState({
             selectedFile: event.target.files[0],
             loaded: 0,
+            sub_status: -1
         })
+        this.renderHelperSubmissionStatus()
     }
 
 
@@ -162,23 +203,6 @@ class Submissions extends Component {
     renderHelperSubmissionForm() {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
-            switch (this.state.status) {
-                case 0:
-                    status_str = "Currently compiling..."
-                    break
-                case 1:
-                    status_str = "Successfully compiled!"
-                    break
-                case 2:
-                    status_str = "Compilation failed."
-                    break
-                case 3:
-                    status_str = "Internal server error. Try re-submitting your code."
-                    break
-                default:
-                    status_str = ""
-                    break
-            }
             let btn_class = "btn btn" 
             let file_label = "No file chosen."
             let button = <button disabled style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
@@ -213,7 +237,7 @@ class Submissions extends Component {
                         </label>
                         <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
                         {button}
-                        <p className="text-center category"> {status_str}</p>
+                        {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
                     </div>
                 </div>
             )
@@ -226,6 +250,37 @@ class Submissions extends Component {
                     </div>
                     <div className="content">
                         <p>Submissions are currently disabled! Check back later.</p>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    renderHelperSubmissionStatus() {
+        if (this.isSubmissionEnabled()) {
+            let status_str = ""
+            switch (this.state.sub_status) {
+                case 0:
+                    status_str = "Currently compiling..."
+                    break
+                case 1:
+                    status_str = "Successfully compiled!"
+                    break
+                case 2:
+                    status_str = "Compilation failed."
+                    break
+                case 3:
+                    status_str = "Internal server error. Try re-submitting your code."
+                    break
+                default:
+                    status_str = ""
+                    break
+            }
+            
+            return (
+                <div className="card">
+                    <div className="content">
+                        <p id="sub_status" className="text-center category"> {status_str}</p>
                     </div>
                 </div>
             )
@@ -341,6 +396,7 @@ class Submissions extends Component {
                     <div className="row">
                         <div className="col-md-12">
                             { this.renderHelperSubmissionForm() }
+                            { this.renderHelperSubmissionStatus() }
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Latest Submissions</h4>

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
+import Submissions from './views/submissions.js';
 
 //const URL = 'https://bh2020.battlecode.org';
 //const URL = 'http://localhost:8000'; // DEVELOPMENT
@@ -24,8 +25,9 @@ class Api {
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
+      console.log("got URL")
+      Cookies.set('submission_id', data['submission_id']);
       $.ajax({
-        // url: 'broekn', 
         url: data['upload_url'], 
         method: "PUT",
         data: submissionfile,
@@ -41,16 +43,24 @@ class Api {
       // TODO this is a dangerous assumption, find a better solution
       // (maybe revolving around the upload working error-free, 
       // and hooking callbacks to done rather than fail)
+      // TODO it's possible that the fail callback occurs
+      // before the upload finishes
       .fail((xhr, status, error) => {
-        console.log(xhr, status, error)
-        // TODO ping the backend to bump submission IDs, log as success, etc
-        // then, once the backend call returns,
-        // have a callback that displays success! on screen
+        // console.log(data);
+        $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
+          team: Cookies.get('team_id')
+        }).done((data, status) => {
+          console.log("Done!")
+          console.log(data, status)
+          Cookies.set('submitting', 0)
+          // TODO make this display done on screen
+        })
       })
     }).fail((xhr, status, error) => {
       console.log("Error in post:", error)
       
     });
+
   }
 
   static downloadSubmission(submissionId, fileNameAddendum, callback) {
@@ -90,6 +100,22 @@ class Api {
   static getCompilationStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
         callback(data);
+    });
+  }
+
+  static getCompilationID(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_id/`).done((data, status) => {
+        return data['compilation_id']
+    });
+  }
+
+  // note that this is a submission, not a teamsubmission, thing
+  static getSubmissionStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${Cookies.get("submission_id")}/get_status/`).done((data, status) => {
+        // callback(data);
+        console.log("sub id", Cookies.get('submission_id'))
+        console.log(data)
+        return data['compilation_status']
     });
   }
 
