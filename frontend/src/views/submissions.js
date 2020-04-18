@@ -219,7 +219,7 @@ class Submissions extends Component {
                         </p>
 
                         <p>
-                        <b> For best chances at successful uploading, please stay on this page for ~15 seconds after pressing the "Submit" button.</b> You can refresh the page and check "Latest Submissions" to see if your code has been submitted.
+                        For best chances at success uploading, please <b><i>stay on this page until the card below indicates success.</i></b> You can refresh the page and check "Latest Submissions" to see if your code has been submitted.
 
                         </p>
                         <label htmlFor="file_upload">
@@ -251,13 +251,13 @@ class Submissions extends Component {
             let status_str = ""
             switch (this.state.sub_status) {
                 case 0:
-                    status_str = "Currently compiling..."
+                    status_str = "Currently submitting..."
                     break
                 case 1:
-                    status_str = "Successfully compiled!"
+                    status_str = "Successfully submitted!"
                     break
                 case 2:
-                    status_str = "Compilation failed."
+                    status_str = "Submission failed."
                     break
                 case 3:
                     status_str = "Internal server error. Try re-submitting your code."
