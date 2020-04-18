@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
-_The formal specification of the Battlehack SP20 game._
-Current version: 1.0.0
+_The formal specification of the Battlehack 2020 game._
+Current version: 1.0.4
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -63,8 +63,8 @@ Instead, simply return from the `turn()` function to end your turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
 The per-turn bytecode limits for various robots are as follows:
-- Overlord: 20000 on first turn, 20000 per turn after
-- Pawn: 20000 on first turn, 20000 per turn after
+- Overlord: 20000 per turn
+- Pawn: 20000 per turn
 
 Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the turn.
 
@@ -75,13 +75,16 @@ Below is a quick reference of all methods available to robots. Make sure not to 
 
 To view the implementation of these methods and the full list of what's available, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124).
 
+To get auto-completion on these methods in your editor (if your editor supports it), add `from battlehack20.stubs import *` to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.
+
 #### Type-agnostic methods
 
+- `log()`: to print anything out, e.g. for debugging. Python's `print` will NOT work
 - `get_board_size()`: returns the board size
 - `get_bytecode()`: returns the number of bytecodes left
 - `get_team()`: returns the robot's team, either `Team.WHITE` or `Team.BLACK`
 - `get_type()`: returns the robot's type, either `RobotType.OVERLORD` or `RobotType.PAWN`
-- `check_space(row, col)`: returns `False` if there is no robot at the location, the robot type of the robot if there is one there, and throws a `RobotError` if outside the vision range
+- `check_space(row, col)`: returns `False` if there is no robot at the location, the team of the robot if there is one there, and throws a `RobotError` if outside the vision range
 
 #### Overlord methods
 
@@ -100,9 +103,32 @@ To view the implementation of these methods and the full list of what's availabl
 
 The Battlecode Python engine is a work in progress. Please report any weird behavior or bugs by submitting an issue in the [battlehack20 repo](https://github.com/battlecode/battlehack20/issues).
 
-Known limitations:
+We also have a [Google Doc](https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit) where we will keep an updated list of known bugs.
 
-- `sum()`, `list()`, `dict()` are not supported
+If you are able to escape the sandbox and get into our servers, please send us an email at [battlecode@mit.edu](mailto:battlecode@mit.edu) — do not post it publicly on GitHub.
 
 
 # Changelog
+
+- 1.0.4 (4/18/20)
+    - spec changes: none
+    - engine changes:
+        - allow math to be imported
+        - catch all exceptions (removes some potential exploits)
+- 1.0.3 (4/17/20)
+    - spec changes:
+        - add documentation of `log()`
+    - engine changes:
+        - add stubs for api methods
+- 1.0.2 (4/17/20)
+    - spec changes:
+        - check_space returns team, not robot type
+    - engine changes:
+        - fix bug causing segmentation fault sometimes
+        - fix sense() function to actually do what it's supposed to do
+- 1.0.1 (4/17/20)
+    - spec changes: none
+    - engine changes: none
+- 1.0.0 (4/17/20)
+    - spec changes: none
+    - engine changes: none

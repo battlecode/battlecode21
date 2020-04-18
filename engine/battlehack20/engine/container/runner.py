@@ -64,7 +64,7 @@ class RobotRunner:
         self.instrument = Instrument(self)
         self.locals = {}
         self.globals = {
-            '__builtins__': dict(i for dct in [safe_builtins, limited_builtins, utility_builtins] for i in dct.items()),
+            '__builtins__': dict(i for dct in [safe_builtins, limited_builtins] for i in dct.items()),
             '__name__': '__main__'
         }
 
@@ -81,6 +81,8 @@ class RobotRunner:
 
         self.globals['__builtins__']['log'] = log_method
         self.globals['__builtins__']['enumerate'] = enumerate
+        self.globals['__builtins__']['set'] = set
+        self.globals['__builtins__']['frozenset'] = frozenset
 
         # instrumented methods
         self.globals['__builtins__']['sorted'] = self.instrument.instrumented_sorted
@@ -168,6 +170,10 @@ class RobotRunner:
             if name == 'random':
                 import random
                 return random
+            
+            if name == 'math':
+                import math
+                return math
 
             raise ImportError('Module "' + name + '" does not exist.')
 
@@ -207,20 +213,14 @@ class RobotRunner:
             exec(self.code['bot'], self.globals, self.locals)
             self.globals.update(self.locals)
             self.initialized = True
-        except RuntimeError:
-            self.force_kill()
-            # current_thread().kill()
-        except Exception:
+        except:
             self.error_method(traceback.format_exc(limit=5))
 
     def do_turn(self):
         if 'turn' in self.locals and isinstance(self.locals['turn'], type(lambda: 1)):
             try:
                 exec(self.locals['turn'].__code__, self.globals, self.locals)
-            except RuntimeError:
-                self.force_kill()
-                # current_thread().kill()
-            except Exception:
+            except:
                 self.error_method(traceback.format_exc(limit=5))
         else:
             self.error_method('Couldn\'t find turn function.')

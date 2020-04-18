@@ -40,22 +40,6 @@ class Tournaments extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
-            <div className="accordion" id={ this.props.name }>
-                <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Tournaments</h4>
-                                </div>
-
-                                <div className="content">
-            <p>To view the replays
-            associated with a particular match, click on "Attachments" next to it (while hovering over the match).
-    </p>
-                            { this.state.tournaments.map(t => 
-                                <Tournament name={ t.name } challonge={ t.bracket_link } blurb = {t.blurb} />
-                            )}
-                                </div>
-                                </div>
-                                </div>
 
 
                             <div className="card">

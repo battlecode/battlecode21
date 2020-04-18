@@ -57,9 +57,6 @@ def pub(project_id, topic_name):
     api_future = client.publish(topic_path, data=data)
     api_future.add_done_callback(get_callback(api_future, data, ref))
 
-    response = client.pull(topic_path, max_messages=1, return_immediately=True)
-    print(response.recieved_messages)
-    print(response)
 
     # Keep the main thread from exiting while the message future
     # gets resolved in the background.

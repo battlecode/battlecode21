@@ -3,6 +3,8 @@
 import subscription, util
 from config import *
 
+import random
+
 import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
@@ -76,9 +78,9 @@ def game_worker(gameinfo):
         try:
             os.mkdir(botdir)
             with open(os.path.join(botdir, 'player1.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
+                bucket.get_blob(os.path.join(player1, 'source.zip')).download_to_file(file_obj)
             with open(os.path.join(botdir, 'player2.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
+                bucket.get_blob(os.path.join(player2, 'source.zip')).download_to_file(file_obj)
         except:
             game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
 
@@ -114,7 +116,7 @@ def game_worker(gameinfo):
 
         # Update distribution
         # TODO: Update this with pypi upon release
-        # util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
+        util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
 
         # Execute game
 
@@ -123,6 +125,11 @@ def game_worker(gameinfo):
             ['python', 'engine/run.py',
                 package1,
                 package2,
+                '--raw-text',
+                '--delay',
+                '0',
+                '--seed',
+                str(random.randint(1,1000000))
             ],
             cwd=rootdir,
             timeout=TIMEOUT_GAME
@@ -155,8 +162,8 @@ def game_worker(gameinfo):
                     wins[0] += 1
                 elif re.fullmatch('Team.BLACK wins!', line):
                     game_winner = 'B'
-                    wins[1] += 0
-                    assert (game_winner == 'A' or game_winner == 'B')
+                    wins[1] += 1
+                assert (game_winner == 'A' or game_winner == 'B')
 
             logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
         except:

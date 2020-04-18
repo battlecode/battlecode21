@@ -34,7 +34,8 @@ class Game:
 
         self.board_states = []
 
-        self.log_info(f'Seed: {seed}')
+        if self.debug:
+            self.log_info(f'Seed: {seed}')
 
     def turn(self):
         if self.running:
@@ -371,12 +372,12 @@ class Game:
 
         robots = []
 
-        for i in range(self.sensor_radius, self.sensor_radius + 1):
-            for j in range(self.sensor_radius, self.sensor_radius + 1):
+        for i in range(-self.sensor_radius, self.sensor_radius + 1):
+            for j in range(-self.sensor_radius, self.sensor_radius + 1):
                 if i == 0 and j == 0:
                     continue
 
-                new_row, new_col = row + i, col + i
+                new_row, new_col = row + i, col + j
                 if not self.is_on_board(new_row, new_col):
                     continue
 

@@ -29,12 +29,8 @@ COPY app/config.py app/subscription.py app/util.py app/id_rsa app/gcloud-key.jso
 # Copy github's RSA key
 COPY .ssh /root/.ssh
 # Init ssh and clone the repo with the deploy key
-RUN eval "$(ssh-agent -s)" && ssh-add /app/id_rsa \
-    && mkdir box \
-    && cd box && git clone git@github.com:battlecode/battlehack20.git /box/
-
-# Install battlecode python package from source
-RUN cd box/engine && pip3 install --user .
+RUN mkdir box \
+    && cd box && git clone https://github.com/battlecode/battlehack20.git /box/
 
 # Clean up everything in the battlehack repo we don't need
 RUN rm -rf box/backend box/frontend box/infrastructure box/specs \
