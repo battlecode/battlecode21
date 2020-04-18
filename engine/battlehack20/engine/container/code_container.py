@@ -1,3 +1,4 @@
+import re
 from os import listdir
 from os.path import isfile, join
 from .instrument import Instrument
@@ -16,9 +17,9 @@ class CodeContainer:
 
         for filename in dic:
             module_name = filename.split('.py')[0]
-            compiled = compile_restricted(dic[filename], filename, 'exec')
+            compiled = compile_restricted(cls.preprocess(dic[filename]), filename, 'exec')
             code[module_name] = Instrument.instrument(compiled)
-        
+
         return cls(code)
 
     @classmethod
@@ -55,7 +56,39 @@ class CodeContainer:
     @classmethod
     def from_file(cls, filename):
         with open(filename, 'rb') as f:
-            return cls.from_bytes(f.read())
+            return cls.from_bytes(cls.preprocess(f.read()))
+
+    @classmethod
+    def preprocess(cls, content):
+        """
+        Strips battlehack20.stubs imports from the code.
+
+        It removes lines containing one of the following imports:
+        - from battlehack20.stubs import *
+        - from battlehack20.stubs import a, b, c
+
+        The regular expression that is used also supports non-standard whitespace styles like the following:
+        - from battlehack20.stubs import a,b,c
+        - from  battlehack20.stubs  import  a,  b,  c
+
+        Go to https://regex101.com/r/bhAqFE/6 to test the regular expression with custom input.
+        """
+
+        pattern = r'^([ \t]*)from([ \t]+)battlehack20\.stubs([ \t]+)import([ \t]+)(\*|([a-zA-Z_]+([ \t]*),([ \t]*))*[a-zA-Z_]+)([ \t]*)$'
+
+        # Replace all stub imports
+        while True:
+            match = re.search(pattern, content, re.MULTILINE)
+
+            if match is None:
+                break
+
+            # Remove the match from the content
+            start = match.start()
+            end = match.end()
+            content = content[0:start] + content[end:]
+
+        return content
 
     def __getitem__(self, key):
         return self.code[key]

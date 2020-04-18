@@ -6,6 +6,7 @@ Here's what this script does:
 * Adds version number and changelog to specs/specs.md
 * Converts `specs.md` into a fancy specs html document (`frontend/public/specs.html`).
 * Deploys the frontend.
+* Updates setup.py version number.
 * Publishes the updated package to PyPi.
 * Commits, tags and pushes.
 
@@ -24,6 +25,8 @@ def main(version):
     fancy_specs()
 
     deploy_frontend()
+
+    update_setup_py_version(version)
 
     publish_pypi()
 
@@ -89,7 +92,7 @@ def specs(version):
 
 def fancy_specs():
     os.chdir('specs')
-    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack SP20 Specs"', shell=True)
+    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack 2020 Specs"', shell=True)
     os.chdir('..')
     subprocess.call('cp specs/specs.html frontend/public/specs.html', shell=True)
 
@@ -98,6 +101,18 @@ def deploy_frontend():
     os.chdir('frontend')
     subprocess.call('./deploy.sh deploy', shell=True)
     os.chdir('..')
+
+def update_setup_py_version(version):
+    with open('engine/setup.py', 'r') as f:
+        config = f.read()
+    config_lines = config.split('\n')
+    for i in range(len(config_lines)):
+        if "version=" in config_lines[i]:
+            p = config_lines[i].split('"')
+            config_lines[i] = p[0] + '"' + version + '"' + p[2]
+    config = "\n".join(config_lines)
+    with open('engine/setup.py', 'w') as f:
+        f.write(config)
 
 def publish_pypi():
     os.chdir('engine')

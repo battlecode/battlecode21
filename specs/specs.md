@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
 _The formal specification of the Battlehack 2020 game._
-Current version: 1.0.3
+Current version: 1.0.4
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -75,6 +75,8 @@ Below is a quick reference of all methods available to robots. Make sure not to 
 
 To view the implementation of these methods and the full list of what's available, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124).
 
+To get auto-completion on these methods in your editor (if your editor supports it), add `from battlehack20.stubs import *` to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.
+
 #### Type-agnostic methods
 
 - `log()`: to print anything out, e.g. for debugging. Python's `print` will NOT work
@@ -108,9 +110,16 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.0.4 (4/18/20)
+    - spec changes: none
+    - engine changes:
+        - allow math to be imported
+        - catch all exceptions (removes some potential exploits)
 - 1.0.3 (4/17/20)
-    - spec changes: mention `log` function
-    - engine changes: none
+    - spec changes:
+        - add documentation of `log()`
+    - engine changes:
+        - add stubs for api methods
 - 1.0.2 (4/17/20)
     - spec changes:
         - check_space returns team, not robot type

@@ -151,7 +151,7 @@ border-radius: 50%;
         <div class="main">
         
 <h1 id="a-prance-of-pawns">A Prance of Pawns</h1>
-<p><em>The formal specification of the Battlehack 2020 game.</em> Current version: 1.0.2</p>
+<p><em>The formal specification of the Battlehack 2020 game.</em> Current version: 1.0.4</p>
 <p>You are one of the noble houses, manipulating your pawns around Westeros.</p>
 <h1 id="game-overview">Game Overview</h1>
 <p>The game takes place on an <span class="math inline"><em>N</em></span> by <span class="math inline"><em>N</em></span> chess board (<span class="math inline"><em>N</em> = 16</span>), and the only pieces available are pawns. Every round, each pawn on the board will get to take a turn, and then each player may spawn one pawn on their back row. The objective of the game is to get <span class="math inline"><em>N</em>/2</span> of your pawns to your opponent’s back row before they do the same to you.</p>
@@ -175,8 +175,10 @@ border-radius: 50%;
 <h1 id="api-reference">API Reference</h1>
 <p>Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.</p>
 <p>To view the implementation of these methods and the full list of what’s available, check out <a href="https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124">battlehack20/engine/game/game.py</a>.</p>
+<p>To get auto-completion on these methods in your editor (if your editor supports it), add <code>from battlehack20.stubs import *</code> to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.</p>
 <h4 id="type-agnostic-methods">Type-agnostic methods</h4>
 <ul>
+<li><code>log()</code>: to print anything out, e.g. for debugging. Python’s <code>print</code> will NOT work</li>
 <li><code>get_board_size()</code>: returns the board size</li>
 <li><code>get_bytecode()</code>: returns the number of bytecodes left</li>
 <li><code>get_team()</code>: returns the robot’s team, either <code>Team.WHITE</code> or <code>Team.BLACK</code></li>
@@ -201,6 +203,26 @@ border-radius: 50%;
 <p>If you are able to escape the sandbox and get into our servers, please send us an email at <a href="mailto:battlecode@mit.edu">battlecode@mit.edu</a> — do not post it publicly on GitHub.</p>
 <h1 id="changelog">Changelog</h1>
 <ul>
+<li>1.0.4 (4/18/20)
+<ul>
+<li>spec changes: none</li>
+<li>engine changes:
+<ul>
+<li>allow math to be imported</li>
+<li>catch all exceptions (removes some potential exploits)</li>
+</ul></li>
+</ul></li>
+<li>1.0.3 (4/17/20)
+<ul>
+<li>spec changes:
+<ul>
+<li>add documentation of <code>log()</code></li>
+</ul></li>
+<li>engine changes:
+<ul>
+<li>add stubs for api methods</li>
+</ul></li>
+</ul></li>
 <li>1.0.2 (4/17/20)
 <ul>
 <li>spec changes:
