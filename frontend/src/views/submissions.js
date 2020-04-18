@@ -233,7 +233,7 @@ class Submissions extends Component {
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p> */}
                         <p>
-                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>bot.py</code> file with a <code>turn()</code> function. Submit the <code>zip</code> file below.
+                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file should only contain one folder, and this folder should contain a <code>bot.py</code> file with a <code>turn</code> function (and whatever other files your bot needs, if any). Furthermore, the <code>zip</code> file can only contain 1 player package. Submit the <code>zip</code> file below.
                         </p>
 
                         <p>
