@@ -233,7 +233,7 @@ class Submissions extends Component {
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p> */}
                         <p>
-                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file should only contain one folder, and this folder should contain a <code>bot.py</code> file with a <code>turn</code> function (and whatever other files your bot needs, if any). Furthermore, the <code>zip</code> file can only contain 1 player package. Submit the <code>zip</code> file below.
+                        Create a <code>zip</code> file of your robot player using the <b>utility found <a href="https://github.com/battlecode/battlehack20-scaffold/blob/master/zipper.py">here</a></b>. Download this file and place it alongside your <code>run.py</code>. Use it with <code>[python/python3] zipper.py [file location of your bot, e.g. examplefuncsplayer]</code>. The utility will give you feedback if you have entered an incorrect file location. Once you have your <code>zip</code> file, upload it here. <b>Please</b> use this utility; <b>incorrectly structured submissions will not run</b>. Submit the <code>zip</code> file below.
                         </p>
 
                         <p>
