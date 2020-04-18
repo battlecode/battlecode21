@@ -59,9 +59,16 @@ class Submissions extends Component {
         this.interval = setInterval(() => {
             if (Cookies.get('submitting') != 1) {
                 // console.log("out of time loop")
+
+                // refresh the submission button and status
                 this.setState({sub_status: 1})
                 this.renderHelperSubmissionForm()
                 this.renderHelperSubmissionStatus()
+                
+                // refresh team submission listing
+                Api.getTeamSubmissions(this.gotSubmissions);
+                this.renderHelperLastTable()
+
                 clearInterval(this.interval)
             }
             else {
@@ -289,7 +296,7 @@ class Submissions extends Component {
             if (this.state.status == 0) {
                 return (
                     <p>
-                    Your code has been submitted; refresh to see it here!
+                    Your code is being submitted -- you'll see it here if it finishes successfully.
                     </p>
                 )  
             } else { 

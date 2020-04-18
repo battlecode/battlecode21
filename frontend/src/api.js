@@ -112,10 +112,10 @@ class Api {
   // note that this is a submission, not a teamsubmission, thing
   static getSubmissionStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/submission/${Cookies.get("submission_id")}/get_status/`).done((data, status) => {
-        // callback(data);
         console.log("sub id", Cookies.get('submission_id'))
         console.log(data)
         return data['compilation_status']
+        // callback(data)
     });
   }
 
