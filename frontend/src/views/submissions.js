@@ -85,6 +85,7 @@ class Submissions extends Component {
             loaded: 0,
             sub_status: -1
         })
+        this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
     }
 
@@ -201,13 +202,23 @@ class Submissions extends Component {
             let status_str = ""
             let btn_class = "btn btn" 
             let file_label = "No file chosen."
-            let button = <button disabled style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+            let file_button_sub = <div> </div>
+            let file_button = <div></div>
+            let file_button_2= <div></div>
+            
+            let button = <button disabled style={{float: "right"}} className={ btn_class }> Submit </button>
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
                 if (this.state.sub_status != 0) { 
                     button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
                 }
+            }
+            if (this.state.sub_status != 0) { 
+                file_button_sub = <div className="btn"> Choose File </div>
+                file_button = <label htmlFor="file_upload">
+                {file_button_sub} <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span> </label>
+                file_button_2 = <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}></input>
             }
 
             return (
@@ -226,13 +237,11 @@ class Submissions extends Component {
                         </p>
 
                         <p>
-                        For best chances at success uploading, please <b><i>stay on this page until the card below indicates success.</i></b> You can refresh the page and check "Latest Submissions" to see if your code has been submitted.
+                        Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
 
                         </p>
-                        <label htmlFor="file_upload">
-                            <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
-                        </label>
-                        <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
+                        {file_button}
+                        {file_button_2}
                         {button}
                         {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
                     </div>
@@ -257,6 +266,9 @@ class Submissions extends Component {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
             switch (this.state.sub_status) {
+                case -1:
+                    status_str = "Waiting to start submission..."
+                    break
                 case 0:
                     status_str = "Currently submitting..."
                     break
