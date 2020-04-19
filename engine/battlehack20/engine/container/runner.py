@@ -1,6 +1,5 @@
 import sys
 import traceback
-import pdb
 
 from RestrictedPython import safe_builtins, limited_builtins, utility_builtins, Guards
 from threading import Thread, Event
@@ -164,9 +163,6 @@ class RobotRunner:
             raise ImportError('No relative imports (yet).')
 
         if not name in self.code:
-            if self.debug and name == 'pdb':
-                return pdb
-
             if name == 'random':
                 import random
                 return random
