@@ -114,6 +114,13 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.1.0 (4/19/20)
+    - spec changes:
+        - add additional row tiebreaks before coin flip
+        - increase game length to 500 rounds
+    - engine changes:
+        - implement spec changes
+        - remove pdb because of potential exploit
 - 1.0.4 (4/18/20)
     - spec changes: none
     - engine changes:
