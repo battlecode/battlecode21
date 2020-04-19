@@ -89,25 +89,39 @@ class Game:
             print(f'[Game info] {msg}')
 
     def check_over(self):
+        winner = False
+
         white, black = 0, 0
         for col in range(self.board_size):
             if self.board[0][col] and self.board[0][col].team == Team.BLACK: black += 1
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
-        if self.round > self.max_rounds:
-            self.running = False
-            if white == black:
-                self.winner = random.choice([Team.WHITE, Team.BLACK])
-            else:
-                self.winner = Team.WHITE if white > black else Team.BLACK
+        if black >= (self.board_size + 1) // 2:
+            winner = True
 
         if white >= (self.board_size + 1) // 2:
-            self.running = False
-            self.winner = Team.WHITE
+            winner = True
 
-        if black >= (self.board_size + 1) // 2:
+        if self.round > self.max_rounds:
+            winner = True
+
+        if winner:
+            if white == black:
+                tie = True
+                for r in range(1, self.board_size):
+                    if tie:
+                        w, b = 0, 0
+                        for c in range(self.board_size):
+                            if self.board[r][c] and self.board[r][c].team == Team.BLACK: b += 1
+                            if self.board[self.board_size - r - 1][c] and self.board[self.board_size - r - 1][c].team == Team.WHITE: w += 1
+                        if w == b: continue
+                        self.winner = Team.WHITE if w > b else Team.BLACK
+                        tie = False
+                if tie:
+                    self.winner = random.choice([Team.WHITE, Team.BLACK])
+            else:
+                self.winner = Team.WHITE if white > black else Team.BLACK
             self.running = False
-            self.winner = Team.BLACK
 
         if not self.running:
             self.board_states.append([row[:] for row in self.board])

@@ -1,7 +1,7 @@
 class GameConstants:
 
     # the maximum number of rounds, until the winner is decided by a coinflip
-    MAX_ROUNDS = 250
+    MAX_ROUNDS = 500
 
     # the board size
     BOARD_SIZE = 16
