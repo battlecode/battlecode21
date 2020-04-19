@@ -94,13 +94,13 @@ class Game:
             if self.board[0][col] and self.board[0][col].team == Team.BLACK: black += 1
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
-        if white >= (self.board_size + 1) // 2:
-            self.running = False
-            self.winner = Team.WHITE
-
-        elif black >= (self.board_size + 1) // 2:
+        if black >= (self.board_size + 1) // 2:
             self.running = False
             self.winner = Team.BLACK
+
+        elif white >= (self.board_size + 1) // 2:
+            self.running = False
+            self.winner = Team.WHITE
 
         elif self.round > self.max_rounds:
             if white == black:
