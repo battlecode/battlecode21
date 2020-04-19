@@ -16,9 +16,13 @@ The objective of the game is to get $N/2$ of your pawns to your opponent’s bac
 Each robot in the game (pawn or Overlord) runs a completely distinct copy of your code, and they may not communicate with each other.
 Robots have to decide what to do ONLY based on what they can see on the board, so you must find a way to implement your strategy as a collection of independent actions from your pawns.
 
-If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 250 rounds, the game ends and ties are broken by:
+If both players get $N/2$ pawns to the opponent’s back row on the same turn, Black wins (but this is rare).
+If no one has won after 500 rounds, the game ends and ties are broken by:
 1. Number of pawns on opponent’s back row
-2. Coin flip
+2. Number of pawns on opponent's second-to-last row
+3. Number of pawns on opponent's third-to-last row
+4. \[etc, for all rows\]
+5. Coin flip
 
 At any point, all robots can get their type (`RobotType.PAWN` or `RobotType.OVERLORD`) with `get_type()`, their team with `get_team()`, and the board size with `get_board_size()`.
 
@@ -110,6 +114,11 @@ If you are able to escape the sandbox and get into our servers, please send us a
 
 # Changelog
 
+- 1.1.0 (4/18/20)
+    - spec changes:
+        - add additional row tiebreaks before coin flip
+        - increase game length to 500 rounds
+    - engine changes: implement that^
 - 1.0.4 (4/18/20)
     - spec changes: none
     - engine changes:
