@@ -134,6 +134,8 @@ def game_worker(gameinfo):
         # Update distribution
         util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
 
+        logging.info(util.monitor_command(['pip3', 'show', 'battlehack20'], botdir)[1])
+
         # Execute game
 
         logging.info('Engine updated, running game')
@@ -162,7 +164,7 @@ def game_worker(gameinfo):
             file_obj.write('Team 1: {}\n'.format(name1))
             file_obj.write('Team 2: {}\n'.format(name2))
             file_obj.write('Battlehack Version: ')
-            file_obj.write(util.monitor_command(['pip\n', 'show', 'battlehack20'], botdir)[0])
+            file_obj.write(util.monitor_command(['pip3', 'show', 'battlehack20'], botdir)[1])
             file_obj.write('\n')
             file_obj.write(result[1])
 
