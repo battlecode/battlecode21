@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # USAGE: csv_to_files.py CSV_FILE
 
+"""Create team_pk and team_names txt from csv, not ordered by seeding"""
+
 import sys, json
 
 filename = sys.argv[1]
