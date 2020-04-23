@@ -13,6 +13,7 @@ a:hover {
 .btn {
 	background-color: #AF805D !important;
 	border-color: #AF805D !important;
+	color: rgb(230, 230, 230)
 }
 
 .btn:hover {

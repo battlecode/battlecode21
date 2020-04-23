@@ -130,6 +130,7 @@ class Instrument:
                     # Otherwise, insert a new one
                     else:
                         instructions.insert(i, Instruction.ExtendedArgs(correct_offset % 256))
+                        instruction.extra_extended_args += 1
                         i += 1
                         fixed = False
 

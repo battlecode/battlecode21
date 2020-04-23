@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import * as Cookies from 'js-cookie';
+import Submissions from './views/submissions.js';
 
-//const URL = 'https://2020.battlecode.org';
+//const URL = 'https://bh2020.battlecode.org';
 //const URL = 'http://localhost:8000'; // DEVELOPMENT
 // do not change URL here!! rather, for development, change it in ../.env.development
 const URL = process.env.REACT_APP_BACKEND_URL;
@@ -24,6 +25,8 @@ class Api {
     $.post(`${URL}/api/${LEAGUE}/submission/`, {
       team: Cookies.get('team_id')
     }).done((data, status) => {
+      console.log("got URL")
+      Cookies.set('submission_id', data['submission_id']);
       $.ajax({
         url: data['upload_url'], 
         method: "PUT",
@@ -31,10 +34,33 @@ class Api {
         processData: false,
         contentType: false
       })
+      .done((data, status) => {
+        console.log(data, status)
+      })
+      // Even when upload succeeds, an error is thrown...
+      // We make the dangerous assumption that the upload succeeded,
+      // ie that the submission exists in a bucket
+      // TODO this is a dangerous assumption, find a better solution
+      // (maybe revolving around the upload working error-free, 
+      // and hooking callbacks to done rather than fail)
+      // TODO it's possible that the fail callback occurs
+      // before the upload finishes
+      .fail((xhr, status, error) => {
+        // console.log(data);
+        $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
+          team: Cookies.get('team_id')
+        }).done((data, status) => {
+          console.log("Definitely done!")
+          // console.log(data, status)
+          Cookies.set('submitting', 0)
+          // TODO make this display done on screen
+        })
+      })
     }).fail((xhr, status, error) => {
-      console.log(error)
-      callback('there was an error', false);
+      console.log("Error in post:", error)
+      
     });
+
   }
 
   static downloadSubmission(submissionId, fileNameAddendum, callback) {
@@ -74,6 +100,22 @@ class Api {
   static getCompilationStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_status/`).done((data, status) => {
         callback(data);
+    });
+  }
+
+  static getCompilationID(callback) {
+    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_id/`).done((data, status) => {
+        return data['compilation_id']
+    });
+  }
+
+  // note that this is a submission, not a teamsubmission, thing
+  static getSubmissionStatus(callback) {
+    $.get(`${URL}/api/${LEAGUE}/submission/${Cookies.get("submission_id")}/get_status/`).done((data, status) => {
+        console.log("sub id", Cookies.get('submission_id'))
+        console.log(data)
+        return data['compilation_status']
+        // callback(data)
     });
   }
 
@@ -534,8 +576,8 @@ class Api {
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
-      "est_date_str": '8 PM EST on April 15, 2020',
-      "seconds_until": (Date.parse(new Date('April 15, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
+      "est_date_str": '8 PM EDT on April 22, 2020',
+      "seconds_until": (Date.parse(new Date('April 22, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
       "tournament_name": "Battlehack 2020 Tournament"
     });
     // callback({

@@ -2,17 +2,19 @@ import random
 from .robot import Robot
 from .team import Team
 from .robottype import RobotType
+from .constants import GameConstants
 
 
 class Game:
-    MAX_ROUNDS = 250
 
-    def __init__(self, code, board_size=8, seed=10, sensor_radius=2, debug=False):
+    def __init__(self, code, board_size=GameConstants.BOARD_SIZE, max_rounds=GameConstants.MAX_ROUNDS, 
+                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False, colored_logs=True):
         random.seed(seed)
 
         self.code = code
 
         self.debug = debug
+        self.colored_logs = colored_logs
         self.running = True
         self.winner = None
 
@@ -24,6 +26,7 @@ class Game:
         self.board_size = board_size
         self.board = [[None] * self.board_size for _ in range(self.board_size)]
         self.round = 0
+        self.max_rounds = max_rounds
 
         self.lords = []
         self.new_robot(None, None, Team.WHITE, RobotType.OVERLORD)
@@ -31,17 +34,20 @@ class Game:
 
         self.board_states = []
 
+        if self.debug:
+            self.log_info(f'Seed: {seed}')
+
     def turn(self):
         if self.running:
             self.round += 1
 
-            if self.round > Game.MAX_ROUNDS:
+            if self.round > self.max_rounds:
                 self.check_over()
 
             if self.debug:
-                Game.log_info(f'Turn {self.round}')
-                Game.log_info(f'Queue: {self.queue}')
-                Game.log_info(f'Lords: {self.lords}')
+                self.log_info(f'Turn {self.round}')
+                self.log_info(f'Queue: {self.queue}')
+                self.log_info(f'Lords: {self.lords}')
 
             for i in range(self.robot_count):
                 if i in self.queue:
@@ -76,30 +82,46 @@ class Game:
 
         return [[serialize_robot(c) for c in r] for r in self.board]
 
-    @staticmethod
-    def log_info(msg):
-        print(f'\u001b[32m[Game info] {msg}\u001b[0m')
+    def log_info(self, msg):
+        if self.colored_logs:
+            print(f'\u001b[32m[Game info] {msg}\u001b[0m')
+        else:
+            print(f'[Game info] {msg}')
 
     def check_over(self):
+        winner = False
+
         white, black = 0, 0
         for col in range(self.board_size):
             if self.board[0][col] and self.board[0][col].team == Team.BLACK: black += 1
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
-        if self.round > Game.MAX_ROUNDS:
-            self.running = False
-            if white == black:
-                self.winner = random.choice([Team.WHITE, Team.BLACK])
-            else:
-                self.winner = Team.WHITE if white > black else Team.BLACK
+        if black >= (self.board_size + 1) // 2:
+            winner = True
 
         if white >= (self.board_size + 1) // 2:
-            self.running = False
-            self.winner = Team.WHITE
+            winner = True
 
-        if black >= (self.board_size + 1) // 2:
+        if self.round > self.max_rounds:
+            winner = True
+
+        if winner:
+            if white == black:
+                tie = True
+                for r in range(1, self.board_size):
+                    if tie:
+                        w, b = 0, 0
+                        for c in range(self.board_size):
+                            if self.board[r][c] and self.board[r][c].team == Team.BLACK: b += 1
+                            if self.board[self.board_size - r - 1][c] and self.board[self.board_size - r - 1][c].team == Team.WHITE: w += 1
+                        if w == b: continue
+                        self.winner = Team.WHITE if w > b else Team.BLACK
+                        tie = False
+                if tie:
+                    self.winner = random.choice([Team.WHITE, Team.BLACK])
+            else:
+                self.winner = Team.WHITE if white > black else Team.BLACK
             self.running = False
-            self.winner = Team.BLACK
 
         if not self.running:
             self.board_states.append([row[:] for row in self.board])
@@ -130,7 +152,6 @@ class Game:
             'get_bytecode' : lambda : robot.runner.bytecode,
             'get_team': lambda : self.get_team(robot),
             'get_type': lambda: self.get_type(robot),
-            'view_board': lambda : self.view_board(),  # remove this for actual competition purposes
         }
 
         if robot_type == RobotType.OVERLORD:
@@ -365,12 +386,12 @@ class Game:
 
         robots = []
 
-        for i in range(self.sensor_radius, self.sensor_radius + 1):
-            for j in range(self.sensor_radius, self.sensor_radius + 1):
+        for i in range(-self.sensor_radius, self.sensor_radius + 1):
+            for j in range(-self.sensor_radius, self.sensor_radius + 1):
                 if i == 0 and j == 0:
                     continue
 
-                new_row, new_col = row + i, col + i
+                new_row, new_col = row + i, col + j
                 if not self.is_on_board(new_row, new_col):
                     continue
 

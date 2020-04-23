@@ -6,6 +6,7 @@ Here's what this script does:
 * Adds version number and changelog to specs/specs.md
 * Converts `specs.md` into a fancy specs html document (`frontend/public/specs.html`).
 * Deploys the frontend.
+* Updates setup.py version number.
 * Publishes the updated package to PyPi.
 * Commits, tags and pushes.
 
@@ -14,6 +15,7 @@ Here's what this script does:
 import argparse
 import subprocess
 import os
+import datetime
 
 def main(version):
     generate_comparison_link()
@@ -24,9 +26,11 @@ def main(version):
 
     deploy_frontend()
 
+    update_setup_py_version(version)
+
     publish_pypi()
 
-    commit_tag_push()
+    commit_tag_push(version)
 
 
 def generate_comparison_link():
@@ -66,7 +70,7 @@ def specs(version):
             if x == "":
                 break
             d[i].append(x)
-    now = datetime.now()
+    now = datetime.datetime.now()
     changelogstring = "- " + version + " (" + str(now.month) + "/" + str(now.day) + "/" + str(now.year)[2:] + ")\n"
     for i in l:
         changelogstring += "    - " + i + " changes:"
@@ -88,7 +92,7 @@ def specs(version):
 
 def fancy_specs():
     os.chdir('specs')
-    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack SP20 Specs"', shell=True)
+    subprocess.call('pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack 2020 Specs"', shell=True)
     os.chdir('..')
     subprocess.call('cp specs/specs.html frontend/public/specs.html', shell=True)
 
@@ -98,16 +102,29 @@ def deploy_frontend():
     subprocess.call('./deploy.sh deploy', shell=True)
     os.chdir('..')
 
+def update_setup_py_version(version):
+    with open('engine/setup.py', 'r') as f:
+        config = f.read()
+    config_lines = config.split('\n')
+    for i in range(len(config_lines)):
+        if "version=" in config_lines[i]:
+            p = config_lines[i].split('"')
+            config_lines[i] = p[0] + '"' + version + '"' + p[2]
+    config = "\n".join(config_lines)
+    with open('engine/setup.py', 'w') as f:
+        f.write(config)
+
 def publish_pypi():
     os.chdir('engine')
-    subprocess.call('python3 setup.py sdist bdist_wheel')
-    subprocess.call('twine upload --skip-existing dist/*')
+    subprocess.call('python3 setup.py sdist bdist_wheel', shell=True)
+    subprocess.call('twine upload --skip-existing dist/*', shell=True)
     os.chdir('..')
 
 def commit_tag_push(version):
+    subprocess.call(f'git commit -am "release {version}"', shell=True)
     subprocess.call(f'git tag v{version}', shell=True)
+    subprocess.call('git push', shell=True)
     subprocess.call('git push --tags', shell=True)
-    subprocess.call(f'git commit -am release {version}', shell=True)
 
 
 if __name__ == '__main__':

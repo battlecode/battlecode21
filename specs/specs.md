@@ -1,7 +1,7 @@
 # A Prance of Pawns
 
-_The formal specification of the Battlehack SP20 game._
-Current version: 1.0.0
+_The formal specification of the Battlehack 2020 game._
+Current version: 1.1.0
 
 You are one of the noble houses, manipulating your pawns around Westeros.
 
@@ -16,9 +16,13 @@ The objective of the game is to get $N/2$ of your pawns to your opponent’s bac
 Each robot in the game (pawn or Overlord) runs a completely distinct copy of your code, and they may not communicate with each other.
 Robots have to decide what to do ONLY based on what they can see on the board, so you must find a way to implement your strategy as a collection of independent actions from your pawns.
 
-If no one has won (gotten $N/2$ pawns to the opponent’s back row) after 250 rounds, the game ends and ties are broken by:
+The game ends either when one of the players get $N/2$ pawns on their opponent's back row, or when 500 rounds have been played.
+The winner is then determined by breaking ties as follows.
 1. Number of pawns on opponent’s back row
-2. Coin flip
+2. Number of pawns on opponent's second-to-last row
+3. Number of pawns on opponent's third-to-last row
+4. \[etc, for all rows\]
+5. Coin flip
 
 At any point, all robots can get their type (`RobotType.PAWN` or `RobotType.OVERLORD`) with `get_type()`, their team with `get_team()`, and the board size with `get_board_size()`.
 
@@ -63,25 +67,28 @@ Instead, simply return from the `turn()` function to end your turn.
 This will pause computation where you choose, and resume on the next line next turn.
 
 The per-turn bytecode limits for various robots are as follows:
-- Overlord: 20000 on first turn, 20000 per turn after
-- Pawn: 20000 on first turn, 20000 per turn after
+- Overlord: 20000 per turn
+- Pawn: 20000 per turn
 
-Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the thurn.
+Robots can get their current bytecode with `get_bytecode()`. This is the amount of bytecode the robots have remaining for the turn.
 
 
 # API Reference
 
 Below is a quick reference of all methods available to robots. Make sure not to define your own functions with the same name as an API method, since that would overwrite the API method.
 
-To view the implementation of these methods, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py).
+To view the implementation of these methods and the full list of what's available, check out [battlehack20/engine/game/game.py](https://github.com/battlecode/battlehack20/blob/master/engine/battlehack20/engine/game/game.py#L124).
+
+To get auto-completion on these methods in your editor (if your editor supports it), add `from battlehack20.stubs import *` to the top of the file. This import is removed before instrumenting your code, so it does not affect the bytecode your bot uses.
 
 #### Type-agnostic methods
 
+- `log()`: to print anything out, e.g. for debugging. Python's `print` will NOT work
 - `get_board_size()`: returns the board size
 - `get_bytecode()`: returns the number of bytecodes left
 - `get_team()`: returns the robot's team, either `Team.WHITE` or `Team.BLACK`
 - `get_type()`: returns the robot's type, either `RobotType.OVERLORD` or `RobotType.PAWN`
-- `check_space(row, col)`: returns `False` if there is no robot at the location, the robot type of the robot if there is one there, and throws a `RobotError` if outside the vision range
+- `check_space(row, col)`: returns `False` if there is no robot at the location, the team of the robot if there is one there, and throws a `RobotError` if outside the vision range
 
 #### Overlord methods
 
@@ -100,9 +107,39 @@ To view the implementation of these methods, check out [battlehack20/engine/game
 
 The Battlecode Python engine is a work in progress. Please report any weird behavior or bugs by submitting an issue in the [battlehack20 repo](https://github.com/battlecode/battlehack20/issues).
 
-Known limitations:
+We also have a [Google Doc](https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit) where we will keep an updated list of known bugs.
 
-- `sum()`, `list()`, `dict()` are not supported
+If you are able to escape the sandbox and get into our servers, please send us an email at [battlecode@mit.edu](mailto:battlecode@mit.edu) — do not post it publicly on GitHub.
 
 
 # Changelog
+
+- 1.1.0 (4/19/20)
+    - spec changes:
+        - add additional row tiebreaks before coin flip
+        - increase game length to 500 rounds
+    - engine changes:
+        - implement spec changes
+        - remove pdb because of potential exploit
+- 1.0.4 (4/18/20)
+    - spec changes: none
+    - engine changes:
+        - allow math to be imported
+        - catch all exceptions (removes some potential exploits)
+- 1.0.3 (4/17/20)
+    - spec changes:
+        - add documentation of `log()`
+    - engine changes:
+        - add stubs for api methods
+- 1.0.2 (4/17/20)
+    - spec changes:
+        - check_space returns team, not robot type
+    - engine changes:
+        - fix bug causing segmentation fault sometimes
+        - fix sense() function to actually do what it's supposed to do
+- 1.0.1 (4/17/20)
+    - spec changes: none
+    - engine changes: none
+- 1.0.0 (4/17/20)
+    - spec changes: none
+    - engine changes: none

@@ -46,7 +46,7 @@ def pull_distribution(cwd, onerror):
     """Updates the distribution, using the gradle update task"""
     try:
         result = monitor_command(
-            ['./gradlew', 'update'],
+            ['pip3', 'install', '--user', '--upgrade', 'battlehack20'],
             cwd=cwd,
             timeout=TIMEOUT_PULL)
         if result[0] != 0:

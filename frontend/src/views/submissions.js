@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import Api from '../api';
+import * as Cookies from 'js-cookie';
 
 
 
@@ -19,7 +20,8 @@ class Submissions extends Component {
             numTourSubmissions: 0,
             numTourLoaded: 0,
             user: {},
-            league: {}
+            league: {},
+            sub_status: -1
         };
         Api.getUserProfile(function (u) {
             this.setState({ user: u });
@@ -35,11 +37,44 @@ class Submissions extends Component {
         }.bind(this));
     }
 
+    componentWillUnmount() {
+        // don't leak memory
+        clearInterval(this.interval)
+    }
+
     //----UPLOADING FILES----
+
 
     // makes an api call to upload the selected file
     uploadData = () => {
+        // let status_str = "Submitting..."
+        Cookies.set('submitting', 1)
+        // console.log("submitting...")
+        this.setState({sub_status: 0})
+        this.renderHelperSubmissionForm()
+        this.renderHelperSubmissionStatus()
+
         Api.newSubmission(this.state.selectedFile, null)
+
+        this.interval = setInterval(() => {
+            if (Cookies.get('submitting') != 1) {
+                // console.log("out of time loop")
+
+                // refresh the submission button and status
+                this.setState({sub_status: 1})
+                this.renderHelperSubmissionForm()
+                this.renderHelperSubmissionStatus()
+                
+                // refresh team submission listing
+                Api.getTeamSubmissions(this.gotSubmissions);
+                this.renderHelperLastTable()
+
+                clearInterval(this.interval)
+            }
+            else {
+                // console.log("in time loop")
+            }
+        }, 1000);
     }
 
     // change handler called when file is selected
@@ -48,7 +83,10 @@ class Submissions extends Component {
         this.setState({
             selectedFile: event.target.files[0],
             loaded: 0,
+            sub_status: -1
         })
+        this.renderHelperSubmissionForm()
+        this.renderHelperSubmissionStatus()
     }
 
 
@@ -162,32 +200,26 @@ class Submissions extends Component {
     renderHelperSubmissionForm() {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
-            switch (this.state.status) {
-                case 0:
-                    status_str = "Currently compiling..."
-                    break
-                case 1:
-                    status_str = "Successfully compiled!"
-                    break
-                case 2:
-                    status_str = "Compilation failed."
-                    break
-                case 3:
-                    status_str = "Internal server error. Try re-submitting your code."
-                    break
-                default:
-                    status_str = ""
-                    break
-            }
             let btn_class = "btn btn" 
             let file_label = "No file chosen."
-            let button = <button disabled style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+            let file_button_sub = <div> </div>
+            let file_button = <div></div>
+            let file_button_2= <div></div>
+            
+            let button = <button disabled style={{float: "right"}} className={ btn_class }> Submit </button>
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
-                button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+                if (this.state.sub_status != 0) { 
+                    button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
+                }
             }
-
+            if (this.state.sub_status != 0) { 
+                file_button_sub = <div className="btn"> Choose File </div>
+                file_button = <label htmlFor="file_upload">
+                {file_button_sub} <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span> </label>
+                file_button_2 = <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}></input>
+            }
 
             return (
                 <div className="card">
@@ -201,14 +233,17 @@ class Submissions extends Component {
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p> */}
                         <p>
-                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
+                        Create a <code>zip</code> file of your robot player using the <b>utility found <a href="https://github.com/battlecode/battlehack20-scaffold/blob/master/zipper.py">here</a></b>. Download this file and place it alongside your <code>run.py</code>. Use it with <code>[python/python3] zipper.py [file location of your bot, e.g. examplefuncsplayer]</code>. The utility will give you feedback if you have entered an incorrect file location. Once you have your <code>zip</code> file, upload it here. <b>Please</b> use this utility; <b>incorrectly structured submissions will not run</b>. Submit the <code>zip</code> file below.
                         </p>
-                        <label htmlFor="file_upload">
-                            <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
-                        </label>
-                        <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
+
+                        <p>
+                        Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
+
+                        </p>
+                        {file_button}
+                        {file_button_2}
                         {button}
-                        <p className="text-center category"> {status_str}</p>
+                        {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
                     </div>
                 </div>
             )
@@ -227,6 +262,40 @@ class Submissions extends Component {
         }
     }
 
+    renderHelperSubmissionStatus() {
+        if (this.isSubmissionEnabled()) {
+            let status_str = ""
+            switch (this.state.sub_status) {
+                case -1:
+                    status_str = "Waiting to start submission..."
+                    break
+                case 0:
+                    status_str = "Currently submitting..."
+                    break
+                case 1:
+                    status_str = "Successfully submitted!"
+                    break
+                case 2:
+                    status_str = "Submission failed."
+                    break
+                case 3:
+                    status_str = "Internal server error. Try re-submitting your code."
+                    break
+                default:
+                    status_str = ""
+                    break
+            }
+            
+            return (
+                <div className="card">
+                    <div className="content">
+                        <p id="sub_status" className="text-center category"> {status_str}</p>
+                    </div>
+                </div>
+            )
+        }
+    }
+
     //reder helper for table containing the team's latest submissions
     renderHelperLastTable() {
         if (this.state.lastSubmissions === null) {
@@ -239,7 +308,7 @@ class Submissions extends Component {
             if (this.state.status == 0) {
                 return (
                     <p>
-                    Your code is currently compiling—you'll see it here if it finishes successfully.
+                    Your code is being submitted -- you'll see it here if it finishes successfully.
                     </p>
                 )  
             } else { 
@@ -336,6 +405,7 @@ class Submissions extends Component {
                     <div className="row">
                         <div className="col-md-12">
                             { this.renderHelperSubmissionForm() }
+                            { this.renderHelperSubmissionStatus() }
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Latest Submissions</h4>
