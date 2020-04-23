@@ -11,9 +11,9 @@ for i in range(4):
             team_pk, team_name = line.split(',')
             if team_pk in wins.keys():
                 groups[i].append((wins[team_pk], team_pk.strip(), team_name.strip())) 
-    with open('top8.txt', 'a+') as g: #write top two teams' team pk, team name of each group to output top8.txt
+    with open('top8.txt', 'a+') as g: #write top two teams' team pk, team name, win pcntg (btwn 0-1) of each group to output top8.txt
         groups[i].sort(reverse=True)
-        g.write(groups[i][0][1] + ',' + groups[i][0][2] + '\n')
-        g.write(groups[i][1][1] + ',' + groups[i][1][2] + '\n')
+        g.write(groups[i][0][1] + ',' + groups[i][0][2] + ',' + str(groups[i][0][0]) + '\n')
+        g.write(groups[i][1][1] + ',' + groups[i][1][2] + ',' + str(groups[i][0][0]) + '\n')
 
 
