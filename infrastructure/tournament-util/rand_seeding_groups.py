@@ -4,7 +4,7 @@ import random
 teams = {}
 with open('infrastructure/tournament-util/team_pk.txt') as pks, open('infrastructure/tournament-util/team_names.txt') as names:
     for pk, name in zip(pks, names):
-        teams[pk.strip()] = name
+        teams[pk.strip()] = name.strip()
 
 keys = list(teams.keys())
 random.shuffle(keys)
