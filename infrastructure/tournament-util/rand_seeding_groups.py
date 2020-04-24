@@ -1,8 +1,8 @@
-import random
+import random, sys
 
 
 teams = {}
-with open('infrastructure/tournament-util/team_pk.txt') as pks, open('infrastructure/tournament-util/team_names.txt') as names:
+with open(sys.argv[1]) as pks, open(sys.argv[2]) as names:
     for pk, name in zip(pks, names):
         teams[pk.strip()] = name.strip()
 

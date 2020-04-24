@@ -69,9 +69,23 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        The competition format is optional ELO-based ranked scrimmages during the week of competition, then we'll reset all the rankings and do tons of autoscrims for a while and whomever has the best ELO at the end will win. We'll announce prizewinners, show highlights, etc. in the livestream on Friday.
+                                        In response to competitor feedback, we have changed the format of the competition.
+                                        Teams are split into four divisions. Round Robin tournaments are held within each of these divisions.
+                                        From each division, the four teams with the highest win-ratio move on the the next round.
+                                        These top 16 will face eachother in another round-robin tournament.
                                     </p>
                                 </div>
+                            </div>
+
+                            <div className='card'>
+                                <div className='header'>
+                                    <h4 className='title'>Results</h4>
+                                </div>
+                                <div className='content'>
+                                    <p>Division Results are out!</p>
+                                    <p>See them <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
+                                </div>
+
                             </div>
 
 

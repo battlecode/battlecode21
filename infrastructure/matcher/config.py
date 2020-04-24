@@ -16,9 +16,9 @@ API_PASSWORD = os.getenv('BH20_DB_PASSWORD')
 API_SCRIM_LIST = 'https://bh2020.battlecode.org/api/match/scrimmage_list/'
 API_ENQUEUE = 'https://bh2020.battlecode.org/api/match/enqueue/'
 
-NUM_WORKER_THREADS = 10
+NUM_WORKER_THREADS = 2
 
-TOURNAMENT_WORKER_TIMEOUT = 15
+TOURNAMENT_WORKER_TIMEOUT = 5
 
 def api_match_status(gameid):
     """

@@ -13,6 +13,6 @@ with open(filename, 'r') as f:
             f.readline() # Skip the title row
             for line in f.readlines():
                 team_id, team_name, team_score = line.split(',')
-                team_name = team_name[1:-1] # Remove quotation marks
+                team_name = team_name # Remove quotation marks
                 g.write(team_id+'\n')
                 h.write(team_name+'\n')
