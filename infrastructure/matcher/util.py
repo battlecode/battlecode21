@@ -23,5 +23,6 @@ def enqueue(match_params):
         })
         response.raise_for_status()
         return response.json()["message"]
-    except:
-        logging.error('Could not enqueue match: {}'.format(match_params))
+    except Exception as e:
+        logging.error(e)
+        logging.error('Could not enqueue match from util: {}'.format(match_params))
