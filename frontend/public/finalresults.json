@@ -1,0 +1,1463 @@
+{
+  "winner": "Snakes and ladders",
+  "number_of_matches_won": {
+    "BrutalPigeon64": 12,
+    "s&c": 23,
+    "Daedalus": 7,
+    "ILikeBracketsOverTabs": 25,
+    "Nikola": 9,
+    "IDIOT": 21,
+    "Razgriz": 11,
+    "asdf": 2,
+    "Pawn Tsunami": 9,
+    "Bozin": 4,
+    "First Time?": 16,
+    "ayushie": 21,
+    "The Quantum Mechanics": 10,
+    "Hugo": 23,
+    "Random Run": 22,
+    "Snakes and ladders": 25
+  },
+  "matches": [
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "IDIOT",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/87ceb271d66dae7fc48568eca04bf0.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/f633fdfeaee32a71e9562a55191297.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Razgriz",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/5466ed85a7987a41e2cd35b133b3d0.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "First Time?",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/851d8c332abed0f35b88f84e0e7322.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "ayushie",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/a3b8f1a86b31866c13f8538865192b.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "The Quantum Mechanics",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/9b95ad0286bd83f95b7dbb700e9c69.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Hugo",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/70c154116925a098db9f4754bba93b.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Random Run",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/ed84c9ed574a59ab9b55b5bd3bda96.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "s&c",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/b4127942d2554e51ae1be3c11fa0ba.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Nikola",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/d263ed10db153020149f58e5a3e7ff.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Daedalus",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/794ba2faf8dc6454e6810a784432c0.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Pawn Tsunami",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/6549bb4c093aa80949e632e57656a6.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "Bozin",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/1deca0cc878a46ba955c0c9c0070e1.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "asdf",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/94c80724ceeb78be4295b830118303.txt"
+    },
+    {
+      "white": "ILikeBracketsOverTabs",
+      "black": "BrutalPigeon64",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/61eda38f0279a5fcd65b1f8de3e7a7.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/4e9cb84a4356f67b8c34e88790b1b3.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Snakes and ladders",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/ef1987a59ccef669eb6a12232fec26.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Razgriz",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/d007ac490df97445020ee4d8b7f2b4.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "First Time?",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/f80fcca1407a9d6d2640e68f3b243d.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/b18b35074aad9944ab8c27c277666b.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "The Quantum Mechanics",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/1b84d893dfaa04e8efa1196c94618d.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/e69587a06145131d0066b145fc59a3.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/55774466b2f948952502988080db2a.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "s&c",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/a0cd4857e04205ead346366dd183c3.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Nikola",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/a4fed880daa76e24bca11ebcc152bd.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Daedalus",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/9e7f749046d4434f1b5a5a808db312.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Pawn Tsunami",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/8569fdd8321cebfc9b64c92142a8c6.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "Bozin",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/251b2298b848f2d51d17424c28a1dd.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "asdf",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/f00d5271371709257c909c7abdf27f.txt"
+    },
+    {
+      "white": "IDIOT",
+      "black": "BrutalPigeon64",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/04274a71a967e81a996e9962ce3bf3.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/af71d00bd94fc608e25ab76baec9ff.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "IDIOT",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/8f7c053f8b9fbc693115060bcd3da9.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Razgriz",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/1c5eb97345a58fa98bfcba4337f727.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "First Time?",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/dd2fa5ba05675884a2f874918347bf.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "ayushie",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/1a3512be258df7d7eb1327521731f8.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "The Quantum Mechanics",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/7fe9d10bb7e0a5f2ad8943099f9feb.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/e8055cd0a9f8de9662fd0bcc1a18df.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/2f80ea399018e778a6eb96d03c1588.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/2f6642dcc10a76acdf33e0495260fa.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Nikola",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/08d1744041d2bb9a71b4156e1be5ec.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Daedalus",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/2042bb4710354a8fb702bad616a29d.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Pawn Tsunami",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/ba8b3bc98c3ee4ab8cb35f6aaf2bbc.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "Bozin",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/ed2837730913d147ef40ef52871e2e.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "asdf",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/054219ebfbe4881cf1155c55d9ce3b.txt"
+    },
+    {
+      "white": "Snakes and ladders",
+      "black": "BrutalPigeon64",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/392db454d41f9d5aa6c23fdae83de2.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/97ecd4e7e52704d7783633dd523de6.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/ca2ecd5345cd8c64f895b84d845198.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/21faffd91109a4bc6f1366979fde4e.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/dc36654e187233f024f84dcadbc9ca.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/7a0c2006c07f591716c0ac75c20df6.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/425665ced9640108b17f5b49913e49.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/c1d974dc046a08c932aff50d2bd407.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/ab0c22f92645dc5dcd05f2f8670f0c.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/1ce11bdf650adc31abea23d9c9e458.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Nikola",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/f2745ddeda674d1ac147ad21b4ca45.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Daedalus",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/b01fb5ba4e1e431916b49110608d61.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Pawn Tsunami",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/2041625f1fbac705aa37976d585a5d.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "Bozin",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/ad16596943060ede80a0e6f23f2643.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "asdf",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/0798da112e1f629c2c2bd2a55285f5.txt"
+    },
+    {
+      "white": "Razgriz",
+      "black": "BrutalPigeon64",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/65e1654e8cef1bce13eba605e68880.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/24576249cb777fe82c25b4a878f97c.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/8c776035abd87afd20d1223caaab60.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/bcf9ba2bc1121120c5dfb5512bac0c.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Razgriz",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/069ba73aeb6d5ff27425e001149e92.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/010368da6cb9537b21a0501abf71f4.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/3a808c7dc6efc8a69edc80e087070e.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/e10365c06ae60fadea7b9416193b9d.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Random Run",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/9a654a92b986a1149b7df74768dc35.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "s&c",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/616394d16d914826df790aaf548bb6.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Nikola",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/588aca9ba1c587ca9b05103e107806.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Daedalus",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/a74e311716c1e2924373ed2a8d3f3e.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Pawn Tsunami",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/ab3b16a0775e93f38b03883bcae87d.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "Bozin",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/1280322b6034a999c150a88d2a138e.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "asdf",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/e8d2107495c7f03e510cd8add076c7.txt"
+    },
+    {
+      "white": "First Time?",
+      "black": "BrutalPigeon64",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/a831098ecc2743059144c72e255a7d.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/9328a790dfa1d90fa5450657817c5b.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/52aeddef9b14f8680717bf8ad42f58.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/c5d9be605817b2b0b81972f631e01d.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Razgriz",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/2c7000bb1f273c5a1fa11bc80d352d.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "First Time?",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/0da8ec3f652b596c56e029e5f1d2d9.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "The Quantum Mechanics",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/462338036a1a5cb047dc39c8df6187.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Hugo",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/b88b7f13f192022295dc01f9259d2f.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Random Run",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/f277cfc6dd4f50caa035f18c1c3fe3.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "s&c",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/f24a454b7a6a3af8d72715134d70d9.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Nikola",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/a8f4384674b15f5f94fae05714d368.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Daedalus",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/26f37903935a789532e8d08975f203.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Pawn Tsunami",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/96465937ac2bf42eb35bcfeca9673e.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "Bozin",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/c34ecd32b23f78c8b6733e9e6289d1.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "asdf",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/9da374129110c9a32cada77483fd7a.txt"
+    },
+    {
+      "white": "ayushie",
+      "black": "BrutalPigeon64",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/8911859f75e272ca6af5c50d3c0796.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/8d5b8a1461fe0a0fd344052506accc.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/cd6ee0d0a897445e26333688b0b77a.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/881b7a959aa10ec45ee6df7421b799.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/dbbde6db4d4064b8b9c5ee7ab21cc0.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "First Time?",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/a41c735c576ffa424b2b6800950cc9.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/6267b4ebeb239a2fda728b7e14abbc.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/9247e96a8dd727a594775d95417be7.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/379eb031672dd237549352be553e21.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/7891f5dd14ea1f0f412640f262a60b.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Nikola",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/5892cff9b5ce97c3abb7de57465511.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Daedalus",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/48f2ec70afa33c241603d867427b11.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Pawn Tsunami",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/b144d34d18a3100e3945eac9461298.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "Bozin",
+      "winner": "Bozin",
+      "replay": "https://bh2020.battlecode.org/replays/8b3dad135897460048297adf12f0d8.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "asdf",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/0e879a961d23458ca6f018d81ede13.txt"
+    },
+    {
+      "white": "The Quantum Mechanics",
+      "black": "BrutalPigeon64",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/37f2ab12256f915f799993769aca20.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/05b3458254cccdc8a6785b57331a4d.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "IDIOT",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/1e71edcbcf5ca6a672c3f55634b0ab.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Snakes and ladders",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/3b5af01b335c37faad70372b6189e3.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Razgriz",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/237cd99e61995376639eeebb63ca0d.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/8c4e3be5b943726a86da318d8e1ab6.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/ec96c31a0db4aa1defdc59513010f7.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "The Quantum Mechanics",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/bb92875b8e6fb734d5518c5ff7fa0c.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/2c02c2761702928864241427c006b6.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/ecf862a81de01845bc09744221f7ce.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Nikola",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/5244077cce9f650afede1cc7542751.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Daedalus",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/bebe22e33c15c7b48d81ced170add8.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Pawn Tsunami",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/dba477ba0cc13651675df5947a03a1.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "Bozin",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/772ebf6648a0046aa1e9eb8fbc2f93.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "asdf",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/78317fa7833d5eafc67b437da9a632.txt"
+    },
+    {
+      "white": "Hugo",
+      "black": "BrutalPigeon64",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/e206e9355f1473d1eabedb4fb8781b.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/800f7e3c9e9a4420f705d2e3966994.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/5ac42a14dc22433abef4920b9c8f75.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/e112d1de41d44159b1bbfaa4688005.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Razgriz",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/8b5ca37514336fce43ff34e24cec51.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/f420def5162d8ece0b37980638022a.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "ayushie",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/43b7a960c2e57d80c3a9917af74b30.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "The Quantum Mechanics",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/6c0a3eda531bf8a898ae71e0482e11.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Hugo",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/cac77b2de47cd44921a067fd4d1454.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/35bd51aa51889d951df0525d1dff54.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Nikola",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/599b2d3955dfa8ee6355c6206a1acd.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Daedalus",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/72b62ada7255036de791b2194098c9.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Pawn Tsunami",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/bc5788509c57921fd9ac0386b9f90d.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "Bozin",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/348e763f286764546e6b0be6546978.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "asdf",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/411f28ccc3ff4ca9b186de38a0fa92.txt"
+    },
+    {
+      "white": "Random Run",
+      "black": "BrutalPigeon64",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/81b17061efaa5daf134b90ecafe8d4.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/1e6f5ee5311e37df54679f08faa370.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "IDIOT",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/34fea241f07d1ccc2187cba9bd731e.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/18db76e97c4d44dd57ba1798ec458a.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Razgriz",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/952f1ab9ed5faf0b1c3afc3e2096ca.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "First Time?",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/763b0abf95211a6ecd572953f70312.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "ayushie",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/644310e44b2d71eb6d67973f994d2f.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "The Quantum Mechanics",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/a410b89a88b158d48c792c6f33e28a.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/281254815659d242f5d9d5327c811b.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/ec0524893aca01cf63f7243cc1c0a3.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Nikola",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/8f53ea38c630ce43ec91407886f5a5.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Daedalus",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/89332683dc9097c1e0d3387d94e46f.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Pawn Tsunami",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/7748526b0344a0ddd881ea4147c8ed.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "Bozin",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/21a416b9721a05b48358bdbcaf4369.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "asdf",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/d4f9180a62cd97fafb4d9a010517df.txt"
+    },
+    {
+      "white": "s&c",
+      "black": "BrutalPigeon64",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/9d12fd5b86182fd439cbb0cd8cb81b.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/ea04f53fd47dd23a04487aaf5d1a82.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/e0cfb7d9bb2a0dd30329164d23f69c.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/6de1f873c5e5a2d0cf41176948f722.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/948061a35463a2a14a55e3e60440ce.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/abf9c1515c8ed8530413d65c0f7c41.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/36482a0dfdc9a3e10eb4b8e366b6c5.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/227e2c320d2578c69ae97a01c2adc1.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/355b1ebeb3a5b99e5d68216c3f0b00.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/727673f08d0692f547b40c9438c8c1.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/49cbc50c2be1f9cd31caa6ffa7b122.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Daedalus",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/b812f3f095ea6ffc70ec5545c65816.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Pawn Tsunami",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/82cb86fdec8916d77410995a6d581a.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "Bozin",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/994900b316f3da87668833a01eb069.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "asdf",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/76d76412c5bab3d9b35c951a5dfb73.txt"
+    },
+    {
+      "white": "Nikola",
+      "black": "BrutalPigeon64",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/eb8c8867a63f43a8ade1fd6a04ce4b.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/1868bffa02f094eef134f100d82c8b.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/498c9da2ae98f6461e9cfb0165ddd7.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/3ec98ef2c4b05d9da6d5d7cded6cce.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/1ffacfb7846334a50fa7efef1e83e2.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/c80631ddcd0386f4039dbda4d4e88e.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/22cc33784f03df2230dd846120d11a.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/15078bb63a56245b6c4297c369a036.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/885381e079b56369b675b14a579252.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/7b76a0d4e1e75350a7f172641c2cd2.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/0c7159fec2534218e9e8c365e3bea6.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Nikola",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/e66fd4a8034039fdae4c4c453e61c2.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Pawn Tsunami",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/dc3427f5696565b0d635788b3b864f.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "Bozin",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/68e5e660e308a22ccef7f5be90d7c7.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "asdf",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/e7e4f004d5a8657c25f2ef031916ed.txt"
+    },
+    {
+      "white": "Daedalus",
+      "black": "BrutalPigeon64",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/9a857db545979749030ebba263653c.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/046f54ce3a6855cd604888b9ee4b3a.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/5779ea38685f590345202fc27c4092.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/9b9509d22f91572bef1dcbaa86669c.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/d089fdb165e918c3c8f9aeccbd404b.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "First Time?",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/e2c020924afbfd3c0a85c1c3838a74.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/17936a2eb40c00381c135e2ae9053d.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/841ed5992e0917995c1c44db1cb732.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/9f35b8cadfa425f137765d20219864.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/3500816c8d6ee4c1dca3f768775120.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/57ae194a82c700a599207f0eb33da9.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Nikola",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/3cde0635eb68f981c65ae8fc3bfbd8.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Daedalus",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/c0d36872b5225c161fb8b2a0abc541.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "Bozin",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/d737b8dabbe923d9ff8c16eb76dbdd.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "asdf",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/f3e7c8bf411d34ca278ba3102131ef.txt"
+    },
+    {
+      "white": "Pawn Tsunami",
+      "black": "BrutalPigeon64",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/a4fc51f7c5a2342d203af16c8d387f.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/7f55cacf4e7b9722494826ecbe0bde.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/25b461577284b5b48865d41a34984c.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/a946b70a63de983bd7d6c0c8acdfd3.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/b59ecd07de83bed92051e90ba6f7b2.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/ab0238def64df2026829077f0d1beb.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/6c7f3fdb83c105b94037876baeebcc.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/453cd939bd2988cfa729acfe4ef368.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/2e9072eccb57aa2d6f86ce0b9e8eef.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/aa37c2a3ed56728f98674efa5f3cf6.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/b779e852ea8deb2b6ccaf26645cac4.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Nikola",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/a9337e718f2dd6cca0c39f53611a74.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Daedalus",
+      "winner": "Bozin",
+      "replay": "https://bh2020.battlecode.org/replays/9279b2f17fe0bb4125a20764c5e176.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "Pawn Tsunami",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/776833a96b554281c481bd76391a80.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "asdf",
+      "winner": "Bozin",
+      "replay": "https://bh2020.battlecode.org/replays/87791353ec033d77552266d7a515a5.txt"
+    },
+    {
+      "white": "Bozin",
+      "black": "BrutalPigeon64",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/61abbc8ca41093eb9ae5eb5a73015c.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/8204d39ae7c29a9c6ba3dd33965b1f.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "IDIOT",
+      "winner": "IDIOT",
+      "replay": "https://bh2020.battlecode.org/replays/743b50e6ffd02484aea9d672e42302.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/d3f0142091519640175a3831612606.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Razgriz",
+      "winner": "Razgriz",
+      "replay": "https://bh2020.battlecode.org/replays/a7c1a4d83ef712f2ff595c0ab2ccc2.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/24e6ad241ed37e623548fba9682b62.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "ayushie",
+      "winner": "ayushie",
+      "replay": "https://bh2020.battlecode.org/replays/0794c2326d5221adad8278243a7b05.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "The Quantum Mechanics",
+      "winner": "The Quantum Mechanics",
+      "replay": "https://bh2020.battlecode.org/replays/03ea5f4e65727ff5b87d6942df255d.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/aa0ebac95711c8df84fa330bf88083.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/f1fbb78dead3828b9087fd191e2d3c.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/eb5f12f34ad6ca19c5b4650ef9ea4f.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Nikola",
+      "winner": "Nikola",
+      "replay": "https://bh2020.battlecode.org/replays/4b10027cf5ac61bd4341f780fc34ad.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Daedalus",
+      "winner": "Daedalus",
+      "replay": "https://bh2020.battlecode.org/replays/b0adbee151498bb8acf6df2151c950.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Pawn Tsunami",
+      "winner": "Pawn Tsunami",
+      "replay": "https://bh2020.battlecode.org/replays/a0a4bc946cf136d6a22dd8284044c7.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "Bozin",
+      "winner": "Bozin",
+      "replay": "https://bh2020.battlecode.org/replays/637325f56f6b4cf3884463079171a0.txt"
+    },
+    {
+      "white": "asdf",
+      "black": "BrutalPigeon64",
+      "winner": "asdf",
+      "replay": "https://bh2020.battlecode.org/replays/9301831f32ab739d4a124175e20800.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "ILikeBracketsOverTabs",
+      "winner": "ILikeBracketsOverTabs",
+      "replay": "https://bh2020.battlecode.org/replays/668456510b4d7e4a094efb55465330.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "IDIOT",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/cd47c2bd30bc2559a1f9e4fe48451e.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Snakes and ladders",
+      "winner": "Snakes and ladders",
+      "replay": "https://bh2020.battlecode.org/replays/ba2d95f96e1dfa5d2e27c2d4d827ca.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Razgriz",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/511b6b4f6937549faf94948933e474.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "First Time?",
+      "winner": "First Time?",
+      "replay": "https://bh2020.battlecode.org/replays/29477a608703d269dc494580d4a7e5.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "ayushie",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/e6c04a5092785c035bb18ea62f3cff.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "The Quantum Mechanics",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/f0863769020d9583329c1cfa740e04.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Hugo",
+      "winner": "Hugo",
+      "replay": "https://bh2020.battlecode.org/replays/056841f78e36ef3842f17b5edae774.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Random Run",
+      "winner": "Random Run",
+      "replay": "https://bh2020.battlecode.org/replays/ac99df1ce8547269fc10d24cc9e802.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "s&c",
+      "winner": "s&c",
+      "replay": "https://bh2020.battlecode.org/replays/ed3704e23876fadde8c2cae635d928.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Nikola",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/8b81e2054ae9378e71f012fa4f8d04.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Daedalus",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/17cb58bda50c6568bf858be8c9a3fe.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Pawn Tsunami",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/db0987d335f9089a8a8c96b41a0c8e.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "Bozin",
+      "winner": "BrutalPigeon64",
+      "replay": "https://bh2020.battlecode.org/replays/697ffa82eed1dd38b164ad08f05d9f.txt"
+    },
+    {
+      "white": "BrutalPigeon64",
+      "black": "asdf",
+      "winner": "asdf",
+      "replay": "https://bh2020.battlecode.org/replays/6e6f9bcbfa573c750662143ee06dc0.txt"
+    }
+  ]
+}

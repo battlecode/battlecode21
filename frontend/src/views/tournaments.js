@@ -47,11 +47,18 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        The winner is <NavLink to='rankings/1643'>Team Snakes and ladders</NavLink>!
-                                        The full round robin results <a href='https://bh2020.battlecode.org/finalresults.json'>are available here</a>.
+                                        Thank you to everyone for participating!
                                     </p>
                                     <p>
-                                        Engine breaker winners:
+                                        <b>The winner of Battlehack 2020 is <NavLink to='rankings/1643'>Team Snakes and ladders</NavLink></b>, 
+                                        awarded a cash prize of $500. Congrats!
+                                        </p>
+                                    <p>
+                                        The full results of the round robin of the top 16 teams, with replays, <a href='https://bh2020.battlecode.org/finalresults.json'>are available here</a>.
+                                    </p>
+                                    <p>The results of the 4 divisions for determining the top 16 are available here: <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
+                                    <p>
+                                        <b>Engine breaker winners:</b>
                                         <ul>
                                             <li>
                                             <a href='https://github.com/battlecode/battlehack20/issues/133'>Issue 133</a>: $125
@@ -77,7 +84,7 @@ class Tournaments extends Component {
                                         </ul>
                                     </p>
                                     <p>
-                                        L33t h4ck3r winners:
+                                        <b>L33t h4ck3r winners:</b>
                                         <ul>
                                             <li>
                                             <a href='https://github.com/battlecode/battlehack20/issues/136'>Issue 136</a>: $350
@@ -134,7 +141,6 @@ class Tournaments extends Component {
                                 </div>
                                 <div className='content'>
                                     <p>Division Results are out!</p>
-                                    <p>See them <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
                                 </div>
 
                             </div>
