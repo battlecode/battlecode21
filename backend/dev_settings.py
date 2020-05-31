@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "ASDF"
+SECRET_KEY = "redacted"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,33 +32,6 @@ INSTALLED_APPS += ['debug_toolbar']
 
 MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
-"""
-# log all SQL queries to console
-LOGGING = {
-    'version': 1,
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        }
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        }
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
-    }
-}
-"""
-
-
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -67,8 +40,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'battlecode',
         'USER': 'battlecode',
-        'PASSWORD': os.getenv('DB_PASS_BC_DEV', 'mysecretpassword'),
-        'HOST': os.getenv('DB_HOST_BC_DEV', 'localhost'),
+        'PASSWORD': 'redacted',
+        'HOST': 'redacted',
         'PORT': 5432,
     }
 }
+
+GOOGLE_APPLICATION_CREDENTIALS = r"""redacted"""
+
+SENDGRID_API_KEY = "redacted"
