@@ -41,6 +41,64 @@ class Tournaments extends Component {
                     <div className="row">
                         <div className="col-md-12">
 
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Tournament Results</h4>
+                                </div>
+                                <div className="content">
+                                    <p>
+                                        Thank you to everyone for participating!
+                                    </p>
+                                    <p>
+                                        <b>The winner of Battlehack 2020 is <NavLink to='rankings/1643'>Team Snakes and ladders</NavLink></b>, 
+                                        awarded a cash prize of $500. Congrats!
+                                        </p>
+                                    <p>
+                                        The full results of the round robin of the top 16 teams, with replays, <a href='https://bh2020.battlecode.org/finalresults.json'>are available here</a>.
+                                    </p>
+                                    <p>The results of the 4 divisions for determining the top 16 are available here: <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
+                                    <p>
+                                        <b>Engine breaker winners:</b>
+                                        <ul>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/133'>Issue 133</a>: $125
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/121'>Issue 121</a>: $125
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/108'>Issue 108</a>: $100
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/106'>Issue 106</a>: $100
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/104'>Issue 104</a>: $100
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/97'>Issue 97</a>: $100
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/71'>Issue 71</a>: $100
+                                            </li>
+                                        </ul>
+                                    </p>
+                                    <p>
+                                        <b>L33t h4ck3r winners:</b>
+                                        <ul>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/136'>Issue 136</a>: $350
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/69'>Issue 69</a>: $200
+                                            </li>
+                                            <li>
+                                            <a href='https://github.com/battlecode/battlehack20/issues/135'>Issue 135</a>: $200
+                                            </li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
 
                             <div className="card">
                                 <div className="header">
@@ -83,7 +141,6 @@ class Tournaments extends Component {
                                 </div>
                                 <div className='content'>
                                     <p>Division Results are out!</p>
-                                    <p>See them <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
                                 </div>
 
                             </div>
@@ -102,7 +159,12 @@ class Tournaments extends Component {
                                             
                                             <li><b>$750 Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). A list of bugs known before launch can be found <a href="https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit?usp=sharing">here</a>; duplicating these bugs will not result in any prizes awarded. This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlehack20/issues">here</a>.</li>
                                             
-                                            <li><b>$750 L33t H4ck3r prize:</b> escape the sandbox into our servers. Split across all teams who contact us and demonstrate a unique exploit. Please do NOT submit them publicly (i.e. no GitHub issue).</li>
+                                            <li><b>$750 L33t H4ck3r prize:</b> escape the sandbox into our servers. 
+                                            Split across all teams who contact us and demonstrate a unique exploit, that can either read the value
+                                            of an environment variable (e.g. <code>echo $SECRET_KEY</code>) or read the contents of an arbitrary
+                                            file (e.g. <code>open("api_key.json","r")</code>).
+                                            Please do NOT submit them publicly (i.e. no GitHub issue). Email us or DM us on Discord.
+                                            </li>
                                             
                                             <li><b>More prizes???</b> TBA, maybe</li>
                                         </ul>
