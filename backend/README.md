@@ -25,7 +25,7 @@ If you still have this bug: On Mac, [this StackOverflow answer has a solution](h
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
+Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings_real.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
 
 ```
 docker run -p 5432:5432 -e POSTGRES_USER=battlecode -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
@@ -54,7 +54,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 docker start bc20db
-export DJANGO_SETTINGS_MODULE="dev_settings"
+export DJANGO_SETTINGS_MODULE="dev_settings_real"
 export EMAIL_PASS="passwordtobattlecodegmail"
 ```
 
