@@ -6,7 +6,7 @@
 
 - `/backend`: Backend API in Django Rest Framework
 - `/frontend`: Frontend dashboard in React
-- `/engine`: Game engine in PYTHON
+- `/engine`: Game engine in Java
 - `/specs`: Game specs in Markdown (and HTML generation)
 
 ## Development
@@ -25,7 +25,17 @@ You can also run both the backend and the frontend in a Docker container, by run
 
 ### Engine
 
-See the `engine` folder for documentation!
+Windows users: Instead of `./gradlew`, use `gradlew` for all commands.
+
+(whenever Gradle has problems with something, run `./gradlew clean` and see if it helps)
+
+To run a game, run
+
+```
+./gradlew headless
+```
+
+The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `./gradlew headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
 
 ## Notes for porting this to battlecode21
 

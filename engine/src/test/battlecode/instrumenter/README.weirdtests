@@ -1,0 +1,35 @@
+ _________________
+< HERE BE DRAGONS >
+ -----------------
+      \                    / \  //\
+       \    |\___/|      /   \//  \\
+            /0  0  \__  /    //  | \ \
+           /     /  \/_/    //   |  \  \
+           @_^_@'/   \/_   //    |   \   \
+           //_^_/     \/_ //     |    \    \
+        ( //) |        \///      |     \     \
+      ( / /) _|_ /   )  //       |      \     _\
+    ( // /) '/,_ _ _/  ( ; -.    |    _ _\.-~        .-~~~^-.
+  (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+ (( // / ))  '/\      /                 ~-. _ .-~      .-~^-.  \
+ (( /// ))      `.   {            }                   /      \  \
+  (( / ))     .----~-.\        \-'                 .~         \  `. \^-.
+             ///.----..>        \             _ -~             `.  ^-`  ^-_
+               ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                  /.-~
+
+We're doing some moderately torturous things to the JVM with our instrumentation, so it only makes sense
+that our tests are slightly torturous.
+
+- Why do these files have the wrong package at the top??
+  Gradle will move them into the right place. Ignore that.
+
+- Why are there class files in my source directory??
+  We have to load several class files in the tests that are inconvenient to generate at compile time.
+  ValueA.class is compiled from a class called Value and has a static method getValue that returns 'A';
+  ValueB.class is compiled from a class called Value and has a static method getValue that returns 'B'.
+  java.lang.Double.class is an (incorrect) implementation of Double.
+
+- Why????
+  I lie awake at night, sometimes, thinking about that question.
+

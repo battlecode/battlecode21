@@ -1,0 +1,311 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+import java.nio.file.*
+
+sourceCompatibility = 1.8
+
+// Avoid weird configuration-time dependency bugs
+// Fun fact: this line of code single-handedly fixed an error I spent two hours debugging.
+evaluationDependsOnChildren()
+
+if (!project.hasProperty("teamA")) {
+    ext.teamA = "examplefuncsplayer"
+}
+if (!project.hasProperty("teamB")) {
+    ext.teamB = "examplefuncsplayer"
+}
+if (!project.hasProperty("maps")) {
+    ext.maps = "maptest"
+}
+
+if (project.hasProperty("release_version")) {
+    if (!project.property("release_version").startsWith("2021")) {
+        throw new StopExecutionException("release version must start with 2021!")
+    }
+}
+
+configurations {
+    scala
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    scala group: 'org.scala-lang', name: 'scala-library', version: '2.11.7'
+    scala group: 'org.scala-lang', name: 'scala-compiler', version: '2.11.7'
+    scala group: 'org.scala-lang', name: 'scala-reflect', version: '2.11.7'
+}
+
+def serverJar = new File(project(":engine").libsDir, "engine.jar")
+
+task buildMap(type: JavaExec, dependsOn: [':engine:build']) {
+    main = 'battlecode.world.maps.' + project.property('buildMap')
+    classpath = files(serverJar)
+}
+
+task buildMaps(type: JavaExec, dependsOn: [':engine:build']) {
+  main = 'battlecode.world.BuildMaps'
+  classpath = files(serverJar)
+}
+
+task headless(type: JavaExec, dependsOn: [':engine:build', ':example-bots:build']) {
+  main = 'battlecode.server.Main'
+  classpath = files(serverJar) + project(':example-bots').sourceSets.main.output + configurations.scala
+  args = ['-c=-']
+  jvmArgs = [
+    '-Dbc.server.mode=headless',
+    '-Dbc.server.map-path=maps',
+    '-Dbc.server.debug=true',
+    '-Dbc.engine.debug-methods=true',
+    '-Dbc.game.team-a='+project.property('teamA'),
+    '-Dbc.game.team-b='+project.property('teamB'),
+    '-Dbc.game.team-a.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.team-b.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.maps='+project.property('maps'),
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+  ]
+}
+
+task debug(type: JavaExec, dependsOn: [':engine:build', ':example-bots:build']) {
+  main = 'battlecode.server.Main'
+  classpath = files(serverJar) + project(':example-bots').sourceSets.main.output + configurations.scala
+  args = ['-c=-']
+  jvmArgs = [
+    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005',
+    '-Dbc.server.mode=headless',
+    '-Dbc.server.map-path=maps',
+    '-Dbc.server.debug=true',
+    '-Dbc.engine.debug-methods=true',
+    '-Dbc.game.team-a='+project.property('teamA'),
+    '-Dbc.game.team-b='+project.property('teamB'),
+    '-Dbc.game.team-a.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.team-b.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.maps='+project.property('maps'),
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+  ]
+}
+
+task headlessX(type: JavaExec, dependsOn: [':engine:build', ':internal-test-bots:build']) {
+  main = 'battlecode.server.Main'
+  classpath = files(serverJar) + project(':internal-test-bots').sourceSets.main.output + configurations.scala
+  args = ['-c=-']
+  jvmArgs = [
+    '-Dbc.server.mode=headless',
+    '-Dbc.server.map-path=maps',
+    '-Dbc.server.debug=true',
+    '-Dbc.engine.debug-methods=true',
+    '-Dbc.game.team-a='+project.property('teamA'),
+    '-Dbc.game.team-b='+project.property('teamB'),
+    '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.maps='+project.property('maps'),
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+  ]
+}
+
+task debugX(type: JavaExec, dependsOn: [':engine:build', ':internal-test-bots:build']) {
+  main = 'battlecode.server.Main'
+  classpath = files(serverJar) + project(':internal-test-bots').sourceSets.main.output + configurations.scala
+  args = ['-c=-']
+  jvmArgs = [
+    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005',
+    '-Dbc.server.mode=headless',
+    '-Dbc.server.map-path=maps',
+    '-Dbc.server.debug=true',
+    '-Dbc.engine.debug-methods=true',
+    '-Dbc.game.team-a='+project.property('teamA'),
+    '-Dbc.game.team-b='+project.property('teamB'),
+    '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
+    '-Dbc.game.maps='+project.property('maps'),
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+  ]
+}
+
+task run(dependsOn: ['headless']) {}
+
+task runClient {
+  doLast {
+    exec {
+      commandLine 'npm', 'install'
+      workingDir 'client/visualizer'
+    }
+
+    exec {
+      commandLine 'npm', 'run', 'watch'
+      workingDir 'client/visualizer'
+    }
+  }
+}
+
+task release(dependsOn: ['release_main', 'release_docs'])
+
+task release_main(type: Jar, dependsOn: [':engine:build']) {
+  File f_version = new File(project.projectDir, "battlecode_version");
+
+  doFirst {
+    if (!project.hasProperty("release_version"))
+      throw new InvalidUserDataException("Must provide property \"release_version\"")
+
+    Files.write(f_version.toPath(), [project.property("release_version")]);
+  }
+
+  baseName = "battlecode";
+  if (project.hasProperty("release_version"))
+    version = project.property("release_version");
+  destinationDir = project.projectDir;
+
+  FileCollection src = files(f_version);
+  src += zipTree(serverJar);
+
+  from src;
+
+  doLast {
+    Files.delete(f_version.toPath())
+  }
+}
+
+task release_docs(type: Jar, dependsOn: [':engine:javadoc']) {
+  doFirst {
+    if (!project.hasProperty("release_version") || project.property("release_version") == "unspecified")
+      throw new InvalidUserDataException("Must provide property \"release_version\"")
+  }
+
+  baseName = "battlecode-javadoc"
+  if (project.hasProperty("release_version"))
+    version = project.property("release_version");
+  destinationDir = project.projectDir;
+
+  from new File(project(":engine").docsDir, "javadoc")
+}
+
+task release_docs_zip(type: Zip, dependsOn: [':engine:javadoc']) {
+  doFirst {
+    if (!project.hasProperty("release_version") || project.property("release_version") == "unspecified")
+      throw new InvalidUserDataException("Must provide property \"release_version\"")
+  }
+
+  baseName = "battlecode-javadoc"
+  if (project.hasProperty("release_version"))
+    version = project.property("release_version");
+  destinationDir = project.projectDir;
+
+  from new File(project(":engine").docsDir, "javadoc")
+}
+
+task release_sources(type: Jar, dependsOn: classes) {
+  from sourceSets.main.allSource
+}
+
+task prodClient {
+  doLast {
+    exec {
+      commandLine 'npm', 'install'
+      workingDir 'client'
+    }
+    exec {
+      commandLine 'npm', 'run', 'prod-electron'
+      workingDir 'client'
+    }
+  }
+}
+
+task releaseClientWin(type: Zip, dependsOn: ['prodClient']) {
+  from fileTree('client/dist/win-unpacked')
+}
+
+task releaseClientMac(type: Zip, dependsOn: ['prodClient']) {
+  from fileTree('client/dist/mac')
+}
+
+task releaseClientLinux(type: Zip, dependsOn: ['prodClient']) {
+  from fileTree('client/dist/linux-unpacked')
+}
+
+task releaseClientWin32(type: Zip, dependsOn: ['prodClient']) {
+  from fileTree('client/dist/win-ia32-unpacked')
+}
+
+task releaseClientLinux32(type: Zip, dependsOn: ['prodClient']) {
+  from fileTree('client/dist/linux-ia32-unpacked')
+}
+
+
+
+task updateVersion() {
+  new File("frontend/public/version.txt").write(project.findProperty('release_version'))
+}
+
+
+publish.dependsOn(updateVersion)
+publishing {
+  repositories {
+    maven {
+      url = uri("https://maven.pkg.github.com/battlecode/battlecode20")
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("BC20_GITUSERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("BC20_GITKEY")
+      }
+    }
+  }
+
+  publications {
+    server(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact release_main
+      
+      artifact release_docs {
+        classifier 'javadoc'
+      }
+      artifact release_sources {
+        classifier 'sources'
+      }
+    }
+
+    clientWin(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode-client-win'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact releaseClientWin
+    }
+    
+    clientMac(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode-client-mac'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact releaseClientMac
+    }
+
+    clientLinux(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode-client-linux'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact releaseClientLinux
+    }
+
+    clientWin32(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode-client-win-32'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact releaseClientWin32
+    }
+
+    clientLinux32(MavenPublication) {
+      groupId 'org.battlecode'
+      artifactId 'battlecode-client-linux-32'
+      version project.findProperty('release_version') ?: 'NONSENSE'
+
+      artifact releaseClientLinux32
+    }
+  }
+}

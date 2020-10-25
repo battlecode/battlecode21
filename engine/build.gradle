@@ -1,0 +1,83 @@
+
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+  main {
+    java.srcDirs = ["src/main"]
+    resources.srcDirs = ["src/main"]
+
+    java.outputDir =  file("$buildDir/classes")
+    output.resourcesDir = "$buildDir/classes"
+  }
+  test {
+    java.srcDirs = ["src/test"]
+    resources.srcDirs = ["src/test"]
+
+    java.outputDir = file("$buildDir/tests")
+    output.resourcesDir = "$buildDir/tests"
+  }
+}
+
+repositories {
+  jcenter()
+  mavenCentral()
+  // Java Spatial Index for RTree
+  maven {url "https://oss.sonatype.org/content/repositories/snapshots/"}
+  maven {url "https://mvnrepository.com/artifact/net.sf.trove4j/trove4j"}
+}
+
+dependencies {
+  compile (
+    [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'],
+    [group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'],
+
+    // normal dependencies
+    [group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'],
+    [group: 'commons-cli', name: 'commons-cli', version: '1.3.1'],
+    [group: 'commons-io', name: 'commons-io', version: '2.4'],
+    [group: 'org.ow2.asm', name: 'asm', version: '5.0.4'],
+    [group: 'org.ow2.asm', name: 'asm-tree', version: '5.0.4'],
+	     
+    // Flatbuffers
+    [group: 'com.github.davidmoten', name: 'flatbuffers-java', version: '1.4.0.1'],
+
+    // Websockets
+    [group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.3.0'],
+
+    // we only use WeakIdentityHashMap which doesn't depend on anything
+    [group: 'org.hibernate', name: 'hibernate-search', version: '3.1.0.GA', transitive: false],
+
+    // Java Spatial Index, RTree indexing
+    [group: 'net.sf.jsi', name: 'jsi', version: '1.1.0-SNAPSHOT'],
+    [group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'],
+
+  )
+
+  // Javadoc manipulation libraries
+  compile files(System.getenv('JAVA_HOME') + '/lib/tools.jar')
+
+  // Testing dependencies
+  testCompile (
+    [group: 'junit', name: 'junit', version: '4.12'],
+    [group: 'org.mockito', name: 'mockito-core', version: '1.10.19'],
+    [group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3']
+  )
+}
+
+jar {
+  from {
+    configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
+
+javadoc {
+  includes = ["**/common/**"]
+  options.windowTitle = "Battlecode 2017"
+  options.classpath = sourceSets.main.compileClasspath as List
+  options.doclet = "com.sun.tools.doclets.standard.Standard"
+  options.taglets = ["battlecode.doc.CostlyMethodTaglet", "battlecode.doc.RobotTypeTaglet"]
+  options.tagletPath = ( sourceSets.main.output.classesDirs as List )+ sourceSets.main.compileClasspath
+}

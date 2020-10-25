@@ -1,85 +1,40 @@
-# snek
+Battlecode Engine
+=================
 
-This repository contains all the code for the Battlecode Python engine.
+If you're a competitor, you don't need to be here.
 
-## Installation and Usage
+Unless you're a hacker.
 
-### Installation
-To install the engine as a local package, run
-```
-$ pip install --user -e .
-```
+Basic Guide to Building
+-----------------------
+Java 1.8 is required. Make sure you have the `JAVA_HOME` environment variable set to the appropriate value for your system.
 
-(Note for mac people: you may need to replace `pip` with `pip3`.) 
+1. `./gradlew build` - to build
+2. `./gradlew javadoc` - to make javadocs
+3. `./gradlew test` - to run tests
 
-The `-e` flag allows you to change the source code and have the changes be automatically reflected without needing to reinstall.
+For Mac, `JAVA_HOME` is probably something similar to `/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home`.
 
-Test it out by trying:
+Basic Guide to the Codebase
+---------------------------
 
-```
-$ python3 run.py examplefuncsplayer examplefuncsplayer
-```
-
-You should see a game between `examplefuncsplayer` and `examplefuncsplayer` being played.
-If your code is in a directory `~/yourcode/coolplayer` then you can run it against examplefuncsplayer using
-
-```
-$ python3 run.py examplefuncsplayer ~/yourcode/coolplayer
-```
-
-If you would like to uninstall, simply run
-```
-$ pip uninstall battlehack20
-```
-
-### Running Interactively
-
-Run
-
-```
-$ python3 -i run.py examplefuncsplayer examplefuncsplayer
-```
-
-This will open an interactive Python shell. There, you can run
-
-```
->>> step()
-```
-
-which advances the game 1 turn. This is very useful for debugging.
-
-
-### Advanced Usage
-
-Interacting directly with the `battlehack20` API will give you more freedom and might make it easier to debug your code. The following is a minimal example of how to do that.
-
-```
-$ python3
->>> import battlehack20 as bh20
->>> code = bh20.CodeContainer.from_directory('./examplefuncsplayer')
->>> game = bh20.Game([code, code], debug=True)
->>> game.turn()
-```
-
-You should see the output:
-```
-[Game info] Turn 1
-[Game info] Queue: {}
-[Game info] Lords: [<ROBOT WHITE HQ WHITE>, <ROBOT BLACK HQ BLACK>]
-[Robot WHITE HQ log] Starting Turn!
-[Robot WHITE HQ log] Team: Team.WHITE
-[Robot WHITE HQ log] Type: RobotType.OVERLORD
-[Robot WHITE HQ log] Bytecode: 4981
-[Robot WHITE HQ log] Spawned unit at: (0, 0)
-[Robot WHITE HQ log] done!
-[Robot WHITE HQ info] Remaining bytecode: 4955
-[Robot BLACK HQ log] Starting Turn!
-[Robot BLACK HQ log] Team: Team.BLACK
-[Robot BLACK HQ log] Type: RobotType.OVERLORD
-[Robot BLACK HQ log] Bytecode: 4981
-[Robot BLACK HQ log] Spawned unit at: (7, 6)
-[Robot BLACK HQ log] done!
-[Robot BLACK HQ info] Remaining bytecode: 4954
-```
-
-If you're curious, this is how the `run.py` script works. Study the source code of `run.py` to figure out how to set up a viewer.
+Inside `src/main/battlecode` you'll find all the important code for the engine:
+* `common`: the simple classes available to all competitors, such as `Direction`, `Team`, and `RobotController`.
+* `world`: the folder that contains most of the gameplay implementation. Here are the most important files:
+  * `GameMap`: information about the game's map.
+  * `GameWorld`: holds the map as well as all the robots on the map, and information about teams (such as team score).
+    The core gameplay code (processing events by visiting signals and keeping track of global team stats) is here.
+  * `InternalRobot`: the class that describes a single Robot and its properties (delays, location, etc.).
+  * `RobotControllerImpl`: this implements `RobotController`. If you're wondering what happens when you call a `RobotController`.
+    method, check the method's implementation here. `RobotControllerImpl` interacts heavily with `GameWorld`.
+  * `XMLMapHandler`: reads the map from the XML file.
+* `world/signal`: the Signals are objects that hold information about events in a game of Battlecode.
+These are serialized and then transferred to the client, which processes these events and performs the
+necessary updates.
+* `analysis`: deprecated code that would be cool to bring back.
+* `doc`: tells Javadocs how to create the documentation. `RobotDoc` is pretty important.
+* `instrumenter`: handles instrumenting player code so that it is isolated, deterministic, and counts bytecodes.
+  * `instrumenter/bytecode`: the actual bytecode-modification code.
+  * `instrumenter/inject`: classes we replace various parts of java.lang with. Also contains RobotMonitor, which counts bytecodes.
+* `server`: contains the main class that starts up the engine.
+* `serial`: contains some information that gets sent to the client as part of every match, such as who won.

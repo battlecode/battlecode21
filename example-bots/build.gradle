@@ -1,0 +1,53 @@
+apply plugin: 'java'
+apply plugin: 'scala'
+
+// You can specify players to release here, or on the command line,
+// with the setting here taking priority. Note that leaving this
+// blank (i.e., an empty string) results in the release of all players.
+// To release no players, set this to 'NONE'.
+// WE DONT SUPPORT THIS ANYMORE
+project.ext.release_players='NONE'
+
+repositories {
+  mavenCentral()
+  maven {url "https://oss.sonatype.org/content/repositories/snapshots/"}
+  jcenter()
+}
+
+sourceSets {
+  main {
+    scala.srcDirs = ["src/main"]
+
+    // output.classesDir = "$buildDir/classes"
+    java.outputDir = file("$buildDir/classes")
+    scala.outputDir = file("$buildDir/classes")
+  }
+  test {
+    scala.srcDirs = ["src/test"]
+
+    // output.classesDir = "$buildDir/tests"
+    java.outputDir = file("$buildDir/tests")
+    scala.outputDir = file("$buildDir/tests")
+  }
+    // main.java.srcDirs += 'src/main/kotlin'
+}
+
+dependencies {
+  compile project(':engine')
+
+  // scala
+  compile group: 'org.scala-lang', name: 'scala-library', version: '2.12.1'
+
+
+
+  // Testing dependencies
+  testCompile 'junit:junit:4.12'
+}
+
+jar {
+  if (project.hasProperty('release_players'))
+    for (String player : project.property('release_players').split(','))
+      include "**/" + player + "/*.class"
+
+  includeEmptyDirs = false
+}
