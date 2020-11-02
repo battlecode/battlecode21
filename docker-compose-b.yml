@@ -25,13 +25,14 @@ services:
       - DJANGO_SETTINGS_MODULE=dev_settings
       - DB_HOST_BC_DEV=db
     # command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && uwsgi --ini uwsgi.ini'
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
+    # command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
+    command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
 
-  db:
-    image: postgres:latest
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=battlecode
-      - POSTGRES_DB=battlecode
-      - POSTGRES_PASSWORD=mysecretpassword
+  # db:
+  #   image: postgres:latest
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - POSTGRES_USER=battlecode
+  #     - POSTGRES_DB=battlecode
+  #     - POSTGRES_PASSWORD=mysecretpassword
