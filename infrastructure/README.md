@@ -16,7 +16,6 @@ In GCloud > IAM > Service accounts:
 In GCloud > Storage:
 - Create new bucket. Call it `bc20-submissions`.
 - Grant permissions to the service account: Storage Legacy Bucket Writer, Storage Object Viewer.
-- Run `gsutil cors set submissions_bucket_cors.json gs://bc20-submissions` to allow the website to access the files.
 
 In GCloud > Compute Engine > Instance templates:
 - Create new instance template.

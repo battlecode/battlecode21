@@ -1,1 +1,0 @@
-[{"method": ["GET", "PUT"], "origin": ["http://localhost:3000", "http://bh2020.battlecode.org", "https://bh2020.battlecode.org"], "responseHeader": ["authorization"]}]

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Print results from file"""
 
 import sys, json, requests
 
