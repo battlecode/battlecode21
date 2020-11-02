@@ -10,10 +10,10 @@ logging.getLogger().setLevel(logging.INFO)
 # Constants, parameters and configurations
 
 GCLOUD_PROJECT_ID        = 'battlecode18'
-GCLOUD_SUB_COMPILE_NAME  = 'bh20-compile-sub'
-GCLOUD_SUB_GAME_NAME     = 'bh20-game-sub'
-GCLOUD_BUCKET_SUBMISSION = 'bh20-submissions'
-GCLOUD_BUCKET_REPLAY     = 'bh20-replays'
+GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
+GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
+GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
+GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
 
 SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
@@ -21,11 +21,11 @@ SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 TIMEOUT_UNZIP   = 30    # Maximum execution time for unzipping submission archive
 TIMEOUT_PULL    = 150   # Maximum execution time for updating distribution
 TIMEOUT_COMPILE = 300   # Maximum execution time for submission compilation
-TIMEOUT_GAME    = 600 # Maximum execution time for game running
+TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 
-GAME_WINNER = 'Team.[White|Black] wins !' #unused
+GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
-API_AUTHENTICATE = 'https://bh2020.battlecode.org/auth/token/'
+API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
 API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
 
@@ -40,7 +40,7 @@ def api_compile_update(submissionid):
     Returns the API link for reporting the compilation status
     submissionid: the ID of the submission
     """
-    return 'https://bh2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
+    return 'https://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
 
 # Game running API specifications
 
@@ -53,4 +53,4 @@ def api_game_update(gametype, gameid):
     gametype: 'scrimmage' or 'tournament'
     gameid: the ID of the game
     """
-    return 'https://bh2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)
+    return 'https://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)

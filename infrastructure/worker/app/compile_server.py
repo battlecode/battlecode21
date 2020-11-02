@@ -45,80 +45,77 @@ def compile_worker(submissionid):
                 |   `-- all compiled .class files
                 `-- player.zip
     """
-    # Do literally nothing except report success
 
-    # client = storage.Client()
-    # bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
+    client = storage.Client()
+    bucket = client.get_bucket(GCLOUD_BUCKET_SUBMISSION)
 
-    # rootdir   = os.path.join('/', 'box')
-    # sourcedir = os.path.join(rootdir, 'src')
-    # builddir  = os.path.join(rootdir, 'build')
-    # classdir  = os.path.join(builddir, 'classes')
-    
-    # try:
-    #     # Obtain compressed archive of the submission
-    #     try:
-    #         os.mkdir(sourcedir)
-    #         with open(os.path.join(rootdir, 'source.zip'), 'wb') as file_obj:
-    #             bucket.get_blob(os.path.join(submissionid, 'source.zip')).download_to_file(file_obj)
-    #     except:
-    #         compile_log_error(submissionid, 'Could not retrieve source file from bucket')
+    rootdir   = os.path.join('/', 'box')
+    sourcedir = os.path.join(rootdir, 'src')
+    builddir  = os.path.join(rootdir, 'build')
+    classdir  = os.path.join(builddir, 'classes')
 
-    #     # Decompress submission archive
-    #     result = util.monitor_command(
-    #         ['unzip', 'source.zip', '-d', sourcedir],
-    #         cwd=rootdir,
-    #         timeout=TIMEOUT_UNZIP)
-    #     if result[0] != 0:
-    #         compile_log_error(submissionid, 'Could not decompress source file')
+    try:
+        # Obtain compressed archive of the submission
+        try:
+            os.mkdir(sourcedir)
+            with open(os.path.join(rootdir, 'source.zip'), 'wb') as file_obj:
+                bucket.get_blob(os.path.join(submissionid, 'source.zip')).download_to_file(file_obj)
+        except:
+            compile_log_error(submissionid, 'Could not retrieve source file from bucket')
 
-    #     # Update distribution
-    #     util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
+        # Decompress submission archive
+        result = util.monitor_command(
+            ['unzip', 'source.zip', '-d', sourcedir],
+            cwd=rootdir,
+            timeout=TIMEOUT_UNZIP)
+        if result[0] != 0:
+            compile_log_error(submissionid, 'Could not decompress source file')
 
-    #     # Execute compilation
-    #     result = util.monitor_command(
-    #         ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
-    #         cwd=rootdir,
-    #         timeout=TIMEOUT_COMPILE)
+        # Update distribution
+        util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
 
-    #     # Only one package allowed per submission
-    #     try:
-    #         packages = os.listdir(classdir)
-    #     except:
-    #         # No classes were generated after compiling
-    #         compile_report_result(submissionid, COMPILE_FAILED)
-    #     else:
-    #         if result[0] == 0 and len(packages) == 1:
-    #             # Compress compiled classes
-    #             result = util.monitor_command(
-    #                 ['zip', '-r', 'player.zip', packages[0]],
-    #                 cwd=classdir,
-    #                 timeout=TIMEOUT_COMPILE)
+        # Execute compilation
+        result = util.monitor_command(
+            ['./gradlew', 'build', '-Psource={}'.format(sourcedir)],
+            cwd=rootdir,
+            timeout=TIMEOUT_COMPILE)
 
-    #             # Send package to bucket for storage
-    #             if result[0] == 0:
-    #                 try:
-    #                     with open(os.path.join(classdir, 'player.zip'), 'rb') as file_obj:
-    #                         bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
-    #                 except:
-    #                     compile_log_error(submissionid, 'Could not send executable to bucket')
-    #                 logging.info('Compilation succeeded')
-    #                 compile_report_result(submissionid, COMPILE_SUCCESS)
-    #             else:
-    #                 compile_log_error(submissionid, 'Could not compress compiled classes')
-    #         else:
-    #             logging.info('Compilation failed')
-    #             compile_report_result(submissionid, COMPILE_FAILED)
-    # finally:
-    #     # Clean up working directory
-    #     try:
-    #         shutil.rmtree(sourcedir)
-    #         os.remove(os.path.join(rootdir, 'source.zip'))
-    #         shutil.rmtree(builddir)
-    #     except:
-    #         logging.warning('Could not clean up compilation directory')
-    
-    compile_report_result(submissionid, COMPILE_SUCCESS)
+        # Only one package allowed per submission
+        try:
+            packages = os.listdir(classdir)
+        except:
+            # No classes were generated after compiling
+            compile_report_result(submissionid, COMPILE_FAILED)
+        else:
+            if result[0] == 0 and len(packages) == 1:
+                # Compress compiled classes
+                result = util.monitor_command(
+                    ['zip', '-r', 'player.zip', packages[0]],
+                    cwd=classdir,
+                    timeout=TIMEOUT_COMPILE)
+
+                # Send package to bucket for storage
+                if result[0] == 0:
+                    try:
+                        with open(os.path.join(classdir, 'player.zip'), 'rb') as file_obj:
+                            bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
+                    except:
+                        compile_log_error(submissionid, 'Could not send executable to bucket')
+                    logging.info('Compilation succeeded')
+                    compile_report_result(submissionid, COMPILE_SUCCESS)
+                else:
+                    compile_log_error(submissionid, 'Could not compress compiled classes')
+            else:
+                logging.info('Compilation failed')
+                compile_report_result(submissionid, COMPILE_FAILED)
+    finally:
+        # Clean up working directory
+        try:
+            shutil.rmtree(sourcedir)
+            os.remove(os.path.join(rootdir, 'source.zip'))
+            shutil.rmtree(builddir)
+        except:
+            logging.warning('Could not clean up compilation directory')
 
 
 if __name__ == '__main__':

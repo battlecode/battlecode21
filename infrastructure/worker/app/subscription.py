@@ -24,7 +24,7 @@ def subscribe(subscription_name, worker, give_up=False):
             if message != None:
                 try:
                     with lock:
-                        client.modify_ack_deadline(subscription_path, [str(message.ack_id)],SUB_ACK_DEADLINE)
+                        client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
                         logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
                     time.sleep(SUB_SLEEP_TIME)
                 except Exception as e:
