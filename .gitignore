@@ -62,5 +62,3 @@ battlecode20-internal-test-bots
 
 test.sh
 backend/dev_settings_real.py
-
-package-lock.json
