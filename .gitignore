@@ -1,0 +1,66 @@
+.DS_Store
+node_modules
+*__pycache__*
+*.pyc
+.vscode/
+venv/
+docker-compose.prod.yml
+
+engine/dist/*
+
+.idea
+
+access.txt
+
+## Frontend
+frontend/build
+
+### Gradle ###
+.gradle
+/build/
+
+### Matches should be ignored
+/matches/
+
+### Java
+*.classpath
+*.project
+*.settings
+bin/
+
+### Client
+client/bc20
+client/visualizer/bc20
+
+### Vim
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg  # comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+# Session
+Session.vim
+Sessionx.vim
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+### Distribution
+temp-dist
+
+### Javadoc
+battlecode-javadoc-*
+
+### test bots
+battlecode20-internal-test-bots
+
+test.sh
+backend/dev_settings_real.py
+
+package-lock.json
