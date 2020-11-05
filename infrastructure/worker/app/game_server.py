@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# This server subscribes to the gcloud scrimmage pub-sub -- basically a queue of scrimmages
+# that need running. It will do its best to accomplish this, and report success or failure
+# to the pubsub and backend.
+
 import subscription, util
 from config import *
 
