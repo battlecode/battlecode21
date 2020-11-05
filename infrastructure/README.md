@@ -1,5 +1,23 @@
 # Infrastructure and docker setup
 
+## Overview
+This folder contains code for four types of servers:
+- The compile servers
+- The game servers
+- The scrimmage servers
+- The tournament servers
+
+Compile and game servers basically read from a google-managed queue; they get
+a list of either source code that needs compiling, or scheduled matches that
+need running. They'll claim a task, run it, update the database accordingly,
+and then remove that task from the queue. These servers can be found in
+`worker > app`. Their behavior is partially specified by values in `config.py`
+(stores urls and aquires system variables) and `util.py` (contains functions
+for interacting with the gcloud pub-sub and getting access tokens from backend)
+
+Scrimmage and Tournament servers schedule matches. They can be found in `matcher`.
+
+
 ## Configurations in Google Cloud
 
 In GCloud > PubSub:
