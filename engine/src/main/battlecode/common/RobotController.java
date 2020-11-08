@@ -439,199 +439,24 @@ public strictfp interface RobotController {
     void buildRobot(RobotType type, Direction dir) throws GameActionException;
 
     // ***********************************
-    // ****** MINER METHODS **************
+    // ****** POLITICIAN METHODS *********
     // ***********************************
 
     /**
-     * Tests whether the robot can mine soup in the given direction.
-     * Checks that the robot is a miner, that it has not yet reached
-     * its soup limit, that the target location is on the map, that
-     * there is soup on the target location, and that there are cooldown
-     * turns remaining.
+     * Runs the "empower" ability of a politician:
+     * Divides all of its conviction evenly among any units within
+     * squared distance < 4; for each friendly unit, increase its conviction
+     * by that amount. For each unfriendly unit, decrease its conviction
+     * by that amount, and, if its conviction becomes negative, it will become
+     * a newly-instantiated unit of the same type but the opposite team.
      *
-     * @param dir the direction to mine
-     * @return whether it is possible to mine soup in the given direction.
+     * This also causes the politician unit to self-destruct and remove itself from the world.
      *
+     * @throws GameActionException if conditions for empowering are not all satisfied
      * @battlecode.doc.costlymethod
      */
-    boolean canMineSoup(Direction dir);
+    void empower() throws GameActionException;
 
-    /**
-     * Mines soup in the given direction. Mines up to GameConstants.SOUP_MINING_RATE,
-     * limited by how much soup the miner can still carry and how much soup exists at
-     * the location.
-     *
-     * @param dir the direction to mine
-     * @throws GameActionException if the conditions of <code>canMineSoup</code>
-     * are all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void mineSoup(Direction dir) throws GameActionException;
-
-    /**
-     * Tests whether the robot can deposit soup in the given direction.
-     * Checks that the robot is a miner, that it is carrying soup, that
-     * the target location is on the map, that there is a refinery (or HQ)
-     * on the target location, and that there are cooldown turns remaining.
-     *
-     * @param dir the direction to deposit soup
-     * @return whether it is possible to deposit soup in the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDepositSoup(Direction dir);
-
-    /**
-     * Deposits soup in the given direction (max up to specified amount).
-     *
-     * @param dir the direction to deposit soup
-     * @param amount the amount of soup to deposit
-     * @throws GameActionException if the conditions of <code>canDepositSoup</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void depositSoup(Direction dir, int amount) throws GameActionException;
-
-    // ***************************************
-    // ********* LANDSCAPER METHODS **********
-    // ***************************************
-
-    /**
-     * Tests whether the robot can dig dirt in the given direction.
-     * Checks that the robot is a landscaper, that it has not yet
-     * reached its dirt limit, that the target location is on the map,
-     * that it is not trying to dig underneath a building (that does
-     * not already have dirt on top of it), and that cooldown turns
-     * are remaining.
-     *
-     * @param dir the direction to dig in
-     * @return whether it is possible to dig dirt from the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDigDirt(Direction dir);
-
-    /**
-     * Digs dirt in the given direction.
-     *
-     * @param dir the direction to dig in
-     * @throws GameActionException if the conditions of <code>canDigDirt</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void digDirt(Direction dir) throws GameActionException;
-
-    /**
-     * Tests whether the robot can deposit dirt in the given direction.
-     * Checks that the robot is a landscaper, that it is carrying at
-     * least 1 unit of dirt, that the target location is on the map,
-     * and that cooldown turns are remaining.
-     *
-     * @param dir the direction to deposit
-     * @return whether it is possible to deposit dirt in the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDepositDirt(Direction dir);
-
-    /**
-     * Deposits 1 unit of dirt in the given direction.
-     *
-     * @param dir the direction to deposit
-     * @throws GameActionException if the conditions of <code>canDepositDirt</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void depositDirt(Direction dir) throws GameActionException;
-
-    // ***************************************
-    // ******* DELIVERY DRONE METHODS ********
-    // ***************************************
-
-    /**
-     * Tests whether a robot is able to pick up a specific unit. Checks
-     * whether this robot is a delivery drone that is not holding anything right
-     * now, whether the robot it is trying to be picked up can be picked up
-     * (and that that robot is not currently held by another drone), that
-     * the robot is within the pickup radius, and that there are cooldown
-     * turns remaining.
-     *
-     * @param id the id of the robot to pick up
-     * @return true if robot with the id can be picked up, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canPickUpUnit(int id);
-
-    /**
-     * Picks up another unit.
-     *
-     * @param id the id of the robot to pick up
-     *
-     * @throws GameActionException if the conditions of <code>canPickUpUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void pickUpUnit(int id) throws GameActionException;
-
-    /**
-     * Tests whether a robot is able to drop a unit in a specified direction.
-     * Checks whether the robot is a drone that is currently holding a unit,
-     * that the target location is unoccupied and on the map, and that
-     * there are cooldown turns remaining.
-     *
-     * @param dir the specified direction
-     * @return true if a robot can be dropped off, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDropUnit(Direction dir);
-
-    /**
-     * Drops the unit that is currently picked up.
-     *
-     * @param dir the direction to drop in
-     *
-     * @throws GameActionException if the conditions of <code>canDropUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void dropUnit(Direction dir) throws GameActionException;
-
-    // ***************************************
-    // ******* NET GUN METHODS ***************
-    // ***************************************
-
-    /**
-     * Tests whether a robot is able to shoot down a specific unit.
-     * Checks whether the robot is a net gun (or HQ), whether the target
-     * robot exists, can be shot and is in the shoot radius, and whether
-     * there are cooldown turns remaining.
-     *
-     * @param id the id of the robot to shoot
-     * @return true if robot with the id can be shot down, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canShootUnit(int id);
-
-    /**
-     * Shoots down another unit.
-     *
-     * @param id the id of the unit to shoot
-     *
-     * @throws GameActionException if the conditions of <code>canShootUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void shootUnit(int id) throws GameActionException;
 
     // ***********************************
     // ****** OTHER ACTION METHODS *******
