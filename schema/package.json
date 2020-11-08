@@ -1,0 +1,30 @@
+{
+  "name": "battlecode-schema",
+  "version": "2017.0.0",
+  "private": "true",
+  "description": "flatbuffers parser for battlecode match files",
+  "main": "ts/index.ts",
+  "scripts": {
+    "test": "true",
+    "build": "flatc --ts -o ts battlecode.fbs && flatc --java -o java battlecode.fbs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/battlecode/battlecode-schema.git"
+  },
+  "keywords": [
+    "battlecode"
+  ],
+  "author": "Teh Devs",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/battlecode/battlecode-schema/issues"
+  },
+  "homepage": "https://github.com/battlecode/battlecode-schema#readme",
+  "dependencies": {
+    "flatbuffers": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/flatbuffers": "^1.9.1"
+  }
+}
