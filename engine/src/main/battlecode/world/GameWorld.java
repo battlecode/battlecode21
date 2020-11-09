@@ -416,13 +416,6 @@ public strictfp class GameWorld {
         }
     }
 
-    /**
-     * Updates the global water level according to an arbitrary function.
-     */
-    public void updateWaterLevel() {
-        this.waterLevel = GameConstants.getWaterLevel(getCurrentRound());
-    }
-
     // ***********************************
     // ****** ROBOT METHODS **************
     // ***********************************
@@ -571,10 +564,6 @@ public strictfp class GameWorld {
             return true;
         });
 
-        // flooding
-        updateWaterLevel();
-        floodfill();
-
         // Check for end of match
         // occurs when time limit reached
         if (timeLimitReached() && gameStats.getWinner() == null)
@@ -588,28 +577,6 @@ public strictfp class GameWorld {
 
         if (gameStats.getWinner() != null)
             running = false;
-    }
-
-    /**
-     * Flood expands from currently flooded locations to immediately
-     *  adjacent locations that are beneath the current water level.
-     */
-    public void floodfill() {
-        ArrayList<MapLocation> floodOrigins = new ArrayList<MapLocation>();
-        for (int idx = 0; idx < this.flooded.length; idx++)
-            if (this.flooded[idx])
-                floodOrigins.add(indexToLocation(idx));
-        for (MapLocation center : floodOrigins) {
-            for (Direction dir : Direction.allDirections()) {
-                MapLocation targetLoc = center.add(dir);
-                if (!this.gameMap.onTheMap(targetLoc))
-                    continue;
-                int idx = locationToIndex(targetLoc);
-                if (flooded[idx] || dirt[idx] >= waterLevel)
-                    continue;
-                setFloodStatus(idx, true);
-            }
-        }
     }
 
     // *********************************
