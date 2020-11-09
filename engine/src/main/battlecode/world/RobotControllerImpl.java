@@ -86,7 +86,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public int getTeamSoup() {
-        return 0;
+        return 0; // TODO: delete
     }
 
     @Override
@@ -133,16 +133,19 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.robot.getLocation();
     }
 
+    // TODO: delete
     @Override
     public int getSoupCarrying() {
         return this.robot.getSoupCarrying();
     }
 
+    // TODO: delete
     @Override
     public int getDirtCarrying() {
         return this.robot.getDirtCarrying();
     }
 
+    // TODO: delete
     @Override
     public boolean isCurrentlyHoldingUnit() {
         return this.robot.isCurrentlyHoldingUnit();
@@ -252,24 +255,28 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return validSensedRobots.toArray(new RobotInfo[validSensedRobots.size()]);
     }
 
+    // TODO: delete
     @Override
     public int senseSoup(MapLocation loc) throws GameActionException {
         assertCanSenseLocation(loc);
         return this.gameWorld.getSoup(loc);
     }
 
+    // TODO: delete
     @Override
     public int sensePollution(MapLocation loc) throws GameActionException {
         assertCanSenseLocation(loc);
         return this.gameWorld.getPollution(loc);
     }
 
+    // TODO: delete
     @Override
     public int senseElevation(MapLocation loc) throws GameActionException {
         assertCanSenseLocation(loc);
         return this.gameWorld.getDirt(loc);
     }
 
+    // TODO: delete
     @Override
     public boolean senseFlooding(MapLocation loc) throws GameActionException {
         assertCanSenseLocation(loc);
@@ -333,11 +340,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (isLocationOccupied(loc))
             throw new GameActionException(CANT_MOVE_THERE,
                     "Cannot move to an occupied location; " + loc + " is occupied.");
-        // if (gameWorld.getDirtDifference(getLocation(), loc) > GameConstants.MAX_DIRT_DIFFERENCE && !getType().canFly())
-        //     throw new GameActionException(CANT_DO_THAT,
-        //             "Robot is of type " + getType() + " which cannot fly, and the dirt difference to " + loc + " is " +
-        //             gameWorld.getDirtDifference(getLocation(), loc) + " which is higher than the limit of " +
-        //             GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units.");
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
@@ -357,12 +359,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; }
     }
 
+    // TODO: update this method
     @Override
     public void move(Direction dir) throws GameActionException {
         assertNotNull(dir);
         MapLocation center = adjacentLocation(dir);
-        assertNotNull(center);
-        assertIsReady();
         assertCanMove(center);
         // now check if the location is flooded and the robot can't fly
         if (gameWorld.isFlooded(center) && !getType().canFly()) {
@@ -389,6 +390,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
+        // TODO: replace with general resource check
         // if (gameWorld.getTeamInfo().getSoup(getTeam()) < type.cost)
         //     throw new GameActionException(NOT_ENOUGH_RESOURCE,
         //             "Not enough refined soup to build a robot of type" + type + ".");
@@ -398,15 +400,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (isLocationOccupied(spawnLoc))
             throw new GameActionException(CANT_MOVE_THERE,
                     "Cannot spawn to an occupied location; " + spawnLoc + " is occupied.");
-        if (gameWorld.isFlooded(spawnLoc) && type != RobotType.DELIVERY_DRONE)
-            throw new GameActionException(CANT_DO_THAT,
-                    "Can only spawn delivery drones to flooded locations; " + spawnLoc + " is flooded but " + type + " is not a delivery drone.");
-        // if (type != RobotType.DELIVERY_DRONE && gameWorld.getDirtDifference(getLocation(), spawnLoc) > GameConstants.MAX_DIRT_DIFFERENCE)
-        //     throw new GameActionException(CANT_DO_THAT,
-        //             "Can only spawn delivery drones to locations with high dirt difference; " +
-        //             "the dirt difference to " + spawnLoc + " is " +
-        //                 gameWorld.getDirtDifference(getLocation(), spawnLoc) + " which is higher than the limit of " +
-        //                 GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units like " + type + ".");
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
@@ -424,6 +417,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public void buildRobot(RobotType type, Direction dir) throws GameActionException {
+        assertNotNull(type);
         assertNotNull(dir);
         assertCanBuildRobot(type, dir);
 
