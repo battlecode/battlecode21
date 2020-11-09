@@ -238,7 +238,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return validSensedRobots.toArray(new RobotInfo[validSensedRobots.size()]);
     }
 
-    // TODO: delete
     @Override
     public MapLocation adjacentLocation(Direction dir) {
         return getLocation().add(dir);
