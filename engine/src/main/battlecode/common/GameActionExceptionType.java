@@ -6,7 +6,7 @@ package battlecode.common;
 public enum GameActionExceptionType {
 
     /**
-     * Internal error in the GameWorld engine.	 This is bad.
+     * Internal error in the GameWorld engine. This is bad.
      */
     INTERNAL_ERROR,
     /**
@@ -35,10 +35,6 @@ public enum GameActionExceptionType {
      * Indicates when a robot tries to perform an action it can't.
      */
     CANT_DO_THAT,
-    /**
-     * Indicates when a robot tries to pick up a unit but can't.
-     */
-    CANT_PICK_UP_UNIT,
     /**
      * Indicates when a robot tries to perform an action on another robot, but there is
      * no suitable robot there.

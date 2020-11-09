@@ -72,7 +72,6 @@ public class RobotInfo {
         if (team != robotInfo.team) return false;
         if (type != robotInfo.type) return false;
         return location.equals(robotInfo.location);
-
     }
 
     @Override
