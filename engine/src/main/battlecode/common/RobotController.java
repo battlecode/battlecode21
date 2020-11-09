@@ -104,6 +104,40 @@ public strictfp interface RobotController {
     MapLocation getLocation();
 
     /**
+<<<<<<< HEAD
+=======
+     * Returns the amount of crude soup this robot is carrying. Can be
+     * called on either a miner or refinery (or HQ).
+     *
+     * @return the amount of crude soup this robot is carrying.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getSoupCarrying();
+
+    /**
+     * Returns the amount of dirt this robot is carrying. If the robot is
+     * a landscaper, this is the amount of dirt the robot is carrying. If the
+     * robot is a building, this is the amount of dirt that is on top of
+     * the building.
+     *
+     * @return the amount of dirt this robot is carrying.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getDirtCarrying();
+
+    /**
+     * Returns whether the robot is currently holding a unit (for delivery drones).
+     *
+     * @return true if the robot is currently holding another unit, false otherwise
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean isCurrentlyHoldingUnit();
+
+    /**
+>>>>>>> Removed pollution constants
      * Returns the robot's sensor radius squared.
      *
      * @return an int, the current sensor radius squared
