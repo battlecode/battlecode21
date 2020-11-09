@@ -333,11 +333,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (isLocationOccupied(loc))
             throw new GameActionException(CANT_MOVE_THERE,
                     "Cannot move to an occupied location; " + loc + " is occupied.");
-        if (gameWorld.getDirtDifference(getLocation(), loc) > GameConstants.MAX_DIRT_DIFFERENCE && !getType().canFly())
-            throw new GameActionException(CANT_DO_THAT,
-                    "Robot is of type " + getType() + " which cannot fly, and the dirt difference to " + loc + " is " +
-                    gameWorld.getDirtDifference(getLocation(), loc) + " which is higher than the limit of " +
-                    GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units.");
+        // if (gameWorld.getDirtDifference(getLocation(), loc) > GameConstants.MAX_DIRT_DIFFERENCE && !getType().canFly())
+        //     throw new GameActionException(CANT_DO_THAT,
+        //             "Robot is of type " + getType() + " which cannot fly, and the dirt difference to " + loc + " is " +
+        //             gameWorld.getDirtDifference(getLocation(), loc) + " which is higher than the limit of " +
+        //             GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units.");
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
@@ -401,12 +401,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (gameWorld.isFlooded(spawnLoc) && type != RobotType.DELIVERY_DRONE)
             throw new GameActionException(CANT_DO_THAT,
                     "Can only spawn delivery drones to flooded locations; " + spawnLoc + " is flooded but " + type + " is not a delivery drone.");
-        if (type != RobotType.DELIVERY_DRONE && gameWorld.getDirtDifference(getLocation(), spawnLoc) > GameConstants.MAX_DIRT_DIFFERENCE)
-            throw new GameActionException(CANT_DO_THAT,
-                    "Can only spawn delivery drones to locations with high dirt difference; " +
-                    "the dirt difference to " + spawnLoc + " is " +
-                        gameWorld.getDirtDifference(getLocation(), spawnLoc) + " which is higher than the limit of " +
-                        GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units like " + type + ".");
+        // if (type != RobotType.DELIVERY_DRONE && gameWorld.getDirtDifference(getLocation(), spawnLoc) > GameConstants.MAX_DIRT_DIFFERENCE)
+        //     throw new GameActionException(CANT_DO_THAT,
+        //             "Can only spawn delivery drones to locations with high dirt difference; " +
+        //             "the dirt difference to " + spawnLoc + " is " +
+        //                 gameWorld.getDirtDifference(getLocation(), spawnLoc) + " which is higher than the limit of " +
+        //                 GameConstants.MAX_DIRT_DIFFERENCE + " for non-flying units like " + type + ".");
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
