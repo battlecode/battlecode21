@@ -44,9 +44,6 @@ public class MapBuilder {
         this.dirtArray = new int[width*height];
     }
 
-
-
-
     // ********************
     // BASIC METHODS
     // ********************
@@ -191,62 +188,6 @@ public class MapBuilder {
         this.dirtArray[locationToIndex(symmetricX(x), symmetricY(y))] = value;
     }
 
-
-//    public void addRectangleDirt(int xl, int yb, int xr, int yt, int v) {
-//        for (int i = xl; i < xr+1; i++) {
-//            for (int j = yb; j < yt+1; j++) {
-//                setSymmetricDirt(i, j, v);
-//            }
-//        }
-//    }
-//
-//    public void addRectangleWater(int xl, int yb, int xr, int yt, int v) {
-//        for (int i = xl; i < xr+1; i++) {
-//            for (int j = yb; j < yt+1; j++) {
-//                setSymmetricWater(i, j, true);
-//                setSymmetricDirt(i,j, v);
-//            }
-//        }
-//        setSymmetricDirt((xl + xr)/2, (yb + yt)/2, Integer.MIN_VALUE);
-//    }
-//    public void addRectangleSoup(int xl, int yb, int xr, int yt, int v) {
-//        for (int i = xl; i < xr+1; i++) {
-//            for (int j = yb; j < yt+1; j++) {
-//                setSymmetricSoup(i, j, v);
-//            }
-//        }
-//    }
-//
-//
-//    /*
-//     * Add a nice circular lake centered at (x,y).
-//     */
-//    public static void addSoup(int x, int y, int r2, int v) {
-//        for (int xx = 0; xx < width; xx++) {
-//            for (int yy = 0; yy < height; yy++) {
-//                int d = (xx-x)*(xx-x)/2 + (yy-y)*(yy-y);
-//                if (d <= r2) {
-//                    setSymmetricSoup(xx, yy, v*(d+v));
-//                }
-//            }
-//        }
-//    }
-//
-//    /*
-//     * Add a nice circular lake centered at (x,y).
-//     */
-//    public static void addLake(int x, int y, int r2, int v) {
-//        for (int xx = 0; xx < width; xx++) {
-//            for (int yy = 0; yy < height; yy++) {
-//                int d = (xx-x)*(xx-x) + (yy-y)*(yy-y);
-//                if (d <= r2) {
-//                    setSymmetricWater(xx, yy, true);
-//                    setSymmetricDirt(xx, yy, v);
-//                }
-//            }
-//        }
-//    }
-
     // ********************
     // INFORMATION
     // ********************
@@ -379,26 +320,12 @@ public class MapBuilder {
                     throw new RuntimeException("Corresponding cows must have IDs that are the same / 2.");
             }
         }
-
-
-        // check if there is a -inf water tile
-        // note: we don't want to use Integer.MIN_VALUE because we then risk underflow
-        // we can never build higher than this
-        // A good option is Integer.MIN_VALUE / 2.
-        int impossibleHeight = 10000000;
-        boolean hasMinInfWater = false;
-        for (int x = 0; x < width; x++)
-            for (int y=0; y < height; y++)
-                if (waterArray[locationToIndex(x,y)] && dirtArray[locationToIndex(x,y)] == GameConstants.MIN_WATER_ELEVATION) {
-                    hasMinInfWater = true;
-                }
-        if (!hasMinInfWater)
-            throw new RuntimeException("Every map is required to have a water tile with elevation GameConstants.MIN_WATER_ELEVATION. This map does not have that.");
-
     }
+
     public boolean onTheMap(MapLocation loc) {
         return loc.x >= 0 && loc.y >= 0 && loc.x < width && loc.y < height;
     }
+
     public MapLocation indexToLocation(int idx) {
         return new MapLocation(idx % this.width,
                                idx / this.width);
