@@ -105,6 +105,7 @@ public strictfp interface RobotController {
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
      * Returns the amount of crude soup this robot is carrying. Can be
      * called on either a miner or refinery (or HQ).
@@ -138,6 +139,8 @@ public strictfp interface RobotController {
 
     /**
 >>>>>>> Removed pollution constants
+=======
+>>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
      * Returns the robot's sensor radius squared.
      *
      * @return an int, the current sensor radius squared
@@ -283,6 +286,7 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
+<<<<<<< HEAD
      * Given a location, returns the amount of swamping on that location, as a double.
      *
      * @param loc the given location
@@ -296,6 +300,8 @@ public strictfp interface RobotController {
     double senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
+=======
+>>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
      * Returns the location adjacent to current location in the given direction.
      *
      * @param dir the given direction
@@ -400,6 +406,7 @@ public strictfp interface RobotController {
     void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException;
 
     // ***********************************
+<<<<<<< HEAD
     // ****** POLITICIAN METHODS ********* 
     // ***********************************
 
@@ -572,6 +579,8 @@ public strictfp interface RobotController {
      */
     int[] getFlag(MapLocation loc) throws GameActionException;
     // ***********************************
+=======
+>>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
     // ****** OTHER ACTION METHODS *******
     // ***********************************
 
