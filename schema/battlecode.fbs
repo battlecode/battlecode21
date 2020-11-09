@@ -24,28 +24,16 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// The hq produces miners, is also a net gun and a refinery.
-    HQ,
-    /// Miners extract crude soup and bring it to the refineries.
-    MINER,
-    /// Refineries turn crude soup into refined soup, and produce pollution.
-    REFINERY,
-    /// Vaporators reduce pollution.
-    VAPORATOR,
-    /// Design schools create landscapers.
-    DESIGN_SCHOOL,
-    /// Fulfillment centers create drones.
-    FULFILLMENT_CENTER,
-    /// Landscapers take dirt from adjacent (decreasing the elevation)
-    /// squares or deposit dirt onto adjacent squares, including
-    /// into water (increasing the elevation).
-    LANDSCAPER,
-    /// Drones pick up any unit and drop them somewhere else.
-    DELIVERY_DRONE,
-    /// Net guns shoot down drones.
-    NET_GUN,
-    /// Cows produce pollution.
-    COW
+    /// Enlightenment centers produce politicians, scandals and muckrakers and place bets
+    ///can be neutral until captured
+    ENLIGHTENMENT_CENTER,
+    /// politicians use their influence to self destruct and capture other units
+    POLITICIAN,
+    /// scandals generate passive influence for the enlightenment center that created them
+    /// they turn into politicians at some point, and can only be identified by muckrakers.
+    SCANDAL,
+    /// have the ability to identify scandals
+    MUCKRAKER,
 }
 
 /// A list of new bodies to be placed on the map.
@@ -64,18 +52,6 @@ table SpawnedBodyTable {
     locs: VecTable;
 }
 
-/// A table of pollution effects
-/// The pollution effect at a location is (global pollution + all additive effects) * all multiplicative effects
-table LocalPollutionTable {
-    /// The origin and radius of the circle defining the pollution effect.
-    locations: VecTable;
-    radiiSquared: [int];
-    /// The additive amount of the pollution effect.
-    additiveEffects: [int];
-    /// The multiplicative coefficient.
-    multiplicativeEffects: [float];
-}
-
 /// The map a round is played on.
 table GameMap {
     /// The name of a map.
@@ -88,16 +64,8 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// The dirt levels.
-    dirt: [int];
-    /// The water levels (above dirt).
-    water: [bool];
-    /// The pollution levels.
-    pollution: [int];
-    /// The amount of crude soup to be mined.
-    soup: [int];
-    /// The initial water level.
-    initialWater: int;
+    /// Whether locations are passable
+    passable: [boolean];
 }
 
 /// Actions that can be performed.
@@ -107,45 +75,42 @@ table GameMap {
 /// Actions may have 'targets', which are the units on which
 /// the actions were performed.
 enum Action : byte {
-    /// Mines a unit of soup (miners).
-    /// Target: location.
-    MINE_SOUP,
-    /// Deposits a unit of soup (miners).
-    /// Target: refinery.
-    DEPOSIT_SOUP,
-    /// Refines a unit of soup (refinery).
-    /// Target: none.
-    REFINE_SOUP,
-    /// Digs a unit of dirt (landscapers).
-    /// Target: location.
-    DIG_DIRT,
-    /// Deposits a unit of dirt (landscapers).
-    /// Target: location.
-    DEPOSIT_DIRT,
-    /// Picks up a unit (drones).
-    /// Target: unit picked up.
-    PICK_UNIT,
-    /// Drops off a unit (drones).
-    /// Target: unit dropped off.
-    DROP_UNIT,
-    /// Builds a unit.
+    /// politicians self-destruct and affect nearby bodies
+    /// Target: none
+    EMPOWER,
+    /// scandals turn into politicians.
+    /// Target: self.
+    CAMOUFLAGE,
+    /// slanders are alowed to TODO.
+    /// Target: TODO.
+    EMBEZZLE,
+    /// Muckrakers can expose a scandal.
+    /// Target: an enemy body.
+    EXPOSE,
+    /// units can change their flag.
+    /// Target: self.
+    SET_FLAG,
+    /// units can get the flag of another unit
+    /// Target: another unit.
+    GET_FLAG,
+    /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
-    /// Shoots a drone.
-    /// Target: drone shot.
-    SHOOT,
-    /// Dies from drowning.
-    /// Target: none.
+    /// places a bet (enlightent center).
+    /// Target: bet placed
+    PLACE_BET,
+    /// Dies by moving into a swamp.
+    /// Target: drowning robot.
     DIE_DROWN,
-    /// Dies from being shot (drones).
-    /// Target: drone.
-    DIE_SHOT,
-    /// Dies due to having too much dirt on top (buildings).
-    /// Target: landscaper
-    DIE_TOO_MUCH_DIRT,
-    /// Dies from suicide.
+    /// Dies for having zero influence.
+    /// Target: a politician, scandal or Muckrakers.
+    DIE_ZERO_INFLUENCE,
+    /// a robot can change team after being empowered
+    /// Target: self
+    CHANGE_TEAM,
+    /// an enlightenment center can become neutral if lost all its influence
     /// Target: none.
-    DIE_SUICIDE,
+    BECOME_NEUTRAL,
     /// Dies due to an uncaught exception
     /// Target: none
     DIE_EXCEPTION
