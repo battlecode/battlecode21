@@ -490,15 +490,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
      */
     @Override
     public void mineSoup(Direction dir) throws GameActionException {
-        assertNotNull(dir);
-        assertCanMineSoup(dir);
-        this.robot.addCooldownTurns();
-        MapLocation mineLoc = adjacentLocation(dir);
-        int soupMined = Math.min(GameConstants.SOUP_MINING_RATE, Math.min(gameWorld.getSoup(mineLoc), getType().soupLimit - getSoupCarrying()));;
-        this.gameWorld.removeSoup(adjacentLocation(dir), soupMined);
-        this.robot.addSoupCarrying(soupMined);
-
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.MINE_SOUP, -1);
+        // TODO: for all of these methods, assert conditions like not null, can do action
+        // then carry out the action, making sure to update information in the world
+        // also make sure to add cooldown turns (robot.addCooldownTurns())
     }
 
     /**

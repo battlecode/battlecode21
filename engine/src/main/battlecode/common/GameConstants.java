@@ -41,19 +41,6 @@ public class GameConstants {
     public static final int MAX_ROBOT_ID = 32000;
 
     // *********************************
-    // ****** SOUP *********************
-    // *********************************
-
-    /** The initial amount of soup each team starts off with. */
-    public static final int INITIAL_SOUP = 200;
-
-    /** The amount of soup each team receives per turn. */
-    public static final int BASE_INCOME_PER_ROUND = 1;
-
-    /** The amount of soup that a miner gets when performing one mine action. */
-    public static final int SOUP_MINING_RATE = 7;
-
-    // *********************************
     // ****** POLLUTION ****************
     // *********************************
 
