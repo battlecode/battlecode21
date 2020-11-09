@@ -12,16 +12,17 @@ For a nice interface to test the backend, go to `localhost:8000/docs/`.
 
 #### Virtual Environment
 
-Create a virtual environment by following the instructions below.
+Open a terminal, and `cd` into this directory. Create a virtual environment by following the instructions below.
 
 - `pip3 install virtualenv` (or `pip` if your default Python installation is 3)
 - `virtualenv venv -p python3`
-- `source venv/bin/activate`
+- `source venv/bin/activate` (or if this doesn't work, `source venv/Scripts/activate`)
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
-It would be good, sometime, to fix `psycopg2` at 2.7.7. Unfortunately, deploy seems to fail. But, this would prevents a bug, in which `psycopg2` requires a working build environmment for the included C code.
-
-If you still have this bug: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
+A couple errors may occur when installing the requirements:
+- Sometimes psycopg2 fails to compile since it needs some prerequisites. You can follow the installation processs [see here](https://www.psycopg.org/docs/install.html#install-from-source). Alternatively, you can use `psycopg2-binary`. Comment out the `psycopg2` line in requirements.txt, run `pip install psycopg2-binary`, then `pip install -r requirements.txt`, then uncomment that line. (It's better to ensure that we use `psycopg2`, rather than the binaries, in production.
+  - (TODO separate the dev requirements from the regular ones
+  - Another potential fix: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
 
 #### Database
 
