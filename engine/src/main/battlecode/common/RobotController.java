@@ -252,7 +252,6 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
@@ -375,7 +374,7 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can empower.
-     * Checks that the robot is a politician, and if there are cooldown
+     * Checks that the robot is a politician, and that there are cooldown
      * turns remaining.
      * 
      * @return whether it is possible to empower on that round.
@@ -411,13 +410,16 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can expose at a given location.
      * Checks that the robot is a muckraker, that the robot is within
-     * sensor radius of the muckraker, and if there are cooldown
+     * sensor radius of the muckraker, and that there are cooldown
      * turns remaining.
      * 
      * Does not check if a slanderer is on the location given.
      * @param loc the location being checked
      * @return whether it is possible to expose on that round at that location. 
      *
+     * If the conditions for exposing are all met but loc does not contain a slanderer,
+     * no Exception is thrown, but the bytecode and cooldown costs are still consumed. 
+     * @throws GameActionException if conditions for exposing are not all satisfied 
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
@@ -490,14 +492,7 @@ public strictfp interface RobotController {
      */
     void bid(int influence) throws GameActionException;
 
-    /** 
-     * Returns the map locations of all locations within detection radius,
-     * that contain a bot, without specifying the bots that are on each location.
-     * @throws GameActionException if conditions for detecting are not satisfied
-     * @battlecode.doc.costlymethod
-     */
-    MapLocation[] detect() throws GameActionException;
- 
+    // TO DO: MUCKRAKER, POLITICIAN, CENTER OF ENLIGHTENMENT, SLANDERER
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
