@@ -23,16 +23,11 @@ A couple errors may occur when installing the requirements:
 - Sometimes psycopg2 fails to compile since it needs some prerequisites. You can follow the installation processs [see here](https://www.psycopg.org/docs/install.html#install-from-source). Alternatively, you can use `psycopg2-binary`. Comment out the `psycopg2` line in requirements.txt, run `pip install psycopg2-binary`, then `pip install -r requirements.txt`, then uncomment that line. (It's better to ensure that we use `psycopg2`, rather than the binaries, in production.
   - (TODO separate the dev requirements from the regular ones
   - Another potential fix: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
+ - uWSGI may fail to build. This is fine -- you don't actually need it to develop locally. Comment it out, run `pip install -r requirements.txt`, and then uncomment it (again so that we can use it in production).
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings_real.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
-
-```
-docker run -p 5432:5432 -e POSTGRES_USER=battlecode -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
-```
-
-To stop or start the database container: `docker stop bc20db` `docker start bc20db`. [Postico](https://eggerapps.at/postico/) and [pgAdmin](https://www.pgadmin.org/) are two useful tools for managing the database.
+Any time you start the backend, there must be a Postgres instance up. (TODO instrs on using the global database)
 
 #### Migrations
 
@@ -49,13 +44,13 @@ This will automatically create a new league with league ID 0. This is something 
 ### Running
 
 Make sure you work in your virtual environment, make sure all packages are up to date, start the database, and set the necessary environment variables (only needed once per terminal session):
+(TODO these exports are annoying to write every time, and also seem non-exhaustive... could we revise how they work?)
 
 ```
 source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-docker start bc20db
-export DJANGO_SETTINGS_MODULE="dev_settings_real"
+export DJANGO_SETTINGS_MODULE="dev_settings"
 export EMAIL_PASS="passwordtobattlecodegmail"
 ```
 
@@ -67,7 +62,7 @@ python manage.py runserver
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
-You can also test with uWSGI (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
 
 ### Testing
 
