@@ -70,8 +70,6 @@ public class MapTestSmall {
             }
         }
 
-        mapBuilder.setSymmetricDirt(2, 2, GameConstants.MIN_WATER_ELEVATION);
         mapBuilder.saveMap(outputDirectory);
-
     }
 }
