@@ -168,11 +168,10 @@ public strictfp class InternalRobot {
     // **********************************
 
     /**
-     * Returns the robot's current sensor radius squared, which is affected
-     * by the current pollution level at the present location.
+     * Returns the robot's sensor radius squared.
      */
-    public int getCurrentSensorRadiusSquared() {
-        return (int) Math.round(this.type.sensorRadiusSquared * GameConstants.getSensorRadiusPollutionCoefficient(this.gameWorld.getPollution(getLocation())));
+    public int getSensorRadiusSquared() {
+        return this.type.sensorRadiusSquared;
     }
 
     /**
@@ -181,7 +180,7 @@ public strictfp class InternalRobot {
      * @param toSense the MapLocation to sense
      */
     public boolean canSenseLocation(MapLocation toSense){
-        return this.location.distanceSquaredTo(toSense) <= getCurrentSensorRadiusSquared();
+        return this.location.distanceSquaredTo(toSense) <= getSensorRadiusSquared();
     }
 
     /**
@@ -190,7 +189,7 @@ public strictfp class InternalRobot {
      * @param radiusSquared the distance squared to sense
      */
     public boolean canSenseRadiusSquared(int radiusSquared) {
-        return radiusSquared <= getCurrentSensorRadiusSquared();
+        return radiusSquared <= getSensorRadiusSquared();
     }
 
     // ******************************************
@@ -208,10 +207,10 @@ public strictfp class InternalRobot {
     }
 
     /**
-     * Resets the action cooldown using the formula cooldown = type_cooldown + pollution_at_location.
+     * Resets the action cooldown.
      */
     public void addCooldownTurns() {
-        setCooldownTurns(this.cooldownTurns + this.type.actionCooldown * GameConstants.getCooldownPollutionCoefficient(this.gameWorld.getPollution(getLocation())));
+        setCooldownTurns(this.cooldownTurns + this.type.actionCooldown);
     }
     
     /**
