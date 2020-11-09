@@ -252,6 +252,14 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
+<<<<<<< HEAD
+=======
+     * Given a location, returns if that location is covered by Martian swamp.
+     *
+     * @param loc the given location
+     * @return whether or not the location is passable as a result of being covered by swamp.
+     *
+>>>>>>> robotcontroller: muckraker detect added
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
@@ -307,9 +315,12 @@ public strictfp interface RobotController {
      * based on the cooldown. Does not check if the location is covered with swamp;
      * bots may choose to enter the swamp.
      *
+<<<<<<< HEAD
      * If a bot enters the swamp then their cooldown is increased,
      * which means that they take more turns for a given action.
      *
+=======
+>>>>>>> robotcontroller: muckraker detect added
      * If a bot enters the swamp then they gain cooldown turns, or 
      * they won't be able to do actions for longer.
      *
@@ -374,7 +385,7 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can empower.
-     * Checks that the robot is a politician, and that there are cooldown
+     * Checks that the robot is a politician, and if there are cooldown
      * turns remaining.
      * 
      * @return whether it is possible to empower on that round.
@@ -410,7 +421,7 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can expose at a given location.
      * Checks that the robot is a muckraker, that the robot is within
-     * sensor radius of the muckraker, and that there are cooldown
+     * sensor radius of the muckraker, and if there are cooldown
      * turns remaining.
      * 
      * Does not check if a slanderer is on the location given.
@@ -438,6 +449,26 @@ public strictfp interface RobotController {
      */
     void expose(MapLocation loc) throws GameActionException;
 
+    /**
+     * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
+     * When you detect you only get the list of occupied MapLocations within a large range, but not
+     * the RobotInfo for the bots on each location occupied.
+     * Checks that the robot is a muckraker, and if there are cooldown
+     * turns remaining.
+     *  
+     * @return whether it is possible to detect on that round at that location.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canDetect(MapLocation loc);
+
+     /** 
+     * Returns the map locations of all locations within detection radius,
+     * that contain a bot, without specifying the bots that are on each location.
+     * @throws GameActionException if conditions for detecting are not satisfied
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detect() throws GameActionException;
 
     /**
      * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
@@ -491,8 +522,7 @@ public strictfp interface RobotController {
      * @return an array of MapLoctions that are occupied within detection radius
      */
     void bid(int influence) throws GameActionException;
-
-    // TO DO: MUCKRAKER, POLITICIAN, CENTER OF ENLIGHTENMENT, SLANDERER
+ 
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
