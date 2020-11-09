@@ -41,26 +41,6 @@ public class GameConstants {
     public static final int MAX_ROBOT_ID = 32000;
 
     // *********************************
-    // ****** POLLUTION ****************
-    // *********************************
-
-    /** The coefficient that the sensor radius squared will be multiplied by, as a function of pollution.
-     * @param pollution the pollution
-     * @return the sensor radius coefficient at the given pollution
-     * */
-    public static float getSensorRadiusPollutionCoefficient(int pollution) {
-        return (float) (1.0 / Math.pow((1.0 + pollution / 4000.0),2));
-    }
-
-    /** The coefficient that the cooldown will be multiplied by, as a function of pollution.
-     * @param pollution the pollution
-     * @return the cooldown coefficient at the given pollution
-     * */
-    public static float getCooldownPollutionCoefficient(int pollution) {
-        return (float) (1.0 + pollution / 2000.0);
-    }
-
-    // *********************************
     // ****** WATER ********************
     // *********************************
 

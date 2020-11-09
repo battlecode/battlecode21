@@ -41,7 +41,6 @@ battlecode/common/RobotController/depositDirt	                    0     true
 battlecode/common/RobotController/depositSoup	                    0     true
 battlecode/common/RobotController/dropUnit                          0     true
 battlecode/common/RobotController/getCooldownTurns                  1     true
-battlecode/common/RobotController/getCurrentSensorRadiusSquared     1     true
 battlecode/common/RobotController/getDirtCarrying	                1     true
 battlecode/common/RobotController/getID                             1     true
 battlecode/common/RobotController/getLocation                       1     true
@@ -52,6 +51,7 @@ battlecode/common/RobotController/getRoundNum                       1     true
 battlecode/common/RobotController/getTeam                           1     true
 battlecode/common/RobotController/getTeamSoup	                    1     true
 battlecode/common/RobotController/getType                           1     true
+battlecode/common/RobotController/getSensorRadiusSquared            1     true
 battlecode/common/RobotController/getSoupCarrying	                1     true
 battlecode/common/RobotController/isCurrentlyHoldingUnit            1     true
 battlecode/common/RobotController/isReady                           1     true
