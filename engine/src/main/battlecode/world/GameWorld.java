@@ -476,7 +476,6 @@ public strictfp class GameWorld {
     public void processBeginningOfRound() {
         // Increment round counter
         currentRound++;
-        this.teamInfo.addSoupIncome(GameConstants.BASE_INCOME_PER_ROUND);
 
         // Process beginning of each robot's round
         objectInfo.eachRobot((robot) -> {
@@ -491,23 +490,10 @@ public strictfp class GameWorld {
         gameStats.setDominationFactor(d);
     }
 
-    /**
-     * Sets the winner if one and only one of the HQ is destroyed.
-     *
-     * @return whether or not a winner was set
-     */
-    public boolean setWinnerIfHQDestroyed() {
-        boolean destroyedA = this.teamInfo.getDestroyedHQ(Team.A);
-        boolean destroyedB = this.teamInfo.getDestroyedHQ(Team.B);
-        if (destroyedA && !destroyedB) {
-            setWinner(Team.B, DominationFactor.HQ_DESTROYED);
-            return true;
-        } else if (destroyedB && !destroyedA) {
-            setWinner(Team.A, DominationFactor.HQ_DESTROYED);
-            return true;
-        }
-        return false;
-    }
+    // Here, we want to have a series of setWinnerIfSomeCondition() methods.
+    // As it sounds, we check some condition, then either call
+    // setWinner(Team.A, DominationFactor.SOME_FACTOR) and return true
+    // or return false
 
     /**
      * Sets the winner if one of the teams has more robots than the other.
@@ -535,8 +521,8 @@ public strictfp class GameWorld {
      */
     public boolean setWinnerIfQuality() {
         int[] netWorths = new int[2];
-        netWorths[0] = this.teamInfo.getSoup(Team.A);
-        netWorths[1] = this.teamInfo.getSoup(Team.B);
+        netWorths[0] = 0; // used to be Team.A's soup
+        netWorths[1] = 0; // used to be Team.B's soup
         for (InternalRobot robot : objectInfo.robotsArray()) {
             if (robot.getTeam() == Team.NEUTRAL) continue;
             netWorths[robot.getTeam().ordinal()] += robot.getType().cost;
@@ -549,22 +535,6 @@ public strictfp class GameWorld {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Sets the winner if one of the teams has more successful broadcasts.
-     *
-     * @return whether or not a winner was set
-     */
-    public boolean setWinnerIfMoreBroadcasts() {
-        if (teamInfo.getBlockchainsSent(Team.A) > teamInfo.getBlockchainsSent(Team.B)) {
-            setWinner(Team.A, DominationFactor.GOSSIP_GIRL);
-        }
-        else if (teamInfo.getBlockchainsSent(Team.A) < teamInfo.getBlockchainsSent(Team.B)) {
-            setWinner(Team.B, DominationFactor.GOSSIP_GIRL);
-        }
-        else return false;
-        return true;
     }
 
     /**
@@ -606,18 +576,14 @@ public strictfp class GameWorld {
         floodfill();
 
         // Check for end of match
-        // occurs when one HQ is destroyed, or time limit reached
-        if ((timeLimitReached() || this.teamInfo.getDestroyedHQ(Team.A) || this.teamInfo.getDestroyedHQ(Team.B)) && gameStats.getWinner() == null)
-            if (!setWinnerIfHQDestroyed())
-                if (!setWinnerIfQuantity())
-                    if (!setWinnerIfQuality())
-                        if (!setWinnerIfMoreBroadcasts())
-                            if (!setWinnerHighestRobotID())
-                                setWinnerArbitrary();
+        // occurs when time limit reached
+        if (timeLimitReached() && gameStats.getWinner() == null)
+            if (!setWinnerIfQuantity())
+                if (!setWinnerIfQuality())
+                    if (!setWinnerHighestRobotID())
+                        setWinnerArbitrary();
 
-        // update the round statistics
-        matchMaker.addTeamSoup(Team.A, teamInfo.getSoup(Team.A));
-        matchMaker.addTeamSoup(Team.B, teamInfo.getSoup(Team.B));
+        // update the round statistics, i.e. add team soup/set global pollution
         matchMaker.setGlobalPollution(this.globalPollution);
 
         if (gameStats.getWinner() != null)
@@ -674,9 +640,6 @@ public strictfp class GameWorld {
         // System.out.println(id);
         InternalRobot robot = objectInfo.getRobotByID(id);
         removeRobot(robot.getLocation());
-        
-        if (robot.getType() == RobotType.HQ)
-            this.teamInfo.destroyHQ(robot.getTeam());
 
         try {
             // if a delivery drone is killed, it drops unit at current location

@@ -86,7 +86,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public int getTeamSoup() {
-        return gameWorld.getTeamInfo().getSoup(getTeam());
+        return 0;
     }
 
     @Override
@@ -389,9 +389,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
-        if (gameWorld.getTeamInfo().getSoup(getTeam()) < type.cost)
-            throw new GameActionException(NOT_ENOUGH_RESOURCE,
-                    "Not enough refined soup to build a robot of type" + type + ".");
+        // if (gameWorld.getTeamInfo().getSoup(getTeam()) < type.cost)
+        //     throw new GameActionException(NOT_ENOUGH_RESOURCE,
+        //             "Not enough refined soup to build a robot of type" + type + ".");
         if (!onTheMap(spawnLoc))
             throw new GameActionException(OUT_OF_RANGE,
                     "Can only spawn to locations on the map; " + spawnLoc + " is not on the map.");
@@ -428,7 +428,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBuildRobot(type, dir);
 
         this.robot.addCooldownTurns();
-        gameWorld.getTeamInfo().adjustSoup(getTeam(), -type.cost);
+        // TODO: replace with using up resource
+        // gameWorld.getTeamInfo().adjustSoup(getTeam(), -type.cost);
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
         getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS);
