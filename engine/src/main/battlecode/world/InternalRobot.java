@@ -279,36 +279,8 @@ public strictfp class InternalRobot {
     }
 
     // TODO: check to update TeamInfo
+    // also just everything else
     public void processEndOfTurn() {
-        // REFINING AND POLLUTION
-        // if can produce pollution, reset it now
-        if (this.type.canAffectPollution()) {
-            this.gameWorld.resetPollutionForRobot(this.ID);
-        }
-        // whether the robot should pollute
-        boolean shouldPollute = false;
-        // If refinery//hq, produces refined soup
-        if (this.type.canRefine() && this.soupCarrying > 0) {
-            int soupProduced = Math.min(this.soupCarrying, this.type.maxSoupProduced);
-            this.soupCarrying -= soupProduced;
-            // this is an action!
-            this.gameWorld.getMatchMaker().addAction(this.ID, Action.REFINE_SOUP, -1);
-            shouldPollute = true;
-        }
-        // If vaporator, produces refined soup always
-        if (this.type == RobotType.VAPORATOR) {
-            shouldPollute = true;
-        }
-        // If cow, always pollute
-        if (this.type == RobotType.COW) {
-            shouldPollute = true;
-        }
-        if (this.type.canAffectPollution() && shouldPollute) {
-            this.gameWorld.addGlobalPollution(this.type.globalPollutionAmount);
-            // now add a local pollution
-            this.gameWorld.addLocalPollution(this.ID, this.getLocation(), this.type.pollutionRadiusSquared, this.type.localPollutionAdditiveEffect, this.type.localPollutionMultiplicativeEffect);
-        }
-
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
         this.roundsAlive++;
