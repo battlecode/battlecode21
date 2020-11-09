@@ -47,6 +47,7 @@ This will automatically create a new league with league ID 0. This is something 
 Make sure you work in your virtual environment, make sure all packages are up to date, start the database, and set the necessary environment variables (only needed once per terminal session):
 (TODO these exports are annoying to write every time, and also seem non-exhaustive... could we revise how they work?)
 (TODO note about reinstalling requirements)
+(TODO i think you have to export the settings module, before migrate.)
 
 ```
 source venv/bin/activate
