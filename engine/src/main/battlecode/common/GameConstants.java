@@ -41,26 +41,6 @@ public class GameConstants {
     public static final int MAX_ROBOT_ID = 32000;
 
     // *********************************
-    // ****** WATER ********************
-    // *********************************
-
-    /** The function determining current water level as a function of the round number.
-     * @param roundNumber the round number
-     * @return the water level at the given round
-     * */
-    public static float getWaterLevel(int roundNumber) {
-        double x = roundNumber;
-        return (float) (Math.exp(0.0028*x-1.38*Math.sin(0.00157*x-1.73)+1.38*Math.sin(-1.73))-1);
-    }
-
-    // *********************************
-    // ****** MOVEMENT *****************
-    // *********************************
-
-    /** The maximum difference between dirt levels that a robot can cross. */
-    public static final int MAX_DIRT_DIFFERENCE = 3;
-
-    // *********************************
     // ****** ATTACKING ****************
     // *********************************
 
