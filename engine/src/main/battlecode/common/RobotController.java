@@ -104,49 +104,10 @@ public strictfp interface RobotController {
     MapLocation getLocation();
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-     * Returns the amount of crude soup this robot is carrying. Can be
-     * called on either a miner or refinery (or HQ).
-     *
-     * @return the amount of crude soup this robot is carrying.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getSoupCarrying();
 
-    /**
-     * Returns the amount of dirt this robot is carrying. If the robot is
-     * a landscaper, this is the amount of dirt the robot is carrying. If the
-     * robot is a building, this is the amount of dirt that is on top of
-     * the building.
-     *
-     * @return the amount of dirt this robot is carrying.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getDirtCarrying();
 
-    /**
-     * Returns whether the robot is currently holding a unit (for delivery drones).
-     *
-     * @return true if the robot is currently holding another unit, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean isCurrentlyHoldingUnit();
-
-    /**
->>>>>>> Removed pollution constants
-=======
->>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
-     * Returns the robot's sensor radius squared.
-=======
      * Returns the robot's current sensor radius squared, which is affected
      * by the current pollution level at the present location.
->>>>>>> robotcontroller: muckraker and politician methods added
      *
      * @return an int, the current sensor radius squared
      *
@@ -291,37 +252,17 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * Given a location, returns the amount of swamping on that location, as a double.
-     *
-     * @param loc the given location
-     * @return the amount of swamping on the location as a double
-     *
-     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
-=======
-     * Given a location, returns if that location is or is not passable due to 
-     * being covered by Martian swamp.
-     *
-     * @param loc the given location
-     * @return whether or not the location is passable as a result of being covered by swamp.
-     *
->>>>>>> robotcontroller: muckraker and politician methods added
+
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
      */
-<<<<<<< HEAD
     double senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
-=======
->>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
-=======
     boolean senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
->>>>>>> robotcontroller: muckraker and politician methods added
      * Returns the location adjacent to current location in the given direction.
      *
      * @param dir the given direction
@@ -366,12 +307,12 @@ public strictfp interface RobotController {
      * is not on the map, if the target location is occupied, and if the robot is not ready
      * based on the cooldown. Does not check if the location is covered with swamp;
      * bots may choose to enter the swamp.
-<<<<<<< HEAD
      *
      * If a bot enters the swamp then their cooldown is increased,
      * which means that they take more turns for a given action.
-=======
->>>>>>> robotcontroller: muckraker and politician methods added
+     *
+     * If a bot enters the swamp then they gain cooldown turns, or 
+     * they won't be able to do actions for longer.
      *
      * @param dir the direction to move in
      * @return true if it is possible to call <code>move</code> without an exception
@@ -386,11 +327,7 @@ public strictfp interface RobotController {
      * @param dir the direction to move in
      * @throws GameActionException if the robot cannot move one step in this
      * direction, such as cooldown being &gt;= 1, the target location being
-<<<<<<< HEAD
      * off the map, or the target destination being occupied by
-=======
-     * off the map, or the target destination being occupied with either
->>>>>>> robotcontroller: muckraker and politician methods added
      * another robot.
      *
      * @battlecode.doc.costlymethod
@@ -404,17 +341,10 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can build a robot of the given type in the
      * given direction. Checks that the robot is of a type that can build bots, 
-<<<<<<< HEAD
      * that the robot can build the desired type, that the target location is 
      * on the map,  that the target location is not occupied, that the robot has 
      * the amount of influence it's trying to spend, and that there are 
      * cooldown turns remaining.
-=======
-     * that the robot can build the desired type, that the target location is on the map,
-     * that the target location is not occupied, that the target location
-     * is not covered in swamp, that the robot has the amount of influence it's trying to spend,
-     * and that there are cooldown turns remaining.
->>>>>>> robotcontroller: muckraker and politician methods added
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -424,11 +354,7 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-<<<<<<< HEAD
     boolean canBuildRobot(RobotType type, Direction dir, int influence);
-=======
-    boolean canBuildRobot(int influence, RobotType type, Direction dir);
->>>>>>> robotcontroller: muckraker and politician methods added
 
     /**
      * Builds a robot of the given type in the given direction.
@@ -441,26 +367,15 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-<<<<<<< HEAD
     void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException;
 
     // ***********************************
-<<<<<<< HEAD
-=======
-    void buildRobot(int influence, RobotType type, Direction dir) throws GameActionException;
-
-    // ***********************************
->>>>>>> robotcontroller: muckraker and politician methods added
     // ****** POLITICIAN METHODS ********* 
     // ***********************************
 
     /**
      * Tests whether the robot can empower.
-<<<<<<< HEAD
      * Checks that the robot is a politician, and if there are cooldown
-=======
-     * Checks that the robot is a politician, and that there are cooldown
->>>>>>> robotcontroller: muckraker and politician methods added
      * turns remaining.
      * 
      * @return whether it is possible to empower on that round.
@@ -471,7 +386,6 @@ public strictfp interface RobotController {
 
     /**
      * Runs the "empower" ability of a politician:
-<<<<<<< HEAD
      * Divides all of its current conviction evenly among any units within the Politician's
      * empower radius; the share received by a unit is at most the Politician's current conviction.
      * 
@@ -480,13 +394,6 @@ public strictfp interface RobotController {
      * If an unfriendly unit's conviction becomes negative, it disappears
      * from the map on the next round, unless it is a Politician, in which case
      * it becomes a Politician of your team.
-=======
-     * Divides all of its conviction evenly among any units within
-     * squared distance < 4. For each friendly unit, increase its conviction
-     * by that amount. For each unfriendly unit, decrease its conviction
-     * by that amount, and, if its conviction becomes negative, it will become
-     * a newly-instantiated unit of the same type but the opposite team.
->>>>>>> robotcontroller: muckraker and politician methods added
      *
      * This also causes the politician unit to self-destruct; 
      * on the next round it will no longer be in the world. 
@@ -504,7 +411,6 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can expose at a given location.
      * Checks that the robot is a muckraker, that the robot is within
-<<<<<<< HEAD
      * sensor radius of the muckraker, and if there are cooldown
      * turns remaining.
      * 
@@ -515,43 +421,25 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
-=======
-     * sensor radius of the muckraker, and that there are cooldown
-     * turns remaining.
-     * 
-     * Does not check if a slanderer is on the location given.
-     * @return whether it is possible to expose on that round at that location.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canExpose(MapLocation  loc);
->>>>>>> robotcontroller: muckraker and politician methods added
 
     /** 
      * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
      * If a slanderer is exposed then on the next round it will no longer be in the world.
      * Aside from this, a successful expose temporarily increases the total conviction 
-<<<<<<< HEAD
      * of all Politicians on the same team by a factor 1.01^(influence) for the next
      * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
      *
      * If the conditions for exposing are all met but loc does not contain a slanderer,
      * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
-=======
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next XX turns
-     *
-     * If the conditions for exposing are all met but loc does not contain a slanderer,
-     * no Exception is thrown, but the bytecode and cooldown costs are still consumed. 
->>>>>>> robotcontroller: muckraker and politician methods added
      * @throws GameActionException if conditions for exposing are not all satisfied 
      * @battlecode.doc.costlymethod
      */
     void expose(MapLocation loc) throws GameActionException;
 
-<<<<<<< HEAD
+
     /**
-     * Tests whether the robot can seek, which is a weaker form of sensing with a larger range.
-     * Seeking only returns a list of occupied MapLocations within a large range, but not
+     * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
+     * When you detect you only get the list of occupied MapLocations within a large range, but not
      * the RobotInfo for the bots on each location occupied.
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
@@ -601,10 +489,15 @@ public strictfp interface RobotController {
      * @return an array of MapLoctions that are occupied within detection radius
      */
     void bid(int influence) throws GameActionException;
-=======
->>>>>>> robotcontroller: muckraker and politician methods added
 
-    // TO DO: MUCKRAKER, POLITICIAN, CENTER OF ENLIGHTENMENT, SLANDERER
+    /** 
+     * Returns the map locations of all locations within detection radius,
+     * that contain a bot, without specifying the bots that are on each location.
+     * @throws GameActionException if conditions for detecting are not satisfied
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detect() throws GameActionException;
+ 
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
@@ -657,9 +550,8 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod  
      */
     int[] getFlag(MapLocation loc) throws GameActionException;
+    
     // ***********************************
-=======
->>>>>>> Deleted unused methods from RobotController and examplefuncsplayer
     // ****** OTHER ACTION METHODS *******
     // ***********************************
 
