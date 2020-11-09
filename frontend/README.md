@@ -42,7 +42,7 @@ For production, build with `npm run build` for the full thing, and `npm run buil
 
 We first need to register the subdomain.
 
-1. Go to [Route 53 on AWS](https://console.aws.amazon.com/route53/home?region=us-east-1#).
+1. Go to [Route 52 on AWS](https://console.aws.amazon.com/route53/home?region=us-east-1#).
 2. Go to the [battlecode.org hosted zone](https://console.aws.amazon.com/route53/v2/hostedzones#ListRecordSets/Z2GXL51TK1J2YK).
 3. Click `Create record` (big orange button), then Simple routing > Define simple record.
 4. Type in the subdomain name (e.g. `2021`), route traffic to the IP address 35.186.192.112 (or whatever the Google Cloud load balancer's IP address is). Leave the record type as A, and the TTL can be whatever.
@@ -59,7 +59,7 @@ We now need to set up a new bucket, and set up the load balancer to point to the
 4. Leave most options at the default setting, but change the access control to "Uniform" from "Fine-grained".
 5. Create the bucket.
 6. Go to the "Permissions" section in the newly created bucket. Click "Add user" and type in `allUsers` with the role "Storage Object Viewer".
-7. Download the `gcloud` command line tool if you haven't done so yet, sign into your account and choose the battlecode account, and run `gsutil web set -m index.html -e index.html gs://battlecode21-frontend` from your terminal. This will make all pages, including error pages, point to the single page React app that we have.
+7. Download the `gcloud` command line tool if you haven't done so yet, sign in to the battlecode account, and run `gsutil web set -m index.html -e index.html gs://battlecode21-frontend` from your terminal. This will make all pages, including error pages, point to the single page React app that we have.
 
 This sets up the bucket. Finally, we need to set up the load balancer to point to the bucket:
 
