@@ -41,21 +41,8 @@ public class GameConstants {
     public static final int MAX_ROBOT_ID = 32000;
 
     // *********************************
-    // ****** ATTACKING ****************
-    // *********************************
-
-    /** The radius that delivery drones can pick up. */
-    public static final int DELIVERY_DRONE_PICKUP_RADIUS_SQUARED = 3;
-
-    /** The radius that net guns can shoot. */
-    public static final int NET_GUN_SHOOT_RADIUS_SQUARED = 15;
-
-    // *********************************
     // ****** COOLDOWNS ****************
     // *********************************
-
-    /** The initial cooldown level. How many turns a newly created robot (that is, excluding the HQ) needs to wait. */
-    public static final int INITIAL_COOLDOWN_TURNS = 10;
 
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******

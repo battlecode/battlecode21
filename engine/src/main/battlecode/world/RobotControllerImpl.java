@@ -432,7 +432,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
         // gameWorld.getTeamInfo().adjustSoup(getTeam(), -type.cost);
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
-        getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS);
+        // TODO: set cooldown based on cost/type/new constant/etc.
+        // getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS);
 
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
@@ -697,11 +698,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         // if (!getRobotByID(id).getType().canBePickedUp())
         //     throw new GameActionException(CANT_PICK_UP_UNIT,
         //             "Cannot pick up any unit of type " + getRobotByID(id).getType() + ".");
-        if (!getRobotByID(id).getLocation().isWithinDistanceSquared(getLocation(), GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED))
-            throw new GameActionException(OUT_OF_RANGE,
-                    "Cannot pick up unit outside pickup radius; unit is " +
-                    getRobotByID(id).getLocation().distanceSquaredTo(getLocation()) +
-                            " squared distance away, but the pickup radius squared is " + GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED);
+        // if (!getRobotByID(id).getLocation().isWithinDistanceSquared(getLocation(), GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED))
+        //     throw new GameActionException(OUT_OF_RANGE,
+        //             "Cannot pick up unit outside pickup radius; unit is " +
+        //             getRobotByID(id).getLocation().distanceSquaredTo(getLocation()) +
+        //                     " squared distance away, but the pickup radius squared is " + GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED);
         // if (getRobotByID(id).isBlocked())
         //     throw new GameActionException(CANT_PICK_UP_UNIT,
         //             "Cannot pick up a unit that is currently picked up by another drone, which " + id + " is.");
@@ -860,11 +861,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Target robot is of type " + targetRobot.getType() + " which cannot be shot.");
 
-        if (!targetRobot.getLocation().isWithinDistanceSquared(getLocation(), GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED))
-            throw new GameActionException(OUT_OF_RANGE,
-                    "Cannot shoot unit outside shooting radius; unit is " +
-                    targetRobot.getLocation().distanceSquaredTo(getLocation()) +
-                            " squared distance away, but the shooting radius squared is " + GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED);
+        // if (!targetRobot.getLocation().isWithinDistanceSquared(getLocation(), GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED))
+        //     throw new GameActionException(OUT_OF_RANGE,
+        //             "Cannot shoot unit outside shooting radius; unit is " +
+        //             targetRobot.getLocation().distanceSquaredTo(getLocation()) +
+        //                     " squared distance away, but the shooting radius squared is " + GameConstants.NET_GUN_SHOOT_RADIUS_SQUARED);
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
