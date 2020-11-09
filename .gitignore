@@ -16,7 +16,7 @@ access.txt
 frontend/build
 
 ### Gradle ###
-.gradle
+.gradle/
 /build/
 
 ### Matches should be ignored
