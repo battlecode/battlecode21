@@ -58,13 +58,6 @@ public strictfp class GameWorld {
     private final RobotControlProvider controlProvider;
     private Random rand;
 
-    // the pool of messages not yet sent
-    private PriorityQueue<Transaction> blockchainQueue;
-    // the messages that have been broadcasted already
-    public ArrayList<ArrayList<Transaction>> blockchain;
-    // associate all transactions with team IDs
-    private HashMap<Transaction, Team> transactionToTeam;
-
     private final GameMaker.MatchMaker matchMaker;
 
     @SuppressWarnings("unchecked")
@@ -91,10 +84,6 @@ public strictfp class GameWorld {
         this.controlProvider = cp;
 
         this.rand = new Random(this.gameMap.getSeed());
-
-        this.blockchainQueue = new PriorityQueue<Transaction>();
-        this.blockchain = new ArrayList<ArrayList<Transaction>>();
-        this.transactionToTeam = new HashMap<Transaction, Team>();
 
         this.matchMaker = matchMaker;
 
@@ -612,9 +601,6 @@ public strictfp class GameWorld {
             return true;
         });
 
-        // process blockchain messages
-        processBlockchain();
-
         // flooding
         updateWaterLevel();
         floodfill();
@@ -677,48 +663,6 @@ public strictfp class GameWorld {
     public int spawnRobot(RobotType type, MapLocation location, Team team){
         int ID = idGenerator.nextID();
         return spawnRobot(ID, type, location, team);
-    }
-
-    // *********************************
-    // ****** BLOCKCHAIN *************** 
-    // *********************************
-
-    /**
-     * Add new transaction to the priority queue of transactions, and also add them
-     * to the matchmaker.
-     * @param transaction The message to add.
-     */
-    public void addTransaction(Transaction transaction) {
-        getMatchMaker().addNewMessage(transaction.getCost(), transaction.getSerializedMessage());
-
-        // add it to the priority queue 
-        blockchainQueue.add(transaction);
-    }
-
-    /**
-     * Associate a transaction with a team.
-     * @param transaction The transaction to add.
-     * @param team The team to associate.
-     */
-    public void associateTransaction(Transaction transaction, Team team) {
-        transactionToTeam.put(transaction, team);
-    }
-
-    private void processBlockchain() {
-        // process messages, take the K first ones!
-        ArrayList<Transaction> block = new ArrayList<Transaction>();
-        for (int i = 0; i < GameConstants.NUMBER_OF_TRANSACTIONS_PER_BLOCK; i++) {
-            if (blockchainQueue.size() <= 0) { break; }
-
-            Transaction transaction = blockchainQueue.poll();
-            // send this to match maker!
-            matchMaker.addBroadcastedMessage(transaction.getCost(), transaction.getSerializedMessage());
-            // also add it to this round's list of messages!
-            block.add(transaction);
-            teamInfo.addBlockchainSent(transactionToTeam.get(transaction));
-        }
-        // add this to the blockchain!
-        blockchain.add(block);
     }
    
     // *********************************

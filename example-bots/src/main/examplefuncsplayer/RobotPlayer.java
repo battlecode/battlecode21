@@ -59,7 +59,6 @@ public strictfp class RobotPlayer {
     }
 
     static void runMiner() throws GameActionException {
-        tryBlockchain();
         tryMove(randomDirection());
         if (tryMove(randomDirection()))
             System.out.println("I moved!");
@@ -206,18 +205,5 @@ public strictfp class RobotPlayer {
             rc.depositSoup(dir, rc.getSoupCarrying());
             return true;
         } else return false;
-    }
-
-
-    static void tryBlockchain() throws GameActionException {
-        if (turnCount < 3) {
-            int[] message = new int[10];
-            for (int i = 0; i < 10; i++) {
-                message[i] = 123;
-            }
-            if (rc.canSubmitTransaction(message, 10))
-                rc.submitTransaction(message, 10);
-        }
-        // System.out.println(rc.getRoundMessages(turnCount-1));
     }
 }

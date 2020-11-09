@@ -36,12 +36,10 @@ battlecode/common/RobotController/canSenseLocation                  5     true
 battlecode/common/RobotController/canSenseRadiusSquared             5     true
 battlecode/common/RobotController/canSenseRobot                     5     true
 battlecode/common/RobotController/canShootUnit                      10    true
-battlecode/common/RobotController/canSubmitTransaction              10     true
 battlecode/common/RobotController/digDirt	       		            0     true
 battlecode/common/RobotController/depositDirt	                    0     true
 battlecode/common/RobotController/depositSoup	                    0     true
 battlecode/common/RobotController/dropUnit                          0     true
-battlecode/common/RobotController/getBlock                          100   true
 battlecode/common/RobotController/getCooldownTurns                  1     true
 battlecode/common/RobotController/getCurrentSensorRadiusSquared     1     true
 battlecode/common/RobotController/getDirtCarrying	                1     true
@@ -73,7 +71,6 @@ battlecode/common/RobotController/senseSoup                         1     true
 battlecode/common/RobotController/setIndicatorDot                   0     true
 battlecode/common/RobotController/setIndicatorLine                  0     true
 battlecode/common/RobotController/shootUnit                         0     true
-battlecode/common/RobotController/submitTransaction                 100   true
 battlecode/common/Team/opponent                                     1     false
 battlecode/common/Team/isPlayer                                     1     false
 java/lang/Math/IEEEremainder            1  false
