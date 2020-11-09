@@ -690,26 +690,26 @@ public final strictfp class RobotControllerImpl implements RobotController {
      * @throws GameActionException
      */
     private void assertCanPickUpUnit(int id) throws GameActionException {
-        if (!getType().canPickUpUnits())
-            throw new GameActionException(CANT_PICK_UP_UNIT,
-                    "Robot is of type " + getType() + " which cannot pick up other units.");
-        if (robot.isCurrentlyHoldingUnit())
-            throw new GameActionException(CANT_PICK_UP_UNIT,
-                    "Robot is already holding a unit; you can't pick up another one!");
+        // if (!getType().canPickUpUnits())
+        //     throw new GameActionException(CANT_PICK_UP_UNIT,
+        //             "Robot is of type " + getType() + " which cannot pick up other units.");
+        // if (robot.isCurrentlyHoldingUnit())
+        //     throw new GameActionException(CANT_PICK_UP_UNIT,
+        //             "Robot is already holding a unit; you can't pick up another one!");
         if (getRobotByID(id) == null)
             throw new GameActionException(NO_ROBOT_THERE,
                     "No unit of ID " + id + " exists! Impossible to pick up nonexistent things.");
-        if (!getRobotByID(id).getType().canBePickedUp())
-            throw new GameActionException(CANT_PICK_UP_UNIT,
-                    "Cannot pick up any unit of type " + getRobotByID(id).getType() + ".");
+        // if (!getRobotByID(id).getType().canBePickedUp())
+        //     throw new GameActionException(CANT_PICK_UP_UNIT,
+        //             "Cannot pick up any unit of type " + getRobotByID(id).getType() + ".");
         if (!getRobotByID(id).getLocation().isWithinDistanceSquared(getLocation(), GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED))
             throw new GameActionException(OUT_OF_RANGE,
                     "Cannot pick up unit outside pickup radius; unit is " +
                     getRobotByID(id).getLocation().distanceSquaredTo(getLocation()) +
                             " squared distance away, but the pickup radius squared is " + GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED);
-        if (getRobotByID(id).isBlocked())
-            throw new GameActionException(CANT_PICK_UP_UNIT,
-                    "Cannot pick up a unit that is currently picked up by another drone, which " + id + " is.");
+        // if (getRobotByID(id).isBlocked())
+        //     throw new GameActionException(CANT_PICK_UP_UNIT,
+        //             "Cannot pick up a unit that is currently picked up by another drone, which " + id + " is.");
         if (!isReady())
             throw new GameActionException(IS_NOT_READY,
                     "Robot is still cooling down! You need to wait before you can perform another action.");
