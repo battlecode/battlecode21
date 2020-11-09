@@ -279,6 +279,7 @@ public strictfp class InternalRobot {
         this.currentBytecodeLimit = getType().bytecodeLimit;
     }
 
+    // TODO: check to update TeamInfo
     public void processEndOfTurn() {
         // REFINING AND POLLUTION
         // if can produce pollution, reset it now
@@ -291,14 +292,12 @@ public strictfp class InternalRobot {
         if (this.type.canRefine() && this.soupCarrying > 0) {
             int soupProduced = Math.min(this.soupCarrying, this.type.maxSoupProduced);
             this.soupCarrying -= soupProduced;
-            this.gameWorld.getTeamInfo().adjustSoup(this.team, soupProduced);
             // this is an action!
             this.gameWorld.getMatchMaker().addAction(this.ID, Action.REFINE_SOUP, -1);
             shouldPollute = true;
         }
         // If vaporator, produces refined soup always
         if (this.type == RobotType.VAPORATOR) {
-            this.gameWorld.getTeamInfo().adjustSoup(this.team, this.type.maxSoupProduced);
             shouldPollute = true;
         }
         // If cow, always pollute
