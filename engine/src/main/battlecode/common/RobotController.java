@@ -645,52 +645,6 @@ public strictfp interface RobotController {
     void resign();
 
     // ***********************************
-    // ****** BLOCKCHAINNNNNNNNNNN *******
-    // ***********************************
-
-    /**
-     * Tests if the robot can submit a transaction
-     * to the blockchain at the indicated cost. Tests if the team has enough soup,
-     * that the provided cost is positive, and that the message doesn't exceed the limit.
-     *
-     * @param message the list of ints to send (at most of GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH many).
-     * @param cost the price that the unit is willing to pay for the message, in soup
-     *
-     * @return whether the transaction can be submitted or not
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canSubmitTransaction(int[] message, int cost);
-
-    /**
-     * Submits a transaction to the transaction pool at the indicated cost.
-     * 
-     * @param message the list of ints to send.
-     * @param cost the price that the unit is willing to pay for the message
-     *
-     * @throws GameActionException if the team does not have enough soup to cover the cost,
-     *  if the message exceeds the allowed limit, or if the cost is negative
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void submitTransaction(int[] message, int cost) throws GameActionException;
-
-
-    /**
-     * Get the block of messages that was approved at a given round.
-     * The block will contain a list of transactions.
-     *
-     * @param roundNumber the round index.
-     * @return an array of Transactions that were accepted into the blockchain
-     *  at the given round, in no particular order.
-     *
-     * @throws GameActionException if the round is not available.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    Transaction[] getBlock(int roundNumber) throws GameActionException;
-
-    // ***********************************
     // ******** DEBUG METHODS ************
     // ***********************************
 
