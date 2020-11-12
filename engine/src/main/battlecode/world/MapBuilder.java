@@ -272,9 +272,9 @@ public class MapBuilder {
                 }
             }
             for (MapLocation HQLoc : HQLocations) {
-                if (waterLevel <= 1 && waterTestArray[locationToIndex(HQLoc.x, HQLoc.y)]) {
-                    throw new RuntimeException("The HQ must not flood at an effective elevation of 1! It currently floods at 0 or 1.");
-                }
+                // if (waterLevel <= 1 && waterTestArray[locationToIndex(HQLoc.x, HQLoc.y)]) {
+                //     throw new RuntimeException("The HQ must not flood at an effective elevation of 1! It currently floods at 0 or 1.");
+                // }
                 if (waterLevel == 5 && !waterTestArray[locationToIndex(HQLoc.x, HQLoc.y)]) {
                     throw new RuntimeException("The HQ must not flood at an effective elevation between 2-5! It currently does not flood at 5.");
                 }
