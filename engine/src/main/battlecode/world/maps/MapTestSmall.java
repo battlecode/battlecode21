@@ -40,8 +40,6 @@ public class MapTestSmall {
         MapBuilder mapBuilder = new MapBuilder(mapName, 32, 32, 30);
         mapBuilder.setWaterLevel(0);
         mapBuilder.addSymmetricHQ(5, 5);
-        mapBuilder.addSymmetricCow(10, 10);
-        mapBuilder.addSymmetricCow(4, 18);
 
         for(int i = 0; i < mapBuilder.width; i++) {
             for (int j = 0; j < mapBuilder.height; j++) {

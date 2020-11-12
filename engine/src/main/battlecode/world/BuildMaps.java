@@ -17,7 +17,7 @@ public class BuildMaps {
      * @param args unused
      */
     public static void main(String[] args) {
-        // ALandDivided.main(args);
+        MapTestSmall.main(args);
     }
 
 }
