@@ -19,16 +19,9 @@ public strictfp class InternalRobot {
     private int currentBytecodeLimit;
     private int bytecodesUsed;
 
-    private int roundsAlive; // WILL NOT INCLUDE ROUNDS BLOCKED WHEN PICKED UP BY DRONE
-    private int soupCarrying; // amount of soup the robot is carrying (miners and refineries)
-    private int dirtCarrying; // amount of dirt the robot is carrying (landscapers and buildings)
-    
+    private int roundsAlive;
+
     private float cooldownTurns;
-
-    private boolean currentlyHoldingUnit;
-    private int idOfUnitCurrentlyHeld;
-
-    private boolean blocked;  // when picked up by a delivery drone
 
     /**
      * Used to avoid recreating the same RobotInfo object over and over.
@@ -55,15 +48,8 @@ public strictfp class InternalRobot {
         this.bytecodesUsed = 0;
 
         this.roundsAlive = 0;
-        this.soupCarrying = 0;
-        this.dirtCarrying = 0;
         
         this.cooldownTurns = 0;
-
-        this.currentlyHoldingUnit = false;
-        this.idOfUnitCurrentlyHeld = -1;
-
-        this.blocked = false;
 
         this.gameWorld = gw;
         this.controller = new RobotControllerImpl(gameWorld, this);
@@ -109,28 +95,8 @@ public strictfp class InternalRobot {
         return roundsAlive;
     }
 
-    public int getSoupCarrying() {
-        return soupCarrying;
-    }
-
-    public int getDirtCarrying() {
-        return dirtCarrying;
-    }
-    
     public float getCooldownTurns() {
         return cooldownTurns;
-    }
-
-    public boolean isCurrentlyHoldingUnit() {
-        return currentlyHoldingUnit;
-    }
-
-    public int getIdOfUnitCurrentlyHeld() {
-        return idOfUnitCurrentlyHeld;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
     }
 
     public RobotInfo getRobotInfo() {
@@ -143,24 +109,6 @@ public strictfp class InternalRobot {
         }
         return this.cachedRobotInfo = new RobotInfo(
                 ID, team, type, location);
-    }
-
-    public void pickUpUnit(int id) {
-        this.currentlyHoldingUnit = true;
-        this.idOfUnitCurrentlyHeld = id;
-    }
-
-    public void dropUnit() {
-        this.currentlyHoldingUnit = false;
-        this.idOfUnitCurrentlyHeld = -1;
-    }
-
-    public void blockUnit() {
-        this.blocked = true;
-    }
-
-    public void unblockUnit() {
-        this.blocked = false;
     }
 
     // **********************************
@@ -222,47 +170,6 @@ public strictfp class InternalRobot {
         this.cooldownTurns = newTurns;
     }
 
-    // ******************************************
-    // ****** SOUP METHODS **********************
-    // ******************************************
-
-    public void addSoupCarrying(int amount) {
-        this.soupCarrying += amount;
-    }
-
-    public void removeSoupCarrying(int amount) {
-        this.soupCarrying = amount > this.soupCarrying ? 0 : this.soupCarrying - amount;
-    }
-
-    // ******************************************
-    // ****** DIRT METHODS **********************
-    // ******************************************
-
-    /**
-     * Adds dirt that the robot is carrying. If the robot is a building
-     *  and adding the amount makes the amount of dirt carried exceed the
-     *  building's dirt limit, then the building is destroyed.
-     * 
-     * @param amount the amount of dirt to add
-     */
-    public void addDirtCarrying(int amount) {
-        this.dirtCarrying += amount;
-        if (getType().isBuilding() && this.dirtCarrying >= getType().dirtLimit)
-            this.gameWorld.destroyRobot(getID());
-    }
-
-    /**
-     * Removes dirt that the robot is carrying.
-     * 
-     * @param amount the amount of dirt to remove
-     * @return the amount of dirt removed
-     */
-    public int removeDirtCarrying(int amount) {
-        int oldDirtCarrying = this.dirtCarrying;
-        this.dirtCarrying = amount > this.dirtCarrying ? 0 : this.dirtCarrying - amount;
-        return oldDirtCarrying - this.dirtCarrying;
-    }
-
     // *********************************
     // ****** GAMEPLAY METHODS *********
     // *********************************
@@ -296,8 +203,6 @@ public strictfp class InternalRobot {
 
     // TODO
     public boolean canExecuteCode() {
-        if (isBlocked())  // for delivery drones
-            return false;
         // if (getHealth() <= 0.0)
         //     return false;
         // if(type.isBuildable())
