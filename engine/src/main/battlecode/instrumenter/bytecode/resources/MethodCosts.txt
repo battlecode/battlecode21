@@ -31,9 +31,12 @@ battlecode/common/RobotController/canSenseRadiusSquared             5     true
 battlecode/common/RobotController/canSenseRobot                     5     true
 battlecode/common/RobotController/getCooldownTurns                  1     true
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 battlecode/common/RobotController/getDirtCarrying	                1     true
 >>>>>>> Removed pollution constants
+=======
+>>>>>>> Updated MethodCosts w.r.t. RobotController
 battlecode/common/RobotController/getID                             1     true
 battlecode/common/RobotController/getLocation                       1     true
 battlecode/common/RobotController/getMapWidth                       1     true
@@ -44,10 +47,13 @@ battlecode/common/RobotController/getTeam                           1     true
 battlecode/common/RobotController/getType                           1     true
 battlecode/common/RobotController/getSensorRadiusSquared            1     true
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 battlecode/common/RobotController/getSoupCarrying	                1     true
 battlecode/common/RobotController/isCurrentlyHoldingUnit            1     true
 >>>>>>> Removed pollution constants
+=======
+>>>>>>> Updated MethodCosts w.r.t. RobotController
 battlecode/common/RobotController/isReady                           1     true
 battlecode/common/RobotController/isLocationOccupied                20    true
 battlecode/common/RobotController/move                              0     true
