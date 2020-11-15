@@ -18,8 +18,8 @@ then
         npm install
 	npm run build
 	cd build
-	gsutil -m rm gs://battlehack21-frontend/**
-	gsutil -m cp -r * gs://battlehack21-frontend
+	gsutil -m rm gs://battlecode21-frontend/**
+	gsutil -m cp -r * gs://battlecode21-frontend
 	cd ..
 elif [ "$1" == "deploynogame" ]
 then
@@ -32,7 +32,7 @@ then
 	cd ..
 elif [ "$1" == "clean" ]
 then
-	gsutil -m rm gs://battlehack21-frontend/**
+	gsutil -m rm gs://battlecode21-frontend/**
 else
 	echo "Unsupported instruction"
 fi
