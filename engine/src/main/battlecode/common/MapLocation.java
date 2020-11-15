@@ -129,10 +129,7 @@ public final strictfp class MapLocation implements Serializable, Comparable<MapL
     public final boolean isAdjacentTo(MapLocation location) {
         int absdx = Math.abs(this.x - location.x);
         int absdy = Math.abs(this.y - location.y);
-        if (absdx <= 1 && absdy <= 1) {
-            return true;
-        }
-        return false;
+        return absdx <= 1 && absdy <= 1;
     }
 
     /**
