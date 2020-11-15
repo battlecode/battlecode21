@@ -26,15 +26,6 @@ public strictfp interface RobotController {
     int getRoundNum();
 
     /**
-     * Returns the team's total soup.
-     *
-     * @return the team's total soup.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getTeamSoup();
-
-    /**
      * Returns the number of robots on your team (including your HQ).
      * If this number ever reaches zero, the opposing team will automatically
      * win by destruction (because your HQ is dead).
@@ -104,45 +95,13 @@ public strictfp interface RobotController {
     MapLocation getLocation();
 
     /**
-     * Returns the amount of crude soup this robot is carrying. Can be
-     * called on either a miner or refinery (or HQ).
-     *
-     * @return the amount of crude soup this robot is carrying.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getSoupCarrying();
-
-    /**
-     * Returns the amount of dirt this robot is carrying. If the robot is
-     * a landscaper, this is the amount of dirt the robot is carrying. If the
-     * robot is a building, this is the amount of dirt that is on top of
-     * the building.
-     *
-     * @return the amount of dirt this robot is carrying.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getDirtCarrying();
-
-    /**
-     * Returns whether the robot is currently holding a unit (for delivery drones).
-     *
-     * @return true if the robot is currently holding another unit, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean isCurrentlyHoldingUnit();
-
-    /**
-     * Returns the robot's current sensor radius squared, which is affected
-     * by the current pollution level at the present location.
+     * Returns the robot's sensor radius squared.
      *
      * @return an int, the current sensor radius squared
      *
      * @battlecode.doc.costlymethod
      */
-     int getCurrentSensorRadiusSquared();
+     int getSensorRadiusSquared();
 
 
     // ***********************************
@@ -281,62 +240,6 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-     * Returns the crude soup count at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @param loc the given location
-     * @return the crude soup count at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @throws GameActionException if robot cannot sense the given location
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int senseSoup(MapLocation loc) throws GameActionException;
-
-    /**
-     * Returns the pollution level at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @param loc the given location
-     * @return the pollution level at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @throws GameActionException if the robot cannot sense the given location
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int sensePollution(MapLocation loc) throws GameActionException;
-
-    /**
-     * Returns the elevation at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @param loc the given location
-     * @return the elevation at a given location, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @throws GameActionException if the robot cannot sense the given location
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int senseElevation(MapLocation loc) throws GameActionException;
-
-    /**
-     * Returns whether or not a given location is flooded, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @param loc the given location
-     * @return whether or not a given location is flooded, if the location is
-     * within the sensor radius of the robot.
-     *
-     * @throws GameActionException if the robot cannot sense the given location
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean senseFlooding(MapLocation loc) throws GameActionException;
-
-    /**
      * Returns the location adjacent to current location in the given direction.
      *
      * @param dir the given direction
@@ -439,201 +342,6 @@ public strictfp interface RobotController {
     void buildRobot(RobotType type, Direction dir) throws GameActionException;
 
     // ***********************************
-    // ****** MINER METHODS **************
-    // ***********************************
-
-    /**
-     * Tests whether the robot can mine soup in the given direction.
-     * Checks that the robot is a miner, that it has not yet reached
-     * its soup limit, that the target location is on the map, that
-     * there is soup on the target location, and that there are cooldown
-     * turns remaining.
-     *
-     * @param dir the direction to mine
-     * @return whether it is possible to mine soup in the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canMineSoup(Direction dir);
-
-    /**
-     * Mines soup in the given direction. Mines up to GameConstants.SOUP_MINING_RATE,
-     * limited by how much soup the miner can still carry and how much soup exists at
-     * the location.
-     *
-     * @param dir the direction to mine
-     * @throws GameActionException if the conditions of <code>canMineSoup</code>
-     * are all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void mineSoup(Direction dir) throws GameActionException;
-
-    /**
-     * Tests whether the robot can deposit soup in the given direction.
-     * Checks that the robot is a miner, that it is carrying soup, that
-     * the target location is on the map, that there is a refinery (or HQ)
-     * on the target location, and that there are cooldown turns remaining.
-     *
-     * @param dir the direction to deposit soup
-     * @return whether it is possible to deposit soup in the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDepositSoup(Direction dir);
-
-    /**
-     * Deposits soup in the given direction (max up to specified amount).
-     *
-     * @param dir the direction to deposit soup
-     * @param amount the amount of soup to deposit
-     * @throws GameActionException if the conditions of <code>canDepositSoup</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void depositSoup(Direction dir, int amount) throws GameActionException;
-
-    // ***************************************
-    // ********* LANDSCAPER METHODS **********
-    // ***************************************
-
-    /**
-     * Tests whether the robot can dig dirt in the given direction.
-     * Checks that the robot is a landscaper, that it has not yet
-     * reached its dirt limit, that the target location is on the map,
-     * that it is not trying to dig underneath a building (that does
-     * not already have dirt on top of it), and that cooldown turns
-     * are remaining.
-     *
-     * @param dir the direction to dig in
-     * @return whether it is possible to dig dirt from the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDigDirt(Direction dir);
-
-    /**
-     * Digs dirt in the given direction.
-     *
-     * @param dir the direction to dig in
-     * @throws GameActionException if the conditions of <code>canDigDirt</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void digDirt(Direction dir) throws GameActionException;
-
-    /**
-     * Tests whether the robot can deposit dirt in the given direction.
-     * Checks that the robot is a landscaper, that it is carrying at
-     * least 1 unit of dirt, that the target location is on the map,
-     * and that cooldown turns are remaining.
-     *
-     * @param dir the direction to deposit
-     * @return whether it is possible to deposit dirt in the given direction.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDepositDirt(Direction dir);
-
-    /**
-     * Deposits 1 unit of dirt in the given direction.
-     *
-     * @param dir the direction to deposit
-     * @throws GameActionException if the conditions of <code>canDepositDirt</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void depositDirt(Direction dir) throws GameActionException;
-
-    // ***************************************
-    // ******* DELIVERY DRONE METHODS ********
-    // ***************************************
-
-    /**
-     * Tests whether a robot is able to pick up a specific unit. Checks
-     * whether this robot is a delivery drone that is not holding anything right
-     * now, whether the robot it is trying to be picked up can be picked up
-     * (and that that robot is not currently held by another drone), that
-     * the robot is within the pickup radius, and that there are cooldown
-     * turns remaining.
-     *
-     * @param id the id of the robot to pick up
-     * @return true if robot with the id can be picked up, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canPickUpUnit(int id);
-
-    /**
-     * Picks up another unit.
-     *
-     * @param id the id of the robot to pick up
-     *
-     * @throws GameActionException if the conditions of <code>canPickUpUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void pickUpUnit(int id) throws GameActionException;
-
-    /**
-     * Tests whether a robot is able to drop a unit in a specified direction.
-     * Checks whether the robot is a drone that is currently holding a unit,
-     * that the target location is unoccupied and on the map, and that
-     * there are cooldown turns remaining.
-     *
-     * @param dir the specified direction
-     * @return true if a robot can be dropped off, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDropUnit(Direction dir);
-
-    /**
-     * Drops the unit that is currently picked up.
-     *
-     * @param dir the direction to drop in
-     *
-     * @throws GameActionException if the conditions of <code>canDropUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void dropUnit(Direction dir) throws GameActionException;
-
-    // ***************************************
-    // ******* NET GUN METHODS ***************
-    // ***************************************
-
-    /**
-     * Tests whether a robot is able to shoot down a specific unit.
-     * Checks whether the robot is a net gun (or HQ), whether the target
-     * robot exists, can be shot and is in the shoot radius, and whether
-     * there are cooldown turns remaining.
-     *
-     * @param id the id of the robot to shoot
-     * @return true if robot with the id can be shot down, false otherwise
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canShootUnit(int id);
-
-    /**
-     * Shoots down another unit.
-     *
-     * @param id the id of the unit to shoot
-     *
-     * @throws GameActionException if the conditions of <code>canShootUnit</code>
-     * are not all satisfied.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void shootUnit(int id) throws GameActionException;
-
-    // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************
 
@@ -643,52 +351,6 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     void resign();
-
-    // ***********************************
-    // ****** BLOCKCHAINNNNNNNNNNN *******
-    // ***********************************
-
-    /**
-     * Tests if the robot can submit a transaction
-     * to the blockchain at the indicated cost. Tests if the team has enough soup,
-     * that the provided cost is positive, and that the message doesn't exceed the limit.
-     *
-     * @param message the list of ints to send (at most of GameConstants.MAX_BLOCKCHAIN_TRANSACTION_LENGTH many).
-     * @param cost the price that the unit is willing to pay for the message, in soup
-     *
-     * @return whether the transaction can be submitted or not
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canSubmitTransaction(int[] message, int cost);
-
-    /**
-     * Submits a transaction to the transaction pool at the indicated cost.
-     * 
-     * @param message the list of ints to send.
-     * @param cost the price that the unit is willing to pay for the message
-     *
-     * @throws GameActionException if the team does not have enough soup to cover the cost,
-     *  if the message exceeds the allowed limit, or if the cost is negative
-     *
-     * @battlecode.doc.costlymethod
-     */
-    void submitTransaction(int[] message, int cost) throws GameActionException;
-
-
-    /**
-     * Get the block of messages that was approved at a given round.
-     * The block will contain a list of transactions.
-     *
-     * @param roundNumber the round index.
-     * @return an array of Transactions that were accepted into the blockchain
-     *  at the given round, in no particular order.
-     *
-     * @throws GameActionException if the round is not available.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    Transaction[] getBlock(int roundNumber) throws GameActionException;
 
     // ***********************************
     // ******** DEBUG METHODS ************
@@ -718,5 +380,4 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     void setIndicatorLine(MapLocation startLoc, MapLocation endLoc, int red, int green, int blue);
-
 }
