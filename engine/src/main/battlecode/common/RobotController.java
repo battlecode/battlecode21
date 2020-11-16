@@ -436,7 +436,7 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canDetect(MapLocation  loc);
+    boolean canExpose(MapLocation  loc);
 
     /** 
      * Returns the map locations of all locations within detection radius,
