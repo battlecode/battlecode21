@@ -2,7 +2,7 @@
   "name": "battlecode-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://bh2020.battlecode.org",
+  "homepage": "https://2021.battlecode.org",
   "devDependencies": {
     "react-scripts": "^3.3.0"
   },
