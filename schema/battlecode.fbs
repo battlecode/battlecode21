@@ -124,28 +124,18 @@ table BodyTypeMetadata {
     type: BodyType;
     /// The spawn source.
     spawnSource: BodyType;
-    /// The cost of the type, in soup.
+    /// The cost of the type, in influence.
     cost: int;
-    /// The maximum amount of dirt the type can carry.
-    dirtLimit: int;
-    /// The maximum amount of soup the type can carry.
-    soupLimit: int;
-    /// The number of cooldowns between every two actions, for pollution 0.
-    actionCooldown: float;
+    /// The current conviction
+    conviction: int;
+    /// The current power, in influence
+    power: int;
+    /// The number of cooldowns between every two actions.
+    actionCooldown: int;
     /// The maximum distance squared this type can sense other robots.
-    sensorRadiusSquared: int;
-    /// The radius squared of local pollution effects.
-    pollutionRadiusSquared: int;
-    /// The amount of pollution created when refining soup locally.
-    localPollutionAdditiveEffect: int;
-    /// The fraction that the local pollution is multiplied by around vaporators.
-    localPollutionMultiplicativeEffect: float;
-    /// The amount of global pollution this type creates.
-    globalPollutionAmount: int;
-    /// The maximum amount of soup this type processes every turn.
-    maxSoupProduced: int;
-    /// The bytecode limit of this type.
-    bytecodeLimit: int;
+    visionRange: int;
+    /// The maximum distance squared this type can affect other robots.
+    actionRange: int;
 }
 
 /// Data relevant to a particular team.
@@ -220,8 +210,8 @@ table MatchFooter {
 table Round {
     /// The IDs of teams in the Game.
     teamIDs: [int];
-    /// The refined soup counts of the teams.
-    teamSoups: [int];
+    /// The bids of the teams.
+    teamBids: [int];
 
     /// The IDs of bodies that moved.
     movedIDs: [int];
@@ -242,34 +232,6 @@ table Round {
     /// The 'targets' of the performed actions. Actions without targets may have
     /// any target (typically 0).
     actionTargets: [int];
-
-    /// The indexes of the locations whose dirt amount changed.
-    dirtChangedLocs: VecTable;
-    /// The amount the dirt changed by.
-    dirtChanges: [int];
-
-    /// The indexes of the locations whose flood situation changed.
-    waterChangedLocs: VecTable;
-
-    /// The global pollution level
-    globalPollution: int;
-    /// The local pollution infos
-    localPollutions: LocalPollutionTable;
-
-    /// The indexes of the locations whose soup amount changed.
-    soupChangedLocs: VecTable;
-    /// The amount the soup changed by.
-    soupChanges: [int];
-
-    /// Costs of new message requests.
-    newMessagesCosts: [int];
-    /// New message requests.
-    newMessages: [string];
-
-    /// Costs of broadcasted messages.
-    broadcastedMessagesCosts: [int];
-    /// Broadcasted messages.
-    broadcastedMessages: [string];
 
     /// The IDs of bodies that set indicator dots
     indicatorDotIDs: [int];
