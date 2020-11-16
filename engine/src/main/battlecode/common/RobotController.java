@@ -550,7 +550,7 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod  
      */
     int[] getFlag(MapLocation loc) throws GameActionException;
-    
+
     // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************
