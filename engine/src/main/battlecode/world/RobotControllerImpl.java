@@ -104,6 +104,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.robot.getSensorRadiusSquared();
     }
 
+    // TODO: update this method!
+    @Override
+    public int getTeamVotes() {
+        return 0;
+    }
+
     // *********************************
     // ****** UNIT QUERY METHODS *******
     // *********************************
@@ -237,6 +243,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return getLocation().add(dir);
     }
 
+    //TODO: update this method!
+    @Override 
+    public boolean senseSwamping(MapLocation loc) {
+        return false;
+    }
+
     // ***********************************
     // ****** READINESS METHODS **********
     // ***********************************
@@ -342,8 +354,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot is still cooling down! You need to wait before you can perform another action.");
     }
 
+    //TODO: update maybe?
     @Override
-    public boolean canBuildRobot(RobotType type, Direction dir) {
+    public boolean canBuildRobot(int influence, RobotType type, Direction dir) {
         try {
             assertNotNull(type);
             assertNotNull(dir);
@@ -352,8 +365,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; }
     }
 
+    //TODO: update maybe?
     @Override
-    public void buildRobot(RobotType type, Direction dir) throws GameActionException {
+    public void buildRobot(int influence, RobotType type, Direction dir) throws GameActionException {
         assertNotNull(type);
         assertNotNull(dir);
         assertCanBuildRobot(type, dir);
@@ -379,6 +393,50 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // also make sure to add cooldown turns (robot.addCooldownTurns())
     // and to properly update information for replays with gameWorld.getMatchMaker().addAction(...)
     // check to make sure we're not double updating the matchmaker (from gameWorld, and here)
+
+    // ***********************************
+    // ****** MUCKRAKER METHODS ********** 
+    // ***********************************
+
+    // TODO: fill this in!
+    @Override
+    public boolean canDetect(MapLocation loc) {
+        return false;
+    }
+
+    // TODO: update this method!
+    @Override
+    public MapLocation[] detect() {
+        return null;
+    }
+
+    // TODO: update this method!
+    @Override
+    public boolean canExpose(MapLocation loc) {
+        return false;
+    }
+
+    // TODO: update this method!
+    @Override
+    public void expose(MapLocation loc) {
+        int a = 0;
+    }
+
+    // ***********************************
+    // ****** POLITICIAN METHODS ********** 
+    // ***********************************
+
+    // TODO: update this method!
+    @Override
+    public boolean canEmpower() {
+        return false;
+    }
+
+    // TODO: update this method!
+    @Override
+    public void empower() {
+        int a = 0;
+    }
 
     // ***********************************
     // ****** OTHER ACTION METHODS *******
