@@ -408,7 +408,8 @@ public strictfp interface RobotController {
      * turns remaining.
      * 
      * Does not check if a slanderer is on the location given.
-     * @return whether it is possible to expose on that round at that location.
+     * @param loc the location being checked
+     * @return whether it is possible to expose on that round at that location. 
      *
      * @battlecode.doc.costlymethod
      */
@@ -418,7 +419,7 @@ public strictfp interface RobotController {
      * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
      * If a slanderer is exposed then on the next round it will no longer be in the world.
      * Aside from this, a successful expose temporarily increases the total conviction 
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EXPOSE_NUM_TURNS </code> turns
+     * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
      *
      * If the conditions for exposing are all met but loc does not contain a slanderer,
      * no Exception is thrown, but the bytecode and cooldown costs are still consumed. 
@@ -438,7 +439,7 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canExpose(MapLocation  loc);
+    boolean canDetect();
 
     /** 
      * Returns the map locations of all locations within detection radius,
