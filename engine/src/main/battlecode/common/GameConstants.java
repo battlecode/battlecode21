@@ -46,6 +46,17 @@ public class GameConstants {
  
 
     // *********************************
+    // ****** GAME MECHANICS ***********
+    // *********************************
+
+    /** Number of turns for which a Slanderer's successful Expose has an effect on its team's Politicians' convictions. */
+    public static final int EXPOSE_NUM_TURNS = 50;
+
+    /** If a Politician runs its Empower method, 
+    the conviction of any units within this radius squared (inclusive) with respect to the Politician's location will be affected. */
+    public static final int EMPOWER_RADIUS_SQUARED = 2;
+
+    // *********************************
     // ****** GAMEPLAY PROPERTIES ******
     // *********************************
 

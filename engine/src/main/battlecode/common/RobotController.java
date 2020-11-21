@@ -104,10 +104,7 @@ public strictfp interface RobotController {
     MapLocation getLocation();
 
     /**
-
-
-     * Returns the robot's current sensor radius squared, which is affected
-     * by the current pollution level at the present location.
+     * Returns the robot's sensor radius squared.
      *
      * @return an int, the current sensor radius squared
      *
@@ -252,21 +249,15 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-<<<<<<< HEAD
-=======
      * Given a location, returns if that location is covered by Martian swamp.
      *
      * @param loc the given location
-     * @return whether or not the location is passable as a result of being covered by swamp.
-     *
->>>>>>> robotcontroller: muckraker detect added
+     * @return whether or not the location is covered by swamp.
+     * If this is the case, robots on this location take more turns for any given action.
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
      */
-    double senseSwamping(MapLocation loc) throws GameActionException;
-  
-    /**
     boolean senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
@@ -315,14 +306,8 @@ public strictfp interface RobotController {
      * based on the cooldown. Does not check if the location is covered with swamp;
      * bots may choose to enter the swamp.
      *
-<<<<<<< HEAD
      * If a bot enters the swamp then their cooldown is increased,
      * which means that they take more turns for a given action.
-     *
-=======
->>>>>>> robotcontroller: muckraker detect added
-     * If a bot enters the swamp then they gain cooldown turns, or 
-     * they won't be able to do actions for longer.
      *
      * @param dir the direction to move in
      * @return true if it is possible to call <code>move</code> without an exception
@@ -351,10 +336,9 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can build a robot of the given type in the
      * given direction. Checks that the robot is of a type that can build bots, 
-     * that the robot can build the desired type, that the target location is 
-     * on the map,  that the target location is not occupied, that the robot has 
-     * the amount of influence it's trying to spend, and that there are 
-     * cooldown turns remaining.
+     * that the robot can build the desired type, that the target location is on the map,
+     * that the target location is not occupied,  that the robot has the amount of influence it's trying to spend,
+     * and that there are cooldown turns remaining.
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -451,11 +435,12 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
-     * When you detect you only get the list of occupied MapLocations within a large range, but not
+     * Detecting only returns a list of occupied MapLocations within a large range, but not
      * the RobotInfo for the bots on each location occupied.
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
-     *  
+     * 
+     * @param loc the location being checked
      * @return whether it is possible to detect on that round at that location.
      *
      * @battlecode.doc.costlymethod
