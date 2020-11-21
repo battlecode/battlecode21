@@ -45,12 +45,23 @@ public class GameConstants {
     // *********************************
 
     // *********************************
+    // ****** GAME MECHANICS ***********
+    // *********************************
+
+    /** Number of turns for which a Slanderer's successful Expose has an effect on its team's Politicians' convictions. */
+    public static final int EXPOSE_NUM_TURNS = 50;
+
+    /** If a Politician runs its Empower method, 
+    the conviction of any units within this radius squared (inclusive) with respect to the Politician's location will be affected. */
+    public static final int EMPOWER_RADIUS_SQUARED = 2;
+
+    // *********************************
     // ****** GAMEPLAY PROPERTIES ******
     // *********************************
 
     /** The default game seed. **/
     public static final int GAME_DEFAULT_SEED = 6370;
 
-    /** The maximum number of rounds in a game. In practice, this is not needed, because the water level at round 10,000 will be huge. **/
+    /** The maximum number of rounds in a game.  **/
     public static final int GAME_MAX_NUMBER_OF_ROUNDS = 10000;
 }
