@@ -65,7 +65,7 @@ table GameMap {
     /// The random seed of the map.
     randomSeed: int;
     /// Whether locations are passable
-    passable: [boolean];
+    passable: [bool];
 }
 
 /// Actions that can be performed.
