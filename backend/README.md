@@ -21,10 +21,11 @@ Open a terminal, and `cd` into this directory. Create a virtual environment by f
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
 A couple errors may occur when installing the requirements:
+
 - Sometimes psycopg2 fails to compile since it needs some prerequisites. You can follow the installation processs [see here](https://www.psycopg.org/docs/install.html#install-from-source). Alternatively, you can use `psycopg2-binary`. Comment out the `psycopg2` line in requirements.txt, run `pip install psycopg2-binary`, then `pip install -r requirements.txt`, then uncomment that line. (It's better to ensure that we use `psycopg2`, rather than the binaries, in production.)
   - (TODO separate the dev requirements from the regular ones
   - Another potential fix: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
- - uWSGI may fail to build. This is fine -- you don't actually need it to develop locally. Comment it out, run `pip install -r requirements.txt`, and then uncomment it (again so that we can use it in production).
+- uWSGI may fail to build. This is fine -- you don't actually need it to develop locally. Comment it out, run `pip install -r requirements.txt`, and then uncomment it (again so that we can use it in production).
 
 #### Database
 
@@ -34,7 +35,7 @@ Any time you start the backend, there must be a Postgres instance up. (TODO inst
 
 Run the following to set up the database:
 
-```
+```python3
 python manage.py migrate
 ```
 
@@ -49,7 +50,7 @@ Make sure you work in your virtual environment, make sure all packages are up to
 (TODO note about reinstalling requirements)
 (TODO i think you have to export the settings module, before migrate.)
 
-```
+```python3
 source venv/bin/activate
 python manage.py migrate
 export DJANGO_SETTINGS_MODULE="dev_settings"
@@ -58,7 +59,7 @@ export EMAIL_PASS="passwordtobattlecodegmail"
 
 Then, start the server:
 
-```
+```python3
 python manage.py runserver
 ```
 
@@ -67,7 +68,8 @@ The backend should now be running on `localhost:8000`. You can open [http://loca
 If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
 
 When you're done, make sure to leave your venv:
-```
+
+```python3
 deactivate
 ```
 
@@ -88,10 +90,9 @@ When installing a new Python package:
 
 Always commit the most recent `requirements.txt`.
 
-
 ## Deployment
 
-#### Steps
+### Steps
 
 1. Push to master.
 2. Go to [Cloud Build Triggers](https://console.cloud.google.com/cloud-build/triggers?project=battlecode18) on Google Cloud.
@@ -103,7 +104,7 @@ Always commit the most recent `requirements.txt`.
 
 This procedure is currently very long and requires too much manual intervention. We should write a script that does all of this for us (which shouldn't be too hard).
 
-#### Setup
+### Setup
 
 A database should be created.
 
