@@ -60,6 +60,7 @@ In GCloud > Compute Engine > Instance templates:
   ```
 - To push docker images to the container registry:
   ```
+  Acquire gcloud-key.json from the developer slack or someone who knows what theyre doing, put it in `worker/app`
   gcloud auth configure-docker # Only needs to be run once to configure settings
   make push
   ```
@@ -74,7 +75,7 @@ In GCloud > Compute Engine > Instance templates:
   - Navigate to `Compute Engine > Instance Templates`
   - Hit Create Instance Template
   - Check `deploy a container image to this VM instance`
-  - Type in the name of the image, e.g. `gcr.io/uhhh im not quite sure we'll figure it out`
+  - Type in the name of the image, e.g. `gcr.io/battlecode18/bc20-X`
   Spin up the instance
   - Go to `Compute Engine > VM Instances`
   - Hit 'Create Instance'

@@ -15,6 +15,8 @@ GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
 GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
 GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
 
+DOMAIN = 'https://2020.battlecode.org'
+
 SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
 
@@ -25,7 +27,7 @@ TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 
 GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
-API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
+API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
 API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
 
@@ -40,7 +42,7 @@ def api_compile_update(submissionid):
     Returns the API link for reporting the compilation status
     submissionid: the ID of the submission
     """
-    return 'https://2020.battlecode.org/api/0/submission/{}/compilation_update/'.format(submissionid)
+    return f'{DOMAIN}/api/0/submission/{submissionid}/compilation_update/'
 
 # Game running API specifications
 
@@ -53,4 +55,4 @@ def api_game_update(gametype, gameid):
     gametype: 'scrimmage' or 'tournament'
     gameid: the ID of the game
     """
-    return 'https://2020.battlecode.org/api/0/{}/{}/set_outcome/'.format(gametype, gameid)
+    return f'{DOMAIN}/api/0/{gametype}/{gameid}/set_outcome/'
