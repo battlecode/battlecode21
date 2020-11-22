@@ -355,6 +355,7 @@ public strictfp interface RobotController {
      *
      * @param dir the direction to spawn the unit
      * @param type the type of robot to build
+     * @param influence the amount of influence to be used to build
      * @throws GameActionException if the conditions of <code>canBuildRobot</code>
      * are not all satisfied.
      *
@@ -415,7 +416,7 @@ public strictfp interface RobotController {
      * @throws GameActionException if conditions for exposing are not all satisfied 
      * @battlecode.doc.costlymethod
      */
-    boolean canExpose(MapLocation  loc);
+    boolean canExpose(MapLocation loc);
 
     /** 
      * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
