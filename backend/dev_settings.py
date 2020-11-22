@@ -14,11 +14,13 @@ import os
 from datetime import timedelta
 from settings import *
 
+# Import sensitive settings.
 try:
-    from dev_settings_real import *
+    from dev_settings_sensitive import *
 except ImportError:
-    print("couldnt import")
-    pass
+    print("Error: dev_settings_sensitive.py not found.")
+    print("Some variables in this file will not be defined properly.")
+    # Set some default values, in case the sensitive settings hadn't been defined.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
