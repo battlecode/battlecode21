@@ -68,6 +68,19 @@ In GCloud > Compute Engine > Instance templates:
   export GOOGLE_APPLICATION_CREDENTIALS=worker/app/gcloud-key.json
   ./pub.py battlecode18 bc20-compile
   ```
+- To run docker images on the gcloud servers:
+  push the images to the container registry (see above)
+  Set up instance templates in gcloud:
+  - Navigate to `Compute Engine > Instance Templates`
+  - Hit Create Instance Template
+  - Check `deploy a container image to this VM instance`
+  - Type in the name of the image, e.g. `gcr.io/uhhh im not quite sure we'll figure it out`
+  Spin up the instance
+  - Go to `Compute Engine > VM Instances`
+  - Hit 'Create Instance'
+  - Hit 'from Template' on the left
+  - Select the template you made
+  Good Job
 
 ## Tournaments
 
