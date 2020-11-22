@@ -14,7 +14,7 @@ Open a terminal, and `cd` into this directory. Create a virtual environment by f
 
 - `pip3 install virtualenv` (or `pip` if your default Python installation is 3)
 - `virtualenv venv -p python3`
-- `source venv/bin/activate` (or if this doesn't work, `source venv/Scripts/activate`)
+- `source venv/bin/activate` (or if this doesn't work, perhaps `source venv/Scripts/activate`, or `source env/bin/activate`; basically, just try to find an activate file)
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
 A couple errors may occur when installing the requirements:
