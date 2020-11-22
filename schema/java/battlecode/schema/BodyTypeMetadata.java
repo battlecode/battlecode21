@@ -12,9 +12,11 @@ import com.google.flatbuffers.*;
  * Metadata about all bodies of a particular type.
  */
 public final class BodyTypeMetadata extends Table {
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb) { return getRootAsBodyTypeMetadata(_bb, new BodyTypeMetadata()); }
-  public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb, BodyTypeMetadata obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public BodyTypeMetadata __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb, BodyTypeMetadata obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public BodyTypeMetadata __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The relevant type.
@@ -55,7 +57,7 @@ public final class BodyTypeMetadata extends Table {
   /**
    * The fraction that the local pollution is multiplied by around vaporators.
    */
-  public float localPollutionMultiplicativeEffect() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0; }
+  public float localPollutionMultiplicativeEffect() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
    * The amount of global pollution this type creates.
    */
@@ -83,7 +85,7 @@ public final class BodyTypeMetadata extends Table {
       int globalPollutionAmount,
       int maxSoupProduced,
       int bytecodeLimit) {
-    builder.startObject(13);
+    builder.startTable(13);
     BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
     BodyTypeMetadata.addMaxSoupProduced(builder, maxSoupProduced);
     BodyTypeMetadata.addGlobalPollutionAmount(builder, globalPollutionAmount);
@@ -100,7 +102,7 @@ public final class BodyTypeMetadata extends Table {
     return BodyTypeMetadata.endBodyTypeMetadata(builder);
   }
 
-  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startObject(13); }
+  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startTable(13); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
   public static void addCost(FlatBufferBuilder builder, int cost) { builder.addInt(2, cost, 0); }
@@ -115,8 +117,15 @@ public final class BodyTypeMetadata extends Table {
   public static void addMaxSoupProduced(FlatBufferBuilder builder, int maxSoupProduced) { builder.addInt(11, maxSoupProduced, 0); }
   public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(12, bytecodeLimit, 0); }
   public static int endBodyTypeMetadata(FlatBufferBuilder builder) {
-    int o = builder.endObject();
+    int o = builder.endTable();
     return o;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+
+    public BodyTypeMetadata get(int j) { return get(new BodyTypeMetadata(), j); }
+    public BodyTypeMetadata get(BodyTypeMetadata obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

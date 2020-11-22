@@ -13,37 +13,48 @@ import com.google.flatbuffers.*;
  * The pollution effect at a location is (global pollution + all additive effects) * all multiplicative effects
  */
 public final class LocalPollutionTable extends Table {
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static LocalPollutionTable getRootAsLocalPollutionTable(ByteBuffer _bb) { return getRootAsLocalPollutionTable(_bb, new LocalPollutionTable()); }
-  public static LocalPollutionTable getRootAsLocalPollutionTable(ByteBuffer _bb, LocalPollutionTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public LocalPollutionTable __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static LocalPollutionTable getRootAsLocalPollutionTable(ByteBuffer _bb, LocalPollutionTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public LocalPollutionTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The origin and radius of the circle defining the pollution effect.
    */
-  public VecTable locations() { return locations(new VecTable()); }
-  public VecTable locations(VecTable obj) { int o = __offset(4); return o != 0 ? obj.__init(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.VecTable locations() { return locations(new battlecode.schema.VecTable()); }
+  public battlecode.schema.VecTable locations(battlecode.schema.VecTable obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   public int radiiSquared(int j) { int o = __offset(6); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int radiiSquaredLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector radiiSquaredVector() { return radiiSquaredVector(new IntVector()); }
+  public IntVector radiiSquaredVector(IntVector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer radiiSquaredAsByteBuffer() { return __vector_as_bytebuffer(6, 4); }
+  public ByteBuffer radiiSquaredInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 4); }
   /**
    * The additive amount of the pollution effect.
    */
   public int additiveEffects(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int additiveEffectsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector additiveEffectsVector() { return additiveEffectsVector(new IntVector()); }
+  public IntVector additiveEffectsVector(IntVector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer additiveEffectsAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
+  public ByteBuffer additiveEffectsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
   /**
    * The multiplicative coefficient.
    */
   public float multiplicativeEffects(int j) { int o = __offset(10); return o != 0 ? bb.getFloat(__vector(o) + j * 4) : 0; }
   public int multiplicativeEffectsLength() { int o = __offset(10); return o != 0 ? __vector_len(o) : 0; }
+  public FloatVector multiplicativeEffectsVector() { return multiplicativeEffectsVector(new FloatVector()); }
+  public FloatVector multiplicativeEffectsVector(FloatVector obj) { int o = __offset(10); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer multiplicativeEffectsAsByteBuffer() { return __vector_as_bytebuffer(10, 4); }
+  public ByteBuffer multiplicativeEffectsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 10, 4); }
 
   public static int createLocalPollutionTable(FlatBufferBuilder builder,
       int locationsOffset,
       int radiiSquaredOffset,
       int additiveEffectsOffset,
       int multiplicativeEffectsOffset) {
-    builder.startObject(4);
+    builder.startTable(4);
     LocalPollutionTable.addMultiplicativeEffects(builder, multiplicativeEffectsOffset);
     LocalPollutionTable.addAdditiveEffects(builder, additiveEffectsOffset);
     LocalPollutionTable.addRadiiSquared(builder, radiiSquaredOffset);
@@ -51,7 +62,7 @@ public final class LocalPollutionTable extends Table {
     return LocalPollutionTable.endLocalPollutionTable(builder);
   }
 
-  public static void startLocalPollutionTable(FlatBufferBuilder builder) { builder.startObject(4); }
+  public static void startLocalPollutionTable(FlatBufferBuilder builder) { builder.startTable(4); }
   public static void addLocations(FlatBufferBuilder builder, int locationsOffset) { builder.addOffset(0, locationsOffset, 0); }
   public static void addRadiiSquared(FlatBufferBuilder builder, int radiiSquaredOffset) { builder.addOffset(1, radiiSquaredOffset, 0); }
   public static int createRadiiSquaredVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
@@ -63,8 +74,15 @@ public final class LocalPollutionTable extends Table {
   public static int createMultiplicativeEffectsVector(FlatBufferBuilder builder, float[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addFloat(data[i]); return builder.endVector(); }
   public static void startMultiplicativeEffectsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endLocalPollutionTable(FlatBufferBuilder builder) {
-    int o = builder.endObject();
+    int o = builder.endTable();
     return o;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+
+    public LocalPollutionTable get(int j) { return get(new LocalPollutionTable(), j); }
+    public LocalPollutionTable get(LocalPollutionTable obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 
