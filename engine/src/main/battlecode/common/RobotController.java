@@ -408,7 +408,8 @@ public strictfp interface RobotController {
      * turns remaining.
      * 
      * Does not check if a slanderer is on the location given.
-     * @return whether it is possible to expose on that round at that location.
+     * @param loc the location being checked
+     * @return whether it is possible to expose on that round at that location. 
      *
      * @battlecode.doc.costlymethod
      */
