@@ -1,0 +1,6 @@
+version: "2"
+services:
+  compile:
+    image: bc21-compile
+  scrimmage:
+    image: bc21-scrimmage
