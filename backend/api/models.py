@@ -74,6 +74,7 @@ class League(models.Model):
     active              = models.BooleanField(default=False)
     submissions_enabled = models.BooleanField(default=False)
     game_released = models.BooleanField(default=False)
+    engine_version = models.TextField(default="")
 
     def __str__(self):
         return self.name
