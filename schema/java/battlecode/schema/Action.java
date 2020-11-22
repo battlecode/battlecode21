@@ -13,77 +13,72 @@ package battlecode.schema;
 public final class Action {
   private Action() { }
   /**
-   * Mines a unit of soup (miners).
-   * Target: location.
+   * politicians self-destruct and affect nearby bodies
+   * Target: none
    */
-  public static final byte MINE_SOUP = 0;
+  public static final byte EMPOWER = 0;
   /**
-   * Deposits a unit of soup (miners).
-   * Target: refinery.
+   * scandals turn into politicians.
+   * Target: self.
    */
-  public static final byte DEPOSIT_SOUP = 1;
+  public static final byte CAMOUFLAGE = 1;
   /**
-   * Refines a unit of soup (refinery).
-   * Target: none.
+   * slanders are alowed to TODO.
+   * Target: TODO.
    */
-  public static final byte REFINE_SOUP = 2;
+  public static final byte EMBEZZLE = 2;
   /**
-   * Digs a unit of dirt (landscapers).
-   * Target: location.
+   * Muckrakers can expose a scandal.
+   * Target: an enemy body.
    */
-  public static final byte DIG_DIRT = 3;
+  public static final byte EXPOSE = 3;
   /**
-   * Deposits a unit of dirt (landscapers).
-   * Target: location.
+   * units can change their flag.
+   * Target: self.
    */
-  public static final byte DEPOSIT_DIRT = 4;
+  public static final byte SET_FLAG = 4;
   /**
-   * Picks up a unit (drones).
-   * Target: unit picked up.
+   * units can get the flag of another unit
+   * Target: another unit.
    */
-  public static final byte PICK_UNIT = 5;
+  public static final byte GET_FLAG = 5;
   /**
-   * Drops off a unit (drones).
-   * Target: unit dropped off.
-   */
-  public static final byte DROP_UNIT = 6;
-  /**
-   * Builds a unit.
+   * Builds a unit (enlightent center).
    * Target: spawned unit
    */
-  public static final byte SPAWN_UNIT = 7;
+  public static final byte SPAWN_UNIT = 6;
   /**
-   * Shoots a drone.
-   * Target: drone shot.
+   * places a bet (enlightent center).
+   * Target: bet placed
    */
-  public static final byte SHOOT = 8;
+  public static final byte PLACE_BET = 7;
   /**
-   * Dies from drowning.
+   * Dies by moving into a swamp.
+   * Target: drowning robot.
+   */
+  public static final byte DIE_DROWN = 8;
+  /**
+   * Dies for having zero influence.
+   * Target: a politician, scandal or Muckrakers.
+   */
+  public static final byte DIE_ZERO_INFLUENCE = 9;
+  /**
+   * a robot can change team after being empowered
+   * Target: self
+   */
+  public static final byte CHANGE_TEAM = 10;
+  /**
+   * an enlightenment center can become neutral if lost all its influence
    * Target: none.
    */
-  public static final byte DIE_DROWN = 9;
-  /**
-   * Dies from being shot (drones).
-   * Target: drone.
-   */
-  public static final byte DIE_SHOT = 10;
-  /**
-   * Dies due to having too much dirt on top (buildings).
-   * Target: landscaper
-   */
-  public static final byte DIE_TOO_MUCH_DIRT = 11;
-  /**
-   * Dies from suicide.
-   * Target: none.
-   */
-  public static final byte DIE_SUICIDE = 12;
+  public static final byte BECOME_NEUTRAL = 11;
   /**
    * Dies due to an uncaught exception
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 13;
+  public static final byte DIE_EXCEPTION = 12;
 
-  public static final String[] names = { "MINE_SOUP", "DEPOSIT_SOUP", "REFINE_SOUP", "DIG_DIRT", "DEPOSIT_DIRT", "PICK_UNIT", "DROP_UNIT", "SPAWN_UNIT", "SHOOT", "DIE_DROWN", "DIE_SHOT", "DIE_TOO_MUCH_DIRT", "DIE_SUICIDE", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BET", "DIE_DROWN", "DIE_ZERO_INFLUENCE", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }

@@ -9,49 +9,25 @@ package battlecode.schema;
 public final class BodyType {
   private BodyType() { }
   /**
-   * The hq produces miners, is also a net gun and a refinery.
+   * Enlightenment centers produce politicians, scandals and muckrakers and place bets
+   *can be neutral until captured
    */
-  public static final byte HQ = 0;
+  public static final byte ENLIGHTENMENT_CENTER = 0;
   /**
-   * Miners extract crude soup and bring it to the refineries.
+   * politicians use their influence to self destruct and capture other units
    */
-  public static final byte MINER = 1;
+  public static final byte POLITICIAN = 1;
   /**
-   * Refineries turn crude soup into refined soup, and produce pollution.
+   * scandals generate passive influence for the enlightenment center that created them
+   * they turn into politicians at some point, and can only be identified by muckrakers.
    */
-  public static final byte REFINERY = 2;
+  public static final byte SCANDAL = 2;
   /**
-   * Vaporators reduce pollution.
+   * have the ability to identify scandals
    */
-  public static final byte VAPORATOR = 3;
-  /**
-   * Design schools create landscapers.
-   */
-  public static final byte DESIGN_SCHOOL = 4;
-  /**
-   * Fulfillment centers create drones.
-   */
-  public static final byte FULFILLMENT_CENTER = 5;
-  /**
-   * Landscapers take dirt from adjacent (decreasing the elevation)
-   * squares or deposit dirt onto adjacent squares, including
-   * into water (increasing the elevation).
-   */
-  public static final byte LANDSCAPER = 6;
-  /**
-   * Drones pick up any unit and drop them somewhere else.
-   */
-  public static final byte DELIVERY_DRONE = 7;
-  /**
-   * Net guns shoot down drones.
-   */
-  public static final byte NET_GUN = 8;
-  /**
-   * Cows produce pollution.
-   */
-  public static final byte COW = 9;
+  public static final byte MUCKRAKER = 3;
 
-  public static final String[] names = { "HQ", "MINER", "REFINERY", "VAPORATOR", "DESIGN_SCHOOL", "FULFILLMENT_CENTER", "LANDSCAPER", "DELIVERY_DRONE", "NET_GUN", "COW", };
+  public static final String[] names = { "ENLIGHTENMENT_CENTER", "POLITICIAN", "SCANDAL", "MUCKRAKER", };
 
   public static String name(int e) { return names[e]; }
 }
