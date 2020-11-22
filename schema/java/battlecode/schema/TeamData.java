@@ -12,20 +12,24 @@ import com.google.flatbuffers.*;
  * Data relevant to a particular team.
  */
 public final class TeamData extends Table {
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static TeamData getRootAsTeamData(ByteBuffer _bb) { return getRootAsTeamData(_bb, new TeamData()); }
-  public static TeamData getRootAsTeamData(ByteBuffer _bb, TeamData obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public TeamData __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static TeamData getRootAsTeamData(ByteBuffer _bb, TeamData obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public TeamData __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The name of the team.
    */
   public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
   /**
    * The java package the team uses.
    */
   public String packageName() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer packageNameAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer packageNameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
   /**
    * The ID of the team this data pertains to.
    */
@@ -35,20 +39,27 @@ public final class TeamData extends Table {
       int nameOffset,
       int packageNameOffset,
       byte teamID) {
-    builder.startObject(3);
+    builder.startTable(3);
     TeamData.addPackageName(builder, packageNameOffset);
     TeamData.addName(builder, nameOffset);
     TeamData.addTeamID(builder, teamID);
     return TeamData.endTeamData(builder);
   }
 
-  public static void startTeamData(FlatBufferBuilder builder) { builder.startObject(3); }
+  public static void startTeamData(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addPackageName(FlatBufferBuilder builder, int packageNameOffset) { builder.addOffset(1, packageNameOffset, 0); }
   public static void addTeamID(FlatBufferBuilder builder, byte teamID) { builder.addByte(2, teamID, 0); }
   public static int endTeamData(FlatBufferBuilder builder) {
-    int o = builder.endObject();
+    int o = builder.endTable();
     return o;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+
+    public TeamData get(int j) { return get(new TeamData(), j); }
+    public TeamData get(TeamData obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

@@ -12,9 +12,11 @@ import com.google.flatbuffers.*;
  * The final event sent in the game.
  */
 public final class GameFooter extends Table {
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static GameFooter getRootAsGameFooter(ByteBuffer _bb) { return getRootAsGameFooter(_bb, new GameFooter()); }
-  public static GameFooter getRootAsGameFooter(ByteBuffer _bb, GameFooter obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public GameFooter __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static GameFooter getRootAsGameFooter(ByteBuffer _bb, GameFooter obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public GameFooter __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The ID of the winning team of the game.
@@ -23,16 +25,23 @@ public final class GameFooter extends Table {
 
   public static int createGameFooter(FlatBufferBuilder builder,
       byte winner) {
-    builder.startObject(1);
+    builder.startTable(1);
     GameFooter.addWinner(builder, winner);
     return GameFooter.endGameFooter(builder);
   }
 
-  public static void startGameFooter(FlatBufferBuilder builder) { builder.startObject(1); }
+  public static void startGameFooter(FlatBufferBuilder builder) { builder.startTable(1); }
   public static void addWinner(FlatBufferBuilder builder, byte winner) { builder.addByte(0, winner, 0); }
   public static int endGameFooter(FlatBufferBuilder builder) {
-    int o = builder.endObject();
+    int o = builder.endTable();
     return o;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+
+    public GameFooter get(int j) { return get(new GameFooter(), j); }
+    public GameFooter get(GameFooter obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 
