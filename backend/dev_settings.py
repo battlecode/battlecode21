@@ -21,6 +21,8 @@ except ImportError:
     print("Error: dev_settings_sensitive.py not found.")
     print("Some variables in this file will not be defined properly.")
     # Set some default values, in case the sensitive settings hadn't been defined.
+    DB_PASS = 'redacted'
+    DB_HOST = 'redacted'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,16 +45,16 @@ MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'battlecode',
-#         'USER': 'battlecode',
-#         'PASSWORD': 'redacted',
-#         'HOST': 'redacted',
-#         'PORT': 5432,
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'battlecode',
+        'USER': 'battlecode',
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': 5432,
+    }
+}
 
 # GOOGLE_APPLICATION_CREDENTIALS = r"""redacted"""
 
