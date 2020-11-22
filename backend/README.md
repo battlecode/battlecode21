@@ -29,19 +29,26 @@ A couple errors may occur when installing the requirements:
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up. (TODO instrs on using the global database)
+Any time you start the backend, there must be a Postgres instance up. It's easiest to create a Postgres database running somewhere else (for example, on Google Cloud), and then to provide connection info in Django's settings module.
 
-#### Migrations
-
-Run the following to set up the database:
+Next, run the following to initialize the database:
 
 ```python3
 python manage.py migrate
 ```
 
-This must be run the first time the database is setup, or anytime models are changed. When models are changed, you also need to run `python manage.py makemigrations` and then commit the migrations. If run through docker-compose, you need to first `docker exec -it battlecode20_backend_1 /bin/bash` and then perform the `python manage.py makemigrations`.
+(This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.)
 
-This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.
+#### Migrations
+
+Anytime models are changed, run the following to actually make changes to the database itself:
+
+```python3
+python manage.py migrate
+python manage.py makemigrations
+```
+
+(Note that if run through Docker or docker-compose, migrations are created and applied during the Docker process.)
 
 ### Running
 
