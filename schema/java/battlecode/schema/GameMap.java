@@ -12,33 +12,30 @@ import com.google.flatbuffers.*;
  * The map a round is played on.
  */
 public final class GameMap extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static GameMap getRootAsGameMap(ByteBuffer _bb) { return getRootAsGameMap(_bb, new GameMap()); }
-  public static GameMap getRootAsGameMap(ByteBuffer _bb, GameMap obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public GameMap __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static GameMap getRootAsGameMap(ByteBuffer _bb, GameMap obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public GameMap __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
 
   /**
    * The name of a map.
    */
   public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
   /**
    * The bottom corner of the map.
    */
-  public battlecode.schema.Vec minCorner() { return minCorner(new battlecode.schema.Vec()); }
-  public battlecode.schema.Vec minCorner(battlecode.schema.Vec obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public Vec minCorner() { return minCorner(new Vec()); }
+  public Vec minCorner(Vec obj) { int o = __offset(6); return o != 0 ? obj.__init(o + bb_pos, bb) : null; }
   /**
    * The top corner of the map.
    */
-  public battlecode.schema.Vec maxCorner() { return maxCorner(new battlecode.schema.Vec()); }
-  public battlecode.schema.Vec maxCorner(battlecode.schema.Vec obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public Vec maxCorner() { return maxCorner(new Vec()); }
+  public Vec maxCorner(Vec obj) { int o = __offset(8); return o != 0 ? obj.__init(o + bb_pos, bb) : null; }
   /**
    * The bodies on the map.
    */
-  public battlecode.schema.SpawnedBodyTable bodies() { return bodies(new battlecode.schema.SpawnedBodyTable()); }
-  public battlecode.schema.SpawnedBodyTable bodies(battlecode.schema.SpawnedBodyTable obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public SpawnedBodyTable bodies() { return bodies(new SpawnedBodyTable()); }
+  public SpawnedBodyTable bodies(SpawnedBodyTable obj) { int o = __offset(10); return o != 0 ? obj.__init(__indirect(o + bb_pos), bb) : null; }
   /**
    * The random seed of the map.
    */
@@ -48,43 +45,31 @@ public final class GameMap extends Table {
    */
   public int dirt(int j) { int o = __offset(14); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int dirtLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
-  public IntVector dirtVector() { return dirtVector(new IntVector()); }
-  public IntVector dirtVector(IntVector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer dirtAsByteBuffer() { return __vector_as_bytebuffer(14, 4); }
-  public ByteBuffer dirtInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 4); }
   /**
    * The water levels (above dirt).
    */
   public boolean water(int j) { int o = __offset(16); return o != 0 ? 0!=bb.get(__vector(o) + j * 1) : false; }
   public int waterLength() { int o = __offset(16); return o != 0 ? __vector_len(o) : 0; }
-  public BooleanVector waterVector() { return waterVector(new BooleanVector()); }
-  public BooleanVector waterVector(BooleanVector obj) { int o = __offset(16); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer waterAsByteBuffer() { return __vector_as_bytebuffer(16, 1); }
-  public ByteBuffer waterInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 16, 1); }
   /**
    * The pollution levels.
    */
   public int pollution(int j) { int o = __offset(18); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int pollutionLength() { int o = __offset(18); return o != 0 ? __vector_len(o) : 0; }
-  public IntVector pollutionVector() { return pollutionVector(new IntVector()); }
-  public IntVector pollutionVector(IntVector obj) { int o = __offset(18); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer pollutionAsByteBuffer() { return __vector_as_bytebuffer(18, 4); }
-  public ByteBuffer pollutionInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 18, 4); }
   /**
    * The amount of crude soup to be mined.
    */
   public int soup(int j) { int o = __offset(20); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int soupLength() { int o = __offset(20); return o != 0 ? __vector_len(o) : 0; }
-  public IntVector soupVector() { return soupVector(new IntVector()); }
-  public IntVector soupVector(IntVector obj) { int o = __offset(20); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer soupAsByteBuffer() { return __vector_as_bytebuffer(20, 4); }
-  public ByteBuffer soupInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 20, 4); }
   /**
    * The initial water level.
    */
   public int initialWater() { int o = __offset(22); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static void startGameMap(FlatBufferBuilder builder) { builder.startTable(10); }
+  public static void startGameMap(FlatBufferBuilder builder) { builder.startObject(10); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addMinCorner(FlatBufferBuilder builder, int minCornerOffset) { builder.addStruct(1, minCornerOffset, 0); }
   public static void addMaxCorner(FlatBufferBuilder builder, int maxCornerOffset) { builder.addStruct(2, maxCornerOffset, 0); }
@@ -104,15 +89,8 @@ public final class GameMap extends Table {
   public static void startSoupVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addInitialWater(FlatBufferBuilder builder, int initialWater) { builder.addInt(9, initialWater, 0); }
   public static int endGameMap(FlatBufferBuilder builder) {
-    int o = builder.endTable();
+    int o = builder.endObject();
     return o;
-  }
-
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
-
-    public GameMap get(int j) { return get(new GameMap(), j); }
-    public GameMap get(GameMap obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

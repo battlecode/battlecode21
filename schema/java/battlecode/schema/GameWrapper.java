@@ -17,51 +17,41 @@ import com.google.flatbuffers.*;
  * the file.
  */
 public final class GameWrapper extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb) { return getRootAsGameWrapper(_bb, new GameWrapper()); }
-  public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb, GameWrapper obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public GameWrapper __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb, GameWrapper obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public GameWrapper __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
 
   /**
    * The series of events comprising the game.
    */
-  public battlecode.schema.EventWrapper events(int j) { return events(new battlecode.schema.EventWrapper(), j); }
-  public battlecode.schema.EventWrapper events(battlecode.schema.EventWrapper obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public EventWrapper events(int j) { return events(new EventWrapper(), j); }
+  public EventWrapper events(EventWrapper obj, int j) { int o = __offset(4); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
   public int eventsLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
-  public battlecode.schema.EventWrapper.Vector eventsVector() { return eventsVector(new battlecode.schema.EventWrapper.Vector()); }
-  public battlecode.schema.EventWrapper.Vector eventsVector(battlecode.schema.EventWrapper.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
   /**
    * The indices of the headers of the matches, in order.
    */
   public int matchHeaders(int j) { int o = __offset(6); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int matchHeadersLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public IntVector matchHeadersVector() { return matchHeadersVector(new IntVector()); }
-  public IntVector matchHeadersVector(IntVector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer matchHeadersAsByteBuffer() { return __vector_as_bytebuffer(6, 4); }
-  public ByteBuffer matchHeadersInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 4); }
   /**
    * The indices of the footers of the matches, in order.
    */
   public int matchFooters(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int matchFootersLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
-  public IntVector matchFootersVector() { return matchFootersVector(new IntVector()); }
-  public IntVector matchFootersVector(IntVector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer matchFootersAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
-  public ByteBuffer matchFootersInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
 
   public static int createGameWrapper(FlatBufferBuilder builder,
       int eventsOffset,
       int matchHeadersOffset,
       int matchFootersOffset) {
-    builder.startTable(3);
+    builder.startObject(3);
     GameWrapper.addMatchFooters(builder, matchFootersOffset);
     GameWrapper.addMatchHeaders(builder, matchHeadersOffset);
     GameWrapper.addEvents(builder, eventsOffset);
     return GameWrapper.endGameWrapper(builder);
   }
 
-  public static void startGameWrapper(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startGameWrapper(FlatBufferBuilder builder) { builder.startObject(3); }
   public static void addEvents(FlatBufferBuilder builder, int eventsOffset) { builder.addOffset(0, eventsOffset, 0); }
   public static int createEventsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startEventsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
@@ -72,15 +62,8 @@ public final class GameWrapper extends Table {
   public static int createMatchFootersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startMatchFootersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endGameWrapper(FlatBufferBuilder builder) {
-    int o = builder.endTable();
+    int o = builder.endObject();
     return o;
-  }
-
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
-
-    public GameWrapper get(int j) { return get(new GameWrapper(), j); }
-    public GameWrapper get(GameWrapper obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 
