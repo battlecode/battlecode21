@@ -14,6 +14,8 @@ public strictfp class InternalRobot {
     private Team team;
     private RobotType type;
     private MapLocation location;
+    private int influence;
+    private int conviction;
 
     private long controlBits;
     private int currentBytecodeLimit;
@@ -35,13 +37,24 @@ public strictfp class InternalRobot {
      * @param type the type of the robot
      * @param loc the location of the robot
      * @param team the team of the robot
+     * @param influence the influence used to create the robot
      */
     @SuppressWarnings("unchecked")
-    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team) {
+    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, int influence) {
         this.ID = id;
         this.team = team;
         this.type = type;
         this.location = loc;
+        this.influence = influence;
+        if (this.type == POLITICIAN || this.type == SLANDERER) {
+            this.conviction = (this.influence * this.influence);
+        }
+        else if (this.type == MUCKRAKER) {
+            this.conviction = Math.ceil(this.influence * this.influence);
+        }
+        else {
+            this.conviction = 0;
+        }
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -83,6 +96,14 @@ public strictfp class InternalRobot {
         return location;
     }
 
+    public int getInfluence() {
+        return influence;
+    }
+
+    public int conviction() {
+        return conviction;
+    }
+
     public long getControlBits() {
         return controlBits;
     }
@@ -99,6 +120,7 @@ public strictfp class InternalRobot {
         return cooldownTurns;
     }
 
+    // TODO: update RobotInfo.java
     public RobotInfo getRobotInfo() {
         if (this.cachedRobotInfo != null
                 && this.cachedRobotInfo.ID == ID
@@ -108,7 +130,7 @@ public strictfp class InternalRobot {
             return this.cachedRobotInfo;
         }
         return this.cachedRobotInfo = new RobotInfo(
-                ID, team, type, location);
+                ID, team, type, location, influence, conviction);
     }
 
     // **********************************
@@ -116,19 +138,51 @@ public strictfp class InternalRobot {
     // **********************************
 
     /**
-     * Returns the robot's sensor radius squared.
+     * Returns the robot's detection radius squared.
      */
-    public int getSensorRadiusSquared() {
-        return this.type.sensorRadiusSquared;
+    public int getDetectionRadiusSquared() {
+        return this.type.detectionRadiusSquared;
     }
 
     /**
-     * Returns whether this robot can sense the given location.
+     * Returns the robot's identification radius squared.
+     */
+    public int getIdentificationRadiusSquared() {
+        return this.type.identificationRadiusSquared;
+    }
+
+    /**
+     * Returns the robot's action radius squared.
+     */
+    public int getActionRadiusSquared() {
+        return this.type.actionRadiusSquared;
+    }
+
+    /**
+     * Returns whether this robot can detect the given location.
      * 
      * @param toSense the MapLocation to sense
      */
-    public boolean canSenseLocation(MapLocation toSense){
-        return this.location.distanceSquaredTo(toSense) <= getSensorRadiusSquared();
+    public boolean canDetectLocation(MapLocation toSense){
+        return this.location.distanceSquaredTo(toSense) <= getDetectionRadiusSquared();
+    }
+
+    /**
+     * Returns whether this robot can identify the given location.
+     * 
+     * @param toSense the MapLocation to sense
+     */
+    public boolean canIdentifyLocation(MapLocation toSense){
+        return this.location.distanceSquaredTo(toSense) <= getIdentificationRadiusSquared();
+    }
+
+    /**
+     * Returns whether this robot can perform actions on the given location.
+     * 
+     * @param toSense the MapLocation to sense
+     */
+    public boolean canActLocation(MapLocation toSense){
+        return this.location.distanceSquaredTo(toSense) <= getActionRadiusSquared();
     }
 
     /**
@@ -136,9 +190,28 @@ public strictfp class InternalRobot {
      * 
      * @param radiusSquared the distance squared to sense
      */
-    public boolean canSenseRadiusSquared(int radiusSquared) {
-        return radiusSquared <= getSensorRadiusSquared();
+    public boolean canDetectRadiusSquared(int radiusSquared) {
+        return radiusSquared <= getDetectionRadiusSquared();
     }
+
+    /**
+     * Returns whether this robot can sense something a given radius away.
+     * 
+     * @param radiusSquared the distance squared to sense
+     */
+    public boolean canIdentifyRadiusSquared(int radiusSquared) {
+        return radiusSquared <= getIdentificationRadiusSquared();
+    }
+
+    /**
+     * Returns whether this robot can sense something a given radius away.
+     * 
+     * @param radiusSquared the distance squared to sense
+     */
+    public boolean canActRadiusSquared(int radiusSquared) {
+        return radiusSquared <= getActionRadiusSquared();
+    }
+
 
     // ******************************************
     // ****** UPDATE METHODS ********************
