@@ -4,7 +4,11 @@ Written in Django Rest Framework. Based on `battlecode19/api`.
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of this repository to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions in this section.
+The best way to run the backend locally is to run `docker-compose up --build backend` from the repo's root directory.
+
+If you don't have Docker, or want to run Django outside of Docker, follow the instructions in the rest of this section.
+
+For a nice interface to test the backend, go to `localhost:8000/docs/`.
 
 ### First-Time Setup
 

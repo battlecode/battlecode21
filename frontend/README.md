@@ -6,11 +6,13 @@ Fully static frontend in React, based on `battlecode19/app`, using modified temp
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of this repository to run the entire website stack. If you want to run the frontend outside of Docker, follow the instructions below.
+It's easiest to run the frontend through Node. To do so, follow the instructions in the rest of this section.
+
+(Alternatively, you could run the frontend through Docker: run `docker-compose up --build frontend` from the repo's root directory.)
 
 ### First-Time Setup
 
-In this directory, run:
+First, make sure you have [Node](https://nodejs.org/en/download/) installed. (Also, on Windows, [Cygwin](https://www.cygwin.com/) is recommended to use as your terminal environment.) Then, in this directory, run:
 
 ```
 npm install

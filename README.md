@@ -13,15 +13,11 @@
 
 ### Website
 
-To get set up, make sure you have [Node](https://nodejs.org/en/download/) and [Docker](https://docs.docker.com/docker-for-mac/install/) installed. For Windows, you will need Docker Toolbox. If you have Windows, I'd also recommend installing [Cygwin](https://www.cygwin.com/), since we have some bash scripts that won't work with the standard Windows command prompt. (Docker is not strictly necessary, but it makes stuff easier, especially if you want to work on the backend of the website.)
+While it isn't strictly necessary, running is easier with [Docker](https://docs.docker.com/get-docker/) installed. If you have Windows, I'd also recommend installing [Cygwin](https://www.cygwin.com/), since we have some scripts and programs that won't work with the standard Windows command prompt. (Docker is not strictly necessary, but it makes stuff easier, especially the backend.)
 
-Go to the `frontend` folder and run `npm install`.
+It's easiest to run the frontend and backend individually, in a separate terminal window for each. For instructions on how to do this, see each of their directories' readmes.
 
-Then, you can start the frontend by running `npm run start` in the `frontend` folder. (If this fails on Windows, make sure you are using Cygwin.) After this step, you should be able to view the website at http://localhost:3000.
-
-If you also want to run the backend (which will enable things like signing in to the website, and a rankings table, etc) then run `docker-compose -f docker-compose-b.yml up --build` in this folder. If you don't have Docker, you can try following the instructions in the `/backend` folder instead.
-
-You can also run both the backend and the frontend in a Docker container, by running `docker-compose up --build`, but that might be slower.
+You could also run both the backend and the frontend in a single Docker container, by running `docker-compose up --build`. But, it's better to run them individuallly.
 
 ### Engine
 
