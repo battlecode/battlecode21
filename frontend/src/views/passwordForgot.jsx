@@ -33,7 +33,7 @@ class PasswordForgot extends Component {
     const { error, success } = this.state;
     return (
       <div
-        className="content chessBackground"
+        className="content dustBackground"
         style={{
           height: '100vh',
           width: '100vw',
