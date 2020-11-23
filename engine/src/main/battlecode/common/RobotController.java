@@ -336,9 +336,10 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can build a robot of the given type in the
      * given direction. Checks that the robot is of a type that can build bots, 
-     * that the robot can build the desired type, that the target location is on the map,
-     * that the target location is not occupied,  that the robot has the amount of influence it's trying to spend,
-     * and that there are cooldown turns remaining.
+     * that the robot can build the desired type, that the target location is 
+     * on the map,  that the target location is not occupied, that the robot has 
+     * the amount of influence it's trying to spend, and that there are 
+     * cooldown turns remaining.
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -424,15 +425,25 @@ public strictfp interface RobotController {
      * If a slanderer is exposed then on the next round it will no longer be in the world.
      * Aside from this, a successful expose temporarily increases the total conviction 
 <<<<<<< HEAD
+<<<<<<< HEAD
      * of all Politicians on the same team by a factor 1.01^(influence) for the next
      * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
 =======
+=======
+>>>>>>> changes to specs / impl for pull request
 <<<<<<< HEAD
      * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EXPOSE_NUM_TURNS </code> turns
 =======
      * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
 >>>>>>> made changes for pull request #120
+<<<<<<< HEAD
 >>>>>>> made changes for pull request #120
+=======
+=======
+     * of all Politicians on the same team by a factor 1.01^(influence) for the next
+     * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
+>>>>>>> changes to specs / impl for pull request
+>>>>>>> changes to specs / impl for pull request
      *
      * If the conditions for exposing are all met but loc does not contain a slanderer,
      * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 

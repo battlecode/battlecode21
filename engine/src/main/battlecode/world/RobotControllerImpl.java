@@ -245,13 +245,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update this method!
     @Override 
-<<<<<<< HEAD
-    public double senseSwamping(MapLocation loc) {
-        return 69.0;
-=======
     public boolean senseSwamping(MapLocation loc) {
         return false;
->>>>>>> updated robot controller impl to have robot controller methods
     }
 
     // ***********************************
@@ -361,11 +356,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update maybe?
     @Override
-<<<<<<< HEAD
     public boolean canBuildRobot(RobotType type, Direction dir, int influence) {
-=======
-    public boolean canBuildRobot(int influence, RobotType type, Direction dir) {
->>>>>>> updated robot controller impl to have robot controller methods
         try {
             assertNotNull(type);
             assertNotNull(dir);
@@ -376,11 +367,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update maybe?
     @Override
-<<<<<<< HEAD
     public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
-=======
-    public void buildRobot(int influence, RobotType type, Direction dir) throws GameActionException {
->>>>>>> updated robot controller impl to have robot controller methods
         assertNotNull(type);
         assertNotNull(dir);
         assertCanBuildRobot(type, dir);
@@ -446,6 +433,18 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void seekLocations() throws GameActionException {
         int chili = 0;
     } 
+
+    // TODO: fill this in!
+    @Override
+    public boolean canDetect(MapLocation loc) {
+        return false;
+    }
+
+    // TODO: update this method!
+    @Override
+    public MapLocation[] detect() {
+        return null;
+    }
     
     // ***********************************
     // *** ENLIGHTENMENT CENTER METHODS **
@@ -466,7 +465,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
      
     @Override //TODO: UPDATE THIS!!
-    public boolean canSetFlag(); {
+    public boolean canSetFlag() {
         return false;
     }
 
@@ -476,7 +475,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     } 
 
     @Override //TODO: UPDATE THIS!!
-    public boolean canGetFlag(MapLocation loc); {
+    public boolean canGetFlag(MapLocation loc) {
         return false;
     }
 
@@ -484,51 +483,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void getFlag(MapLocation loc) throws GameActionException {
         int chili = 0;
     } 
-
-
-    // ***********************************
-    // ****** MUCKRAKER METHODS ********** 
-    // ***********************************
-
-    // TODO: fill this in!
-    @Override
-    public boolean canDetect(MapLocation loc) {
-        return false;
-    }
-
-    // TODO: update this method!
-    @Override
-    public MapLocation[] detect() {
-        return null;
-    }
-
-    // TODO: update this method!
-    @Override
-    public boolean canExpose(MapLocation loc) {
-        return false;
-    }
-
-    // TODO: update this method!
-    @Override
-    public void expose(MapLocation loc) {
-        int a = 0;
-    }
-
-    // ***********************************
-    // ****** POLITICIAN METHODS ********** 
-    // ***********************************
-
-    // TODO: update this method!
-    @Override
-    public boolean canEmpower() {
-        return false;
-    }
-
-    // TODO: update this method!
-    @Override
-    public void empower() {
-        int a = 0;
-    }
 
     // ***********************************
     // ****** OTHER ACTION METHODS *******
