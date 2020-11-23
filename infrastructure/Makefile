@@ -2,21 +2,21 @@
 
 # Basic environment variables for docker images
 env:
-	docker build - < env.Dockerfile -t bc20-env
+	docker build - < env.Dockerfile -t bc21-env
 
 # Worker servers: compilation server and game runner server
 worker: env
-	docker build -f worker.Dockerfile -t bc20-worker worker
+	docker build -f worker.Dockerfile -t bc21-worker worker
 compile: worker
-	docker build -f compile.Dockerfile -t bc20-compile worker
+	docker build -f compile.Dockerfile -t bc21-compile worker
 game: worker
-	docker build -f game.Dockerfile -t bc20-game worker
+	docker build -f game.Dockerfile -t bc21-game worker
 
 # Matchmaking servers: scrimmage matchmaking and tournament running
 scrimmage: env
-	docker build -f scrimmage.Dockerfile -t bc20-scrimmage matcher
+	docker build -f scrimmage.Dockerfile -t bc21-scrimmage matcher
 tournament: env
-	docker build -f tournament.Dockerfile -t bc20-tournament matcher
+	docker build -f tournament.Dockerfile -t bc21-tournament matcher
 
 images: compile game scrimmage tournament
 
