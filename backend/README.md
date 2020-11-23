@@ -98,7 +98,7 @@ Always commit the most recent `requirements.txt`.
 
 Note that the deployed version of the backend uses regular `docker` and this folder's `Dockerfile` to build. In particular, `docker-compose.yml` is not used by the deployment process at all.
 
-Also, note that the deployed version uses `uWSGI` to run (as specified in the Dockerfile), rather than Django's own serving process.
+Also, note that the deployed version uses `uWSGI` to run (as specified in the Dockerfile), and serves out of port 80, as opposed to Django's own serving and port 8000.
 
 ### Steps
 
