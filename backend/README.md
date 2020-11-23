@@ -4,69 +4,74 @@ Written in Django Rest Framework. Based on `battlecode19/api`.
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of `battlecode20` to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions below.
-
-For a nice interface to test the backend, go to `localhost:8000/docs/`.
+You can run `docker-compose up --build` in the root directory of this repository to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions in this section.
 
 ### First-Time Setup
 
 #### Virtual Environment
 
-Create a virtual environment by following the instructions below.
+Open a terminal, and `cd` into this directory. Create a virtual environment by following the instructions below.
 
 - `pip3 install virtualenv` (or `pip` if your default Python installation is 3)
 - `virtualenv venv -p python3`
-- `source venv/bin/activate`
+- `source venv/bin/activate` (or if this doesn't work, perhaps `source venv/Scripts/activate`, or `source env/bin/activate`; basically, just try to find an activate file)
 - `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
 
-It would be good, sometime, to fix `psycopg2` at 2.7.7. Unfortunately, deploy seems to fail. But, this would prevents a bug, in which `psycopg2` requires a working build environmment for the included C code.
+A couple errors may occur when installing the requirements:
 
-If you still have this bug: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
+- Sometimes psycopg2 fails to compile since it needs some prerequisites. You can follow the installation process [see here](https://www.psycopg.org/docs/install.html#install-from-source). 
+  - Alternatively, you can use `psycopg2-binary`. Comment out the `psycopg2` line in requirements.txt, run `pip install psycopg2-binary`, then `pip install -r requirements.txt`, then uncomment that line. (It's better that we use `psycopg2`, rather than the binaries, in production. So, make sure to _not commit any changes_.)
+  - Another potential fix: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
+- uWSGI may fail to build. This is fine, as you don't actually need it to develop locally. Comment it out, run `pip install -r requirements.txt`, and then uncomment it (again so that we can use it in production -- make sure to _not commit any changes_).
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings_real.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
+Any time you start the backend, there must be a Postgres instance up. It's easiest to create a Postgres database running somewhere else (for example, on Google Cloud, or another deployment service), and then to provide connection info in `dev_settings.py` (and `dev_settings_sensitive.py`). (More instructions about setting up this database coming soon! If they aren't here yet, bug Nathan.)
 
-```
-docker run -p 5432:5432 -e POSTGRES_USER=battlecode -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
+Next, run the following to initialize the database:
+
+```python3
+python manage.py migrate
 ```
 
-To stop or start the database container: `docker stop bc20db` `docker start bc20db`. [Postico](https://eggerapps.at/postico/) and [pgAdmin](https://www.pgadmin.org/) are two useful tools for managing the database.
+(This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.)
 
 #### Migrations
 
-Run the following to set up the database:
+Anytime models are changed, run the following to actually make changes to the database itself:
 
-```
+```python3
+python manage.py makemigrations
 python manage.py migrate
 ```
 
-This must be run the first time the database is setup, or anytime models are changed. When models are changed, you also need to run `python manage.py makemigrations` and then commit the migrations. If run through docker-compose, you need to first `docker exec -it battlecode20_backend_1 /bin/bash` and then perform the `python manage.py makemigrations`.
-
-This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.
+(Note that if run through Docker or docker-compose, migrations are created and applied during the Docker process.)
 
 ### Running
 
-Make sure you work in your virtual environment, make sure all packages are up to date, start the database, and set the necessary environment variables (only needed once per terminal session):
+Make sure you work in your virtual environment. Also, if `requirements.txt` has been changed, make sure all packages are up to date (same process as before). And, if models are changed, make sure to migrate (again, same as above).
 
-```
-source venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-docker start bc20db
-export DJANGO_SETTINGS_MODULE="dev_settings_real"
-export EMAIL_PASS="passwordtobattlecodegmail"
+Then, set the necessary environment variables (only needed once per terminal session):
+
+```python3
+export DJANGO_SETTINGS_MODULE="dev_settings"
 ```
 
 Then, start the server:
 
-```
+```python3
 python manage.py runserver
 ```
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
-You can also test with uWSGI (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+
+When you're done, make sure to leave your venv:
+
+```python3
+deactivate
+```
 
 ### Testing
 
@@ -85,10 +90,9 @@ When installing a new Python package:
 
 Always commit the most recent `requirements.txt`.
 
-
 ## Deployment
 
-#### Steps
+### Steps
 
 1. Push to master.
 2. Go to [Cloud Build Triggers](https://console.cloud.google.com/cloud-build/triggers?project=battlecode18) on Google Cloud.
@@ -100,7 +104,7 @@ Always commit the most recent `requirements.txt`.
 
 This procedure is currently very long and requires too much manual intervention. We should write a script that does all of this for us (which shouldn't be too hard).
 
-#### Setup
+### Setup
 
 A database should be created.
 
