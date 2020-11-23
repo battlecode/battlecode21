@@ -6,11 +6,13 @@ Fully static frontend in React, based on `battlecode19/app`, using modified temp
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of this repository to run the entire website stack. If you want to run the frontend outside of Docker, follow the instructions below.
+It's easiest to run the frontend through Node. To do so, follow the instructions in the rest of this section.
+
+(Alternatively, you could run the frontend through Docker: run `docker-compose up --build frontend` from the repo's root directory.)
 
 ### First-Time Setup
 
-In this directory, run:
+First, make sure you have [Node](https://nodejs.org/en/download/) installed. (Also, on Windows, [Cygwin](https://www.cygwin.com/) is recommended to use as your terminal environment.) Then, in this directory, run:
 
 ```
 npm install
@@ -35,6 +37,8 @@ When installing a new Node package, always `npm install --save <package>` or `np
 ## Deployment
 
 For production, build with `npm run build` for the full thing, and `npm run buildnogame` to build the site without any game specific information. This is handled automatically by calling `./deploy.sh deploy` or `./deploy.sh deploynogame` using Bash, respectively. Note that the former should ONLY be called after the release of the game, since it makes the game specs and the visualizer public.
+
+Notably, the servers that serve the deployed frontend never run npm (through Docker or otherwise). Instead, our deploy script runs npm locally to build the frontend, and then sends this compiled version to Google Cloud.
 
 ### One-time setup
 

@@ -4,7 +4,11 @@ Written in Django Rest Framework. Based on `battlecode19/api`.
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of this repository to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions in this section.
+The best way to run the backend locally is to run `docker-compose up --build backend` from the repo's root directory.
+
+If you don't have Docker, or want to run Django outside of Docker, follow the instructions in the rest of this section.
+
+For a nice interface to test the backend, go to `localhost:8000/docs/`.
 
 ### First-Time Setup
 
@@ -65,7 +69,7 @@ python manage.py runserver
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
-If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`. Note that the backend may be running on port 80, instead of 8000. You should check this, and then change URLs in `frontend/.env.development` as necessary.
 
 When you're done, make sure to leave your venv:
 
@@ -91,6 +95,10 @@ When installing a new Python package:
 Always commit the most recent `requirements.txt`.
 
 ## Deployment
+
+Note that the deployed version of the backend uses regular `docker` and this folder's `Dockerfile` to build. In particular, `docker-compose.yml` is not used by the deployment process at all.
+
+Also, note that the deployed version uses `uWSGI` to run (as specified in the Dockerfile), and serves out of port 80, as opposed to Django's own serving and port 8000.
 
 ### Steps
 
