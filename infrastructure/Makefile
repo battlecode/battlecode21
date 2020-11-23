@@ -22,10 +22,10 @@ images: compile game scrimmage tournament
 
 # Push to google container registry
 push: images
-	docker tag bc21-compile    gcr.io/battlecode18/bc20-compile
-	docker tag bc21-game       gcr.io/battlecode18/bc20-game
-	docker tag bc21-scrimmage  gcr.io/battlecode18/bc20-scrimmage
-	docker tag bc21-tournament gcr.io/battlecode18/bc20-tournament
+	docker tag bc21-compile    gcr.io/battlecode18/bc21-compile
+	docker tag bc21-game       gcr.io/battlecode18/bc21-game
+	docker tag bc21-scrimmage  gcr.io/battlecode18/bc21-scrimmage
+	docker tag bc21-tournament gcr.io/battlecode18/bc21-tournament
 	docker push gcr.io/battlecode18/bc21-compile
 	docker push gcr.io/battlecode18/bc21-game
 	docker push gcr.io/battlecode18/bc21-scrimmage
