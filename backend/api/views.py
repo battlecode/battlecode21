@@ -445,6 +445,7 @@ class TeamViewSet(viewsets.GenericViewSet,
     search_fields = ('name','users__username')
     ordering_fields = ('score','name')
     ordering = ('score','name')
+    TEAM_SIZE = 4
 
     def get_queryset(self):
         """
@@ -586,7 +587,7 @@ class TeamViewSet(viewsets.GenericViewSet,
             return Response({'message': 'Already on a team in this league'}, status.HTTP_400_BAD_REQUEST)
         if team.team_key != request.data.get('team_key', None):
             return Response({'message': 'Invalid team key'}, status.HTTP_400_BAD_REQUEST)
-        if team.users.count() == 2:
+        if team.users.count() == self.TEAM_SIZE:
             return Response({'message': 'Team has max number of users'}, status.HTTP_400_BAD_REQUEST)
         team.users.add(request.user.id)
         team.save()
