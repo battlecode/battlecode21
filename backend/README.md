@@ -69,7 +69,7 @@ python manage.py runserver
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
-If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`. Note that the backend may be running on port 80, instead of 8000. You should check this, and then change URLs in `frontend/.env.development` as necessary.
 
 When you're done, make sure to leave your venv:
 
