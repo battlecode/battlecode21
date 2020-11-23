@@ -6,12 +6,11 @@ import logging
 logging.basicConfig(format='%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 logging.getLogger().setLevel(logging.INFO)
 
-
 # Constants, parameters and configurations
 
 GCLOUD_PROJECT_ID        = 'battlecode18'
-GCLOUD_SUB_COMPILE_NAME  = 'bc20-compile-sub'
-GCLOUD_SUB_GAME_NAME     = 'bc20-game-sub'
+GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile-sub'
+GCLOUD_SUB_GAME_NAME     = 'bc21-game-sub'
 GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
 GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
 
