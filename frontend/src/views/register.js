@@ -126,7 +126,7 @@ class Register extends Component {
         }}
       >
       <div
-        className="chessBackground"
+        className="dustBackground"
         style={{
           height: '100vh',
           width: '100vw',
