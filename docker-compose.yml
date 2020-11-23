@@ -29,4 +29,5 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=dev_settings
     # command: bash -c 'python manage.py migrate && uwsgi --ini uwsgi.ini'
+    # command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
     command: bash -c 'python manage.py migrate && python manage.py runserver 0.0.0.0:80'
