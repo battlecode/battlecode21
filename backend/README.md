@@ -40,8 +40,8 @@ python manage.py migrate
 Anytime models are changed, run the following to actually make changes to the database itself:
 
 ```python3
-python manage.py migrate
 python manage.py makemigrations
+python manage.py migrate
 ```
 
 (Note that if run through Docker or docker-compose, migrations are created and applied during the Docker process.)
