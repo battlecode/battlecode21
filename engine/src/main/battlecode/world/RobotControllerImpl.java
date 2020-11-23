@@ -356,7 +356,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update maybe?
     @Override
-    public boolean canBuildRobot(int influence, RobotType type, Direction dir) {
+    public boolean canBuildRobot(RobotType type, Direction dir, int influence) {
         try {
             assertNotNull(type);
             assertNotNull(dir);
@@ -367,7 +367,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update maybe?
     @Override
-    public void buildRobot(int influence, RobotType type, Direction dir) throws GameActionException {
+    public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         assertNotNull(type);
         assertNotNull(dir);
         assertCanBuildRobot(type, dir);

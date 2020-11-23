@@ -86,7 +86,7 @@ public strictfp interface RobotController {
     Team getTeam();
 
     /**
-     * Returns this robot's type (CENTER, MUCKRAKER, POLITICIAN, etc.).
+     * Returns this robot's type (MUCKRAKER, POLITICIAN, SLANDERER, etc.).
      *
      * @return this robot's type.
      *
@@ -336,9 +336,10 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can build a robot of the given type in the
      * given direction. Checks that the robot is of a type that can build bots, 
-     * that the robot can build the desired type, that the target location is on the map,
-     * that the target location is not occupied,  that the robot has the amount of influence it's trying to spend,
-     * and that there are cooldown turns remaining.
+     * that the robot can build the desired type, that the target location is 
+     * on the map,  that the target location is not occupied, that the robot has 
+     * the amount of influence it's trying to spend, and that there are 
+     * cooldown turns remaining.
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -353,15 +354,15 @@ public strictfp interface RobotController {
     /**
      * Builds a robot of the given type in the given direction.
      *
-     * @param dir the direction to spawn the unit
      * @param type the type of robot to build
+     * @param dir the direction to spawn the unit
      * @param influence the amount of influence to be used to build
      * @throws GameActionException if the conditions of <code>canBuildRobot</code>
      * are not all satisfied.
      *
      * @battlecode.doc.costlymethod
      */
-    void buildRobot(int influence, RobotType type, Direction dir) throws GameActionException;
+    void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException;
 
     // ***********************************
     // ****** POLITICIAN METHODS ********* 
@@ -380,11 +381,10 @@ public strictfp interface RobotController {
 
     /**
      * Runs the "empower" ability of a politician:
-     * Divides all of its conviction evenly among any units within
-     * squared distance &le; <code> GameConstants.EMPOWER_RADIUS_SQUARED </code>. 
-     * For each friendly unit, increase its conviction
-     * by that amount. For each unfriendly unit, decrease its conviction
-     * by that amount.
+     * Divides all of its current conviction, which is capped at its starting conviction,
+     * evenly among any units within the Politician's empower radius.
+     * For each friendly unit, increase its conviction by that amount. 
+     * For each unfriendly unit, decrease its conviction by that amount.
      * If an unfriendly unit's conviction becomes negative, it disappears
      * from the map on the next round, unless it is a Politician, in which case
      * it becomes a Politician of your team.
@@ -420,10 +420,11 @@ public strictfp interface RobotController {
      * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
      * If a slanderer is exposed then on the next round it will no longer be in the world.
      * Aside from this, a successful expose temporarily increases the total conviction 
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
+     * of all Politicians on the same team by a factor 1.01^(influence) for the next
+     * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
      *
      * If the conditions for exposing are all met but loc does not contain a slanderer,
-     * no Exception is thrown, but the bytecode and cooldown costs are still consumed. 
+     * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
      * @throws GameActionException if conditions for exposing are not all satisfied 
      * @battlecode.doc.costlymethod
      */
