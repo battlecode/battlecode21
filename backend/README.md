@@ -96,6 +96,8 @@ Always commit the most recent `requirements.txt`.
 
 ## Deployment
 
+Note that the deployed version of the backend uses regular `docker` and this folder's `Dockerfile` to build. In particular, `docker-compose.yml` is not used by the deployment process at all.
+
 ### Steps
 
 1. Push to master.
