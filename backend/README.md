@@ -25,7 +25,7 @@ A couple errors may occur when installing the requirements:
 
 #### Database
 
-Any time you start the backend, there must be a Postgres instance up. It's easiest to create a Postgres database running somewhere else (for example, on Google Cloud), and then to provide connection info in Django's settings module.
+Any time you start the backend, there must be a Postgres instance up. It's easiest to create a Postgres database running somewhere else (for example, on Google Cloud, or another deployment service), and then to provide connection info in `dev_settings.py` (and `dev_settings_sensitive.py`). (More instructions about setting up this database coming soon! If they aren't here yet, bug Nathan.)
 
 Next, run the following to initialize the database:
 
