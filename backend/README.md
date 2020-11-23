@@ -48,16 +48,12 @@ python manage.py makemigrations
 
 ### Running
 
-Make sure you work in your virtual environment, make sure all packages are up to date, start the database, and set the necessary environment variables (only needed once per terminal session):
-(TODO these exports are annoying to write every time, and also seem non-exhaustive... could we revise how they work?)
-(TODO note about reinstalling requirements)
-(TODO i think you have to export the settings module, before migrate.)
+Make sure you work in your virtual environment. Also, if `requirements.txt` has been changed, make sure all packages are up to date (same process as before). And, if models are changed, make sure to migrate (again, same as above).
+
+Then, set the necessary environment variables (only needed once per terminal session):
 
 ```python3
-source venv/bin/activate
-python manage.py migrate
 export DJANGO_SETTINGS_MODULE="dev_settings"
-export EMAIL_PASS="passwordtobattlecodegmail"
 ```
 
 Then, start the server:
