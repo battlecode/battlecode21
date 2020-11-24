@@ -107,7 +107,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // TODO: update this method!
     @Override
     public int getTeamVotes() {
-        return 0;
+        return gameWorld.getTeamInfo().getVotes(getTeam()); // corresponding method in TeamInfo.java not implemented yet
     }
 
     // *********************************
@@ -139,7 +139,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
             return null;
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
-
+ 
+    public int getInfluence() {
+        return this.robot.getInfluence(); // corresponding method in InternalRobot.java not done yet
+    }
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
     // ***********************************
@@ -246,7 +249,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
     //TODO: update this method!
     @Override 
     public double senseSwamping(MapLocation loc) {
-        return 69.0;
+        assertCanSenseLocation(loc);
+        return this.gameWorld.isSwamped(loc); // corresponding method in GameWorld.java not implemented
     }
 
     // ***********************************
@@ -337,12 +341,15 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ****** BUILDING/SPAWNING **********
     // ***********************************
 
-    private void assertCanBuildRobot(RobotType type, Direction dir) throws GameActionException {
+    private void assertCanBuildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         MapLocation spawnLoc = adjacentLocation(dir);
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
         // TODO: add general resource check
+        if (influence <= 0) { // robot spending nonpositive influence doesn't make sense? unsure though
+            throw new GameActionException(CANT_DO_THAT, "Not possible to spend nonpositive amount of influence.");
+        } 
         if (!onTheMap(spawnLoc))
             throw new GameActionException(OUT_OF_RANGE,
                     "Can only spawn to locations on the map; " + spawnLoc + " is not on the map.");
@@ -360,7 +367,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         try {
             assertNotNull(type);
             assertNotNull(dir);
-            assertCanBuildRobot(type, dir);
+            assertCanBuildRobot(type, dir, influence);
             return true;
         } catch (GameActionException e) { return false; }
     }
@@ -370,15 +377,17 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         assertNotNull(type);
         assertNotNull(dir);
-        assertCanBuildRobot(type, dir);
+        assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
         // TODO: replace with using up resource
         // gameWorld.getTeamInfo().adjustSoup(getTeam(), -type.cost);
+        influence = Math.min(influence, this.getInfluence());
+        this.robot.removeInfluence(influence); // corresponding method in InternalRobot.java not yet exist
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
         // TODO: set cooldown based on cost/type/new constant/etc.
-        // getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS);
+        getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS); // should this be as function of robot type? 
 
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
@@ -426,18 +435,25 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     // TODO: fill this in!
     @Override
-    public boolean canDetect(MapLocation loc) {
-        return false;
+    public boolean canDetect() { 
+        try { 
+            assertCanDetect();
+            return true;
+        } catch (GameActionException e) { return false; }
+    } 
+
+    private void assertCanDetect() throws GameActionException {
+        if (!getType().canDetect()) // corresponding function in RobotType.java not done
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot detect.");  
     }
 
     @Override //TODO: UPDATE THIS!!
     public MapLocation[] detect() {
-        return MapLocation();
-    } 
-    
-    @Override //TODO: UPDATE THIS!!
-    public boolean canSeekLocations() {
-        return false;
+        try {
+            assertCanDetect();
+            RobotInfo[] info = senseNearbyRobots(getLocation(), radiusSquared,  getTeam()); // how does one get the detectradius?
+        } catch (GameActionException e) { return false; }
     }
     
     @Override //TODO: UPDATE THIS!!
