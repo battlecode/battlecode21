@@ -19,4 +19,5 @@ RUN pip install -r requirements.txt
 
 COPY . /code/
 
-CMD ["uwsgi", "--ini", "uwsgi.ini"]
+# CMD ["uwsgi", "--ini", "uwsgi.ini"]
+CMD ["bash", "-c", "python manage.py makemigrations && python manage.py migrate && uwsgi --ini uwsgi.ini"]
