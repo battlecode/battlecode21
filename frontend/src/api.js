@@ -158,9 +158,9 @@ class Api {
       let wins = 0
       let losses = 0
       data.forEach(entry => {
-        if (entry.won) {
+        if (entry.won != null && entry.won) {
           wins++
-        } else {
+        } else if (entry.won != null) {
           losses++
         }
       })
