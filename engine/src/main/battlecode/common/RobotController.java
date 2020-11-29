@@ -447,10 +447,94 @@ public strictfp interface RobotController {
      * Returns the map locations of all locations within detection radius,
      * that contain a bot, without specifying the bots that are on each location.
      * @throws GameActionException if conditions for detecting are not satisfied
-     * @battlecode.doc.costlymethod
+     * @battlecode.doc.costlymethod 
+     * @return an array of MapLoctions that are occupied within detection radius
      */
     MapLocation[] detect() throws GameActionException;
  
+    
+    // ***********************************
+    // ****** CENTER METHODS ************* 
+    // ***********************************
+
+/**
+     * Tests whether the robot can bid the specified amount of influence on that round.
+     * 
+     * Checks that the robot is a Center, that the robot has at least that amount of influence,
+     * , that the amount of influence is positive, and there are cooldown turns remaining. 
+     *
+     * @param influence the amount of influence being bid 
+     * @return whether it is possible to detect on that round at that location.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canBid(int influence);
+
+    /** 
+     * If the conditions for bidding are met, bids the specified amount of influence.
+     * If this robot has the highest bid of all bids on that round, then the team that
+     * the robot is on gains 1 vote and loses the amount bid. 
+     * If the robot doesn't have the highest bid then it only loses 50% of the amount bid,
+     * rounded up to the nearest integer. 
+     *
+     * @throws GameActionException if conditions for bidding are not satisfied
+     * @battlecode.doc.costlymethod 
+     * @return an array of MapLoctions that are occupied within detection radius
+     */
+    void bid(int influence) throws GameActionException;
+
+    // ***********************************
+    // ****** COMMUNICATION METHODS ****** 
+    // ***********************************
+     
+    /**
+     * Tests whether the robot can set its flag on that round, which is an ordered list of 2 integers.
+     * This flag, if set, persists for future rounds as long as it doesn't get overwritten.
+     *  
+     * Checks if there are cooldown turns remaining.
+     * @return whether it is possible to set the robot's flag on that round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canSetFlag();
+
+    /** 
+     * Sets a robot's flag to an ordered list of the two integers passed in.  
+     *
+     * @param flag1 first integer in flag
+     * @param flag2 second integer in flag
+     * @throws GameActionException if conditions for setting the flag are not satisfied
+     *
+     * @battlecode.doc.costlymethod  
+     */
+    void setFlag(int flag1, int flag2) throws GameActionException;
+
+    /**
+     * Given a MapLocation, checks if a robot can get the flag of the robot on that location,
+     * if a robot exists there.
+     *
+     * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
+     * that the robot on the target location is on the same team, and that either (a) the
+     * robot is a Center of Enlightenment or (b) the squared distance between the target location and
+     * the current location is &leq; 8. 
+     *
+     * @param loc MapLocation being targeted by canGetFlag
+     * @return whether it is possible to set the robot's flag on that round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canGetFlag(MapLocation loc);
+
+    /** 
+     * Given a MapLocation, returns an int[] corresponding to the 
+     * flag of the robot on that MapLocation, if the conditions of canGetFlag(loc) are satisfied.
+     *
+     * @param loc MapLocation being targeted by getFlag
+     * @throws GameActionException if conditions for getting the flag are not satisfied
+     * @return the flag of the robot on the location specified, as an array of 2 integers
+     * @battlecode.doc.costlymethod  
+     */
+    int[] getFlag(MapLocation loc) throws GameActionException;
     // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************
