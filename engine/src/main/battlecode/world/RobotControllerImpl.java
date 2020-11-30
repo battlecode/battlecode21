@@ -245,8 +245,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update this method!
     @Override 
-    public boolean senseSwamping(MapLocation loc) {
-        return false;
+    public double senseSwamping(MapLocation loc) {
+        return 69.0;
     }
 
     // ***********************************
@@ -411,28 +411,18 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
 
     // ***********************************
-    // ****** MUCKRAKER METHODS ********** 
+    // ****** MUCKRAKER METHODS ********* 
     // ***********************************
-
+    
     @Override //TODO: UPDATE THIS!!
     public boolean canExpose(MapLocation loc) {
         return false;
     }
-    
+
     @Override //TODO: UPDATE THIS!!
     public void expose(MapLocation loc) throws GameActionException {
         int chili = 0;
     }
-    
-    @Override //TODO: UPDATE THIS!!
-    public boolean canSeekLocations() {
-        return false;
-    }
-    
-    @Override //TODO: UPDATE THIS!!
-    public void seekLocations() throws GameActionException {
-        int chili = 0;
-    } 
 
     // TODO: fill this in!
     @Override
@@ -440,11 +430,20 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return false;
     }
 
-    // TODO: update this method!
-    @Override
+    @Override //TODO: UPDATE THIS!!
     public MapLocation[] detect() {
-        return null;
+        return MapLocation();
+    } 
+    
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSeekLocations() {
+        return false;
     }
+    
+    @Override //TODO: UPDATE THIS!!
+    public MapLocation[] seekLocations() {
+        return MapLocation();
+    } 
     
     // ***********************************
     // *** ENLIGHTENMENT CENTER METHODS **
@@ -480,8 +479,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     @Override //TODO: UPDATE THIS!!
-    public void getFlag(MapLocation loc) throws GameActionException {
-        int chili = 0;
+    public int[] getFlag(MapLocation loc) {
+        return Integer();
     } 
 
     // ***********************************

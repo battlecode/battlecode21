@@ -35,9 +35,9 @@ public strictfp interface RobotController {
     int getTeamVotes();
 
     /**
-     * Returns the number of robots on your team, including Centers of Enlightenment.
+     * Returns the number of robots on your team, including Enlightenment Centers.
      * If this number ever reaches zero, and you have less votes than your opponent,
-     * you lose by default (because you can't get any more votes with no Centers of Enlightenment).
+     * you lose by default (because you can't get any more votes with no Enlightenment Centers).
      *
      * @return the number of robots on your team
      *
@@ -249,16 +249,17 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-     * Given a location, returns if that location is covered by Martian swamp.
+     * Given a location, returns the amount of swamping on that location, as a double.
      *
      * @param loc the given location
-     * @return whether or not the location is covered by swamp.
-     * If this is the case, robots on this location take more turns for any given action.
+     * @return the amount of swamping on the location as a double
+     *
+     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
      */
-    boolean senseSwamping(MapLocation loc) throws GameActionException;
+    double senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
      * Returns the location adjacent to current location in the given direction.
@@ -413,9 +414,6 @@ public strictfp interface RobotController {
      * @param loc the location being checked
      * @return whether it is possible to expose on that round at that location. 
      *
-     * If the conditions for exposing are all met but loc does not contain a slanderer,
-     * no Exception is thrown, but the bytecode and cooldown costs are still consumed. 
-     * @throws GameActionException if conditions for exposing are not all satisfied 
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
@@ -423,27 +421,9 @@ public strictfp interface RobotController {
     /** 
      * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
      * If a slanderer is exposed then on the next round it will no longer be in the world.
-     * Aside from this, a successful expose temporarily increases the total conviction 
-<<<<<<< HEAD
-<<<<<<< HEAD
+     * Aside from this, a successful expose temporarily increases the total conviction
      * of all Politicians on the same team by a factor 1.01^(influence) for the next
      * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
-=======
-=======
->>>>>>> changes to specs / impl for pull request
-<<<<<<< HEAD
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EXPOSE_NUM_TURNS </code> turns
-=======
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
->>>>>>> made changes for pull request #120
-<<<<<<< HEAD
->>>>>>> made changes for pull request #120
-=======
-=======
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next
-     * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
->>>>>>> changes to specs / impl for pull request
->>>>>>> changes to specs / impl for pull request
      *
      * If the conditions for exposing are all met but loc does not contain a slanderer,
      * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
@@ -453,8 +433,8 @@ public strictfp interface RobotController {
     void expose(MapLocation loc) throws GameActionException;
 
     /**
-     * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
-     * Detecting only returns a list of occupied MapLocations within a large range, but not
+     * Tests whether the robot can seek, which is a weaker form of sensing with a larger range.
+     * Seeking only returns a list of occupied MapLocations within a large range, but not
      * the RobotInfo for the bots on each location occupied.
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
@@ -469,8 +449,9 @@ public strictfp interface RobotController {
      /** 
      * Returns the map locations of all locations within detection radius,
      * that contain a bot, without specifying the bots that are on each location.
-     * @throws GameActionException if conditions for detecting are not satisfied
-     * @battlecode.doc.costlymethod
+     * @throws GameActionException if conditions for seeking are not satisfied
+     * @battlecode.doc.costlymethod 
+     * @return an array of MapLocations that are occupied within seeking radius
      */
     MapLocation[] detect() throws GameActionException;
 
@@ -501,7 +482,7 @@ public strictfp interface RobotController {
     // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-/**
+    /**
      * Tests whether the robot can bid the specified amount of influence on that round.
      * 
      * Checks that the robot is an Enlightenment Center, that the robot has at least that amount of influence,
@@ -526,7 +507,7 @@ public strictfp interface RobotController {
      * @return an array of MapLoctions that are occupied within detection radius
      */
     void bid(int influence) throws GameActionException;
- 
+
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
