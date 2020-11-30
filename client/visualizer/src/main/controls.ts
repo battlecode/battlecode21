@@ -37,6 +37,8 @@ export default class Controls {
   onStepForward: () => void;
   onStepBackward: () => void;
   onSeek: (frame: number) => void;
+  onStop: () => void;
+  onGoEnd: () => void;
   isPaused: () => Boolean;
 
   // qualities of progress bar
@@ -57,6 +59,7 @@ export default class Controls {
     reverseUPS: ButtonInfo,
     doubleUPS: ButtonInfo,
     halveUPS: ButtonInfo,
+    goEnd: ButtonInfo
   };
 
   constructor(conf: Config, images: imageloader.AllImages) {
@@ -79,6 +82,7 @@ export default class Controls {
       reverseUPS: { img: imgs.reverseUPS, text: "Reverse", onclick: () => this.reverseUPS() },
       doubleUPS: { img: imgs.doubleUPS, text: "Faster", onclick: () => this.doubleUPS() },
       halveUPS: { img: imgs.halveUPS, text: "Slower", onclick: () => this.halveUPS() },
+      goEnd: {img: imgs.goEnd, text: "End", onclick: () => this.end()}
     };
 
 
@@ -118,6 +122,8 @@ export default class Controls {
 
     let stopButton = this.createButton('playbackStop');
 
+    let endButton = this.createButton('goEnd');
+
     buttons.appendChild(reverseButton);
     buttons.appendChild(halveButton);
     buttons.appendChild(goPreviousButton);
@@ -125,6 +131,7 @@ export default class Controls {
     buttons.appendChild(goNextButton);
     buttons.appendChild(doubleButton);
     buttons.appendChild(stopButton);
+    buttons.appendChild(endButton);
     buttons.appendChild(document.createElement("br"));
     buttons.appendChild(this.tileInfo);
 
@@ -272,11 +279,11 @@ export default class Controls {
    * Stop the match, and go to the first round
    */
   stop() {
-    const pauseButton = document.getElementById("playbackPause");
-    if (!this.isPaused() && pauseButton) {
-      pauseButton.click();
-    }
-    this.onSeek(0);
+    this.onStop();
+  }
+
+  end() {
+    this.onGoEnd();
   }
 
   /**

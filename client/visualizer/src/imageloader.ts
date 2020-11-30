@@ -34,6 +34,7 @@ export type AllImages = {
     reverseUPS: Image,
     doubleUPS: Image,
     halveUPS: Image,
+    goEnd: Image
   }
 };
 
@@ -133,6 +134,7 @@ export function loadAll(config: Config, finished: (AllImages) => void) {
   img(result.controls, 'reverseUPS', require(dirname + 'controls/reverse.png'));
   img(result.controls, 'doubleUPS', require(dirname + 'controls/skip-forward.png'));
   img(result.controls, 'halveUPS', require(dirname + 'controls/skip-backward.png'));
+  img(result.controls, 'goEnd', require(dirname + 'controls/go-end.png'));
 
   img(result.controls, 'matchBackward', require(dirname + 'controls/green-previous.png'));
   img(result.controls, 'matchForward', require(dirname + 'controls/green-next.png'));

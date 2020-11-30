@@ -646,6 +646,18 @@ export default class Client {
       match.seek(turn);
       interpGameTime = turn;
     };
+    this.controls.onStop = () => {
+      if(!(goalUPS == 0)) {
+        this.controls.pause();
+      }
+      this.controls.onSeek(0);
+    };    
+    this.controls.onGoEnd = () => {
+      if(!(goalUPS == 0)) {
+        this.controls.pause();
+      }
+      this.controls.onSeek(match['_farthest'].turn);
+    };
     this.controls.onStepForward = () => {
       if(!(goalUPS == 0)) {
         this.controls.pause();
@@ -774,6 +786,9 @@ export default class Client {
             break;
           case 79: // "o" - Stop
             controls.stop();
+            break;
+          case 69: // 'e' - go to end
+            controls.end();
             break;
           case 37: // "LEFT" - Step Backward
             controls.stepBackward();
