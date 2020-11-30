@@ -462,7 +462,7 @@ public strictfp interface RobotController {
      * Tests whether the robot can bid the specified amount of influence on that round.
      * 
      * Checks that the robot is a Center, that the robot has at least that amount of influence,
-     * , that the amount of influence is positive, and there are cooldown turns remaining. 
+     * , and that the amount of influence is positive. 
      *
      * @param influence the amount of influence being bid 
      * @return whether it is possible to detect on that round at that location.
