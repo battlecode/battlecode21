@@ -252,7 +252,7 @@ public strictfp interface RobotController {
      * Given a location, returns the amount of swamping on that location, as a double.
      *
      * @param loc the given location
-     * @return the amount of swamping on the location
+     * @return the amount of swamping on the location as a double
      *
      * Higher amounts of swamping mean that robots on this location take more turns for any given action.
      * @throws GameActionException if the robot cannot sense the given location
