@@ -381,9 +381,10 @@ public strictfp interface RobotController {
 
     /**
      * Runs the "empower" ability of a politician:
-     * Divides all of its current conviction, which is capped at its starting conviction,
-     * evenly among any units within the Politician's empower radius.
-     * For each friendly unit, increase its conviction by that amount. 
+     * Divides all of its current conviction evenly among any units within the Politician's
+     * empower radius; the share received by a unit is at most the Politician's current conviction.
+     * 
+     * For each friendly unit, increase its conviction by that amount.
      * For each unfriendly unit, decrease its conviction by that amount.
      * If an unfriendly unit's conviction becomes negative, it disappears
      * from the map on the next round, unless it is a Politician, in which case
@@ -431,8 +432,8 @@ public strictfp interface RobotController {
     void expose(MapLocation loc) throws GameActionException;
 
     /**
-     * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
-     * Detecting only returns a list of occupied MapLocations within a large range, but not
+     * Tests whether the robot can seek, which is a weaker form of sensing with a larger range.
+     * Seeking only returns a list of occupied MapLocations within a large range, but not
      * the RobotInfo for the bots on each location occupied.
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
@@ -441,16 +442,16 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canDetect();
+    boolean canSeekLocations();
 
     /** 
-     * Returns the map locations of all locations within detection radius,
+     * Returns the map locations of all locations within seeking radius,
      * that contain a bot, without specifying the bots that are on each location.
-     * @throws GameActionException if conditions for detecting are not satisfied
+     * @throws GameActionException if conditions for seeking are not satisfied
      * @battlecode.doc.costlymethod 
-     * @return an array of MapLoctions that are occupied within detection radius
+     * @return an array of MapLocations that are occupied within seeking radius
      */
-    MapLocation[] detect() throws GameActionException;
+    MapLocation[] seekLocations() throws GameActionException;
  
     
     // ***********************************
