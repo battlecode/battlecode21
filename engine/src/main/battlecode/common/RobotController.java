@@ -438,7 +438,7 @@ public strictfp interface RobotController {
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
      *  
-     * @return whether it is possible to detect on that round at that location.
+     * @return whether it is possible to seek on that round at that location.
      *
      * @battlecode.doc.costlymethod
      */
