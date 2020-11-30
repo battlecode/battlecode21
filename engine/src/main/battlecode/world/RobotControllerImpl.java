@@ -104,6 +104,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.robot.getSensorRadiusSquared();
     }
 
+    // TODO: update this method!
+    @Override
+    public int getTeamVotes() {
+        return 0;
+    }
+
     // *********************************
     // ****** UNIT QUERY METHODS *******
     // *********************************
@@ -237,6 +243,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return getLocation().add(dir);
     }
 
+    //TODO: update this method!
+    @Override 
+    public boolean senseSwamping(MapLocation loc) {
+        return false;
+    }
+
     // ***********************************
     // ****** READINESS METHODS **********
     // ***********************************
@@ -342,8 +354,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot is still cooling down! You need to wait before you can perform another action.");
     }
 
+    //TODO: update maybe?
     @Override
-    public boolean canBuildRobot(RobotType type, Direction dir) {
+    public boolean canBuildRobot(RobotType type, Direction dir, int influence) {
         try {
             assertNotNull(type);
             assertNotNull(dir);
@@ -352,8 +365,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; }
     }
 
+    //TODO: update maybe?
     @Override
-    public void buildRobot(RobotType type, Direction dir) throws GameActionException {
+    public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         assertNotNull(type);
         assertNotNull(dir);
         assertCanBuildRobot(type, dir);
@@ -379,6 +393,85 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // also make sure to add cooldown turns (robot.addCooldownTurns())
     // and to properly update information for replays with gameWorld.getMatchMaker().addAction(...)
     // check to make sure we're not double updating the matchmaker (from gameWorld, and here)
+
+    
+    // ***********************************
+    // ****** POLITICIAN METHODS ********* 
+    // ***********************************
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canEmpower() {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void empower() throws GameActionException {
+        int chili = 0;
+    }
+
+
+    // ***********************************
+    // ****** MUCKRAKER METHODS ********** 
+    // ***********************************
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canExpose(MapLocation loc) {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void expose(MapLocation loc) throws GameActionException {
+        int chili = 0;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSeekLocations() {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void seekLocations() throws GameActionException {
+        int chili = 0;
+    } 
+    
+    // ***********************************
+    // *** ENLIGHTENMENT CENTER METHODS **
+    // ***********************************
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canBid(int influence) {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void bid(int influence) throws GameActionException {
+        int chili = 0;
+    }
+
+    // ***********************************
+    // ****** COMMUNICATION METHODS ****** 
+    // ***********************************
+     
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSetFlag(); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void setFlag(int flag1, int flag2) throws GameActionException {
+        int chili = 0;
+    } 
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canGetFlag(MapLocation loc); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void getFlag(MapLocation loc) throws GameActionException {
+        int chili = 0;
+    } 
+
 
     // ***********************************
     // ****** OTHER ACTION METHODS *******

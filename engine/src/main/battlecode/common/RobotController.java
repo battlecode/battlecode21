@@ -26,9 +26,18 @@ public strictfp interface RobotController {
     int getRoundNum();
 
     /**
-     * Returns the number of robots on your team (including your HQ).
-     * If this number ever reaches zero, the opposing team will automatically
-     * win by destruction (because your HQ is dead).
+     * Returns the team's total votes.
+     *
+     * @return the team's total votes.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getTeamVotes();
+
+    /**
+     * Returns the number of robots on your team, including Enlightenment Centers.
+     * If this number ever reaches zero, and you have less votes than your opponent,
+     * you lose by default (because you can't get any more votes with no Enlightenment Centers).
      *
      * @return the number of robots on your team
      *
@@ -77,7 +86,7 @@ public strictfp interface RobotController {
     Team getTeam();
 
     /**
-     * Returns this robot's type (MINER, HQ, etc.).
+     * Returns this robot's type (MUCKRAKER, POLITICIAN, SLANDERER, etc.).
      *
      * @return this robot's type.
      *
@@ -240,6 +249,18 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
+     * Given a location, returns if that location is covered by Martian swamp.
+     *
+     * @param loc the given location
+     * @return whether or not the location is covered by swamp.
+     * If this is the case, robots on this location take more turns for any given action.
+     * @throws GameActionException if the robot cannot sense the given location
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean senseSwamping(MapLocation loc) throws GameActionException;
+  
+    /**
      * Returns the location adjacent to current location in the given direction.
      *
      * @param dir the given direction
@@ -281,11 +302,12 @@ public strictfp interface RobotController {
     /**
      * Tells whether this robot can move one step in the given direction.
      * Returns false if the robot is a building, if the target location
-     * is not on the map, if the target location is occupied,
-     * if the dirt difference is
-     * too high and this robot is not a drone, and if the robot is ready
-     * based on the cooldown. Does not check if the location is flooded;
-     * suicide is permitted.
+     * is not on the map, if the target location is occupied, and if the robot is not ready
+     * based on the cooldown. Does not check if the location is covered with swamp;
+     * bots may choose to enter the swamp.
+     *
+     * If a bot enters the swamp then their cooldown is increased,
+     * which means that they take more turns for a given action.
      *
      * @param dir the direction to move in
      * @return true if it is possible to call <code>move</code> without an exception
@@ -300,8 +322,8 @@ public strictfp interface RobotController {
      * @param dir the direction to move in
      * @throws GameActionException if the robot cannot move one step in this
      * direction, such as cooldown being &gt;= 1, the target location being
-     * off the map, the target destination being occupied with either
-     * another robot, and the robot attempting to climb too high.
+     * off the map, or the target destination being occupied by
+     * another robot.
      *
      * @battlecode.doc.costlymethod
      */
@@ -313,34 +335,207 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can build a robot of the given type in the
-     * given direction. Checks that the robot can build the desired type,
-     * that the team has enough soup, that the target location is on the map,
-     * that the target location is not occupied, that the target location
-     * is not flooded (unless trying to build a drone), that the dirt
-     * difference is within <code>GameConstants.MAX_DIRT_DIFFERENCE</code>,
-     * and that there are cooldown turns remaining.
+     * given direction. Checks that the robot is of a type that can build bots, 
+     * that the robot can build the desired type, that the target location is 
+     * on the map,  that the target location is not occupied, that the robot has 
+     * the amount of influence it's trying to spend, and that there are 
+     * cooldown turns remaining.
      *
-     * @param dir the direction to build in
      * @param type the type of robot to build
+     * @param dir the direction to build in
+     * @param influence the amount of influence to spend
      * @return whether it is possible to build a robot of the given type in the
      * given direction.
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canBuildRobot(RobotType type, Direction dir);
+    boolean canBuildRobot(RobotType type, Direction dir, int influence);
 
     /**
      * Builds a robot of the given type in the given direction.
      *
-     * @param dir the direction to spawn the unit
      * @param type the type of robot to build
+     * @param dir the direction to spawn the unit
+     * @param influence the amount of influence to be used to build
      * @throws GameActionException if the conditions of <code>canBuildRobot</code>
      * are not all satisfied.
      *
      * @battlecode.doc.costlymethod
      */
-    void buildRobot(RobotType type, Direction dir) throws GameActionException;
+    void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException;
 
+    // ***********************************
+    // ****** POLITICIAN METHODS ********* 
+    // ***********************************
+
+    /**
+     * Tests whether the robot can empower.
+     * Checks that the robot is a politician, and if there are cooldown
+     * turns remaining.
+     * 
+     * @return whether it is possible to empower on that round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canEmpower();
+
+    /**
+     * Runs the "empower" ability of a politician:
+     * Divides all of its current conviction evenly among any units within the Politician's
+     * empower radius; the share received by a unit is at most the Politician's current conviction.
+     * 
+     * For each friendly unit, increase its conviction by that amount.
+     * For each unfriendly unit, decrease its conviction by that amount.
+     * If an unfriendly unit's conviction becomes negative, it disappears
+     * from the map on the next round, unless it is a Politician, in which case
+     * it becomes a Politician of your team.
+     *
+     * This also causes the politician unit to self-destruct; 
+     * on the next round it will no longer be in the world. 
+     *
+     * @throws GameActionException if conditions for empowering are not all satisfied
+     * @battlecode.doc.costlymethod
+     */
+    void empower() throws GameActionException;
+
+
+    // ***********************************
+    // ****** MUCKRAKER METHODS ********** 
+    // ***********************************
+
+    /**
+     * Tests whether the robot can expose at a given location.
+     * Checks that the robot is a muckraker, that the robot is within
+     * sensor radius of the muckraker, and if there are cooldown
+     * turns remaining.
+     * 
+     * Does not check if a slanderer is on the location given.
+     * @param loc the location being checked
+     * @return whether it is possible to expose on that round at that location. 
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canExpose(MapLocation loc);
+
+    /** 
+     * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
+     * If a slanderer is exposed then on the next round it will no longer be in the world.
+     * Aside from this, a successful expose temporarily increases the total conviction 
+     * of all Politicians on the same team by a factor 1.01^(influence) for the next
+     * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
+     *
+     * If the conditions for exposing are all met but loc does not contain a slanderer,
+     * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
+     * @throws GameActionException if conditions for exposing are not all satisfied 
+     * @battlecode.doc.costlymethod
+     */
+    void expose(MapLocation loc) throws GameActionException;
+
+    /**
+     * Tests whether the robot can seek, which is a weaker form of sensing with a larger range.
+     * Seeking only returns a list of occupied MapLocations within a large range, but not
+     * the RobotInfo for the bots on each location occupied.
+     * Checks that the robot is a muckraker, and if there are cooldown
+     * turns remaining.
+     *  
+     * @return whether it is possible to seek on that round at that location.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canSeekLocations();
+
+    /** 
+     * Returns the map locations of all locations within seeking radius,
+     * that contain a bot, without specifying the bots that are on each location.
+     * @throws GameActionException if conditions for seeking are not satisfied
+     * @battlecode.doc.costlymethod 
+     * @return an array of MapLocations that are occupied within seeking radius
+     */
+    MapLocation[] seekLocations() throws GameActionException;
+ 
+    
+    // ***********************************
+    // *** ENLIGHTENMENT CENTER METHODS **
+    // ***********************************
+
+/**
+     * Tests whether the robot can bid the specified amount of influence on that round.
+     * 
+     * Checks that the robot is an Enlightenment Center, that the robot has at least that amount of influence,
+     * , and that the amount of influence is positive. 
+     *
+     * @param influence the amount of influence being bid 
+     * @return whether it is possible to detect on that round at that location.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canBid(int influence);
+
+    /** 
+     * If the conditions for bidding are met, bids the specified amount of influence.
+     * If this robot has the highest bid of all bids on that round, then the team that
+     * the robot is on gains 1 vote and this robot loses the amount bid. 
+     * If the robot doesn't have the highest bid then it only loses 50% of the amount bid,
+     * rounded up to the nearest integer. 
+     *
+     * @throws GameActionException if conditions for bidding are not satisfied
+     * @battlecode.doc.costlymethod 
+     * @return an array of MapLoctions that are occupied within detection radius
+     */
+    void bid(int influence) throws GameActionException;
+
+    // ***********************************
+    // ****** COMMUNICATION METHODS ****** 
+    // ***********************************
+     
+    /**
+     * Tests whether the robot can set its flag on that round, which is an ordered list of 2 integers.
+     * This flag, if set, persists for future rounds as long as it doesn't get overwritten.
+     *  
+     * Checks if there are cooldown turns remaining.
+     * @return whether it is possible to set the robot's flag on that round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canSetFlag();
+
+    /** 
+     * Sets a robot's flag to an ordered list of the two integers passed in.  
+     *
+     * @param flag1 first integer in flag
+     * @param flag2 second integer in flag
+     * @throws GameActionException if conditions for setting the flag are not satisfied
+     *
+     * @battlecode.doc.costlymethod  
+     */
+    void setFlag(int flag1, int flag2) throws GameActionException;
+
+    /**
+     * Given a MapLocation, checks if a robot can get the flag of the robot on that location,
+     * if a robot exists there.
+     *
+     * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
+     * that the robot on the target location is on the same team, and that either (a) the
+     * robot is an Enlightenment Center or (b) the squared distance between the target location and
+     * the current location is &leq; 8. 
+     *
+     * @param loc MapLocation being targeted by canGetFlag
+     * @return whether it is possible to set the robot's flag on that round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canGetFlag(MapLocation loc);
+
+    /** 
+     * Given a MapLocation, returns an int[] corresponding to the 
+     * flag of the robot on that MapLocation, if the conditions of canGetFlag(loc) are satisfied.
+     *
+     * @param loc MapLocation being targeted by getFlag
+     * @throws GameActionException if conditions for getting the flag are not satisfied
+     * @return the flag of the robot on the location specified, as an array of 2 integers
+     * @battlecode.doc.costlymethod  
+     */
+    int[] getFlag(MapLocation loc) throws GameActionException;
     // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************
