@@ -369,37 +369,29 @@ export default class Controls {
    * Redraws the timeline and sets the current round displayed in the controls.
    */
   // TODO scale should be constant; should not depend on loadedTime
-  setTime(time: number, loadedTime: number, ups: number, fps: number, lagging: Boolean) {
+  setTime(time: number, loadedTime: number, upsUnpaused: number, paused: Boolean, fps: number, lagging: Boolean) {
 
-    if (this.conf.tournamentMode) {
-      // TOURNAMENT MODE
-      let speedText = (lagging ? '(Lagging) ' : '') + `UPS: ${ups | 0} FPS: ${fps | 0}`;
-      speedText = speedText.padStart(32);
-      this.speedReadout.textContent = speedText;
-      this.timeReadout.textContent = `Round: ${time}`;
-      return;
+    if (!this.conf.tournamentMode) {
+      // Redraw the timeline
+      const scale = this.canvas.width / loadedTime;
+      // const scale = this.canvas.width / cst.MAX_ROUND_NUM;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.ctx.fillStyle = "rgb(39, 39, 39)";
+      this.ctx.fillRect(0, 0, time * scale, this.canvas.height);
+
+      this.ctx.fillStyle = "#777";
+      this.ctx.fillRect(time * scale, 0, (loadedTime - time) * scale, this.canvas.height);
+
+      this.ctx.fillStyle = 'rgb(255,0,0)';
+      this.ctx.fillRect(time * scale, 0, 2, this.canvas.height);
     }
 
-    // Redraw the timeline
-    const scale = this.canvas.width / loadedTime;
-    // const scale = this.canvas.width / cst.MAX_ROUND_NUM;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.ctx.fillStyle = "rgb(39, 39, 39)";
-    this.ctx.fillRect(0, 0, time * scale, this.canvas.height);
-
-    this.ctx.fillStyle = "#777";
-    this.ctx.fillRect(time * scale, 0, (loadedTime - time) * scale, this.canvas.height);
-
-    this.ctx.fillStyle = 'rgb(255,0,0)';
-    this.ctx.fillRect(time * scale, 0, 2, this.canvas.height);
-
-    // Edit the text
-    this.timeReadout.textContent = `Round: ${time}/${loadedTime}`;
-
-    let speedText = (lagging ? '(Lagging) ' : '') + `UPS: ${ups | 0} FPS: ${fps | 0}`;
+    let speedText = (lagging ? '(Lagging) ' : '') + `UPS: ${upsUnpaused | 0}` + (paused ? ' (Paused)' : '') + ` FPS: ${fps | 0}`;
     speedText = speedText.padStart(32);
     this.speedReadout.textContent = speedText;
+    this.timeReadout.textContent = (this.conf.tournamentMode ? `Round: ${time}` : `Round: ${time}/${loadedTime}`);
+
   }
 
   /**
