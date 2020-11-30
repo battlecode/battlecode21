@@ -62,8 +62,6 @@ battlecode-javadoc-*
 battlecode20-internal-test-bots
 
 test.sh
-
-backend/dev_settings_real.py
+backend/dev_settings_sensitive.py
 
 infrastructure/worker/app/gcloud-key.json
-
