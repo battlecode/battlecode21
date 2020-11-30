@@ -441,6 +441,7 @@ public strictfp interface RobotController {
      *  
      * @return whether it is possible to seek on that round at that location.
      *
+     * @throws GameActionException if conditions for empowering are not all satisfied
      * @battlecode.doc.costlymethod
      */
     boolean canSeekLocations();

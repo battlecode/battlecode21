@@ -139,7 +139,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
             return null;
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
-
+ 
+    public int getInfluence() {
+        return this.robot.getInfluence(); // corresponding method in InternalRobot.java not done yet
+    }
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
     // ***********************************
@@ -337,12 +340,15 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ****** BUILDING/SPAWNING **********
     // ***********************************
 
-    private void assertCanBuildRobot(RobotType type, Direction dir) throws GameActionException {
+    private void assertCanBuildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         MapLocation spawnLoc = adjacentLocation(dir);
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
         // TODO: add general resource check
+        if (influence <= 0) { // robot spending nonpositive influence doesn't make sense? unsure though
+            throw new GameActionException(CANT_DO_THAT, "Not possible to spend nonpositive amount of influence.");
+        } 
         if (!onTheMap(spawnLoc))
             throw new GameActionException(OUT_OF_RANGE,
                     "Can only spawn to locations on the map; " + spawnLoc + " is not on the map.");
@@ -360,7 +366,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         try {
             assertNotNull(type);
             assertNotNull(dir);
-            assertCanBuildRobot(type, dir);
+            assertCanBuildRobot(type, dir, influence);
             return true;
         } catch (GameActionException e) { return false; }
     }
@@ -370,7 +376,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
         assertNotNull(type);
         assertNotNull(dir);
-        assertCanBuildRobot(type, dir);
+        assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
         // TODO: replace with using up resource
