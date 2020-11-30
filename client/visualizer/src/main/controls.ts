@@ -121,7 +121,6 @@ export default class Controls {
     let doubleButton = this.createButton('doubleUPS');
 
     let stopButton = this.createButton('playbackStop');
-
     let endButton = this.createButton('goEnd');
 
     buttons.appendChild(reverseButton);
@@ -136,12 +135,13 @@ export default class Controls {
     buttons.appendChild(this.tileInfo);
 
     pauseStartButton.title =  "Pause/resume";
-    stopButton.title = "Stop";
+    stopButton.title = "Stop (go to start)";
     goPreviousButton.title = "Step back";
     goNextButton.title = "Step forward";
     doubleButton.title = "Double Speed";
     halveButton.title = "Halve Speed";
     reverseButton.title = "Play Reverse";
+    endButton.title = "Go to end"
 
     // create the info string display
     let infoString = document.createElement("td");
