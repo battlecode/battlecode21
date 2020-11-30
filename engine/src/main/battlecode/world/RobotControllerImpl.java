@@ -405,7 +405,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
     
     @Override //TODO: UPDATE THIS!!
-    void empower() throws GameActionException {
+    public void empower() throws GameActionException {
         int chili = 0;
     }
 

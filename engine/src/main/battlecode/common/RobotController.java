@@ -474,7 +474,7 @@ public strictfp interface RobotController {
     /** 
      * If the conditions for bidding are met, bids the specified amount of influence.
      * If this robot has the highest bid of all bids on that round, then the team that
-     * the robot is on gains 1 vote and and this robot loses the amount bid. 
+     * the robot is on gains 1 vote and this robot loses the amount bid. 
      * If the robot doesn't have the highest bid then it only loses 50% of the amount bid,
      * rounded up to the nearest integer. 
      *
