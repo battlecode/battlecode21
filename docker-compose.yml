@@ -47,11 +47,11 @@ services:
       context: './infrastructure/worker'
       dockerfile: ./../compile.Dockerfile
     environment:
-      - DOMAIN=localhost
+      - DOMAIN=localhost:8000
 
   game:
     build:
       context: './infrastructure/worker'
       dockerfile: ./../game.Dockerfile
     environment:
-      - DOMAIN=localhost
+      - DOMAIN=localhost:8000
