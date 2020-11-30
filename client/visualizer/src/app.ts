@@ -1,7 +1,7 @@
 import {Game, GameWorld, Match, Metadata, schema, flatbuffers} from 'battlecode-playback';
 import * as cst from './constants';
 import * as config from './config';
-import * as imageloader from './main/imageloader';
+import * as imageloader from './imageloader';
 
 import Sidebar from './main/sidebar';
 import Controls from './main/controls';
@@ -14,7 +14,7 @@ import {MapEditor} from './mapeditor/index';
 import WebSocketListener from './main/websocket';
 import ScaffoldCommunicator from './main/scaffold';
 
-import { electron } from './main/electron-modules';
+// import { electron } from './main/electron-modules';
 import { TeamStats } from 'battlecode-playback/out/gameworld';
 
 import {Tournament, readTournament} from './main/tournament';
@@ -27,11 +27,11 @@ require('./static/css/style.css');
 require('./static/css/tournament.css');
 
 // open devtools on f12
-document.addEventListener("keydown", function (e) {
-  if (e.which === 123) {
-    electron.remote.getCurrentWindow().webContents.openDevTools();
-  }
-});
+// document.addEventListener("keydown", function (e) {
+//   if (e.which === 123) {
+//     electron.remote.getCurrentWindow().webContents.openDevTools();
+//   }
+// });
 
 /**
  * The entrypoint to the battlecode client.

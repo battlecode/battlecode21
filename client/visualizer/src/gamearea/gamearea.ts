@@ -1,5 +1,5 @@
 import {Config, Mode} from '../config';
-import {AllImages} from '../main/imageloader';
+import {AllImages} from '../imageloader';
 import Client from '../app';
 
 import {GameWorld} from 'battlecode-playback';

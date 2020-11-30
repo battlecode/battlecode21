@@ -3,7 +3,7 @@ import * as cst from '../constants';
 import NextStep from './nextstep';
 
 import {GameWorld, Metadata, schema, Game} from 'battlecode-playback';
-import {AllImages} from '../main/imageloader';
+import {AllImages} from '../imageloader';
 import Victor = require('victor');
 
 /**

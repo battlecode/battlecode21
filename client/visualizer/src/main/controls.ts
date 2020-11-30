@@ -1,5 +1,5 @@
 import {Config, Mode} from '../config';
-import * as imageloader from './imageloader';
+import * as imageloader from '../imageloader';
 import * as cst from '../constants';
 import {Game} from 'battlecode-playback';
 

@@ -1,5 +1,5 @@
 import {Config} from '../config';
-import {AllImages} from '../main/imageloader';
+import {AllImages} from '../imageloader';
 
 import {Game} from 'battlecode-playback';
 import { Profiler } from "./index";

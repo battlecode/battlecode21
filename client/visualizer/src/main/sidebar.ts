@@ -1,5 +1,5 @@
 import {Config, Mode} from '../config';
-import {AllImages} from './imageloader';
+import {AllImages} from '../imageloader';
 
 import Stats from '../sidebar/stats';
 import Console from '../sidebar/console';

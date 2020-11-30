@@ -1,6 +1,6 @@
 import {Config} from '../config';
 import * as cst from '../constants';
-import {AllImages} from '../main/imageloader';
+import {AllImages} from '../imageloader';
 import {Block,Transaction} from 'battlecode-playback';
 
 import {schema} from 'battlecode-playback';

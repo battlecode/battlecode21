@@ -2,7 +2,7 @@ import * as config from '../../config';
 import * as cst from '../../constants';
 
 import {GameWorld, schema} from 'battlecode-playback';
-import {AllImages} from '../../main/imageloader';
+import {AllImages} from '../../imageloader';
 import Victor = require('victor');
 
 import {GameMap} from '../index';
