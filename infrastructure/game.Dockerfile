@@ -1,4 +1,4 @@
-FROM bc20-worker
+FROM bc21-worker
 
 COPY app/game_server.py app/
 # COPY maps box/maps/
