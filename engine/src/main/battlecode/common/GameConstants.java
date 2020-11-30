@@ -46,10 +46,7 @@ public class GameConstants {
 
     // *********************************
     // ****** GAME MECHANICS ***********
-    // *********************************
-
-    /** Number of turns for which a Slanderer's successful Expose has an effect on its team's Politicians' convictions. */
-    public static final int EXPOSE_NUM_TURNS = 50;
+    // ********************************* 
 
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******

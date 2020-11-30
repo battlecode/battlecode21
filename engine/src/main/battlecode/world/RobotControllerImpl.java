@@ -245,8 +245,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update this method!
     @Override 
-    public boolean senseSwamping(MapLocation loc) {
-        return false;
+    public double senseSwamping(MapLocation loc) {
+        return 69.0;
     }
 
     // ***********************************
@@ -394,49 +394,84 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // and to properly update information for replays with gameWorld.getMatchMaker().addAction(...)
     // check to make sure we're not double updating the matchmaker (from gameWorld, and here)
 
+    
+    // ***********************************
+    // ****** POLITICIAN METHODS ********* 
+    // ***********************************
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canEmpower() {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void empower() throws GameActionException {
+        int chili = 0;
+    }
+
+
     // ***********************************
     // ****** MUCKRAKER METHODS ********** 
     // ***********************************
 
-    // TODO: fill this in!
-    @Override
-    public boolean canDetect(MapLocation loc) {
-        return false;
-    }
-
-    // TODO: update this method!
-    @Override
-    public MapLocation[] detect() {
-        return null;
-    }
-
-    // TODO: update this method!
-    @Override
+    @Override //TODO: UPDATE THIS!!
     public boolean canExpose(MapLocation loc) {
         return false;
     }
-
-    // TODO: update this method!
-    @Override
-    public void expose(MapLocation loc) {
-        int a = 0;
+    
+    @Override //TODO: UPDATE THIS!!
+    public void expose(MapLocation loc) throws GameActionException {
+        int chili = 0;
     }
-
+    
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSeekLocations() {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void seekLocations() throws GameActionException {
+        int chili = 0;
+    } 
+    
     // ***********************************
-    // ****** POLITICIAN METHODS ********** 
+    // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-    // TODO: update this method!
-    @Override
-    public boolean canEmpower() {
+    @Override //TODO: UPDATE THIS!!
+    public boolean canBid(int influence) {
         return false;
     }
 
-    // TODO: update this method!
-    @Override
-    public void empower() {
-        int a = 0;
+    @Override //TODO: UPDATE THIS!!
+    public void bid(int influence) throws GameActionException {
+        int chili = 0;
     }
+
+    // ***********************************
+    // ****** COMMUNICATION METHODS ****** 
+    // ***********************************
+     
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSetFlag(); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void setFlag(int flag1, int flag2) throws GameActionException {
+        int chili = 0;
+    } 
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canGetFlag(MapLocation loc); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void getFlag(MapLocation loc) throws GameActionException {
+        int chili = 0;
+    } 
+
 
     // ***********************************
     // ****** OTHER ACTION METHODS *******
