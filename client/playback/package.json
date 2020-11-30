@@ -1,0 +1,43 @@
+{
+  "name": "battlecode-playback",
+  "version": "2019.0.0",
+  "description": "Play back and analyze battlecode match files.",
+  "author": "Teh Devs",
+  "license": "GPL-3.0",
+  "private": true,
+  "main": "out/index.js",
+  "typings": "out/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf out",
+    "build": "tsc -p src",
+    "lint": "tslint 'src/**/*.ts'",
+    "gen": "mkdir -p ../examples/ && ts-node src/gen/create.ts",
+    "watch": "tsc -w -p src",
+    "test": "npm run gen && blue-tape \"out/gen/test/**/*.js\" | tap-dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/battlecode/battlecode20"
+  },
+  "dependencies": {
+    "battlecode-schema": "file:../../schema",
+    "core-js": "^3.3.6",
+    "deepcopy": "^2.0.0",
+    "pako": "^1.0.10",
+    "victor": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/blue-tape": "^0.1.33",
+    "@types/core-js": "^2.5.2",
+    "@types/node": "^12.12.5",
+    "@types/pako": "^1.0.1",
+    "@types/victor": "^1.1.0",
+    "blue-tape": "^1.0.0",
+    "npm-force-resolutions": "0.0.3",
+    "stream": "0.0.2",
+    "tap-dot": "^2.0.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

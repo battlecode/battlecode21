@@ -1,0 +1,95 @@
+{
+  "name": "battlecode-visualizer",
+  "version": "1.1.7",
+  "description": "Visualizing the game using playback",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf bc20",
+    "lint": "tslint \"src/**/*.ts\"",
+    "build": "webpack --mode=development",
+    "prod": "webpack --mode=production",
+    "watch": "echo '--- open localhost:8080 in your browser ---' && webpack-dev-server --env dev",
+    "electron": "webpack --mode=development --env electron --env dev && electron .",
+    "prod-electron": "webpack --mode=production --env electron && electron-builder -mwl --dir --ia32 --x64",
+    "prod-electron-no-sign": "webpack --mode=production --env electron && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -mwl --dir --ia32 --x64",
+    "prod-test": "webpack --mode=production --env electron && electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/battlecode/battlecode20.git"
+  },
+  "author": "Teh Devs",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/battlecode/battlecode20/issues"
+  },
+  "homepage": "https://github.com/battlecode/battlecode20#battlecode-2020",
+  "dependencies": {
+    "battlecode-playback": "file:../playback",
+    "speedscope": "^1.5.2",
+    "victor": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/blue-tape": "^0.1.33",
+    "@types/electron": "^1.6.10",
+    "@types/node": "^12.12.14",
+    "@types/victor": "^1.1.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "copy-webpack-plugin": "^5.0.5",
+    "css-loader": "^3.2.1",
+    "electron": "^10.1.5",
+    "electron-builder": "^22.1.0",
+    "file-loader": "^5.0.2",
+    "json-loader": "^0.5.7",
+    "node": "^14.15.0",
+    "style-loader": "^1.0.1",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3",
+    "url-loader": "^3.0.0",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^4.2.2"
+  },
+  "main": "electron-main.js",
+  "build": {
+    "appId": "org.battlecode.client",
+    "productName": "Battlecode Client",
+    "compression": "maximum",
+    "files": [
+      "bc20/**/*",
+      "index.html",
+      "electron-main.js",
+      "node_modules/electron"
+    ],
+    "directories": {
+      "output": "../dist"
+    },
+    "fileAssociations": [
+      {
+        "ext": "bc20",
+        "name": "BC20",
+        "description": "Battlecode Match 2020",
+        "role": "Viewer"
+      }
+    ],
+    "mac": {
+      "target": [
+        "dir"
+      ],
+      "category": "public.app-category.games",
+      "hardenedRuntime": "true"
+    },
+    "win": {
+      "target": [
+        "dir"
+      ]
+    },
+    "linux": {
+      "target": [
+        "dir"
+      ]
+    }
+  }
+}

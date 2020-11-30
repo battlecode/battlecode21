@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Battlecode Client</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Graduate">
+    </head>
+    <body>
+        <div id='client'/>
+        <script type="text/javascript" src="bc20/app.js" charset="utf-8"></script>
+        <script type="text/javascript">
+    		match_url = window.location.search.substr(1);
+            window.battleClient = window.battlecode.mount(
+                document.getElementById('client'),
+                {
+                    websocketURL: "ws://localhost:6175",
+                    matchFileURL: match_url
+                }
+            );
+        </script>
+    </body>
+</html>
+

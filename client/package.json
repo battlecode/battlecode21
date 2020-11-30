@@ -1,0 +1,28 @@
+{
+  "name": "bc20-client",
+  "version": "1.0.0",
+  "description": "Client wrapper of visualizer and playback",
+  "main": "visualizer/electron-main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install_all": "(cd playback && npm install) & (cd visualizer && npm install)",
+    "clean": "rm -rf dist/",
+    "build": "(cd playback && npm run build) & (cd visualizer && npm run build)",
+    "build_playback": "(cd playback && npm run build)",
+    "electron": "npm run build_playback & (cd visualizer && npm run electron)",
+    "watch": "npm run build_playback & (cd visualizer && npm run watch)",
+    "prod-electron": "npm run build_playback & (cd visualizer && npm run prod-electron)",
+    "prod-electron-no-sign": "npm run build_playback & (cd visualizer && npm run prod-electron-no-sign)",
+    "prod-test": "npm run build_playback & (cd visualizer && npm run prod-test)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/battlecode/battlecode20.git"
+  },
+  "author": "Teh Devs",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/battlecode/battlecode20/issues"
+  },
+  "homepage": "https://github.com/battlecode/battlecode20#readme"
+}

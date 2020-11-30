@@ -1,0 +1,521 @@
+/* Global stylings here */
+
+/* Scrollbar styling */
+
+/*::-webkit-scrollbar {
+    width: 10px;
+}*/
+
+/* Track */
+/*::-webkit-scrollbar-track {
+background: rgb(252, 252, 252);
+}*/
+
+/* Handle */
+/*::-webkit-scrollbar-thumb {
+background: rgb(39, 39, 39);
+}*/
+
+.gameWrapper {
+    background: #e0e0e0;
+    color: #222;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+p {
+    font-size: 14px;
+}
+
+.gameTitle {
+    padding-bottom: 20px;
+}
+
+.blue {
+    color: #4f7ee6;
+}
+
+.red {
+    color: #db3627;
+}
+
+#matchQueue {
+    text-align: left;
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 16px;
+    font-family: Tahoma, sans-serif;
+}
+
+.robotSpriteStats img {
+    width: 30px;
+}
+
+#matchRunner {
+    font-family: Tahoma;
+}
+
+#profiler {
+    font-size: 16px;
+}
+
+#profiler span {
+    display: inline-block;
+    width: 55px;
+    text-align: left;
+}
+
+#profiler select {
+    width: 140px;
+}
+
+.removeButton {
+    float: right;
+}
+
+.gameNum {
+    display: inline-block;
+    margin-left: 16px;
+    margin-right: 16px;
+    min-width: 60px;
+}
+
+.active-match {
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.inactive-match {
+    padding: 4px;
+    cursor: pointer;
+}
+
+#mapEditor {
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+}
+
+form {
+    text-align: center;
+}
+
+#gamearea canvas {
+    max-height: calc(100vh - 75px);
+    max-width: calc(100vw - 345px);
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+#gamearea iframe {
+    height: calc(100vh - 75px);
+    width: calc(100vw - 345px);
+    border: 0;
+}
+
+#gamearea {
+    display:flex;
+    align-items: center; /* Vertical center alignment */
+    justify-content: center; /* Horizontal center alignment */
+}
+
+#canvas-wrapper {
+    margin-top: -75px;
+    min-width: 569px;
+    text-align: center;
+    margin-right: 295px;
+}
+
+#export {
+    font-size: 24px;
+    width: 90%;
+}
+
+#root {
+    font-family: tahoma;
+    font-size: 14px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+}
+
+input[type='file'] {
+    display: none;
+}
+
+.custom-button {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.25;
+    padding: .4rem .8rem;
+    margin: .1rem;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background-color: #777777;
+    color: white;
+    font-size: 14px;
+}
+
+.upload-button-div {
+    text-align: center;
+    width: 100%;
+}
+
+.custom-button:active, button:target {
+    background-color: #8c8c8c;
+}
+.custom-button:focus {
+    outline: none;
+}
+
+#gamearea {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 75px;
+    left: 320px;
+    background: rgb(39, 39, 39);
+}
+
+.teamHeader {
+    padding: 14px;
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.tdLabel {
+    font-family: "Graduate";
+    text-align: right;
+    padding: 5px;
+}
+
+.tdCount {
+    padding-left: 10px;
+    text-align: left;
+}
+
+.form-button {
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.checkbox {
+    position: absolute;
+    visibility: hidden;
+    cursor: pointer;
+}
+
+label{
+    display: inline-block;
+    clear: left;
+    /* width: 80px; */
+    text-align: center;
+}
+
+#viewoptionformid {
+    margin-top: 12px;
+    width: 100%;
+}
+
+:checked + .viewspan {
+    padding: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border: 2px solid gray;
+    border-radius: 10px;
+}
+
+input {
+    border: 2px solid rgb(0,123,255);
+    padding: 5px;
+    margin: 5px;
+    display: inline-block;
+}
+
+#baseDiv {
+    width: 100%;
+    height: 55px;
+    margin-left: 335px;
+    position: fixed;
+    z-index: 0.5;
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    color: rgb(39, 39, 39);
+    background-color: white;
+    padding: 10px;
+}
+
+#timelineCanvas {
+    height: 32px;
+    width: 400px;
+    background-color: #999;
+    display: inline-block;
+}
+
+h4 {
+    margin: 10px;
+}
+
+#helpDiv {
+    text-align: left;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    padding: 10px;
+}
+
+
+#sidebar {
+    /* Positioning */
+    height: 100%;
+    width: 325px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+
+    /* Inner style */
+    background-color: white;
+    color: rgb(39, 39, 39);
+    text-align: center;
+    font-size: 14px;
+    font-family: sans-serif;
+
+    /* Inner formatting */
+    padding: 10px;
+}
+
+.modebutton {
+    border: none;
+    color: white;
+    background-color: #777777;
+    padding: 10px 10px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+}
+.modebutton:focus {
+    outline: none;
+}
+
+#sidebar button.modebutton {
+    background-color: white;
+    color: rgb(39, 39, 39);
+    padding: 10px 5px;
+    width: 100%;
+    border-bottom-color: rgba(0,0,0,0.04);
+    border-bottom-style: groove;
+}
+#sidebar button.modebutton:hover {
+    background-color: rgba(0,0,0,0.04);
+}
+#sidebar button.selectedmodebutton {
+    border-bottom-color: blue !important;
+}
+
+#logo {
+    font-weight: normal;
+    font-size: 20px;
+    text-align: center;
+    font-family: sans-serif;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.console {
+    font-family: Monospace;
+    border-radius: 10px;
+    background-color: #333;
+    color: #46ff00;
+    padding: 15px;
+    margin: 0px 5px;
+    font-size: 11px;
+    text-align: left;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
+
+.console p {
+    font-size: 12px;
+}
+
+.modepanel {
+    width: 100%;
+}
+
+#splashSubtitle {
+    font-size: 24px;
+    font-family: sans-serif;
+    color: rgb(252, 252, 252);
+    margin: 8px;
+}
+
+#splashTitle {
+    font-size: 56px;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: rgb(252, 252, 252);
+    margin: 0px;
+}
+
+#splashNewVersion {
+    color: deepskyblue;
+
+}
+
+.mapInputBox {
+    padding: 8px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.mapInputLabel {
+    text-align: right;
+    margin-right: 12px;
+
+}
+
+#gameEditorHeaderTable {
+    margin-left: 16px;
+}
+
+#mapListContainer {
+    text-align: left;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-left: 48px;
+
+}
+
+#mapsDiv {
+    height: 190px;
+    /* overflow: scroll; */
+    margin-top: 10px;
+    width: 200px;
+    font-size: 14px;
+}
+
+#runMatch {
+    width: 70%;
+    font-size: 18px;
+    padding: 8px 0px;
+    margin: 8px 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.consolelogheader {
+    color: gray;
+}
+
+#updateText {
+    color: red;
+    font-weight: bold;
+}
+
+.control-button {
+    background-color: #bbb !important;
+}
+
+#robotLogs {
+    height: 70vh;
+}
+
+#compileLogs {
+    height: 500px;
+    margin-top: 9px;
+}
+
+.changebuttonbutton {
+    background-color: rgba(0,0,0,0);
+    /* text-decoration: underline; */
+    color: #777;
+    border: none;
+    padding: 0 10px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+}
+.changebuttonbutton:focus {
+    outline: none;
+}
+
+.errorLog {
+    color: red;
+}
+
+.slide-control {
+    width: 200px;
+    height: 8px;
+    background-color: rgb(39, 39, 39);;
+    overflow: visible;
+    display:block;
+    position: relative;
+    margin-top: 12px;
+}
+
+.slide-control-button {
+    position:absolute;
+    z-index:2;
+    width:12px;
+    height:32px;
+    left:150px;
+    margin-left: -12px;
+    top: -10px;
+    bottom:-32px;
+    border-radius: 8px;
+    background: #777;
+}
+
+.slide-control-button:hover {
+    cursor: pointer;
+}
+
+#mapsDiv option {
+    padding: 3px 10px;
+}
+
+#mapsDiv:focus {
+    outline: none;
+}
+
+#battlecode-splash {
+    position: absolute;
+    text-align: center;
+    z-index: -1;
+    overflow: hidden;
+    margin-top: -39px;
+    margin-left: -161px;
+}
+
+#stats-table {
+    width: 100%;
+}
+
+#stats-table td {
+    width: 25%;
+    padding: .2em;
+}
+
+.stat-bar {
+    height: 100%;
+}
+
+#star {
+    margin-top: 1em;
+    width: 40px;
+}
