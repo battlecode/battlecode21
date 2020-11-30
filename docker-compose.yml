@@ -40,3 +40,17 @@ services:
       - POSTGRES_USER=battlecode
       - POSTGRES_DB=battlecode
       - POSTGRES_PASSWORD=mysecretpassword
+
+  compile:
+    build:
+      context: './infrastructure/worker'
+      dockerfile: ./../compile.Dockerfile
+    environment:
+      - DOMAIN=localhost
+
+  game:
+    build:
+      context: './infrastructure/worker'
+      dockerfile: ./../game.Dockerfile
+    environment:
+      - DOMAIN=localhost

@@ -14,7 +14,7 @@ GCLOUD_SUB_GAME_NAME     = 'bc21-game-sub'
 GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
 GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
 
-DOMAIN = 'https://2020.battlecode.org'
+DOMAIN = os.getenv('DOMAIN')
 
 SUB_ACK_DEADLINE = 30 # Value to which ack deadline is reset
 SUB_SLEEP_TIME   = 10 # Interval between checks for new jobs and ack deadline
