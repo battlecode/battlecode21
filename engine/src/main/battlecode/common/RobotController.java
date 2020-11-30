@@ -35,9 +35,9 @@ public strictfp interface RobotController {
     int getTeamVotes();
 
     /**
-     * Returns the number of robots on your team, including Centers of Enlightenment.
+     * Returns the number of robots on your team, including Enlightenment Centers.
      * If this number ever reaches zero, and you have less votes than your opponent,
-     * you lose by default (because you can't get any more votes with no Centers of Enlightenment).
+     * you lose by default (because you can't get any more votes with no Enlightenment Centers).
      *
      * @return the number of robots on your team
      *
@@ -455,13 +455,13 @@ public strictfp interface RobotController {
  
     
     // ***********************************
-    // ****** CENTER METHODS ************* 
+    // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
 /**
      * Tests whether the robot can bid the specified amount of influence on that round.
      * 
-     * Checks that the robot is a Center, that the robot has at least that amount of influence,
+     * Checks that the robot is an Enlightenment Center, that the robot has at least that amount of influence,
      * , and that the amount of influence is positive. 
      *
      * @param influence the amount of influence being bid 
@@ -516,7 +516,7 @@ public strictfp interface RobotController {
      *
      * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
      * that the robot on the target location is on the same team, and that either (a) the
-     * robot is a Center of Enlightenment or (b) the squared distance between the target location and
+     * robot is an Enlightenment Center or (b) the squared distance between the target location and
      * the current location is &leq; 8. 
      *
      * @param loc MapLocation being targeted by canGetFlag

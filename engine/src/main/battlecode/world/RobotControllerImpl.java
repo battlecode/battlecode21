@@ -394,79 +394,83 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // and to properly update information for replays with gameWorld.getMatchMaker().addAction(...)
     // check to make sure we're not double updating the matchmaker (from gameWorld, and here)
 
+    
     // ***********************************
-    // ****** POLITICIAN METHODS ********** 
+    // ****** POLITICIAN METHODS ********* 
     // ***********************************
 
-    // TODO: update this method!
-    @Override
+    @Override //TODO: UPDATE THIS!!
     public boolean canEmpower() {
         return false;
     }
-
-    // TODO: update this method!
-    @Override
-    public void empower() {
-        int a = 0;
+    
+    @Override //TODO: UPDATE THIS!!
+    void empower() throws GameActionException {
+        int chili = 0;
     }
+
 
     // ***********************************
     // ****** MUCKRAKER METHODS ********** 
     // ***********************************
 
-    // TODO: fill this in!
-    @Override
-    public boolean canDetect(MapLocation loc) {
-        return false;
-    }
-
-    // TODO: update this method!
-    @Override
-    public MapLocation[] detect() {
-        return null;
-    }
-
-    // TODO: update this method!
-    @Override
+    @Override //TODO: UPDATE THIS!!
     public boolean canExpose(MapLocation loc) {
         return false;
     }
-
-    // TODO: update this method!
-    @Override
-    public void expose(MapLocation loc) {
-        int a = 0;
+    
+    @Override //TODO: UPDATE THIS!!
+    public void expose(MapLocation loc) throws GameActionException {
+        int chili = 0;
     }
-
-     // ***********************************
-    // ****** CENTER METHODS ************* 
+    
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSeekLocations() {
+        return false;
+    }
+    
+    @Override //TODO: UPDATE THIS!!
+    public void seekLocations() throws GameActionException {
+        int chili = 0;
+    } 
+    
+    // ***********************************
+    // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-    /**
-     * Tests whether the robot can bid the specified amount of influence on that round.
-     * 
-     * Checks that the robot is a Center, that the robot has at least that amount of influence,
-     * , that the amount of influence is positive, and there are cooldown turns remaining. 
-     *
-     * @param influence the amount of influence being bid 
-     * @return whether it is possible to detect on that round at that location.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canBid(int influence);
+    @Override //TODO: UPDATE THIS!!
+    public boolean canBid(int influence) {
+        return false;
+    }
 
-    /** 
-     * If the conditions for bidding are met, bids the specified amount of influence.
-     * If this robot has the highest bid of all bids on that round, then the team that
-     * the robot is on gains 1 vote and loses the amount bid. 
-     * If the robot doesn't have the highest bid then it only loses 50% of the amount bid,
-     * rounded up to the nearest integer. 
-     *
-     * @throws GameActionException if conditions for bidding are not satisfied
-     * @battlecode.doc.costlymethod 
-     * @return an array of MapLoctions that are occupied within detection radius
-     */
-    void bid(int influence) throws GameActionException;
+    @Override //TODO: UPDATE THIS!!
+    public void bid(int influence) throws GameActionException {
+        int chili = 0;
+    }
+
+    // ***********************************
+    // ****** COMMUNICATION METHODS ****** 
+    // ***********************************
+     
+    @Override //TODO: UPDATE THIS!!
+    public boolean canSetFlag(); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void setFlag(int flag1, int flag2) throws GameActionException {
+        int chili = 0;
+    } 
+
+    @Override //TODO: UPDATE THIS!!
+    public boolean canGetFlag(MapLocation loc); {
+        return false;
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public void getFlag(MapLocation loc) throws GameActionException {
+        int chili = 0;
+    } 
 
 
     // ***********************************
