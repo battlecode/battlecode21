@@ -2,7 +2,6 @@
 
 # Server will periodically retrieve a list of scrimmages from API_SCRIM_LIST (found in config)
 # and attempt to place those scrimmages on the gcloud pub-sub
-# Note: possibly out of date, check with backend to make sure they don't place scrims on pub-sub themselves
 # Note: how does this server tell the backend that scrims have been queued? Why would scrims not be queued infinitely?
 
 

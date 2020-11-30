@@ -8,7 +8,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 # Constants, parameters and configurations
-DOMAIN = 'https://2020.battlecode.org'
+DOMAIN = os.getenv('DOMAIN')
+
 API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
 API_USERNAME = os.getenv('BC20_DB_USERNAME')
 API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
