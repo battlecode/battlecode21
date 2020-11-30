@@ -249,16 +249,17 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-     * Given a location, returns if that location is covered by Martian swamp.
+     * Given a location, returns the amount of swamping on that location, as a double.
      *
      * @param loc the given location
-     * @return whether or not the location is covered by swamp.
-     * If this is the case, robots on this location take more turns for any given action.
+     * @return the amount of swamping on the location as a double
+     *
+     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
      */
-    boolean senseSwamping(MapLocation loc) throws GameActionException;
+    double senseSwamping(MapLocation loc) throws GameActionException;
   
     /**
      * Returns the location adjacent to current location in the given direction.

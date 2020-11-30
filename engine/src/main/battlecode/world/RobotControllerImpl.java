@@ -245,8 +245,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     //TODO: update this method!
     @Override 
-    public boolean senseSwamping(MapLocation loc) {
-        return false;
+    public double senseSwamping(MapLocation loc) {
+        return 69.0;
     }
 
     // ***********************************
