@@ -25,6 +25,8 @@ export default class Renderer {
 
   // For rendering robot information on click
   private lastSelectedID: number;
+  //position currently hovered over
+  private hoverPos: {x: number, y: number};
 
   constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config, metadata: Metadata,
     onRobotSelected: (id: number) => void,
@@ -107,7 +109,6 @@ export default class Renderer {
 
     // TODO use color pacakge for nicer manipulation?
     const getDirtColor = (x: number): string => {
-
       /*
       I'm thinking the following:
       - A gradient following the rainbow of the following colors. Defined in cst.DIRT_COLORS
@@ -205,6 +206,15 @@ export default class Renderer {
         this.ctx.globalAlpha = 1;
         this.ctx.strokeRect(cx, cy, scale, scale);
       }
+    }
+
+    // draw hover box last
+    if (this.hoverPos != undefined && this.hoverPos.x >= 0) {
+      const {x, y} = this.hoverPos;
+      const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
+      this.ctx.strokeStyle = 'red';
+      this.ctx.globalAlpha = 1;
+      this.ctx.strokeRect(cx, cy, scale, scale);
     }
 
     this.ctx.restore();
@@ -411,10 +421,15 @@ export default class Renderer {
       // const y = this.flip(_y, minY, maxY)
 
       // Set the location of the mouseover
-      const {x, y} = this.getIntegerLocation(event, world);
+      const {x,y} = this.getIntegerLocation(event, world);
       const idx = world.mapStats.getIdx(x, y);
       world.calculatePollutionIfNeeded();
       onMouseover(x, y, world.mapStats.dirt[idx], world.mapStats.flooded[idx], world.mapStats.pollution[idx], world.mapStats.soup[idx]);
+      this.hoverPos = {x: x, y: y};
+    };
+
+    this.canvas.onmouseout = (event) => {
+      this.hoverPos = {x: -1, y: -1};
     };
   }
 
