@@ -172,17 +172,24 @@ If you are unable to find this option, you may be using an old version of Eclips
                                 <div className="content">
                                     <p>
                                         If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
-                                    </p>
-                                    <h6 class="installation-steps">Step 1: Install Python and pip</h6>
+                                    </p> <h6 class="installation-steps">Step 1: Install Java</h6>
+                                <p>
+                                You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
+                                work. <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" style={{fontWeight:700}}>Download it here</a></b>.
+                                You may need to create an Oracle account.
+
+                                <Floater content={
+                                    <div>
                                     <p>
-                                        Install Python! Note that <b>we only support Python 3.6 and 3.7</b> (in particular, not 3.8).
-                                    </p>
-                                    <p>
-                                    You'll also need <code>pip</code> — usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
-                                    </p>
-                                    <p>
-                                        You'll need to use your terminal. On Mac and Linux, that will be a pre-installed program called <code>Terminal</code>. On Windows, it is called <code>Command Line</code>.
-                                        When you open your terminal you can paste in the commands you see on this page to get stuff to happen!
+                                    Alternatively, you can install a JDK yourself using your favorite package manager. Make sure it's an Oracle JDK — we don't support anything else — and is compatible with Java 8.
+                                    </p></div>
+                                    } showCloseButton={true}>
+                                                                        <i className="pe-7s-info pe-fw" />
+                                    </Floater>
+                                                                    </p>
+                                                                    <p>
+                                    </p><p>
+                                    If you're unsure how to install the JDK, you can find instructions for all operating systems <a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html'>here</a> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
                                     </p>
                                     <h6 class="installation-steps">Step 2: Coming later!</h6>
                                     <p>
