@@ -40,6 +40,14 @@ class Tournaments extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">2021 Tournament Info Coming Soon</h4>
+                                </div>
+                                <div className="content">
+                                    <p>Updated dates and prizes will be posted soon. In the meantime, checkout our Battlehack 2020 winners below 🎉</p>
+                                </div>
+                            </div>
 
                             <div className="card">
                                 <div className="header">
