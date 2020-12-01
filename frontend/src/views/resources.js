@@ -66,7 +66,7 @@ class Resources extends Component {
                                 <div className="content">
                                 <p>
                                     Battlecode 2021 will be holding lectures, where a dev will be going over possible strategy, coding up an example player, answering questions, etc.
-                                    Lectures are streamed on Twitch every weekday the first two weeks of IAP (times TBA).
+                                    Lectures are streamed on Twitch every weekday the first two weeks of IAP 7-10 PM Eastern Time.
                                 </p>
                                 <p>
                                     All lectures are streamed live on <a href='https://twitch.tv/mitbattlecode'>our Twitch account</a>, and
