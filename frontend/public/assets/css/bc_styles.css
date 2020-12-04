@@ -1,24 +1,24 @@
 body {
-	background-color: #F7E5CD;
+	background-color: #96acb746;
 }
 
 a {
-	color: #AF805D;
+	color: #6e6eb6;
 }
 
 a:hover {
-	color: #9A6D4C;
+	color: #272750;
 }
 
 .btn {
-	background-color: #AF805D !important;
-	border-color: #AF805D !important;
+	background-color: #52527A !important;
+	border-color: #52527A !important;
 	color: rgb(230, 230, 230)
 }
 
 .btn:hover {
-	background-color: #9A6D4C !important;
-	border-color: #9A6D4C !important;
+	background-color: #2F3061 !important;
+	border-color: #2F3061 !important;
 }
 
 /* a centered row of things used in team page for checkboxes */
