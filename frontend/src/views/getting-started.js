@@ -140,19 +140,15 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     <h4 className="title">Overview</h4>
                                 </div>
                                 <div className="content">
+                                    <p>
+                                        This is the Battlecode 2021 contest website, which will be your main hub for all Battlecode-related things
+                                        for the duration of the contest. For a general overview of what Battlecode is, visit <a href='https://battlecode.org'>
+                                            our landing page</a>.
 
-                                <p>
-                                    This is the Battlehack 2020 contest website, which will be your main hub for all Battlehack-related things
-                                    for the duration of the contest. For a general overview of what Battlehack / Battlecode is, visit <a href='https://battlecode.org'>
-                                        our landing page</a>.
-
-                                </p>
-                                <p>
-                                   In this year's Battlehack game, you are one of the noble houses, manipulating your pawns around Westeros. You will write bots in Python.
-                                </p>
-                                <p>
-                                    Battlehack 2020 is released! Read the <a href="specs.html">game specifications</a>. 
-                                </p>
+                                    </p>
+                                    <p>
+                                        Battlecode 2021 has not been released yet! Register a team and watch out for the January 2021 launch. 
+                                    </p>
                                 </div>
                             </div>
                             <div className="card">
@@ -160,13 +156,13 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     <h4 className="title">Account and Team Creation</h4>
                                 </div>
                                 <div className="content">
-                                <p>
-                                    To participate in Battlehack, you need an account and a team. Each team can consist of 1 to 2 people.
-                                </p>
-                                <p>
-                                    Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create
-                                    or join a team.
-                                </p>
+                                    <p>
+                                        To participate in Battlecode, you need an account and a team. Each team can consist of 1 to 4 people.
+                                    </p>
+                                    <p>
+                                        Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create
+                                        or join a team.
+                                    </p>
                                 </div>
                             </div>
                             <div className="card">
@@ -174,101 +170,46 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     <h4 className="title">Installation</h4>
                                 </div>
                                 <div className="content">
-                                <p>
-                                    If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
-                                </p>
-                                    <h6 class="installation-steps">Step 1: Install Python and pip</h6>
                                     <p>
-                                        Install Python! Note that <b>we only support Python 3.6 and 3.7</b> (in particular, not 3.8).
+                                        If you experience problems with the instructions below, check <NavLink to='common-issues'>common issues</NavLink>, and if that doesn't help, ask on the Discord.
+                                    </p> <h6 class="installation-steps">Step 1: Install Java</h6>
+                                <p>
+                                You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
+                                work. <b><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" style={{fontWeight:700}}>Download it here</a></b>.
+                                You may need to create an Oracle account.
+
+                                <Floater content={
+                                    <div>
+                                    <p>
+                                    Alternatively, you can install a JDK yourself using your favorite package manager. Make sure it's an Oracle JDK — we don't support anything else — and is compatible with Java 8.
+                                    </p></div>
+                                    } showCloseButton={true}>
+                                                                        <i className="pe-7s-info pe-fw" />
+                                    </Floater>
+                                                                    </p>
+                                                                    <p>
+                                    </p><p>
+                                    If you're unsure how to install the JDK, you can find instructions for all operating systems <a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html'>here</a> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
                                     </p>
-                                <p>
-                                You'll also need <code>pip</code> — usually, it is already installed if you have Python installed. If, however, running <code>pip</code> or <code>pip3</code> produces an error, follow the installation instructions for pip <b><a href="https://pip.pypa.io/en/stable/installing/" style={{fontWeight:700}}>here</a></b>.
-</p><p>
-                                You'll need to use your terminal. On Mac and Linux, that will be a pre-installed program called <code>Terminal</code>. On Windows, it is called <code>Command Line</code>.
-When you open your terminal you can paste in the commands you see on this page to get stuff to happen!
-                                </p>
-                                <p>
-</p>
-
-<h6 class="installation-steps">Step 2: Install packages</h6>
-    <p>
-        Next, run <code>pip install --user --upgrade battlehack20</code> (or <code>pip3 install --user --upgrade battlehack20</code>, depending on how your pip is set up). 
-        This will get you set up with the necessary Python packages for proper engine function.
-        </p>
-        
-<h6 class='installation-steps'>Step 3: Download Battlehack</h6>
-<p>
-
-    Next, you should get the starter code by downloading the <a href="https://github.com/battlecode/battlehack20-scaffold">Battlehack 2020 scaffold</a>.
-
-    To get up and running quickly, you can click "Clone or download" and then "Download ZIP," and move on to the next step.
-</p><p>
-    You can also make a copy of the repo and do <code>git clone</code> if you know how to do that. Read <a href='https://guides.github.com/introduction/git-handbook/'>this guide</a> if you want to learn more about git!
-</p>
-    
-                                    <h6 class="installation-steps">Step 4: Hack!</h6>
-    <p>
-        We recommend using an IDE like Pycharm or an editor like VS Code to work on Battlecode, but you can also use your favorite text editor combined with a terminal.
-        </p>
-                                </div>
-                            </div>
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Run a Match</h4>
-                                </div>
-                                <div className="content">
+                                    <h6 class="installation-steps">Step 2: Coming later!</h6>
                                     <p>
-                                        To run a match, use the command <code>python3 run.py path/to/bot1_folder path/to/bot2_folder</code>. You should see a game between the two specified bots being played out.
-                                        If you're on Windows you may need to run <code>python3 run.py path/to/bot1_folder path/to/bot2_folder --raw-text</code> to get reasonable output.
-                                </p>
-                                <p>
-                                    <b><a href="https://github.com/battlecode/battlehack20-scaffold#battlehack20-scaffold">Go here</a></b> for more in-depth instructions!
-                                </p>
-
-
+                                        2021-specific installation instructions will appear here once the game is released.
+                                    </p>
                                 </div>
-                            </div>
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Upload Your Bot and Scrimmage</h4>
-                                </div>
-                                <div className="content">
-                                <p>
-                                    Create a zip file containing only your robot code (only 1 package), and uploaded it to the <NavLink to='submissions'>submissions</NavLink> page.
-                                </p>
-                                <p>
-                                    Your bot will automatically be run against other players to determine your ranking. You can also request scrimmages with other teams, and see the replays.
-                                </p>
-
-                                </div>
-                            </div>
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Good Luck!</h4>
-                                </div>
-                                <div className="content">
-                                <p>
-                                    Now, read the <a href='specs.html'>game specs</a> carefully.
-                                </p>
-                                </div>
-                            </div>
+                            </div>   
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Join the Community!</h4>
                                 </div>
                                 <div className="content">
-                                <p>
-                                    Battlecode has a Discord server! 
-                                    Everyone is encouraged to join. 
-                                    Announcements, strategy discussions, bug fixes and ~memes~ all 
-                                    happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
-                                </p>
-
-
+                                    <p>
+                                        Battlecode has a Discord server! 
+                                        Everyone is encouraged to join. 
+                                        Announcements, strategy discussions, bug fixes and ~memes~ all 
+                                        happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
+                                    </p>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
