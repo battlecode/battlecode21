@@ -24,7 +24,7 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// Enlightenment centers produce politicians, scandals and slanderers and place bets
+    /// Enlightenment centers produce politicians, scandals and slanderers and place bids
     ///can be neutral until captured
     ENLIGHTENMENT_CENTER,
     /// politicians use their influence to self destruct and capture other units
@@ -96,9 +96,9 @@ enum Action : byte {
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
-    /// places a bet (enlightent center).
-    /// Target: bet placed
-    PLACE_BET,
+    /// places a bid (enlightent center).
+    /// Target: bid placed
+    PLACE_BID,
     /// a robot can change team after being empowered
     /// Target: self
     CHANGE_TEAM,
