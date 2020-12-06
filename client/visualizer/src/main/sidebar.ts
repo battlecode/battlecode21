@@ -132,12 +132,14 @@ export default class Sidebar {
     UP - Double Playback Speed<br>
     DOWN - Halve Playback Speed<br>
     P - Pause/Unpause<br>
-    O - Stop<br>
+    O - Stop (Go to Start)<br>
+    E - Go to End<br>
     V - Toggle Indicator Dots/Lines<br>
     G - Toggle Grid<br>
     N - Toggle Sight/Sensor Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
+    
     <br>
     <b class="red">How to Play a Match</b><br>
     <i>From the application:</i> Click <b>'Runner'</b> and follow the
