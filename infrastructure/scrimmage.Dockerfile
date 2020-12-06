@@ -1,4 +1,4 @@
-FROM bc20-env
+FROM bc21-env
 
 # Install software dependencies
 RUN pip3 install --upgrade \

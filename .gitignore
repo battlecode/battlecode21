@@ -3,6 +3,7 @@ node_modules
 *__pycache__*
 *.pyc
 .vscode/
+*.code-workspace
 venv/
 docker-compose.prod.yml
 
@@ -62,3 +63,5 @@ battlecode20-internal-test-bots
 
 test.sh
 backend/dev_settings_sensitive.py
+
+infrastructure/worker/app/gcloud-key.json
