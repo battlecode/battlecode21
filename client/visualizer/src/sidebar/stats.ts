@@ -1,9 +1,8 @@
 import {Config} from '../config';
 import * as cst from '../constants';
 import {AllImages} from '../imageloader';
-import {Block,Transaction} from 'battlecode-playback';
-
-import {schema} from 'battlecode-playback';
+import {Block,Transaction,schema} from 'battlecode-playback';
+import MatchQueue from './matchqueue';
 
 const hex: Object = {
   1: "#db3627",
@@ -45,6 +44,8 @@ export default class Stats {
   private waterLabel: HTMLHeadingElement;
   private waterHorizontalSlider: HTMLDivElement;
 
+  private matchqueue: MatchQueue; //needed for file uploading in tournament mode
+
   private conf: Config;
 
   // Note: robot types and number of teams are currently fixed regardless of
@@ -55,11 +56,12 @@ export default class Stats {
     cst.MINER, cst.LANDSCAPER, cst.DRONE, cst.NET_GUN, cst.REFINERY, cst.VAPORATOR, cst.HQ, cst.DESIGN_SCHOOL, cst.FULFILLMENT_CENTER
   ];
 
-  constructor(conf: Config, images: AllImages) {
+  constructor(conf: Config, images: AllImages, matchqueue: MatchQueue) {
     this.conf = conf;
     this.images = images;
     this.div = document.createElement("div");
     this.tourIndexJump = document.createElement("input");
+    this.matchqueue = matchqueue;
 
     let teamNames: Array<string> = ["?????", "?????"];
     let teamIDs: Array<number> = [1, 2];
@@ -193,7 +195,7 @@ export default class Stats {
       this.div.append(this.addViewOptions());
     } else {
       // FOR TOURNAMENT
-      let uploadButton = this.addUploadButton();
+      let uploadButton = this.matchqueue.addUploadButton();
       let tempdiv = document.createElement("div");
       tempdiv.className = "upload-button-div";
       tempdiv.appendChild(uploadButton);
@@ -419,46 +421,6 @@ export default class Stats {
     viewOptionForm.appendChild(dirtLabel);
 
     return viewOptionForm;
-  }
-
-
-  // FOR TOURNAMENT
-  onGameLoaded: (data: ArrayBuffer) => void;
-
-  addUploadButton(){
-    // disguise the default upload file button with a label
-    let uploadLabel = document.createElement("label");
-    uploadLabel.setAttribute("for", "file-upload");
-    uploadLabel.setAttribute("class", "custom-button");
-    uploadLabel.innerText = 'Upload a .bc20 replay file';
-
-    // create the functional button
-    let upload = document.createElement('input');
-    upload.textContent = 'upload';
-    upload.id = "file-upload";
-    upload.setAttribute('type', 'file');
-    upload.accept = '.bc20';
-    if (this.conf.tournamentMode) {
-      upload.accept = '.bc20,.json';
-    }
-    upload.onchange = () => this.loadMatch(upload.files as FileList);
-    uploadLabel.appendChild(upload);
-
-    return uploadLabel;
-  }
-
-  loadMatch(files: FileList) {
-    const file = files[0];
-    console.log(file);
-    if (file.name.endsWith('.json')) {
-      this.onTournamentLoaded(file);
-    } else {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.onGameLoaded(<ArrayBuffer>reader.result);
-      };
-      reader.readAsArrayBuffer(file);
-    }
   }
 
   /**

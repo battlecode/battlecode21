@@ -86,6 +86,9 @@ export default class MatchQueue {
     uploadLabel.setAttribute("for", "file-upload");
     uploadLabel.setAttribute("class", "custom-button");
     uploadLabel.innerText = 'Upload a .bc20 replay file';
+    if (this.conf.tournamentMode) {
+      uploadLabel.innerText = "Upload a .bc20 or .json file";
+    }
 
     // create the functional button
     let upload = document.createElement('input');

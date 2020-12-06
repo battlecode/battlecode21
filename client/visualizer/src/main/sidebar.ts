@@ -52,7 +52,6 @@ export default class Sidebar {
     this.innerDiv = document.createElement("div");
     this.images = images;
     this.console = new Console(conf);
-    this.stats = new Stats(conf, images);
     this.mapeditor = new MapEditor(conf, images);
     this.matchrunner = new MatchRunner(conf, () => {
       // Set callback for matchrunner in case the scaffold is loaded later
@@ -74,6 +73,7 @@ export default class Sidebar {
     });
     this.profiler = new Profiler();
     this.matchqueue = new MatchQueue(conf, images, this.profiler);
+    this.stats = new Stats(conf, images, this.matchqueue);
     this.help = this.initializeHelp();
     this.conf = conf;
     this.onkeydownControls = onkeydownControls;
