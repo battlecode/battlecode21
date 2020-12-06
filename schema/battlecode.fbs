@@ -24,13 +24,13 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// Enlightenment centers produce politicians, scandals and muckrakers and place bets
+    /// Enlightenment centers produce politicians, scandals and slanderers and place bets
     ///can be neutral until captured
     ENLIGHTENMENT_CENTER,
     /// politicians use their influence to self destruct and capture other units
     POLITICIAN,
     /// scandals generate passive influence for the enlightenment center that created them
-    /// they turn into politicians at some point, and can only be identified by muckrakers.
+    /// they turn into politicians at some point, and can only be identified by slanderers.
     SCANDAL,
     /// have the ability to identify scandals
     MUCKRAKER,
@@ -84,7 +84,7 @@ enum Action : byte {
     /// slanders are alowed to TODO.
     /// Target: TODO.
     EMBEZZLE,
-    /// Muckrakers can expose a scandal.
+    /// slanderers can expose a scandal.
     /// Target: an enemy body.
     EXPOSE,
     /// units can change their flag.
@@ -103,7 +103,7 @@ enum Action : byte {
     /// Target: drowning robot.
     DIE_DROWN,
     /// Dies for having zero influence.
-    /// Target: a politician, scandal or Muckrakers.
+    /// Target: a politician, scandal or slanderers.
     DIE_ZERO_INFLUENCE,
     /// a robot can change team after being empowered
     /// Target: self
