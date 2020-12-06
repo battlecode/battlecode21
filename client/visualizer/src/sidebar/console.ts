@@ -18,6 +18,7 @@ export default class Console {
   private teamAInput: HTMLInputElement;
   private teamBInput: HTMLInputElement;
   private lengthInput: HTMLInputElement;
+  private copyButton: HTMLButtonElement;
 
   // Filters
   // use teamA(), teamB(), minRound(), and maxRound() to get the other filters
@@ -66,6 +67,7 @@ export default class Console {
     this.teamAInput = this.getHTMLCheckbox("A");
     this.teamBInput = this.getHTMLCheckbox("B");
     this.lengthInput = this.getHTMLInput();
+    this.copyButton = this.getHTMLCopyButton();
 
     // Add a tip
     const span = document.createElement("span");
@@ -100,6 +102,8 @@ export default class Console {
     this.console.id = "robotLogs";
     this.console.className = "console";
     div.appendChild(this.console);
+
+    div.appendChild(this.copyButton);
 
     this.updateLogHeader();
 
@@ -146,6 +150,20 @@ export default class Console {
     }
     return input;
   }
+
+  /**
+   * Returns the HTML button for copying logs.
+   */
+  private getHTMLCopyButton(): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.textContent = "Copy Logs";
+    button.setAttribute("class", "custom-button");
+    button.onclick = () => {
+      navigator.clipboard.writeText(this.console.innerText);
+    };
+    return button;
+  }
+
 
   /**
    * Set the logs we should be checking.

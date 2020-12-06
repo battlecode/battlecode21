@@ -282,6 +282,7 @@ h4 {
     top: 0;
     left: 0;
     overflow-x: hidden;
+    box-sizing: border-box;
 
     /* Inner style */
     background-color: white;
