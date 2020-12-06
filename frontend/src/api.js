@@ -158,11 +158,11 @@ class Api {
       let wins = 0
       let losses = 0
       data.forEach(entry => {
-        if (entry.won != null && entry.won) {
+        if (entry.won === true) {
           wins++
-        } else if (entry.won != null) {
+        } else if (entry.won === false) {
           losses++
-        }
+        } // entry.won can be null when errors occur, doesn't contribute to win/loss
       })
 
       callback([wins, losses])
