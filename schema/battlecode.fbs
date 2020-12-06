@@ -99,9 +99,6 @@ enum Action : byte {
     /// places a bet (enlightent center).
     /// Target: bet placed
     PLACE_BET,
-    /// Dies by moving into a swamp.
-    /// Target: drowning robot.
-    DIE_DROWN,
     /// Dies for having zero influence.
     /// Target: a politician, scandal or slanderers.
     DIE_ZERO_INFLUENCE,
