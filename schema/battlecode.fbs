@@ -99,9 +99,6 @@ enum Action : byte {
     /// places a bet (enlightent center).
     /// Target: bet placed
     PLACE_BET,
-    /// Dies for having zero influence.
-    /// Target: a politician, scandal or slanderers.
-    DIE_ZERO_INFLUENCE,
     /// a robot can change team after being empowered
     /// Target: self
     CHANGE_TEAM,
