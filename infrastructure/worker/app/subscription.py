@@ -36,7 +36,7 @@ def subscribe(subscription_name, worker, give_up=False):
     logging.info('Listening for jobs')
     try:
         while not shutdown_requested:
-            response = client.pull(subscription_path, max_messages=1, return_immediately=True)
+            response = client.pull(request= {'subscription': subscription_path, 'max_messages':1})
 
             if not response.received_messages:
                 logging.info('Job queue is empty')
