@@ -25,7 +25,7 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p className='text-center'>
-                                    <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Read the (OLD) Battlecode 2020 Game Specifications</a>
+                                    <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Specifications have not been released yet for 2021!</a>
                                 </p>
                                 </div>
                             </div>
