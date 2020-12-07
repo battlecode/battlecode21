@@ -590,8 +590,7 @@ export default class Client {
     const nextStep = new NextStep();
 
     // Last selected robot ID to display extra info
-    const controls = this.controls;
-    const cconsole = this.console;
+
     let lastSelectedID: number | undefined = undefined;
     const onRobotSelected = (id: number | undefined) => {
       lastSelectedID = id;
@@ -760,9 +759,7 @@ export default class Client {
     this.controls.updatePlayPauseButton();
 
     // set key options
-    const conf = this.conf;
-    const t = this;
-    document.onkeydown = function(event) {
+    document.onkeydown = (event) => {
 
       // TODO: figure out what this is???
       if (document.activeElement == null) {
@@ -775,55 +772,55 @@ export default class Client {
         console.log(event.keyCode);
         switch (event.keyCode) {
           case 80: // "p" - Pause/Unpause
-            controls.pause();
+            this.controls.pause();
             break;
           case 79: // "o" - Stop
-            controls.stop();
+            this.controls.stop();
             break;
           case 69: // 'e' - go to end
-            controls.end();
+            this.controls.end();
             break;
           case 37: // "LEFT" - Step Backward
-            controls.stepBackward();
+            this.controls.stepBackward();
             break;
           case 39: // "RIGHT" - Step Forward
-            controls.stepForward();
+            this.controls.stepForward();
             break;
           case 38: // "UP" - Faster
-            controls.doubleUPS();
+            this.controls.doubleUPS();
             break;
           case 40: // "DOWN" - Slower
-          controls.halveUPS();
+            this.controls.halveUPS();
             break;
           case 82: // "r" - reverse UPS
-            controls.reverseUPS();
+            this.controls.reverseUPS();
             break;
           case 67: // "c" - Toggle Circle Bots
-            conf.circleBots = !conf.circleBots;
+            this.conf.circleBots = !this.conf.circleBots;
             break;
           case 86: // "v" - Toggle Indicator Dots and Lines
-            conf.indicators = !conf.indicators;
+            this.conf.indicators = !this.conf.indicators;
             break;
           case 66: // "b" - Toggle Interpolation
-            conf.interpolate = !conf.interpolate;
+            this.conf.interpolate = !this.conf.interpolate;
             break;
           case 78: // "n" - Toggle sight radius
-            conf.sightRadius = !conf.sightRadius;
+            this.conf.sightRadius = !this.conf.sightRadius;
             break;
           case 71: // "g" - Toogle grid view
-            conf.showGrid = !conf.showGrid;
+            this.conf.showGrid = !this.conf.showGrid;
             break;
           case 72: // "h" - Toggle short log header
-            conf.shorterLogHeader = !conf.shorterLogHeader;
-            cconsole.updateLogHeader();
+            this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
+            this.console.updateLogHeader();
             break;
           case 65: // "a" - previous tournament Match
-            t.previousTournamentThing();
-            t.updateTournamentState();
+            this.previousTournamentThing();
+            this.updateTournamentState();
             break;
           case 68: // 'd' - next tournament match
-            t.nextTournamentThing();
-            t.updateTournamentState();
+            this.nextTournamentThing();
+            this.updateTournamentState();
             break;
         }
       }
