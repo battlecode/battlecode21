@@ -8,11 +8,11 @@
     "lint": "tslint \"src/**/*.ts\"",
     "build": "webpack --mode=development",
     "prod": "webpack --mode=production",
-    "watch": "echo '--- open localhost:8080 in your browser ---' && webpack-dev-server --env dev",
-    "electron": "webpack --mode=development --env electron --env dev && electron .",
-    "prod-electron": "webpack --mode=production --env electron && electron-builder -mwl --dir --ia32 --x64",
-    "prod-electron-no-sign": "webpack --mode=production --env electron && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -mwl --dir --ia32 --x64",
-    "prod-test": "webpack --mode=production --env electron && electron-builder"
+    "watch": "echo '--- open localhost:8080 in your browser ---' && webpack-dev-server --env.dev",
+    "electron": "webpack --mode=development --env.electron --env.dev && electron .",
+    "prod-electron": "webpack --mode=production --env.electron && electron-builder -mwl --dir --ia32 --x64",
+    "prod-electron-no-sign": "webpack --mode=production --env.electron && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -mwl --dir --ia32 --x64",
+    "prod-test": "webpack --mode=production --env.electron && electron-builder"
   },
   "repository": {
     "type": "git",
