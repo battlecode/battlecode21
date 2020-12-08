@@ -2,6 +2,7 @@ import {Config, Mode} from '../config';
 import * as imageloader from '../imageloader';
 import * as cst from '../constants';
 import {Game} from 'battlecode-playback';
+import Runner from '../runner';
 
 type ButtonInfo = {
   img: HTMLImageElement,
@@ -30,7 +31,6 @@ export default class Controls {
    * This is for easily modifing local variables of app.ts, such as goalUPS.
    */
 
-  onGameLoaded: (data: ArrayBuffer) => void;
   onTogglePause: () => void;
   onToggleUPS: () => void;
   onToggleRewind: () => void;
@@ -50,6 +50,8 @@ export default class Controls {
   // buttons
   readonly conf: Config;
 
+  private runner: Runner;
+
   readonly buttons: {
     playbackStart: ButtonInfo,
     playbackPause: ButtonInfo,
@@ -62,7 +64,7 @@ export default class Controls {
     goEnd: ButtonInfo
   };
 
-  constructor(conf: Config, images: imageloader.AllImages) {
+  constructor(conf: Config, images: imageloader.AllImages, runner: Runner) {
     this.div = this.baseDiv();
     this.timeReadout = document.createTextNode('No match loaded');
     this.tileInfo = document.createTextNode('X | Y | Dirt | Water | Pollution | Soup');
@@ -85,6 +87,7 @@ export default class Controls {
       goEnd: {img: imgs.goEnd, text: "End", onclick: () => this.end()}
     };
 
+    this.runner = runner;
 
     let table = document.createElement("table");
     let tr = document.createElement("tr");
@@ -247,7 +250,7 @@ export default class Controls {
     const file = files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      this.onGameLoaded(<ArrayBuffer>reader.result);
+      this.runner.onGameLoaded(<ArrayBuffer>reader.result);
     };
     reader.readAsArrayBuffer(file);
   }

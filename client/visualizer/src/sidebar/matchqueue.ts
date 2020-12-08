@@ -3,6 +3,7 @@ import {AllImages} from '../imageloader';
 
 import {Game} from 'battlecode-playback';
 import { Profiler } from "./index";
+import Runner from '../runner';
 
 export default class MatchQueue {
 
@@ -15,24 +16,19 @@ export default class MatchQueue {
   // Options
   private readonly conf: Config;
 
-  // Callbacks initialized from outside Stats
-  onNextMatch: () => void;
-  onPreviousMatch: () => void;
-  onTournamentLoaded: (path: File) => void;
-  gotoMatch: (game: number, match: number) => void;
-  onGameLoaded: (data: ArrayBuffer) => void;
-  removeGame: (game: number) => void;
-
   // The profiler to initialize when switching matches
   profiler: Profiler;
+
+  private runner: Runner; 
 
   // Images
   private readonly images: AllImages;
 
-  constructor(conf: Config, images: AllImages, profiler: Profiler) {
+  constructor(conf: Config, images: AllImages, profiler: Profiler, runner: Runner) {
     this.conf = conf;
     this.images = images;
     this.profiler = profiler;
+    this.runner = runner;
     this.div = this.basediv();
   }
 
@@ -41,7 +37,7 @@ export default class MatchQueue {
     let div = document.createElement("div");
     div.id = "matchQueue";
 
-    let uploadButton = this.addUploadButton();
+    let uploadButton = this.runner.getUploadButton();
     let tempdiv = document.createElement("div");
     tempdiv.className = "upload-button-div";
     tempdiv.appendChild(uploadButton);
@@ -60,14 +56,14 @@ export default class MatchQueue {
     let back = document.createElement("button");
     back.setAttribute("class", "custom-button");
     back.setAttribute("type", "button");
-    back.onclick = () => this.onPreviousMatch();
+    back.onclick = () => this.runner.goPreviousMatch();
     back.appendChild(this.images.controls.matchBackward);
 
     // Go the next match/round
     let next = document.createElement("button");
     next.setAttribute("class", "custom-button");
     next.setAttribute("type", "button");
-    next.onclick = () => this.onNextMatch();
+    next.onclick = () => this.runner.goNextMatch();
     next.appendChild(this.images.controls.matchForward);
 
     // Append all the HTML elements
@@ -79,48 +75,6 @@ export default class MatchQueue {
 
     return div;
   }
-
-  addUploadButton(){
-    // disguise the default upload file button with a label
-    let uploadLabel = document.createElement("label");
-    uploadLabel.setAttribute("for", "file-upload");
-    uploadLabel.setAttribute("class", "custom-button");
-    uploadLabel.innerText = 'Upload a .bc20 replay file';
-    if (this.conf.tournamentMode) {
-      uploadLabel.innerText = "Upload a .bc20 or .json file";
-    }
-
-    // create the functional button
-    let upload = document.createElement('input');
-    upload.textContent = 'upload';
-    upload.id = "file-upload";
-    upload.setAttribute('type', 'file');
-    upload.accept = '.bc20';
-    if (this.conf.tournamentMode) {
-      upload.accept = '.bc20,.json';
-    }
-    upload.onchange = () => this.loadMatch(upload.files as FileList);
-    upload.onclick = () => upload.value = "";
-    uploadLabel.appendChild(upload);
-
-    return uploadLabel;
-  }
-
-  loadMatch(files: FileList) {
-    const file = files[0];
-    console.log(file);
-    if (file.name.endsWith('.json')) {
-      this.onTournamentLoaded(file);
-    } else {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.onGameLoaded(<ArrayBuffer>reader.result);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
-
-
 
   refreshGameList(gameList: Array<Game>, activeGame: number, activeMatch: number) {
     // Initialize the profiler with the active match
@@ -178,7 +132,7 @@ export default class MatchQueue {
             // }
             const rounds = match.lastTurn!;
             const active = gameIndex === activeGame && matchIndex === activeMatch;
-            const cb = () => { this.gotoMatch(gameIndex, matchIndex) };
+            const cb = () => { this.runner.goToMatch(gameIndex, matchIndex) };
 
             gameWrapper.appendChild(this.matchWrapper(
               mapName, matchWinner, rounds, active, cb));
@@ -273,7 +227,7 @@ export default class MatchQueue {
     remove.setAttribute("class", "custom-button");
     remove.setAttribute("type", "button");
     remove.textContent = "Remove";
-    remove.onclick = () => {this.removeGame(gameNumber)};
+    remove.onclick = () => {this.runner.removeGame(gameNumber)};
     return remove;
   }
 }

@@ -8,8 +8,10 @@ import MatchQueue from '../sidebar/matchqueue';
 import Profiler from '../sidebar/profiler';
 import MapEditor from '../mapeditor/mapeditor';
 import ScaffoldCommunicator from './scaffold';
+import Runner from '../runner';
 
 import {http,electron} from './electron-modules';
+
 
 
 export default class Sidebar {
@@ -45,7 +47,7 @@ export default class Sidebar {
   cb: () => void;
 
   // onkeydownControls is an onkeydown event that uses the controls depending on the game mode
-  constructor(conf: Config, images: AllImages,
+  constructor(conf: Config, images: AllImages, runner: Runner,
     onkeydownControls: (event: KeyboardEvent) => void) {
     // Initialize fields
     this.div = document.createElement("div");
@@ -72,8 +74,9 @@ export default class Sidebar {
       this.updateUpdate();
     });
     this.profiler = new Profiler();
-    this.matchqueue = new MatchQueue(conf, images, this.profiler);
-    this.stats = new Stats(conf, images, this.matchqueue);
+    console.log("runner:", runner);
+    this.matchqueue = new MatchQueue(conf, images, this.profiler, runner);
+    this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
     this.conf = conf;
     this.onkeydownControls = onkeydownControls;

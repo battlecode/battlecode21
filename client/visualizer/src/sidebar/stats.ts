@@ -2,7 +2,7 @@ import {Config} from '../config';
 import * as cst from '../constants';
 import {AllImages} from '../imageloader';
 import {Block,Transaction,schema} from 'battlecode-playback';
-import MatchQueue from './matchqueue';
+import Runner from '../runner';
 
 const hex: Object = {
   1: "#db3627",
@@ -36,15 +36,12 @@ export default class Stats {
 
   private robotConsole: HTMLDivElement;
 
-  seekTournament: (match: number) => void;
-  onTournamentLoaded: (path: File) => void;
-
   private blockchain: HTMLDivElement;
 
   private waterLabel: HTMLHeadingElement;
   private waterHorizontalSlider: HTMLDivElement;
 
-  private matchqueue: MatchQueue; //needed for file uploading in tournament mode
+  private runner: Runner; //needed for file uploading in tournament mode
 
   private conf: Config;
 
@@ -56,12 +53,12 @@ export default class Stats {
     cst.MINER, cst.LANDSCAPER, cst.DRONE, cst.NET_GUN, cst.REFINERY, cst.VAPORATOR, cst.HQ, cst.DESIGN_SCHOOL, cst.FULFILLMENT_CENTER
   ];
 
-  constructor(conf: Config, images: AllImages, matchqueue: MatchQueue) {
+  constructor(conf: Config, images: AllImages, runner: Runner) {
     this.conf = conf;
     this.images = images;
     this.div = document.createElement("div");
     this.tourIndexJump = document.createElement("input");
-    this.matchqueue = matchqueue;
+    this.runner = runner;
 
     let teamNames: Array<string> = ["?????", "?????"];
     let teamIDs: Array<number> = [1, 2];
@@ -195,7 +192,7 @@ export default class Stats {
       this.div.append(this.addViewOptions());
     } else {
       // FOR TOURNAMENT
-      let uploadButton = this.matchqueue.addUploadButton();
+      let uploadButton = this.runner.getUploadButton();
       let tempdiv = document.createElement("div");
       tempdiv.className = "upload-button-div";
       tempdiv.appendChild(uploadButton);
@@ -290,7 +287,7 @@ export default class Stats {
   tourIndexJumpFun(e) {
     if (e.keyCode === 13){
         var h = +this.tourIndexJump.value.trim().toLowerCase();
-        this.seekTournament(h-1);
+        this.runner.seekTournament(h-1);
     }
   }
 

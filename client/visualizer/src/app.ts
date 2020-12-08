@@ -78,17 +78,13 @@ export default class Client {
 
     imageloader.loadAll(conf, (images: imageloader.AllImages) => {
       this.imgs = images;
+      this.runner = new Runner(this.root, this.conf, this.imgs);
       this.root.appendChild(this.loadControls());
       this.root.appendChild(this.loadSidebar());
       this.root.appendChild(this.loadGameArea());
       this.loadScaffold();
-      this.ready();
+      this.runner.ready(this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
     });
-  }
-
-  ready() {
-    this.runner = new Runner(this.root, this.conf, this.imgs, this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
-    this.runner.ready();
   }
 
   /**
@@ -110,7 +106,7 @@ export default class Client {
    * Loads control bar and timeline
    */
   private loadControls() {
-    this.controls = new Controls(this.conf, this.imgs);
+    this.controls = new Controls(this.conf, this.imgs, this.runner);
     return this.controls.div;
   }
 
@@ -128,7 +124,7 @@ export default class Client {
           break;
       }
     };
-    this.sidebar = new Sidebar(this.conf, this.imgs, onkeydownControls);
+    this.sidebar = new Sidebar(this.conf, this.imgs, this.runner, onkeydownControls);
     this.stats = this.sidebar.stats;
     this.console = this.sidebar.console;
     this.mapeditor = this.sidebar.mapeditor;

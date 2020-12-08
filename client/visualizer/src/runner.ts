@@ -19,19 +19,17 @@ import { Tournament, readTournament } from './main/tournament';
 
 /**
  * Runs matches and tournaments.
- * Provides methods to load, switch, pause, etc. (TODO: make these work nicely when called externally)
+ * Provides methods to load matches, switch, pause, etc., to be used by other components.
+ * (Not related to the runner for the scaffold.)
  */
 export default class Runner {
-  private conf: config.Config;
-  readonly root: HTMLElement;
   readonly ctx: CanvasRenderingContext2D;
 
-  imgs: imageloader.AllImages;
-  controls: Controls; // Upper controls bar
-  stats: Stats;
-  gamearea: GameArea; // Inner game area
-  console: Console; // Console to display logs
-  matchqueue: MatchQueue; // Match queue
+  private matchqueue: MatchQueue;
+  private controls: Controls;
+  private stats: Stats;
+  private gamearea: GameArea; 
+  private console: Console;
 
   // Match logic
   listener: WebSocketListener | null;
@@ -47,16 +45,7 @@ export default class Runner {
   // used to cancel the main loop
   loopID: number | null;
 
-  constructor(root: HTMLElement, conf: config.Config, imgs: imageloader.AllImages, controls: Controls, stats: Stats, gamearea: GameArea, console: Console, matchqueue: MatchQueue) {
-    this.root = root;
-    this.conf = conf;
-
-    this.imgs = imgs;
-    this.controls = controls;
-    this.stats = stats;
-    this.gamearea = gamearea;
-    this.console = console;
-    this.matchqueue = matchqueue;
+  constructor(readonly root: HTMLElement, private conf: config.Config, private imgs: imageloader.AllImages) {
 
     this.games = [];
 
@@ -70,48 +59,22 @@ export default class Runner {
   }
 
   /**
-   * Set the current game.
-   */
-  setGame(game: number) {
-    if (game < 0 || game >= this.games.length) {
-      throw new Error(`No game ${game} loaded, only have ${this.games.length} games`);
-    }
-    this.clearScreen();
-    this.currentGame = game;
-    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-  }
+  * Marks the client as fully loaded.
+  */
+  ready(controls: Controls, stats: Stats, gamearea: GameArea, 
+       cconsole: Console, matchqueue: MatchQueue) {
 
-  setMatch(match: number) {
-    const matchCount = this.games[this.currentGame as number].matchCount;
-    if (match < 0 || match >= matchCount) {
-      throw new Error(`No match ${match} loaded, only have ${matchCount} matches in current game`);
-    }
-    this.clearScreen();
-    this.currentMatch = match;
+    this.controls = controls;
+    this.stats = stats;
+    this.gamearea = gamearea;
+    this.console = cconsole;
+    this.matchqueue = matchqueue;
 
-    // Restart game loop
-    this.runMatch();
-    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch);
-    this.games[this.currentGame ? this.currentGame : 0].getMatch(this.currentMatch).seek(0);
-  }
-
-  clearScreen() {
-    // TODO clear screen
-    if (this.loopID !== null) {
-      window.cancelAnimationFrame(this.loopID);
-      this.loopID = null;
-    }
-  }
-
-  /**
-   * Marks the client as fully loaded.
-   */
-  ready() {
     this.gamearea.setCanvas();
 
     let startGame = () => {
       if (this.games.length === 1) {
-        // this will run the first match from the game
+        // if only one game in queue, run its first match
         this.setGame(0);
         this.setMatch(0);
       }
@@ -184,137 +147,226 @@ export default class Runner {
     //     });
     //   }
     // }
-
-    this.controls.onGameLoaded = (data: ArrayBuffer) => {
-      let lastGame = this.games.length
-      this.games[lastGame] = new Game();
-      this.games[lastGame].loadFullGameRaw(data);
-
-      startGame();
-    };
-    this.matchqueue.onGameLoaded = (data: ArrayBuffer) => {
-      let lastGame = this.games.length
-      this.games[lastGame] = new Game();
-      this.games[lastGame].loadFullGameRaw(data);
-
-      startGame();
-    };
-
-    if (this.listener != null) {
-      this.listener.start(
-        // What to do when we get a game from the websocket
-        (game) => {
-          this.games.push(game);
-          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-        },
-        // What to do with the websocket's first match in a given game
-        () => {
-          // switch to running this match 
-          this.setGame(this.games.length - 1);
-          this.setMatch(0);
-          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-        },
-        // What to do with any other match
-        () => {
-          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-        }
-      );
-    }
-
-    this.stats.seekTournament = (num: number) => {
-      console.log('seek tournament');
-      this.tournament?.seek(num, 0);
-      this.updateTournamentState();
-    };
-
-    this.stats.onTournamentLoaded = (jsonFile: File) => {
-      if (!process.env.ELECTRON) {
-        console.error("Can't load tournament outside of electron!");
-        return;
-      }
-      readTournament(jsonFile, (err, tournament) => {
-        if (err) {
-          console.error(`Can't load tournament: ${err}`);
-          return;
-        }
-        if (tournament) {
-          this.tournament = tournament;
-          const t = this;
-          document.onkeydown = function (event) {
-            // TODO: figure out what this is???
-            if (document.activeElement == null) {
-              throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-            }
-            let input = document.activeElement.nodeName == "INPUT";
-            if (!input) {
-              // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-              console.log(event.keyCode);
-              switch (event.keyCode) {
-                case 65: // "a" - previous tournament Match
-                  t.previousTournamentThing();
-                  t.updateTournamentState();
-                  break;
-                case 68: // 'd' - next tournament match
-                  console.log('next tournament d!');
-                  t.nextTournamentThing();
-                  t.updateTournamentState();
-                  break;
-              }
-            }
-
-          };
-          // CHOOSE STARTING ROUND?
-          tournament.seek(0, 0);
-          this.tournamentState = TournamentState.START_SPLASH;
-          this.updateTournamentState();
-        }
-      });
-    };
-    this.matchqueue.onTournamentLoaded = (jsonFile: File) => {
-      if (!process.env.ELECTRON) {
-        console.error("Can't load tournament outside of electron!");
-        return;
-      }
-      readTournament(jsonFile, (err, tournament) => {
-        if (err) {
-          console.error(`Can't load tournament: ${err}`);
-          return;
-        }
-        if (tournament) {
-          this.tournament = tournament;
-          const t = this;
-          document.onkeydown = function (event) {
-            // TODO: figure out what this is???
-            if (document.activeElement == null) {
-              throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-            }
-            let input = document.activeElement.nodeName == "INPUT";
-            if (!input) {
-              // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-              console.log(event.keyCode);
-              switch (event.keyCode) {
-                case 65: // "a" - previous tournament Match
-                  t.previousTournamentThing();
-                  t.updateTournamentState();
-                  break;
-                case 68: // 'd' - next tournament match
-                  console.log('next tournament d!');
-                  t.nextTournamentThing();
-                  t.updateTournamentState();
-                  break;
-              }
-            }
-
-          };
-          // CHOOSE STARTING ROUND?
-          tournament.seek(0, 0);
-          this.tournamentState = TournamentState.START_SPLASH;
-          this.updateTournamentState();
-        }
-      });
-    };
   }
 
+  /**
+   * Public functions for loading games and switching between matches.
+   */
+
+  setGame(game: number) {
+    if (game < 0 || game >= this.games.length) {
+      throw new Error(`No game ${game} loaded, only have ${this.games.length} games`);
+    }
+    this.clearScreen();
+    this.currentGame = game;
+    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+  }
+
+  setMatch(match: number) {
+    const matchCount = this.games[this.currentGame as number].matchCount;
+    if (match < 0 || match >= matchCount) {
+      throw new Error(`No match ${match} loaded, only have ${matchCount} matches in current game`);
+    }
+    this.clearScreen();
+    this.currentMatch = match;
+
+    // Restart game loop
+    this.runMatch();
+    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch);
+    this.games[this.currentGame ? this.currentGame : 0].getMatch(this.currentMatch).seek(0);
+  }
+
+  goToMatch(game: number, match: number) {
+    this.setGame(game);
+    this.setMatch(match);
+  };
+
+  clearScreen() {
+    // TODO clear screen
+    if (this.loopID !== null) {
+      window.cancelAnimationFrame(this.loopID);
+      this.loopID = null;
+    }
+  }
+
+  getUploadButton() {
+    // disguise the default upload file button with a label
+    let uploadLabel = document.createElement("label");
+    uploadLabel.setAttribute("for", "file-upload");
+    uploadLabel.setAttribute("class", "custom-button");
+    uploadLabel.innerText = 'Upload a .bc20 replay file';
+    if (this.conf.tournamentMode) {
+      uploadLabel.innerText = "Upload a .bc20 or .json file";
+    }
+
+    // create the functional button
+    let upload = document.createElement('input');
+    upload.textContent = 'upload';
+    upload.id = "file-upload";
+    upload.setAttribute('type', 'file');
+    upload.accept = '.bc20';
+    if (this.conf.tournamentMode) {
+      upload.accept = '.bc20,.json';
+    }
+    upload.onchange = () => this.loadMatch(upload.files as FileList);
+    upload.onclick = () => upload.value = "";
+    uploadLabel.appendChild(upload);
+
+    return uploadLabel;
+  }
+
+  loadMatch(files: FileList) {
+    const file = files[0];
+    console.log(file);
+    if (file.name.endsWith('.json')) {
+      this.onTournamentLoaded(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.onGameLoaded(<ArrayBuffer>reader.result);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  }
+
+  onGameLoaded(data: ArrayBuffer) {
+    let lastGame = this.games.length
+    this.games[lastGame] = new Game();
+    this.games[lastGame].loadFullGameRaw(data);
+
+    this.startGame();
+  };
+
+  startGame() {
+    if (this.games.length === 1) {
+      // if only one game in queue, run its first match
+      this.setGame(0);
+      this.setMatch(0);
+    }
+    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+  }
+
+  onTournamentLoaded(jsonFile: File) {
+    if (!process.env.ELECTRON) {
+      console.error("Can't load tournament outside of electron!");
+      return;
+    }
+    readTournament(jsonFile, (err, tournament) => {
+      if (err) {
+        console.error(`Can't load tournament: ${err}`);
+        return;
+      }
+      if (tournament) {
+        this.tournament = tournament;
+        const t = this;
+        document.onkeydown = function (event) {
+          // TODO: figure out what this is???
+          if (document.activeElement == null) {
+            throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
+          }
+          let input = document.activeElement.nodeName == "INPUT";
+          if (!input) {
+            // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
+            console.log(event.keyCode);
+            switch (event.keyCode) {
+              case 65: // "a" - previous tournament Match
+                t.previousTournamentThing();
+                t.updateTournamentState();
+                break;
+              case 68: // 'd' - next tournament match
+                console.log('next tournament d!');
+                t.nextTournamentThing();
+                t.updateTournamentState();
+                break;
+            }
+          }
+
+        };
+        // CHOOSE STARTING ROUND?
+        tournament.seek(0, 0);
+        this.tournamentState = TournamentState.START_SPLASH;
+        this.updateTournamentState();
+      }
+    });
+  };
+
+  goNextMatch() {
+    console.log("NEXT MATCH");
+
+    if (this.currentGame as number < 0) {
+      return; // Special case when deleting games
+    }
+
+    const matchCount = this.games[this.currentGame as number].matchCount;
+    if (this.currentMatch as number < matchCount - 1) {
+      this.setMatch(this.currentMatch as number + 1);
+    } else {
+      if (this.currentGame as number < this.games.length - 1) {
+        this.setGame(this.currentGame as number + 1);
+        this.setMatch(0);
+      } else {
+        // Do nothing, at the end
+      }
+    }
+  }
+
+  goPreviousMatch() {
+    console.log("PREV MATCH");
+
+    if (this.currentMatch as number > 0) {
+      this.setMatch(this.currentMatch as number - 1);
+    } else {
+      if (this.currentGame as number > 0) {
+        this.setGame(this.currentGame as number - 1);
+        this.setMatch(this.games[this.currentGame as number].matchCount - 1);
+      } else {
+        // Do nothing, at the beginning
+      }
+    }
+
+  };
+
+  seekTournament (num: number) {
+    console.log('seek tournament');
+    this.tournament?.seek(num, 0);
+    this.updateTournamentState();
+  };
+
+  removeGame(game: number) {
+
+    if (game > (this.currentGame as number)) {
+      this.games.splice(game, 1);
+    } else if (this.currentGame == game) {
+      if (game == 0) {
+        // if games.length > 1, remove game, set game to 0, set match to 0
+        if (this.games.length > 1) {
+          this.setGame(0);
+          this.setMatch(0);
+          this.games.splice(game, 1);
+        } else {
+          this.games.splice(game, 1);
+          this.clearScreen();
+          this.currentGame = -1;
+          this.currentMatch = 0;
+        }
+      } else {
+        this.setGame(game - 1);
+        this.setMatch(0);
+        this.games.splice(game, 1);
+      }
+    } else {
+      // remove game, set game to game - 1
+      this.games.splice(game, 1);
+      this.currentGame = game - 1;
+    }
+
+    if (this.games.length == 0) {
+      this.conf.splash = true;
+      this.gamearea.setCanvas();
+    }
+
+    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+  };
 
   /**
    * Updates the stats bar displaying VP, bullets, and robot counts for each
@@ -556,79 +608,6 @@ export default class Runner {
       if (match.current.turn > 0) {
         this.controls.onSeek(match.current.turn - 1);
       }
-    };
-    this.matchqueue.onNextMatch = () => {
-      console.log("NEXT MATCH");
-
-      if (this.currentGame as number < 0) {
-        return; // Special case when deleting games
-      }
-
-      const matchCount = this.games[this.currentGame as number].matchCount;
-      if (this.currentMatch as number < matchCount - 1) {
-        this.setMatch(this.currentMatch as number + 1);
-      } else {
-        if (this.currentGame as number < this.games.length - 1) {
-          this.setGame(this.currentGame as number + 1);
-          this.setMatch(0);
-        } else {
-          // Do nothing, at the end
-        }
-      }
-    };
-    this.matchqueue.onPreviousMatch = () => {
-      console.log("PREV MATCH");
-
-      if (this.currentMatch as number > 0) {
-        this.setMatch(this.currentMatch as number - 1);
-      } else {
-        if (this.currentGame as number > 0) {
-          this.setGame(this.currentGame as number - 1);
-          this.setMatch(this.games[this.currentGame as number].matchCount - 1);
-        } else {
-          // Do nothing, at the beginning
-        }
-      }
-
-    };
-    this.matchqueue.removeGame = (game: number) => {
-
-      if (game > (this.currentGame as number)) {
-        this.games.splice(game, 1);
-      } else if (this.currentGame == game) {
-        if (game == 0) {
-          // if games.length > 1, remove game, set game to 0, set match to 0
-          if (this.games.length > 1) {
-            this.setGame(0);
-            this.setMatch(0);
-            this.games.splice(game, 1);
-          } else {
-            this.games.splice(game, 1);
-            this.clearScreen();
-            this.currentGame = -1;
-            this.currentMatch = 0;
-          }
-        } else {
-          this.setGame(game - 1);
-          this.setMatch(0);
-          this.games.splice(game, 1);
-        }
-      } else {
-        // remove game, set game to game - 1
-        this.games.splice(game, 1);
-        this.currentGame = game - 1;
-      }
-
-      if (this.games.length == 0) {
-        this.conf.splash = true;
-        this.gamearea.setCanvas();
-      }
-
-      this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-    };
-    this.matchqueue.gotoMatch = (game: number, match: number) => {
-      this.setGame(game);
-      this.setMatch(match);
     };
     function changeTime(dragEvent: MouseEvent) {
       // jump to a frame when clicking the controls timeline
