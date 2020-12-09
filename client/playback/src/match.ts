@@ -10,16 +10,6 @@ export type Log = {
   text: string
 };
 
-export type Transaction = {
-  cost: number,
-  message: Array<number>
-}
-
-export type Block = {
-  messages: Array<Transaction>,
-  round: number
-}
-
 export type ProfilerEvent = {
   type: string,
   at: number,
@@ -84,17 +74,6 @@ export default class Match {
   readonly logs: Array<Array<Log>>;
 
   /**
-   * The blockchain, an array of blocks per round.
-   */
-  readonly blockchain: Array<Block>;
-
-  /**
-   * The profiler files belong to this match.
-   * Contains 2 items (team A and team B) if profiling was enabled, empty otherwise.
-   */
-  readonly profilerFiles: Array<ProfilerFile>;
-
-  /**
    * The current game world.
    * DO NOT CACHE this reference between calls to seek() and compute(), it may
    * change.
@@ -155,8 +134,6 @@ export default class Match {
     this.snapshots.push(this._current.copy());
     this.deltas = new Array(1);
     this.logs = new Array(1);
-    this.blockchain = new Array(1);
-    this.profilerFiles = [];
     this.maxTurn = header.maxRounds();
     this._lastTurn = null;
     this._seekTo = 0;
@@ -175,95 +152,7 @@ export default class Match {
     if(delta.logs()){
       this.parseLogs(delta.roundID(), <string> delta.logs(flatbuffers.Encoding.UTF16_STRING));
     }
-    this.parseBlockchain(delta);
   }
-
-  /**
-   * parses blockchain broadcasts
-   */
-  parseBlockchain(delta: schema.Round) {
-    let blockMessages = new Array<Transaction>();
-
-    // lol the schema format for this is real weird
-    // THIS IS THE HACKIEST SOLUTION MANKIND HAS EVER SEEN
-    // another option is actually changing the schema, but we can't remove parts of it
-    // so then we would need to add a new thing
-    // which would (1) break old replays and (2) have twice as big new replays
-    // sorry this is probably the best solution
-    // DO NOT COPY THIS CODE FOR FUTURE USE. MODIFY!!!
-
-    let j = 0;
-    let messageStringLen = delta.broadcastedMessagesLength();
-    for (let i = 0; i < delta.broadcastedMessagesCostsLength(); i++) {
-      let messageCost = delta.broadcastedMessagesCosts(i);
-      // console.log(messageCost);
-      // let x = delta.broadcastedMessages(j, flatbuffers.Encoding.UTF16_STRING);
-      // var offset = delta.bb!.__offset(delta.bb_pos, 42);
-      // var h = delta.bb!.__vector(delta.bb_pos + offset)
-      // console.log(h);
-      // var k = delta.bb!.readInt32(h);
-      // console.log(k);
-      // console.log(delta.bb!.readInt32(h+4));
-      // console.log(delta.bb!.readInt32(h+8));
-      // console.log(delta.bb!.readInt32(h+12));
-      // console.log(delta.bb!.readInt32(h+16));
-      let thisTransaction = "";
-      let offset = delta.bb!.__offset(delta.bb_pos, 42);
-      let startPointer = delta.bb!.__vector(delta.bb_pos + offset);
-      if (offset) {
-        // this is ascii
-        let x = String.fromCharCode(delta.bb!.readInt32(startPointer + 4*j));
-        while (x !== ' ') {
-          // console.log(x);
-          // this will be 
-          thisTransaction += x;
-          j += 1;
-          if (j >= messageStringLen) {
-            console.log("BLOCKCHAIN ERROR SHOULD NEVER HAPPEN");
-            break;
-          }
-          x = String.fromCharCode(delta.bb!.readInt32(startPointer + 4*j));
-        }
-        j += 1;
-        // now split this transaction on _
-        let splitMessage = thisTransaction.split("_");
-        let messageArr = new Array<number>();
-        for (let j = 0; j < splitMessage.length; j++) {
-          messageArr.push(parseInt(splitMessage[j]));
-        }
-        blockMessages.push({
-          cost: messageCost,
-          message: messageArr
-        });
-      } else {
-        console.log("couldn't display blockchain");
-      }
-    }
-
-    // console.log(blockMessages);
-
-    // for (let i = 0; i < delta.broadcastedMessagesCostsLength(); i++) {
-      // let messageString = delta.broadcastedMessages(i);
-      // let messageCost = delta.broadcastedMessagesCosts(i);
-      // console.log(messageString);
-      // // string is formatted as int_int_int
-      // let splitMessage = messageString.split("_");
-      // let messageArr = new Array<number>();
-      // for (let j = 0; j < splitMessage.length; j++) {
-      //   messageArr.push(parseInt(splitMessage[j]));
-      // }
-      // blockMessages.push({
-      //   cost: messageCost,
-      //   message: messageArr
-      // });
-    // }
-
-    this.blockchain.push({
-      messages: blockMessages,
-      round: delta.roundID()
-    });
-  }
-
 
   /**
    * Parse logs for a round.
@@ -273,7 +162,7 @@ export default class Match {
 
     // Regex
     let lines = logs.split(/\r?\n/);
-    let header = /^\[(A|B):(MINER|LANDSCAPER|DELIVERY_DRONE|NET_GUN|REFINERY|VAPORATOR|HQ|DESIGN_SCHOOL|FULFILLMENT_CENTER)#(\d+)@(\d+)\] (.*)/;
+    let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SCANDAL|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
 
     let roundLogs = new Array<Log>();
 
@@ -298,15 +187,10 @@ export default class Match {
       }
 
       let shortenRobot = new Map();
-      shortenRobot.set("MINER", "M");
-      shortenRobot.set("LANDSCAPER", "L");
-      shortenRobot.set("DELIVERY_DRONE", "DD");
-      shortenRobot.set("NET_GUN", "NG");
-      shortenRobot.set("REFINERY", "R");
-      shortenRobot.set("VAPORATOR", "V");
-      shortenRobot.set("HQ", "HQ");
-      shortenRobot.set("DESIGN_SCHOOL", "DS");
-      shortenRobot.set("FULFILLMENT_CENTER", "FC");
+      shortenRobot.set("ENLIGHTENMENT_CENTER", "EC");
+      shortenRobot.set("POLITICIAN", "P");
+      shortenRobot.set("SCANDAL", "SC");
+      shortenRobot.set("MUCKRAKER", "MR");
 
       // Get the matches
       let team = matches[1];
@@ -351,38 +235,6 @@ export default class Match {
 
     this._lastTurn = footer.totalRounds();
     this._winner = footer.winner();
-
-    for (let i = 0, iMax = footer.profilerFilesLength(); i < iMax; i++) {
-      const file = footer.profilerFiles(i);
-
-      const frames: string[] = [];
-      for (let j = 0, jMax = file.framesLength(); j < jMax; j++) {
-        frames.push(file.frames(j));
-      }
-
-      const profiles: ProfilerProfile[] = [];
-      for (let j = 0, jMax = file.profilesLength(); j < jMax; j++) {
-        const profile = file.profiles(j);
-
-        const events: ProfilerEvent[] = [];
-        for (let k = 0, kMax = profile.eventsLength(); k < kMax; k++) {
-          const event = profile.events(k);
-
-          events.push({
-            type: event.isOpen() ? 'O' : 'C',
-            at: event.at(),
-            frame: event.frame(),
-          });
-        }
-
-        profiles.push({
-          name: profile.name(),
-          events,
-        });
-      }
-
-      this.profilerFiles.push({ frames, profiles });
-    }
   }
 
   /**

@@ -6,8 +6,8 @@ import { schema } from 'battlecode-schema';
 import Victor = require('victor');
 import deepcopy = require('deepcopy');
 
-// let Position to be vector type?
-export type DiedBodiesSchema = {
+// TODO use Victor for representing positions
+export type DeadBodiesSchema = {
   id: Int32Array,
   x: Int32Array,
   y: Int32Array,
@@ -19,15 +19,11 @@ export type BodiesSchema = {
   type: Int8Array,
   x: Int32Array,
   y: Int32Array,
-  onDirt: Int32Array, // the amount of dirt on top of the unit
-  carryDirt: Int32Array, // the amount of dirt landscaper is carrying 
-  cargo: Int32Array,  // info about current cargo. 0 when not carrying
-                      // unitID for drones, amount of dirt for landscaper, and amount of soup for miner
-  isCarried: Uint8Array, // whether the unit is being cariied or not
-  bytecodesUsed: Int32Array, // Only relevant for non-neutral bodies
+  // TODO other stats like power or convictions?
+  bytecodesUsed: Int32Array, // TODO: is this needed?
 };
 
-// TODO change this to schema?
+// NOTE: consider changing MapStats to schema to use SOA for better performance, if it has large data
 export type MapStats = {
   name: string,
   minCorner: Victor,
@@ -35,24 +31,16 @@ export type MapStats = {
   bodies: schema.SpawnedBodyTable,
   randomSeed: number,
 
-  dirt: Int32Array,
-  flooded: Int8Array, // actually a boolean array but flatbuffers does not understand that
-  globalPollution: number,
-  localPollutions: schema.LocalPollutionTable,
-  pollution: Int32Array, // not guaranteed to be correct
-  soup: Int32Array
+  passable: Int8Array, // boolean
 
   getIdx: (x:number, y:number) => number;
   getLoc: (idx: number) => Victor;
 };
 
 export type TeamStats = {
-  // TODO: get size of array and auto-scale this array's size?
-
   // An array of numbers corresponding to team stats, which map to RobotTypes
-  // Corresponds to robot type (including NONE; empty drones and iscarry drones are counted the same. length 11)
-  soup: number,
-  robots: [number, number, number, number, number, number, number, number, number, number, number]
+  // Corresponds to robot type (including NONE. length 5)
+  robots: [number, number, number, number, number]
 };
 
 export type IndicatorDotsSchema = {
@@ -75,14 +63,6 @@ export type IndicatorLinesSchema = {
   blue: Int32Array
 }
 
-export type NetGunShotSchema = {
-  id: Int32Array,
-  startX: Int32Array,
-  startY: Int32Array,
-  endX: Int32Array,
-  endY: Int32Array
-}
-
 /**
  * A frozen image of the game world.
  *
@@ -91,24 +71,11 @@ export type NetGunShotSchema = {
 export default class GameWorld {
   /**
    * Bodies that died this round.
-   * {
-   *   id: Int32Array,
-   *   x: Int32Array,
-   *   y: Int32Array,
-   * }
    */
-  diedBodies: StructOfArrays<DiedBodiesSchema>;
+  diedBodies: StructOfArrays<DeadBodiesSchema>;
 
   /**
-   * Everything that isn't a bullet or indicator string.
-   * {
-   *   id: Int32Array,
-   *   team: Int8Array,
-   *   type: Int8Array,
-   *   x: Int32Array,
-   *   y: Int32Array,
-   *   bytecodesUsed: Int32Array,
-   * }
+   * Everything that isn't an indicator string.
    */
   bodies: StructOfArrays<BodiesSchema>;
 
@@ -122,43 +89,15 @@ export default class GameWorld {
    */
   mapStats: MapStats; // Team ID to their stats
 
-  /*
-   * Whether pollution needs to be recomputed.
-   */
-  pollutionNeedsUpdate: boolean;
-
   /**
    * Indicator dots.
-   * {
-   *   id: Int32Array,
-   *   x: Float32Array,
-   *   y: Float32Array,
-   *   red: Int32Array,
-   *   green: Int32Array,
-   *   blue: Int32Array
-   * }
    */
   indicatorDots: StructOfArrays<IndicatorDotsSchema>;
 
   /**
    * Indicator lines.
-   * {
-   *   id: Int32Array,
-   *   startX: Float32Array,
-   *   startY: Float32Array,
-   *   endX: Float32Array,
-   *   endY: Float32Array,
-   *   red: Int32Array,
-   *   green: Int32Array,
-   *   blue: Int32Array
-   * }
    */
   indicatorLines: StructOfArrays<IndicatorLinesSchema>;
-
-  /**
-   * Net gun shots. Just an indicator line actually.
-   */
-  netGunShots: StructOfArrays<NetGunShotSchema>;
 
   /**
    * The current turn.
@@ -188,10 +127,9 @@ export default class GameWorld {
   meta: Metadata;
 
   // Cache fields
-  // We pass these into flatbuffers functions to avoid allocations, but that's
-  // it, they don't hold any state
+  // We pass these into flatbuffers functions to avoid allocations, 
+  // but that's it, they don't hold any state
   private _bodiesSlot: schema.SpawnedBodyTable;
-  private _localPollutionsSlot: schema.LocalPollutionTable;
   private _vecTableSlot1: schema.VecTable;
   private _vecTableSlot2: schema.VecTable;
   private _rgbTableSlot: schema.RGBTable;
@@ -211,10 +149,6 @@ export default class GameWorld {
       type: new Int8Array(0),
       x: new Int32Array(0),
       y: new Int32Array(0),
-      onDirt: new Int32Array(0),
-      carryDirt: new Int32Array(0),
-      cargo: new Int32Array(0),
-      isCarried: new Uint8Array(0),
       bytecodesUsed: new Int32Array(0),
     }, 'id');
 
@@ -224,18 +158,11 @@ export default class GameWorld {
     for (let team in this.meta.teams) {
         var teamID = this.meta.teams[team].teamID;
         this.teamStats.set(teamID, {
-          soup: 0,
           robots: [
-            0, // MINER
-            0, // LANDSCAPER
-            0, // DRONE
-            0, // NET_GUN
-            0, // COW
-            0, // REFINERY
-            0, // VAPORATOR
-            0, // HQ
-            0, // DESIGN_SCHOOL
-            0, // FULFILLMENT_CENTER
+            0, // ENLIGHTENMENT_CENTER
+            0, // POLITICIAN
+            0, // SCANDAL
+            0, // MUCKRAKER
             0, // NONE
         ]});
     }
@@ -247,12 +174,7 @@ export default class GameWorld {
       maxCorner: new Victor(0,0),
       bodies: new schema.SpawnedBodyTable(),
       randomSeed: 0,
-      flooded: new Int8Array(0),
-      dirt: new Int32Array(0),
-      globalPollution: 0,
-      localPollutions: new schema.LocalPollutionTable(),
-      pollution: new Int32Array(0),
-      soup: new Int32Array(0),
+      passable: new Int8Array(0),
       getIdx: (x:number, y:number) => 0,
       getLoc: (idx: number) => new Victor(0,0)
     };
@@ -276,14 +198,6 @@ export default class GameWorld {
       red: new Int32Array(0),
       green: new Int32Array(0),
       blue: new Int32Array(0)
-    }, 'id');
-
-    this.netGunShots = new StructOfArrays({
-      id: new Int32Array(0),
-      startX: new Int32Array(0),
-      startY: new Int32Array(0),
-      endX: new Int32Array(0),
-      endY: new Int32Array(0)
     }, 'id');
 
     this.turn = 0;
@@ -325,11 +239,7 @@ export default class GameWorld {
 
     this.mapStats.randomSeed = map.randomSeed();
 
-    this.mapStats.flooded = Int8Array.from(map.waterArray());
-    this.mapStats.dirt = Int32Array.from(map.dirtArray());
-    this.mapStats.soup = Int32Array.from(map.soupArray());
-    this.mapStats.pollution = Int32Array.from(map.pollutionArray());
-    this.pollutionNeedsUpdate = false;
+    this.mapStats.passable = Int8Array.from(map.passableArray());
 
     const width = (maxCorner.x() - minCorner.x());
     this.mapStats.getIdx = (x:number, y:number) => (
@@ -360,7 +270,6 @@ export default class GameWorld {
     this.bodies.copyFrom(source.bodies);
     this.indicatorDots.copyFrom(source.indicatorDots);
     this.indicatorLines.copyFrom(source.indicatorLines);
-    this.netGunShots.copyFrom(source.netGunShots);
     this.teamStats = new Map<number, TeamStats>();
     source.teamStats.forEach((value: TeamStats, key: number) => {
       this.teamStats.set(key, deepcopy(value));
@@ -374,16 +283,6 @@ export default class GameWorld {
   processDelta(delta: schema.Round) {
     if (delta.roundID() != this.turn + 1) {
       throw new Error(`Bad Round: this.turn = ${this.turn}, round.roundID() = ${delta.roundID()}`);
-    }
-
-    // Soup changes on team
-    for (var i = 0; i < delta.teamIDsLength(); i++) {
-        var teamID = delta.teamIDsArray()[i];
-        var statObj = this.teamStats.get(teamID);
-
-        statObj.soup = delta.teamSoups(i);
-
-        this.teamStats.set(teamID, statObj);
     }
 
     // Location changes on bodies
@@ -402,11 +301,6 @@ export default class GameWorld {
       this.insertBodies(bodies);
     }
 
-
-    
-
-    // clear net gun
-    this.netGunShots.clear();
     let shootID = 0;
     // Action
     if(delta.actionsLength() > 0){
@@ -418,9 +312,9 @@ export default class GameWorld {
         const target = delta.actionTargets(i);
         switch (action) {
           // TODO: validate actions?
-          // TODO: vaporator things?
           // Actions list from battlecode.fbs enum Action
           
+          /*
           case schema.Action.MINE_SOUP:
             // could have died
             // or actually probably not but let's be safe
@@ -437,7 +331,6 @@ export default class GameWorld {
               arrays.cargo[robotID] -= 1; // TODO: this assumes you can only always deposit 1 soup WRONG FORMAT FOR CHANGING SOA: SEE DIG_DIRT
             }
             break;
-
 
           case schema.Action.DIG_DIRT:
             // this.mapStats.dirt[target] -= 1; // this is done somewhere else
@@ -489,33 +382,60 @@ export default class GameWorld {
             }
             // console.log('attempting to drop ' + robotID);
             break;
+          */
           
+          // TODO: fill actions
+          /// politicians self-destruct and affect nearby bodies
+          /// Target: none
+          case schema.Action.EMPOWER:
+            break;
+          /// scandals turn into politicians.
+          /// Target: self.
+          case schema.Action.CAMOUFLAGE:
+            break;
+          /// slanders are alowed to TODO.
+          /// Target: TODO.
+          case schema.Action.EMBEZZLE:
+            break;
+          /// Muckrakers can expose a scandal.
+          /// Target: an enemy body.
+          case schema.Action.EXPOSE:
+            break;
+          /// units can change their flag.
+          /// Target: self.
+          case schema.Action.SET_FLAG:
+            break;
+          /// units can get the flag of another unit
+          /// Target: another unit.
+          case schema.Action.GET_FLAG:
+            break;
+          /// Builds a unit (enlightent center).
+          /// Target: spawned unit
           // spawnings are handled by spawnedBodies
           case schema.Action.SPAWN_UNIT:
             break;
-          
-          // deaths are handled by diedIDs
-          case schema.Action.SHOOT:
-            if (this.bodies.index(robotID) !== -1 && this.bodies.index(target) !== -1) {
-              this.netGunShots.insert({
-                id: shootID++,
-                startX: this.bodies.lookup(robotID).x,
-                startY: this.bodies.lookup(robotID).y,
-                endX: this.bodies.lookup(target).x,
-                endY: this.bodies.lookup(target).y
-              })
-            }
-            // console.log('robot ' + robotID + ' is attempting to shoot ' + target);
+          /// places a bet (enlightent center).
+          /// Target: bet placed
+          case schema.Action.PLACE_BET:
             break;
+          /// Dies by moving into a swamp.
+          /// Target: drowning robot.
           case schema.Action.DIE_DROWN:
             break;
-          case schema.Action.DIE_SHOT:
+          /// Dies for having zero influence.
+          /// Target: a politician or scandal or Muckrakers.
+          case schema.Action.DIE_ZERO_INFLUENCE:
             break;
-          case schema.Action.DIE_TOO_MUCH_DIRT:
+          /// a robot can change team after being empowered
+          /// Target: self
+          case schema.Action.CHANGE_TEAM:
             break;
-          case schema.Action.DIE_SUICIDE:
+          /// an enlightenment center can become neutral if lost all its influence
+          /// Target: none.
+          case schema.Action.BECOME_NEUTRAL:
             break;
-
+          /// Dies due to an uncaught exception
+          /// Target: none
           case schema.Action.DIE_EXCEPTION:
             console.log(`Exception occured: robotID(${robotID}), target(${target}`);
             break;
@@ -549,36 +469,6 @@ export default class GameWorld {
       this.bodies.deleteBulk(delta.diedIDsArray());
     }
 
-
-    // Dirt changes on map
-    for(let i = 0; i<delta.dirtChangesLength(); i++){
-      const x = delta.dirtChangedLocs().xs(i);
-      const y = delta.dirtChangedLocs().ys(i);
-      const mapIdx = this.mapStats.getIdx(x, y);
-      this.mapStats.dirt[mapIdx] += delta.dirtChanges(i);
-    }
-    // Water changes on map
-    if (delta.waterChangedLocs() !== null) {
-      for(let i = 0; i<delta.waterChangedLocs().xsLength(); i++){
-        const x = delta.waterChangedLocs().xs(i);
-        const y = delta.waterChangedLocs().ys(i);
-        const mapIdx = this.mapStats.getIdx(x, y);
-        this.mapStats.flooded[mapIdx] = 1 - this.mapStats.flooded[mapIdx]; // this position changed flood situation
-      }
-    }
-    // Pollution changes on map
-    // We don't calculate the pollution until it is actually needed. Lazy is always good.
-    this.mapStats.globalPollution = delta.globalPollution();
-    this.mapStats.localPollutions = delta.localPollutions(this._localPollutionsSlot);
-    this.pollutionNeedsUpdate = true;
-    // Soup changes on map
-    for(let i = 0; i<delta.soupChangesLength(); i++){
-      const x = delta.soupChangedLocs().xs(i);
-      const y = delta.soupChangedLocs().ys(i);
-      const mapIdx = this.mapStats.getIdx(x, y);
-      this.mapStats.soup[mapIdx] += delta.soupChanges(i);
-    }
-
     // Insert indicator dots and lines
     this.insertIndicatorDots(delta);
     this.insertIndicatorLines(delta);
@@ -600,36 +490,6 @@ export default class GameWorld {
       });
     }
   }
-
-  private distanceSquared(a: number, b: number, x: number, y: number) {
-    return (a - x)*(a-x) + (b-y)*(b-y);
-  }
-
-  public calculatePollutionIfNeeded() {
-    if (!this.pollutionNeedsUpdate) {
-      return;
-    }
-    // calculates pollution based on pollution effects
-    // this has annoying time complexity but I think it'll be fine
-    let width = this.mapStats.maxCorner.x - this.mapStats.minCorner.x;
-    let height = this.mapStats.maxCorner.y - this.mapStats.minCorner.y;
-    for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-            let idx = this.mapStats.getIdx(x, y);
-            this.mapStats.pollution[idx] = this.mapStats.globalPollution;
-            let multiplier = 1;
-            if (!this.mapStats.localPollutions) continue;
-            for (let i = 0; i < this.mapStats.localPollutions.radiiSquaredLength(); i++) {
-                if (this.distanceSquared(this.mapStats.localPollutions.locations().xsArray()[i], this.mapStats.localPollutions.locations().ysArray()[i], x, y) <= this.mapStats.localPollutions.radiiSquaredArray()[i]) {
-                    this.mapStats.pollution[idx] += this.mapStats.localPollutions.additiveEffectsArray()[i];
-                    multiplier *= this.mapStats.localPollutions.multiplicativeEffectsArray()[i];
-                }
-            }
-            this.mapStats.pollution[idx] = Math.round(this.mapStats.pollution[idx] * multiplier);
-        }
-    }
-    this.pollutionNeedsUpdate = false;
-}
 
   private insertDiedBodies(delta: schema.Round) {
     // Delete the died bodies from the previous round
@@ -691,10 +551,6 @@ export default class GameWorld {
         blue: rgbs.blueArray()
       })
     }
-  }
-
-  private isBuilding(body: schema.BodyType) {
-    return body == schema.BodyType.DESIGN_SCHOOL || body == schema.BodyType.FULFILLMENT_CENTER || body == schema.BodyType.HQ || body == schema.BodyType.NET_GUN || body == schema.BodyType.REFINERY || body == schema.BodyType.VAPORATOR;
   }
 
   private insertBodies(bodies: schema.SpawnedBodyTable) {

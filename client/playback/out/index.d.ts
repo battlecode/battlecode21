@@ -8,7 +8,4 @@ import Match from './match';
 import { Log } from './match';
 import Game from './game';
 import { flatbuffers, schema } from 'battlecode-schema';
-
-export {Game, Log, Match, GameWorld, gameworld, Metadata, metadata, StructOfArrays, soa, flatbuffers, schema};
-
-// TODO provide ergonomic main export
+export { Game, Log, Match, GameWorld, gameworld, Metadata, metadata, StructOfArrays, soa, flatbuffers, schema };
