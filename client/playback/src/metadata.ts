@@ -18,7 +18,7 @@ export default class Metadata {
    * All the body types in a game.
    * Access like: meta.types[schema.BodyType.MINOR].strideRadius
    */
-  types: {[key: number]: BodyType};
+  types: {[key: number]: BodyTypeMetaData};
 
   /**
    * All the teams in a game.
@@ -45,19 +45,16 @@ export default class Metadata {
     const bodyCount = header.bodyTypeMetadataLength();
     for (let i = 0; i < bodyCount; i++) {
       const body = header.bodyTypeMetadata(i);
-      this.types[body.type()] = new BodyType(
+      this.types[body.type()] = new BodyTypeMetaData(
         body.type(),
         body.spawnSource(),
         body.cost(),
-        body.dirtLimit(),
-        body.soupLimit(),
+        body.conviction(),
+        body.power(),
         body.actionCooldown(),
-        body.sensorRadiusSquared(),
-        body.pollutionRadiusSquared(),
-        body.localPollutionAdditiveEffect(),
-        body.localPollutionMultiplicativeEffect(),
-        body.maxSoupProduced(),
-        body.bytecodeLimit()
+        body.visionRange(),
+        body.actionRange(),
+        10000
       );
     }
     // SAFE
@@ -89,39 +86,31 @@ export class Team {
 /**
  * Information about a specific body type.
  */
-export class BodyType {
+export class BodyTypeMetaData {
   // schema.BodyTypeMetadata
 
   type: schema.BodyType;
   spawnSource: schema.BodyType;
   cost: number;
-  dirtLimit: number;
-  soupLimit: number;
+  conviction: number;
+  power: number;
   actionCooldown: number;
-  sensorRadiusSquared: number;
-  pollutionRadiusSquared: number;
-  localPollutionAdditiveEffect: number;
-  localPollutionMultiplicativeEffect: number;
-  maxSoupProduced: number;
-  bytecodeLimit: number;
+  visionRadiusSquared: number;
+  actionRadiusSquared: number;
+  bytecodeLimit: number; // TODO: is this needed?
   
   constructor(type: schema.BodyType, spawnSource: schema.BodyType, cost: number,
-      soupLimit: number, dirtLimit: number, actionCooldown: number,
-      sensorRadiusSquared: number, pollutionRadiusSquared: number, 
-      localPollutionAdditiveEffect: number, localPollutionMultiplicativeEffect: number,
-      maxSoupProduced: number, bytecodeLimit: number) {
+      conviction: number, power: number, actionCooldown: number,
+      visionRadiusSquared: number, actionRadiusSquared: number, bytecodeLimit: number) {
 
     this.type = type;
     this.spawnSource = spawnSource;
     this.cost = cost;
-    this.dirtLimit = dirtLimit;
-    this.soupLimit = soupLimit;
+    this.conviction = conviction;
+    this.power = power;
     this.actionCooldown = actionCooldown;
-    this.sensorRadiusSquared = sensorRadiusSquared;
-    this.pollutionRadiusSquared = pollutionRadiusSquared;
-    this.localPollutionAdditiveEffect = localPollutionAdditiveEffect;
-    this.localPollutionMultiplicativeEffect = localPollutionMultiplicativeEffect;
-    this.maxSoupProduced = maxSoupProduced;
+    this.visionRadiusSquared = visionRadiusSquared;
+    this.actionRadiusSquared = actionRadiusSquared;
     this.bytecodeLimit = bytecodeLimit;
     Object.freeze(this);
   }

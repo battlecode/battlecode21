@@ -6,13 +6,23 @@
 
 
 ## Contributing
-Before you commit, **please run** `npm run build` and commit the changes in the out/ directory. 
-This is a slightly painful fact due to typescript, sorry.
+Before you commit, **please run** `npm run build` and commit the changes in the out/ directory.
+
+When you update playback for the next year's game, work in order of
+
+ 1. `metadata.ts`
+ 2. `gameworld.ts`
+ 3. `match.ts`
+ 4. `game.ts`
+
+`soa.ts` (struct of arrays) is not needed to be updated.
+
 
 
 ### NPM Scripts
 Remember to run `npm install` without any serious errors in this directory.
 
+ * `npm run check`: Compile typescript files (`src/*.ts`) without creating any output files, and pipe output to less. Use this command when you need to update playback for new schema.
  * `npm run build`: Compile typescript files (`src/*.ts`) into javascript & typescript declaration files. (`out/*.js`, `out/*.d.ts`)
  * `npm run gen`: Generate dummy bc20 files. It runs typescript without transcripting into javascript, by using `ts-node`. (`../examples`)
  * `npm run clean`: Simply remove itself and everything in `out` directory.
