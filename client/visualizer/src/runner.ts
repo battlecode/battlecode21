@@ -154,31 +154,27 @@ export default class Runner {
    */
 
   setGame(game: number) {
-    if (game < 0 || game >= this.games.length) {
-      throw new Error(`No game ${game} loaded, only have ${this.games.length} games`);
-    }
-    this.clearScreen();
-    this.currentGame = game;
-    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+    this.goToMatch(this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
   }
 
   setMatch(match: number) {
-    const matchCount = this.games[this.currentGame as number].matchCount;
+    this.goToMatch(this.currentGame ? this.currentGame : 0, match);
+  }
+
+  goToMatch(game: number, match: number) {
+    if (game < 0 || game >= this.games.length) {
+      throw new Error(`No game ${game} loaded, only have ${this.games.length} games`);
+    }
+    const matchCount = this.games[game as number].matchCount;
     if (match < 0 || match >= matchCount) {
       throw new Error(`No match ${match} loaded, only have ${matchCount} matches in current game`);
     }
     this.clearScreen();
+    this.currentGame = game;
     this.currentMatch = match;
-
-    // Restart game loop
     this.runMatch();
-    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch);
-    this.games[this.currentGame ? this.currentGame : 0].getMatch(this.currentMatch).seek(0);
-  }
-
-  goToMatch(game: number, match: number) {
-    this.setGame(game);
-    this.setMatch(match);
+    this.matchqueue.refreshGameList(this.games, game ? game : 0, match ? match : 0);
+    this.games[game ? game : 0].getMatch(match).seek(0);
   };
 
   clearScreen() {
