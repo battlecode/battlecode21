@@ -75,7 +75,6 @@ export default class Runner {
       if (this.games.length === 1) {
         // if only one game in queue, run its first match
         this.setGame(0);
-        this.setMatch(0);
       }
       this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
     }
@@ -221,7 +220,7 @@ export default class Runner {
    */
 
   setGame(game: number) {
-    this.goToMatch(game, this.currentMatch ? this.currentMatch : 0);
+    this.goToMatch(game, 0);
   }
 
   setMatch(match: number) {
@@ -296,7 +295,6 @@ export default class Runner {
     if (this.games.length === 1) {
       // if only one game in queue, run its first match
       this.setGame(0);
-      this.setMatch(0);
     }
     this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
   }
@@ -358,7 +356,6 @@ export default class Runner {
     } else {
       if (this.currentGame as number < this.games.length - 1) {
         this.setGame(this.currentGame as number + 1);
-        this.setMatch(0);
       } else {
         // Do nothing, at the end
       }
@@ -372,8 +369,7 @@ export default class Runner {
       this.setMatch(this.currentMatch as number - 1);
     } else {
       if (this.currentGame as number > 0) {
-        this.setGame(this.currentGame as number - 1);
-        this.setMatch(this.games[this.currentGame as number].matchCount - 1);
+        this.goToMatch(this.currentGame as number - 1, this.games[this.currentGame as number].matchCount - 1);
       } else {
         // Do nothing, at the beginning
       }
@@ -396,7 +392,6 @@ export default class Runner {
         // if games.length > 1, remove game, set game to 0, set match to 0
         if (this.games.length > 1) {
           this.setGame(0);
-          this.setMatch(0);
           this.games.splice(game, 1);
         } else {
           this.games.splice(game, 1);
@@ -406,7 +401,6 @@ export default class Runner {
         }
       } else {
         this.setGame(game - 1);
-        this.setMatch(0);
         this.games.splice(game, 1);
       }
     } else {
@@ -512,7 +506,6 @@ export default class Runner {
           this.games = [new Game()];
           this.games[0].loadFullGameRaw(data);
           this.setGame(0);
-          this.setMatch(0);
         });
       }
     }
