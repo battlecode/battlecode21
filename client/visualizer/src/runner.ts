@@ -147,7 +147,6 @@ export default class Runner {
     // }
         // set key options
     document.onkeydown = (event) => {
-
       // TODO: figure out what this is???
       if (document.activeElement == null) {
         throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
@@ -213,6 +212,27 @@ export default class Runner {
       }
 
     };
+
+    if (this.listener != null) {
+      this.listener.start(
+        // What to do when we get a game from the websocket
+        (game) => {
+          this.games.push(game);
+          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+        },
+        // What to do with the websocket's first match in a given game
+        () => {
+          // switch to running this match 
+          this.setGame(this.games.length - 1);
+          this.setMatch(0);
+          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+        },
+        // What to do with any other match
+        () => {
+          this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+        }
+      );
+    }
   }
 
   /**
