@@ -102,7 +102,7 @@ export default class Looper {
         // whether we're seeking
         this.externalSeek = false;
 
-        this.controls.updatePlayPauseButton();
+        this.controls.updatePlayPauseButton(this.isPaused());
 
         this.loopID = window.requestAnimationFrame((curTime) => this.loop.call(this, curTime));
 
@@ -165,6 +165,12 @@ export default class Looper {
             this.onSeek(this.match.current.turn - 1);
         }
     };
+
+    // cleanup when looper is destroyed (match is switched / ended)
+    die() {
+        this.clearScreen();
+        this.controls.pause();
+    }
 
     private loop(curTime) {
         

@@ -255,7 +255,6 @@ export default class Runner {
     if (match < 0 || match >= matchCount) {
       throw new Error(`No match ${match} loaded, only have ${matchCount} matches in current game`);
     }
-    if (this.looper) this.looper.clearScreen();
     this.currentGame = game;
     this.currentMatch = match;
     this.runMatch();
@@ -415,7 +414,10 @@ export default class Runner {
           this.games.splice(game, 1);
         } else {
           this.games.splice(game, 1);
-          if (this.looper) this.looper.clearScreen();
+          if (this.looper) {
+            this.looper.die();
+            this.looper = null;
+          }
           this.currentGame = -1;
           this.currentMatch = 0;
         }
@@ -508,7 +510,7 @@ export default class Runner {
       console.log('real update tour state!');
       // clear things
       Splash.removeScreen();
-      if (this.looper) this.looper.clearScreen();
+      if (this.looper) this.looper.die();
       // simply updates according to the current tournament state
       if (this.tournamentState === TournamentState.START_SPLASH) {
         console.log('go from splash real update tour state!');
@@ -547,6 +549,8 @@ export default class Runner {
     const game = this.games[this.currentGame as number] as Game;
     const match = game.getMatch(this.currentMatch as number) as Match; 
     const meta = game.meta as Metadata;
+
+    if (this.looper) this.looper.die();
 
     this.looper = new Looper(match, meta, this.conf, this.imgs,
       this.controls, this.stats, this.gamearea, this.console, this.matchqueue);

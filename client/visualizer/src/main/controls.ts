@@ -263,23 +263,25 @@ export default class Controls {
   }
 
   /**
-   * Pause our simulation.
+   * Toggle between pausing and playing our simulation.
    */
   pause() {
     if (this.runner.looper) {
       this.runner.looper.onTogglePause();
-      this.updatePlayPauseButton();
+      this.updatePlayPauseButton(this.runner.looper.isPaused());
     }
   }
   /**
    * Update play/pause button.
    */
-  updatePlayPauseButton() {
+  updatePlayPauseButton(isPaused) {
     // toggle the play/pause button
-    if (this.runner.looper && this.runner.looper.isPaused()) {
+    if (isPaused) {
+      console.log("should be paused");
       this.buttons["playbackStart"].img.style.display = "unset";
       this.buttons["playbackPause"].img.style.display = "none";
     } else {
+      console.log("should be playing");
       this.buttons["playbackStart"].img.style.display = "none";
       this.buttons["playbackPause"].img.style.display = "unset";
     }
@@ -358,6 +360,7 @@ export default class Controls {
     }
     this.winnerDiv.appendChild(matchWinner);
   }
+  
   private winnerTeam(teams, winnerID: number | null): HTMLSpanElement {
     const span = document.createElement("span");
     if (winnerID === null) {
