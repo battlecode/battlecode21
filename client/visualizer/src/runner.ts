@@ -15,6 +15,7 @@ import WebSocketListener from './main/websocket';
 import { TeamStats } from 'battlecode-playback/out/gameworld';
 
 import { Tournament, readTournament } from './main/tournament';
+import Looper from './main/looper';
 
 
 /**
@@ -30,6 +31,7 @@ export default class Runner {
   private stats: Stats;
   private gamearea: GameArea; 
   private console: Console;
+  looper: Looper | null;
 
   // Match logic
   listener: WebSocketListener | null;
@@ -41,9 +43,6 @@ export default class Runner {
 
   currentGame: number | null;
   currentMatch: number | null;
-
-  // used to cancel the main loop
-  loopID: number | null;
 
   constructor(readonly root: HTMLElement, private conf: config.Config, private imgs: imageloader.AllImages) {
 
@@ -147,6 +146,74 @@ export default class Runner {
     //     });
     //   }
     // }
+        // set key options
+    document.onkeydown = (event) => {
+
+      // TODO: figure out what this is???
+      if (document.activeElement == null) {
+        throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
+      }
+
+      let input = document.activeElement.nodeName == "INPUT";
+      if (!input) {
+        // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
+        console.log(event.keyCode);
+        switch (event.keyCode) {
+          case 80: // "p" - Pause/Unpause
+            this.controls.pause();
+            break;
+          case 79: // "o" - Stop
+            this.controls.stop();
+            break;
+          case 69: // 'e' - go to end
+            this.controls.end();
+            break;
+          case 37: // "LEFT" - Step Backward
+            this.controls.stepBackward();
+            break;
+          case 39: // "RIGHT" - Step Forward
+            this.controls.stepForward();
+            break;
+          case 38: // "UP" - Faster
+            this.controls.doubleUPS();
+            break;
+          case 40: // "DOWN" - Slower
+            this.controls.halveUPS();
+            break;
+          case 82: // "r" - reverse UPS
+            this.controls.reverseUPS();
+            break;
+          case 67: // "c" - Toggle Circle Bots
+            this.conf.circleBots = !this.conf.circleBots;
+            break;
+          case 86: // "v" - Toggle Indicator Dots and Lines
+            this.conf.indicators = !this.conf.indicators;
+            break;
+          case 66: // "b" - Toggle Interpolation
+            this.conf.interpolate = !this.conf.interpolate;
+            break;
+          case 78: // "n" - Toggle sight radius
+            this.conf.sightRadius = !this.conf.sightRadius;
+            break;
+          case 71: // "g" - Toogle grid view
+            this.conf.showGrid = !this.conf.showGrid;
+            break;
+          case 72: // "h" - Toggle short log header
+            this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
+            this.console.updateLogHeader();
+            break;
+          case 65: // "a" - previous tournament Match
+            this.previousTournamentThing();
+            this.updateTournamentState();
+            break;
+          case 68: // 'd' - next tournament match
+            this.nextTournamentThing();
+            this.updateTournamentState();
+            break;
+        }
+      }
+
+    };
   }
 
   /**
@@ -154,7 +221,7 @@ export default class Runner {
    */
 
   setGame(game: number) {
-    this.goToMatch(this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
+    this.goToMatch(game, this.currentMatch ? this.currentMatch : 0);
   }
 
   setMatch(match: number) {
@@ -169,21 +236,13 @@ export default class Runner {
     if (match < 0 || match >= matchCount) {
       throw new Error(`No match ${match} loaded, only have ${matchCount} matches in current game`);
     }
-    this.clearScreen();
+    if (this.looper) this.looper.clearScreen();
     this.currentGame = game;
     this.currentMatch = match;
     this.runMatch();
     this.matchqueue.refreshGameList(this.games, game ? game : 0, match ? match : 0);
     this.games[game ? game : 0].getMatch(match).seek(0);
   };
-
-  clearScreen() {
-    // TODO clear screen
-    if (this.loopID !== null) {
-      window.cancelAnimationFrame(this.loopID);
-      this.loopID = null;
-    }
-  }
 
   getUploadButton() {
     // disguise the default upload file button with a label
@@ -341,7 +400,7 @@ export default class Runner {
           this.games.splice(game, 1);
         } else {
           this.games.splice(game, 1);
-          this.clearScreen();
+          if (this.looper) this.looper.clearScreen();
           this.currentGame = -1;
           this.currentMatch = 0;
         }
@@ -363,33 +422,6 @@ export default class Runner {
 
     this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
   };
-
-  /**
-   * Updates the stats bar displaying VP, bullets, and robot counts for each
-   * team in the current game world.
-   */
-  private updateStats(world: GameWorld, meta: Metadata) {
-    for (let team in meta.teams) {
-      let teamID = meta.teams[team].teamID;
-      let teamStats = world.teamStats.get(teamID);
-
-      // TODO: maybe this check isn't needed???
-      if (teamStats == undefined) {
-        throw new Error("teamStats is undefined??? figure this out NOW")
-      }
-
-      // Update the Soup
-      this.stats.setSoups(teamID, (teamStats as TeamStats).soup);
-      if (teamStats.soup < 0) { console.log("Soup is negative!!!"); }
-
-      this.stats.setWaterLevel(cst.waterLevel(world.turn));
-
-      // Update each robot count
-      this.stats.robots.forEach((type: schema.BodyType) => {
-        this.stats.setRobotCount(teamID, type, (teamStats as TeamStats).robots[type]);
-      });
-    }
-  }
 
   private nextTournamentThing() {
     console.log('actually next tournament thing!');
@@ -462,7 +494,7 @@ export default class Runner {
       console.log('real update tour state!');
       // clear things
       Splash.removeScreen();
-      this.clearScreen();
+      if (this.looper) this.looper.clearScreen();
       // simply updates according to the current tournament state
       if (this.tournamentState === TournamentState.START_SPLASH) {
         console.log('go from splash real update tour state!');
@@ -499,303 +531,12 @@ export default class Runner {
       throw new Error('this.currentMatch is null; something really bad happened!!! figure this out NOW')
     }
 
-    this.conf.mode = config.Mode.GAME;
-    this.conf.splash = false;
-    this.gamearea.setCanvas();
-
-    // Cancel previous games if they're running
-    this.clearScreen();
-
-    // For convenience
     const game = this.games[this.currentGame as number] as Game;
+    const match = game.getMatch(this.currentMatch as number) as Match; 
     const meta = game.meta as Metadata;
-    const match = game.getMatch(this.currentMatch as number) as Match;
 
-    // Reset the canvas
-    this.gamearea.setCanvasDimensions(match.current);
-
-    // Reset the stats bar
-    let teamNames = new Array();
-    let teamIDs = new Array();
-    for (let team in meta.teams) {
-      teamNames.push(meta.teams[team].name);
-      teamIDs.push(meta.teams[team].teamID);
-    }
-    this.stats.initializeGame(teamNames, teamIDs);
-    this.console.setLogsRef(match.logs);
-
-    // keep around to avoid reallocating
-    const nextStep = new NextStep();
-
-    // Last selected robot ID to display extra info
-
-    let lastSelectedID: number | undefined = undefined;
-    const onRobotSelected = (id: number | undefined) => {
-      lastSelectedID = id;
-      this.console.setIDFilter(id);
-    };
-    const onMouseover = (x: number, y: number, dirt: number, water: number, pollution: number, soup: number) => {
-      // Better make tile type and hand that over
-      this.controls.setTileInfo(x, y, dirt, water, pollution, soup);
-    };
-
-    // Configure renderer for this match
-    // (radii, etc. may change between matches)
-    const renderer = new Renderer(this.gamearea.canvas, this.imgs,
-      this.conf, meta as Metadata, onRobotSelected, onMouseover);
-    console.log("r", renderer);
-
-    // How fast the simulation should progress
-    let goalUPS = this.controls.getUPS();
-    if (this.conf.tournamentMode) {
-      goalUPS = 0; // FOR TOURNAMENT
-    }
-
-    // A variety of stuff to track how fast the simulation is going
-    let rendersPerSecond = new TickCounter(.5, 100);
-    let updatesPerSecond = new TickCounter(.5, 100);
-
-    // The current time in the simulation, interpolated between frames
-    let interpGameTime = 0;
-    // The time of the last frame
-    let lastTime: number | null = null;
-    let lastTurn: number | null = null;
-    // whether we're seeking
-    let externalSeek = false;
-
-    this.controls.isPaused = () => {
-      return goalUPS === 0;
-    }
-    this.controls.onTogglePause = () => {
-      goalUPS = goalUPS === 0 ? this.controls.getUPS() : 0;
-    };
-    this.controls.onToggleUPS = () => {
-      goalUPS = this.controls.isPaused() ? 0 : this.controls.getUPS();
-    };
-    this.controls.onSeek = (turn: number) => {
-      externalSeek = true;
-      match.seek(turn);
-      interpGameTime = turn;
-    };
-    this.controls.onStop = () => {
-      if (!(goalUPS == 0)) {
-        this.controls.pause();
-      }
-      this.controls.onSeek(0);
-    };
-    this.controls.onGoEnd = () => {
-      if (!(goalUPS == 0)) {
-        this.controls.pause();
-      }
-      this.controls.onSeek(match['_farthest'].turn);
-    };
-    this.controls.onStepForward = () => {
-      if (!(goalUPS == 0)) {
-        this.controls.pause();
-      }
-      if (match.current.turn < match['_farthest'].turn) {
-        this.controls.onSeek(match.current.turn + 1);
-      }
-    };
-    this.controls.onStepBackward = () => {
-      if (!(goalUPS == 0)) {
-        this.controls.pause();
-      }
-      if (match.current.turn > 0) {
-        this.controls.onSeek(match.current.turn - 1);
-      }
-    };
-    function changeTime(dragEvent: MouseEvent) {
-      // jump to a frame when clicking the controls timeline
-      let width: number = (<HTMLCanvasElement>this).width;
-      let turn: number = dragEvent.offsetX / width * match['_farthest'].turn;
-      turn = Math.round(Math.min(match['_farthest'].turn, turn));
-      externalSeek = true;
-      match.seek(turn);
-      interpGameTime = turn;
-    }
-    this.controls.canvas.addEventListener('click', changeTime);
-    this.controls.canvas.onmousedown = function (mousedownevent) {
-      this.addEventListener('mousemove', changeTime);
-    };
-    this.controls.canvas.onmouseup = function (mouseupevent) {
-      this.removeEventListener('mousemove', changeTime);
-    };
-
-    this.controls.updatePlayPauseButton();
-
-    // set key options
-    document.onkeydown = (event) => {
-
-      // TODO: figure out what this is???
-      if (document.activeElement == null) {
-        throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-      }
-
-      let input = document.activeElement.nodeName == "INPUT";
-      if (!input) {
-        // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-        console.log(event.keyCode);
-        switch (event.keyCode) {
-          case 80: // "p" - Pause/Unpause
-            this.controls.pause();
-            break;
-          case 79: // "o" - Stop
-            this.controls.stop();
-            break;
-          case 69: // 'e' - go to end
-            this.controls.end();
-            break;
-          case 37: // "LEFT" - Step Backward
-            this.controls.stepBackward();
-            break;
-          case 39: // "RIGHT" - Step Forward
-            this.controls.stepForward();
-            break;
-          case 38: // "UP" - Faster
-            this.controls.doubleUPS();
-            break;
-          case 40: // "DOWN" - Slower
-            this.controls.halveUPS();
-            break;
-          case 82: // "r" - reverse UPS
-            this.controls.reverseUPS();
-            break;
-          case 67: // "c" - Toggle Circle Bots
-            this.conf.circleBots = !this.conf.circleBots;
-            break;
-          case 86: // "v" - Toggle Indicator Dots and Lines
-            this.conf.indicators = !this.conf.indicators;
-            break;
-          case 66: // "b" - Toggle Interpolation
-            this.conf.interpolate = !this.conf.interpolate;
-            break;
-          case 78: // "n" - Toggle sight radius
-            this.conf.sightRadius = !this.conf.sightRadius;
-            break;
-          case 71: // "g" - Toogle grid view
-            this.conf.showGrid = !this.conf.showGrid;
-            break;
-          case 72: // "h" - Toggle short log header
-            this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
-            this.console.updateLogHeader();
-            break;
-          case 65: // "a" - previous tournament Match
-            this.previousTournamentThing();
-            this.updateTournamentState();
-            break;
-          case 68: // 'd' - next tournament match
-            this.nextTournamentThing();
-            this.updateTournamentState();
-            break;
-        }
-      }
-
-    };
-
-    // The main update loop
-    const loop = (curTime) => {
-      let delta = 0;
-      if (lastTime === null) {
-        // first simulation step
-        // do initial stuff?
-      } else if (externalSeek) {
-        if (match.current.turn === match.seekTo) {
-          externalSeek = false;
-        }
-      } else if (goalUPS < 0 && match.current.turn === 0) {
-        this.controls.pause();
-      } else if (Math.abs(interpGameTime - match.current.turn) < 10) {
-        // only update time if we're not seeking
-        delta = goalUPS * (curTime - lastTime) / 1000;
-        interpGameTime += delta;
-
-        // tell the simulation to go to our time goal
-        match.seek(interpGameTime | 0);
-      } if (match['_farthest'].winner !== null && match.current.turn === match['_farthest'].turn && match.current.turn !== 0) {
-        // Match have ended
-        this.controls.onFinish(game);
-      }
-
-      // update fps
-      rendersPerSecond.update(curTime, 1);
-      updatesPerSecond.update(curTime, delta);
-
-      this.controls.setTime(
-        match.current.turn,
-        match['_farthest'].turn,
-        this.controls.getUPS(),
-        this.controls.isPaused(),
-        rendersPerSecond.tps,
-        Math.abs(updatesPerSecond.tps) < Math.max(0, Math.abs(goalUPS) - 2)
-      );
-
-      // run simulation
-      // this may look innocuous, but it's a large chunk of the run time
-      match.compute(5 /* ms */);
-
-      // update the info string in controls
-      if (lastSelectedID !== undefined) {
-        let bodies = match.current.bodies.arrays;
-        let index = bodies.id.indexOf(lastSelectedID)
-        if (index === -1) {
-          // The body doesn't exist anymore so indexOf returns -1
-          lastSelectedID = undefined;
-        } else {
-          let id = bodies.id[index];
-          let x = bodies.x[index];
-          let y = bodies.y[index];
-
-          let on = bodies.onDirt[index];
-
-          let type = bodies.type[index];
-          let bytecodes = bodies.bytecodesUsed[index];
-          if (type === cst.COW) {
-            this.controls.setInfoString(id, x, y, on);
-          }
-          else if (type === cst.LANDSCAPER) {
-            this.controls.setInfoString(id, x, y, on, bodies.carryDirt[index], bytecodes);
-          }
-          else {
-            this.controls.setInfoString(id, x, y, on, undefined, bytecodes);
-          }
-        }
-      }
-
-      this.console.seekRound(match.current.turn);
-      lastTime = curTime;
-      lastTurn = match.current.turn;
-
-      // @ts-ignore
-      // renderer.render(match.current, match.current.minCorner, match.current.maxCorner);
-      if (this.conf.interpolate &&
-        match.current.turn + 1 < match.deltas.length &&
-        goalUPS < rendersPerSecond.tps) {
-
-        console.log('interpolating!!');
-
-        nextStep.loadNextStep(
-          match.current,
-          match.deltas[match.current.turn + 1]
-        );
-
-        let lerp = Math.min(interpGameTime - match.current.turn, 1);
-
-        // @ts-ignore
-        renderer.render(match.current, match.current.minCorner, match.current.maxCorner, nextStep, lerp);
-      } else {
-        console.log('not interpolating!!');
-        // interpGameTime might be incorrect if we haven't computed fast enough
-        // @ts-ignore
-        renderer.render(match.current, match.current.minCorner, match.current.maxCorner);
-      }
-
-      this.stats.showBlock(match.blockchain[match.current.turn]);
-      this.updateStats(match.current, meta);
-      this.loopID = window.requestAnimationFrame(loop);
-
-    };
-    this.loopID = window.requestAnimationFrame(loop);
+    this.looper = new Looper(match, meta, this.conf, this.imgs,
+      this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
   }
 }
 

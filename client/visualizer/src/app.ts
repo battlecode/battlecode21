@@ -99,7 +99,7 @@ export default class Client {
   }
 
   clearScreen() {
-    this.runner.clearScreen();
+    if (this.runner.looper) this.runner.looper.clearScreen();
   }
 
   /**

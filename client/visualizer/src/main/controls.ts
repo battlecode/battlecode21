@@ -1,7 +1,7 @@
 import {Config, Mode} from '../config';
 import * as imageloader from '../imageloader';
 import * as cst from '../constants';
-import {Game} from 'battlecode-playback';
+import {Game, Match, Metadata} from 'battlecode-playback';
 import Runner from '../runner';
 
 type ButtonInfo = {
@@ -30,16 +30,6 @@ export default class Controls {
    * Most of these are defined in ../app.ts
    * This is for easily modifing local variables of app.ts, such as goalUPS.
    */
-
-  onTogglePause: () => void;
-  onToggleUPS: () => void;
-  onToggleRewind: () => void;
-  onStepForward: () => void;
-  onStepBackward: () => void;
-  onSeek: (frame: number) => void;
-  onStop: () => void;
-  onGoEnd: () => void;
-  isPaused: () => Boolean;
 
   // qualities of progress bar
   canvas: HTMLCanvasElement;
@@ -86,7 +76,6 @@ export default class Controls {
       halveUPS: { img: imgs.halveUPS, text: "Slower", onclick: () => this.halveUPS() },
       goEnd: {img: imgs.goEnd, text: "End", onclick: () => this.end()}
     };
-
     this.runner = runner;
 
     let table = document.createElement("table");
@@ -161,6 +150,24 @@ export default class Controls {
     this.wrapper = document.createElement("div");
     this.wrapper.appendChild(table);
     this.div.appendChild(this.wrapper);
+
+    function changeTime(dragEvent: MouseEvent) {
+      // jump to a frame when clicking the controls timeline
+      if (runner.looper) {
+        let width: number = (<HTMLCanvasElement>this).width;
+        let turn: number = dragEvent.offsetX / width * runner.looper.match['_farthest'].turn;
+        turn = Math.round(Math.min(runner.looper.match['_farthest'].turn, turn));
+    
+        runner.looper.onSeek(turn);
+      }
+    }
+    this.canvas.addEventListener('click', changeTime);
+    this.canvas.onmousedown = function (mousedownevent) {
+      this.addEventListener('mousemove', changeTime);
+    };
+    this.canvas.onmouseup = function (mouseupevent) {
+      this.removeEventListener('mousemove', changeTime);
+    };
   }
 
   /**
@@ -259,16 +266,17 @@ export default class Controls {
    * Pause our simulation.
    */
   pause() {
-    this.onTogglePause();
-
-    this.updatePlayPauseButton();
+    if (this.runner.looper) {
+      this.runner.looper.onTogglePause();
+      this.updatePlayPauseButton();
+    }
   }
   /**
    * Update play/pause button.
    */
   updatePlayPauseButton() {
     // toggle the play/pause button
-    if (this.isPaused()) {
+    if (this.runner.looper && this.runner.looper.isPaused()) {
       this.buttons["playbackStart"].img.style.display = "unset";
       this.buttons["playbackPause"].img.style.display = "none";
     } else {
@@ -282,25 +290,25 @@ export default class Controls {
    * Stop the match, and go to the first round
    */
   stop() {
-    this.onStop();
+    if (this.runner.looper) this.runner.looper.onStop();
   }
 
   end() {
-    this.onGoEnd();
+    if (this.runner.looper) this.runner.looper.onGoEnd();
   }
 
   /**
    * Steps forward one turn in the simulation
    */
   stepForward() {
-    this.onStepForward();
+    if (this.runner.looper) this.runner.looper.onStepForward();
   }
 
   /**
    * Steps backward one turn in the simulation
    */
   stepBackward() {
-    this.onStepBackward();
+    if (this.runner.looper) this.runner.looper.onStepBackward();
   }
 
   /**
@@ -310,7 +318,7 @@ export default class Controls {
     if (Math.abs(this.curUPS) < 128){
       this.curUPS = this.curUPS * 2;
     }
-    this.onToggleUPS();
+    if (this.runner.looper) this.runner.looper.onToggleUPS();
   }
 
   /**
@@ -320,7 +328,7 @@ export default class Controls {
     if (Math.abs(this.curUPS) > 1){
       this.curUPS = this.curUPS / 2;
     }
-    this.onToggleUPS();
+    if (this.runner.looper) this.runner.looper.onToggleUPS();
   }
 
   /**
@@ -328,23 +336,23 @@ export default class Controls {
    */
   reverseUPS() {
     this.curUPS = - this.curUPS;
-    this.onToggleUPS();
+    if (this.runner.looper) this.runner.looper.onToggleUPS();
   }
 
   /**
    * When the match is finished, set UPS to 0.
    */
-  onFinish(game: Game) {
-    if (!this.isPaused()) this.pause();
+  onFinish(match: Match, meta: Metadata) {
+    if (this.runner.looper && !this.runner.looper.isPaused()) this.pause();
     if (this.conf.tournamentMode) {
       // also update the winner text
-      this.setWinner(game);
+      this.setWinner(match, meta);
     }
   }
 
-  setWinner(game: Game) {
-    console.log('winner: ' + game.getMatch(0).winner);
-    const matchWinner = this.winnerTeam(game.meta.teams, game.getMatch(0).winner);
+  setWinner(match: Match, meta: Metadata) {
+    console.log('winner: ' + match.winner);
+    const matchWinner = this.winnerTeam(meta.teams, match.winner);
     while (this.winnerDiv.firstChild) {
       this.winnerDiv.removeChild(this.winnerDiv.firstChild);
     }
