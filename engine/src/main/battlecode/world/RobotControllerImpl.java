@@ -141,7 +141,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
  
     public int getInfluence() {
-        return this.robot.getInfluence(); // corresponding method in InternalRobot.java not done yet
+        return this.robot.getInfluence();  
     }
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
@@ -246,11 +246,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return getLocation().add(dir);
     }
 
-    //TODO: update this method!
+    //TODO: update this method! 
     @Override 
     public double senseSwamping(MapLocation loc) {
+        assertNotNull(loc); 
         assertCanSenseLocation(loc);
-        return this.gameWorld.isSwamped(loc); // corresponding method in GameWorld.java not implemented
+        return this.gameWorld.getSwamping(loc);
     }
 
     // ***********************************
@@ -347,7 +348,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
         // TODO: add general resource check
-        if (influence <= 0) { // robot spending nonpositive influence doesn't make sense? unsure though
+        if (influence <= 0 && influence <= getInfluence()) {  
             throw new GameActionException(CANT_DO_THAT, "Not possible to spend nonpositive amount of influence.");
         } 
         if (!onTheMap(spawnLoc))
@@ -407,30 +408,64 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
     // ****** POLITICIAN METHODS ********* 
     // ***********************************
+    private void assertCanEmpower() throws GameActionException {
+        assertIsReady();
+        if (!getType().canEmpower())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot empower.");
+        
+    }
 
     @Override //TODO: UPDATE THIS!!
     public boolean canEmpower() {
-        return false;
+        try {
+            assertCanEmpower();
+            return true;
+        } catch (GameActionException e) { return false; } 
     }
     
     @Override //TODO: UPDATE THIS!!
     public void empower() throws GameActionException {
-        int chili = 0;
+        assertCanEmpower();
+        InternalRobot[] allEmpoweredRobots = gameWorld.getAllRobotsWithinRadiusSquared(getLocation(),
+                getType().actionRadiusSquared);
+        // TODO: put here (a) a method to get the muckraker factor for empowering for this robot's type: from where?
+        //                (b) a method to modify the conviction of each of the empowered robots
+        //                (c) a method that, for each empowered robot, will kill it or change its team, if necessary [can be part of (b)]
+        disintegrate();
     }
 
 
     // ***********************************
     // ****** MUCKRAKER METHODS ********* 
     // ***********************************
-    
+    private void assertCanExpose(MapLocation loc) throws GameActionException {
+        assertIsReady();
+        if (!getType().canExpose())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot expose.");  
+        assertNotNull(loc);
+        assertCanSenseLocation(loc);
+    }
+
     @Override //TODO: UPDATE THIS!!
     public boolean canExpose(MapLocation loc) {
-        return false;
+        try {
+            assertCanExpose(loc);
+            return true;
+        } catch (GameActionException e) { return false; }  
     }
 
     @Override //TODO: UPDATE THIS!!
     public void expose(MapLocation loc) throws GameActionException {
-        int chili = 0;
+        assertCanExpose(loc);
+        InternalRobot bot = gameWorld.getRobot(loc);
+        if (bot == null || !(bot.getType().canBeExposed()) ) {
+            throw new GameActionException(NO_ROBOT_THERE, "Robot tried to expose at location that does not have a Robot that can be Exposed.");
+        } else {
+            // TODO: call method for exposing the bot we just saw (from where?)
+        }
+            
     }
 
     // TODO: fill this in!
