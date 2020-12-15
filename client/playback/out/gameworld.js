@@ -24,10 +24,6 @@ class GameWorld {
             type: new Int8Array(0),
             x: new Int32Array(0),
             y: new Int32Array(0),
-            onDirt: new Int32Array(0),
-            carryDirt: new Int32Array(0),
-            cargo: new Int32Array(0),
-            isCarried: new Uint8Array(0),
             bytecodesUsed: new Int32Array(0),
         }, 'id');
         // Instantiate teamStats
@@ -35,14 +31,7 @@ class GameWorld {
         for (let team in this.meta.teams) {
             var teamID = this.meta.teams[team].teamID;
             this.teamStats.set(teamID, {
-                soup: 0,
                 robots: [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     0,
                     0,
                     0,
@@ -58,12 +47,7 @@ class GameWorld {
             maxCorner: new Victor(0, 0),
             bodies: new battlecode_schema_1.schema.SpawnedBodyTable(),
             randomSeed: 0,
-            flooded: new Int8Array(0),
-            dirt: new Int32Array(0),
-            globalPollution: 0,
-            localPollutions: new battlecode_schema_1.schema.LocalPollutionTable(),
-            pollution: new Int32Array(0),
-            soup: new Int32Array(0),
+            passable: new Int8Array(0),
             getIdx: (x, y) => 0,
             getLoc: (idx) => new Victor(0, 0)
         };
@@ -84,13 +68,6 @@ class GameWorld {
             red: new Int32Array(0),
             green: new Int32Array(0),
             blue: new Int32Array(0)
-        }, 'id');
-        this.netGunShots = new soa_1.default({
-            id: new Int32Array(0),
-            startX: new Int32Array(0),
-            startY: new Int32Array(0),
-            endX: new Int32Array(0),
-            endY: new Int32Array(0)
         }, 'id');
         this.turn = 0;
         this.minCorner = new Victor(0, 0);
@@ -123,11 +100,7 @@ class GameWorld {
             this.insertBodies(bodies);
         }
         this.mapStats.randomSeed = map.randomSeed();
-        this.mapStats.flooded = Int8Array.from(map.waterArray());
-        this.mapStats.dirt = Int32Array.from(map.dirtArray());
-        this.mapStats.soup = Int32Array.from(map.soupArray());
-        this.mapStats.pollution = Int32Array.from(map.pollutionArray());
-        this.pollutionNeedsUpdate = false;
+        this.mapStats.passable = Int8Array.from(map.passableArray());
         const width = (maxCorner.x() - minCorner.x());
         this.mapStats.getIdx = (x, y) => (Math.floor(y) * width + Math.floor(x));
         this.mapStats.getLoc = (idx) => (new Victor(idx % width, Math.floor(idx / width)));
@@ -150,7 +123,6 @@ class GameWorld {
         this.bodies.copyFrom(source.bodies);
         this.indicatorDots.copyFrom(source.indicatorDots);
         this.indicatorLines.copyFrom(source.indicatorLines);
-        this.netGunShots.copyFrom(source.netGunShots);
         this.teamStats = new Map();
         source.teamStats.forEach((value, key) => {
             this.teamStats.set(key, deepcopy(value));
@@ -163,13 +135,6 @@ class GameWorld {
     processDelta(delta) {
         if (delta.roundID() != this.turn + 1) {
             throw new Error(`Bad Round: this.turn = ${this.turn}, round.roundID() = ${delta.roundID()}`);
-        }
-        // Soup changes on team
-        for (var i = 0; i < delta.teamIDsLength(); i++) {
-            var teamID = delta.teamIDsArray()[i];
-            var statObj = this.teamStats.get(teamID);
-            statObj.soup = delta.teamSoups(i);
-            this.teamStats.set(teamID, statObj);
         }
         // Location changes on bodies
         const movedLocs = delta.movedLocs(this._vecTableSlot1);
@@ -185,8 +150,6 @@ class GameWorld {
         if (bodies) {
             this.insertBodies(bodies);
         }
-        // clear net gun
-        this.netGunShots.clear();
         let shootID = 0;
         // Action
         if (delta.actionsLength() > 0) {
@@ -197,95 +160,128 @@ class GameWorld {
                 const target = delta.actionTargets(i);
                 switch (action) {
                     // TODO: validate actions?
-                    // TODO: vaporator things?
                     // Actions list from battlecode.fbs enum Action
-                    case battlecode_schema_1.schema.Action.MINE_SOUP:
-                        // could have died
-                        // or actually probably not but let's be safe
-                        if (this.bodies.index(robotID) != -1) {
-                            arrays.cargo[robotID] += 1; // TODO: this assumes you can only always mine 1 soup THIS IS ALSO WRONG FORMAT FOR CHANGING SOA; SEE DIG_DIRT
+                    /*
+                    case schema.Action.MINE_SOUP:
+                      // could have died
+                      // or actually probably not but let's be safe
+                      if (this.bodies.index(robotID) != -1) {
+                        arrays.cargo[robotID] += 1; // TODO: this assumes you can only always mine 1 soup THIS IS ALSO WRONG FORMAT FOR CHANGING SOA; SEE DIG_DIRT
+                      }
+                      break;
+          
+                    case schema.Action.REFINE_SOUP:
+                      break;
+                    
+                    case schema.Action.DEPOSIT_SOUP:
+                      if (this.bodies.index(robotID) != -1) {
+                        arrays.cargo[robotID] -= 1; // TODO: this assumes you can only always deposit 1 soup WRONG FORMAT FOR CHANGING SOA: SEE DIG_DIRT
+                      }
+                      break;
+          
+                    case schema.Action.DIG_DIRT:
+                      // this.mapStats.dirt[target] -= 1; // this is done somewhere else
+                      if (this.bodies.index(robotID) != -1) {
+                        this.bodies.alter({id: robotID, carryDirt: this.bodies.arrays.carryDirt[this.bodies.index(robotID)] + 1})
+                      }
+                      if (this.bodies.index(target) != -1) {
+                        // check if this is a building
+                        if (this.isBuilding(this.bodies.arrays.type[this.bodies.index(target)])) {
+                          // remove onDirt!
+                          // console.log(this.bodies.arrays.onDirt[this.bodies.index(target)]);
+                          this.bodies.alter({id: target, onDirt: this.bodies.arrays.onDirt[this.bodies.index(target)] - 1})
                         }
+                      }
+                      break;
+                    case schema.Action.DEPOSIT_DIRT:
+                      // this.mapStats.dirt[target] += 1; // this is done somewhere else
+                      if (this.bodies.index(robotID) != -1) {
+                        this.bodies.alter({id: robotID, carryDirt: this.bodies.arrays.carryDirt[this.bodies.index(robotID)] - 1})
+                      }
+                      if (this.bodies.index(target) != -1) {
+                        // check if this is a building
+                        if (this.isBuilding(this.bodies.arrays.type[this.bodies.index(target)])) {
+                          // add onDirt!
+                          this.bodies.alter({id: target, onDirt: this.bodies.arrays.onDirt[this.bodies.index(target)] + 1})
+                        }
+                      }
+                      break;
+          
+                    case schema.Action.PICK_UNIT:
+                      // console.log('unit ' + robotID + " is picking " + target + " at location (" + this.bodies.lookup(robotID).x + "," + this.bodies.lookup(robotID).y + ")");
+                      // the drone might have been killed on the same round, after picking!
+                      if (this.bodies.index(robotID) != -1) {
+                        this.bodies.alter({ id: robotID, cargo: target });
+                      }
+                      // can this happen? unclear
+                      if (this.bodies.index(target) != -1) {
+                        this.bodies.alter({ id: target, isCarried: 1 });
+                      }
+                      break;
+                    case schema.Action.DROP_UNIT:
+                      // this might be the result of a netgun shooting the drone, in which case robotID will have been deleted already
+                      if (this.bodies.index(robotID) != -1) {
+                        this.bodies.alter({ id: robotID, cargo: 0 });
+                      }
+                      // the drone might be dropping something into the water, in which case robotID already deleted
+                      if (this.bodies.index(target) != -1) {
+                        this.bodies.alter({ id: target, isCarried: 0 });
+                      }
+                      // console.log('attempting to drop ' + robotID);
+                      break;
+                    */
+                    // TODO: fill actions
+                    /// politicians self-destruct and affect nearby bodies
+                    /// Target: none
+                    case battlecode_schema_1.schema.Action.EMPOWER:
                         break;
-                    case battlecode_schema_1.schema.Action.REFINE_SOUP:
+                    /// scandals turn into politicians.
+                    /// Target: self.
+                    case battlecode_schema_1.schema.Action.CAMOUFLAGE:
                         break;
-                    case battlecode_schema_1.schema.Action.DEPOSIT_SOUP:
-                        if (this.bodies.index(robotID) != -1) {
-                            arrays.cargo[robotID] -= 1; // TODO: this assumes you can only always deposit 1 soup WRONG FORMAT FOR CHANGING SOA: SEE DIG_DIRT
-                        }
+                    /// slanders are alowed to TODO.
+                    /// Target: TODO.
+                    case battlecode_schema_1.schema.Action.EMBEZZLE:
                         break;
-                    case battlecode_schema_1.schema.Action.DIG_DIRT:
-                        // this.mapStats.dirt[target] -= 1; // this is done somewhere else
-                        if (this.bodies.index(robotID) != -1) {
-                            this.bodies.alter({ id: robotID, carryDirt: this.bodies.arrays.carryDirt[this.bodies.index(robotID)] + 1 });
-                        }
-                        if (this.bodies.index(target) != -1) {
-                            // check if this is a building
-                            if (this.isBuilding(this.bodies.arrays.type[this.bodies.index(target)])) {
-                                // remove onDirt!
-                                // console.log(this.bodies.arrays.onDirt[this.bodies.index(target)]);
-                                this.bodies.alter({ id: target, onDirt: this.bodies.arrays.onDirt[this.bodies.index(target)] - 1 });
-                            }
-                        }
+                    /// Muckrakers can expose a scandal.
+                    /// Target: an enemy body.
+                    case battlecode_schema_1.schema.Action.EXPOSE:
                         break;
-                    case battlecode_schema_1.schema.Action.DEPOSIT_DIRT:
-                        // this.mapStats.dirt[target] += 1; // this is done somewhere else
-                        if (this.bodies.index(robotID) != -1) {
-                            this.bodies.alter({ id: robotID, carryDirt: this.bodies.arrays.carryDirt[this.bodies.index(robotID)] - 1 });
-                        }
-                        if (this.bodies.index(target) != -1) {
-                            // check if this is a building
-                            if (this.isBuilding(this.bodies.arrays.type[this.bodies.index(target)])) {
-                                // add onDirt!
-                                this.bodies.alter({ id: target, onDirt: this.bodies.arrays.onDirt[this.bodies.index(target)] + 1 });
-                            }
-                        }
+                    /// units can change their flag.
+                    /// Target: self.
+                    case battlecode_schema_1.schema.Action.SET_FLAG:
                         break;
-                    case battlecode_schema_1.schema.Action.PICK_UNIT:
-                        // console.log('unit ' + robotID + " is picking " + target + " at location (" + this.bodies.lookup(robotID).x + "," + this.bodies.lookup(robotID).y + ")");
-                        // the drone might have been killed on the same round, after picking!
-                        if (this.bodies.index(robotID) != -1) {
-                            this.bodies.alter({ id: robotID, cargo: target });
-                        }
-                        // can this happen? unclear
-                        if (this.bodies.index(target) != -1) {
-                            this.bodies.alter({ id: target, isCarried: 1 });
-                        }
+                    /// units can get the flag of another unit
+                    /// Target: another unit.
+                    case battlecode_schema_1.schema.Action.GET_FLAG:
                         break;
-                    case battlecode_schema_1.schema.Action.DROP_UNIT:
-                        // this might be the result of a netgun shooting the drone, in which case robotID will have been deleted already
-                        if (this.bodies.index(robotID) != -1) {
-                            this.bodies.alter({ id: robotID, cargo: 0 });
-                        }
-                        // the drone might be dropping something into the water, in which case robotID already deleted
-                        if (this.bodies.index(target) != -1) {
-                            this.bodies.alter({ id: target, isCarried: 0 });
-                        }
-                        // console.log('attempting to drop ' + robotID);
-                        break;
+                    /// Builds a unit (enlightent center).
+                    /// Target: spawned unit
                     // spawnings are handled by spawnedBodies
                     case battlecode_schema_1.schema.Action.SPAWN_UNIT:
                         break;
-                    // deaths are handled by diedIDs
-                    case battlecode_schema_1.schema.Action.SHOOT:
-                        if (this.bodies.index(robotID) !== -1 && this.bodies.index(target) !== -1) {
-                            this.netGunShots.insert({
-                                id: shootID++,
-                                startX: this.bodies.lookup(robotID).x,
-                                startY: this.bodies.lookup(robotID).y,
-                                endX: this.bodies.lookup(target).x,
-                                endY: this.bodies.lookup(target).y
-                            });
-                        }
-                        // console.log('robot ' + robotID + ' is attempting to shoot ' + target);
+                    /// places a bet (enlightent center).
+                    /// Target: bet placed
+                    case battlecode_schema_1.schema.Action.PLACE_BET:
                         break;
+                    /// Dies by moving into a swamp.
+                    /// Target: drowning robot.
                     case battlecode_schema_1.schema.Action.DIE_DROWN:
                         break;
-                    case battlecode_schema_1.schema.Action.DIE_SHOT:
+                    /// Dies for having zero influence.
+                    /// Target: a politician or scandal or Muckrakers.
+                    case battlecode_schema_1.schema.Action.DIE_ZERO_INFLUENCE:
                         break;
-                    case battlecode_schema_1.schema.Action.DIE_TOO_MUCH_DIRT:
+                    /// a robot can change team after being empowered
+                    /// Target: self
+                    case battlecode_schema_1.schema.Action.CHANGE_TEAM:
                         break;
-                    case battlecode_schema_1.schema.Action.DIE_SUICIDE:
+                    /// an enlightenment center can become neutral if lost all its influence
+                    /// Target: none.
+                    case battlecode_schema_1.schema.Action.BECOME_NEUTRAL:
                         break;
+                    /// Dies due to an uncaught exception
+                    /// Target: none
                     case battlecode_schema_1.schema.Action.DIE_EXCEPTION:
                         console.log(`Exception occured: robotID(${robotID}), target(${target}`);
                         break;
@@ -315,34 +311,6 @@ class GameWorld {
             this.insertDiedBodies(delta);
             this.bodies.deleteBulk(delta.diedIDsArray());
         }
-        // Dirt changes on map
-        for (let i = 0; i < delta.dirtChangesLength(); i++) {
-            const x = delta.dirtChangedLocs().xs(i);
-            const y = delta.dirtChangedLocs().ys(i);
-            const mapIdx = this.mapStats.getIdx(x, y);
-            this.mapStats.dirt[mapIdx] += delta.dirtChanges(i);
-        }
-        // Water changes on map
-        if (delta.waterChangedLocs() !== null) {
-            for (let i = 0; i < delta.waterChangedLocs().xsLength(); i++) {
-                const x = delta.waterChangedLocs().xs(i);
-                const y = delta.waterChangedLocs().ys(i);
-                const mapIdx = this.mapStats.getIdx(x, y);
-                this.mapStats.flooded[mapIdx] = 1 - this.mapStats.flooded[mapIdx]; // this position changed flood situation
-            }
-        }
-        // Pollution changes on map
-        // We don't calculate the pollution until it is actually needed. Lazy is always good.
-        this.mapStats.globalPollution = delta.globalPollution();
-        this.mapStats.localPollutions = delta.localPollutions(this._localPollutionsSlot);
-        this.pollutionNeedsUpdate = true;
-        // Soup changes on map
-        for (let i = 0; i < delta.soupChangesLength(); i++) {
-            const x = delta.soupChangedLocs().xs(i);
-            const y = delta.soupChangedLocs().ys(i);
-            const mapIdx = this.mapStats.getIdx(x, y);
-            this.mapStats.soup[mapIdx] += delta.soupChanges(i);
-        }
         // Insert indicator dots and lines
         this.insertIndicatorDots(delta);
         this.insertIndicatorLines(delta);
@@ -359,35 +327,6 @@ class GameWorld {
                 bytecodesUsed: delta.bytecodesUsedArray()
             });
         }
-    }
-    distanceSquared(a, b, x, y) {
-        return (a - x) * (a - x) + (b - y) * (b - y);
-    }
-    calculatePollutionIfNeeded() {
-        if (!this.pollutionNeedsUpdate) {
-            return;
-        }
-        // calculates pollution based on pollution effects
-        // this has annoying time complexity but I think it'll be fine
-        let width = this.mapStats.maxCorner.x - this.mapStats.minCorner.x;
-        let height = this.mapStats.maxCorner.y - this.mapStats.minCorner.y;
-        for (let x = 0; x < width; x++) {
-            for (let y = 0; y < height; y++) {
-                let idx = this.mapStats.getIdx(x, y);
-                this.mapStats.pollution[idx] = this.mapStats.globalPollution;
-                let multiplier = 1;
-                if (!this.mapStats.localPollutions)
-                    continue;
-                for (let i = 0; i < this.mapStats.localPollutions.radiiSquaredLength(); i++) {
-                    if (this.distanceSquared(this.mapStats.localPollutions.locations().xsArray()[i], this.mapStats.localPollutions.locations().ysArray()[i], x, y) <= this.mapStats.localPollutions.radiiSquaredArray()[i]) {
-                        this.mapStats.pollution[idx] += this.mapStats.localPollutions.additiveEffectsArray()[i];
-                        multiplier *= this.mapStats.localPollutions.multiplicativeEffectsArray()[i];
-                    }
-                }
-                this.mapStats.pollution[idx] = Math.round(this.mapStats.pollution[idx] * multiplier);
-            }
-        }
-        this.pollutionNeedsUpdate = false;
     }
     insertDiedBodies(delta) {
         // Delete the died bodies from the previous round
@@ -443,9 +382,6 @@ class GameWorld {
                 blue: rgbs.blueArray()
             });
         }
-    }
-    isBuilding(body) {
-        return body == battlecode_schema_1.schema.BodyType.DESIGN_SCHOOL || body == battlecode_schema_1.schema.BodyType.FULFILLMENT_CENTER || body == battlecode_schema_1.schema.BodyType.HQ || body == battlecode_schema_1.schema.BodyType.NET_GUN || body == battlecode_schema_1.schema.BodyType.REFINERY || body == battlecode_schema_1.schema.BodyType.VAPORATOR;
     }
     insertBodies(bodies) {
         // Update spawn stats

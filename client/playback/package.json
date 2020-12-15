@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rm -rf out",
     "build": "tsc -p src",
+    "check": "tsc -p src --noEmit --pretty | less -r",
     "lint": "tslint 'src/**/*.ts'",
     "gen": "mkdir -p ../examples/ && ts-node src/gen/create.ts",
     "watch": "tsc -w -p src",

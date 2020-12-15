@@ -13,7 +13,7 @@ The battlecode server hosts an unsecured websocket server on port 6175. When you
 
 1. Update `battlecode.fbs`. Only add fields to the ends of tables; don't remove or rearrange any fields. Do not edit structs.
 2. Run `flatc --ts -o ts battlecode.fbs` and `flatc --java -o java battlecode.fbs` to update the TypeScript and Java files.
-3. Change line 3 of `ts/battlecode_generated.ts` from `import { flatbuffers } from "./flatbuffers"` to `import { flatbuffers } from "flatbuffers"`.
+3. Change line 3 of `ts/battlecode_generated.ts` from `import * as flatbuffers from 'flatbuffers'"` to `import { flatbuffers } from "flatbuffers"`.
 4. Copy the Java files over to `../engine` and run `npm install` in both `../client/playback` and then `../client/visualizer`.
 
 #### ADDITIONAL NOTES FOR 2020+:

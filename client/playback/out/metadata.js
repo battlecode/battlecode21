@@ -22,7 +22,7 @@ class Metadata {
         const bodyCount = header.bodyTypeMetadataLength();
         for (let i = 0; i < bodyCount; i++) {
             const body = header.bodyTypeMetadata(i);
-            this.types[body.type()] = new BodyType(body.type(), body.spawnSource(), body.cost(), body.dirtLimit(), body.soupLimit(), body.actionCooldown(), body.sensorRadiusSquared(), body.pollutionRadiusSquared(), body.localPollutionAdditiveEffect(), body.localPollutionMultiplicativeEffect(), body.maxSoupProduced(), body.bytecodeLimit());
+            this.types[body.type()] = new BodyTypeMetaData(body.type(), body.spawnSource(), body.cost(), body.conviction(), body.power(), body.actionCooldown(), body.visionRange(), body.actionRange(), 10000);
         }
         // SAFE
         Object.freeze(this.types);
@@ -44,21 +44,18 @@ exports.Team = Team;
 /**
  * Information about a specific body type.
  */
-class BodyType {
-    constructor(type, spawnSource, cost, soupLimit, dirtLimit, actionCooldown, sensorRadiusSquared, pollutionRadiusSquared, localPollutionAdditiveEffect, localPollutionMultiplicativeEffect, maxSoupProduced, bytecodeLimit) {
+class BodyTypeMetaData {
+    constructor(type, spawnSource, cost, conviction, power, actionCooldown, visionRadiusSquared, actionRadiusSquared, bytecodeLimit) {
         this.type = type;
         this.spawnSource = spawnSource;
         this.cost = cost;
-        this.dirtLimit = dirtLimit;
-        this.soupLimit = soupLimit;
+        this.conviction = conviction;
+        this.power = power;
         this.actionCooldown = actionCooldown;
-        this.sensorRadiusSquared = sensorRadiusSquared;
-        this.pollutionRadiusSquared = pollutionRadiusSquared;
-        this.localPollutionAdditiveEffect = localPollutionAdditiveEffect;
-        this.localPollutionMultiplicativeEffect = localPollutionMultiplicativeEffect;
-        this.maxSoupProduced = maxSoupProduced;
+        this.visionRadiusSquared = visionRadiusSquared;
+        this.actionRadiusSquared = actionRadiusSquared;
         this.bytecodeLimit = bytecodeLimit;
         Object.freeze(this);
     }
 }
-exports.BodyType = BodyType;
+exports.BodyTypeMetaData = BodyTypeMetaData;

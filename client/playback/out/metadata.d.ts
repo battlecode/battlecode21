@@ -15,7 +15,7 @@ export default class Metadata {
      * Access like: meta.types[schema.BodyType.MINOR].strideRadius
      */
     types: {
-        [key: number]: BodyType;
+        [key: number]: BodyTypeMetaData;
     };
     /**
      * All the teams in a game.
@@ -35,18 +35,15 @@ export declare class Team {
 /**
  * Information about a specific body type.
  */
-export declare class BodyType {
+export declare class BodyTypeMetaData {
     type: schema.BodyType;
     spawnSource: schema.BodyType;
     cost: number;
-    dirtLimit: number;
-    soupLimit: number;
+    conviction: number;
+    power: number;
     actionCooldown: number;
-    sensorRadiusSquared: number;
-    pollutionRadiusSquared: number;
-    localPollutionAdditiveEffect: number;
-    localPollutionMultiplicativeEffect: number;
-    maxSoupProduced: number;
+    visionRadiusSquared: number;
+    actionRadiusSquared: number;
     bytecodeLimit: number;
-    constructor(type: schema.BodyType, spawnSource: schema.BodyType, cost: number, soupLimit: number, dirtLimit: number, actionCooldown: number, sensorRadiusSquared: number, pollutionRadiusSquared: number, localPollutionAdditiveEffect: number, localPollutionMultiplicativeEffect: number, maxSoupProduced: number, bytecodeLimit: number);
+    constructor(type: schema.BodyType, spawnSource: schema.BodyType, cost: number, conviction: number, power: number, actionCooldown: number, visionRadiusSquared: number, actionRadiusSquared: number, bytecodeLimit: number);
 }

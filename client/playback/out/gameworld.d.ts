@@ -2,7 +2,7 @@ import StructOfArrays from './soa';
 import Metadata from './metadata';
 import { schema } from 'battlecode-schema';
 import Victor = require('victor');
-export declare type DiedBodiesSchema = {
+export declare type DeadBodiesSchema = {
     id: Int32Array;
     x: Int32Array;
     y: Int32Array;
@@ -13,10 +13,6 @@ export declare type BodiesSchema = {
     type: Int8Array;
     x: Int32Array;
     y: Int32Array;
-    onDirt: Int32Array;
-    carryDirt: Int32Array;
-    cargo: Int32Array;
-    isCarried: Uint8Array;
     bytecodesUsed: Int32Array;
 };
 export declare type MapStats = {
@@ -25,18 +21,12 @@ export declare type MapStats = {
     maxCorner: Victor;
     bodies: schema.SpawnedBodyTable;
     randomSeed: number;
-    dirt: Int32Array;
-    flooded: Int8Array;
-    globalPollution: number;
-    localPollutions: schema.LocalPollutionTable;
-    pollution: Int32Array;
-    soup: Int32Array;
+    passable: Int8Array;
     getIdx: (x: number, y: number) => number;
     getLoc: (idx: number) => Victor;
 };
 export declare type TeamStats = {
-    soup: number;
-    robots: [number, number, number, number, number, number, number, number, number, number, number];
+    robots: [number, number, number, number, number];
 };
 export declare type IndicatorDotsSchema = {
     id: Int32Array;
@@ -56,13 +46,6 @@ export declare type IndicatorLinesSchema = {
     green: Int32Array;
     blue: Int32Array;
 };
-export declare type NetGunShotSchema = {
-    id: Int32Array;
-    startX: Int32Array;
-    startY: Int32Array;
-    endX: Int32Array;
-    endY: Int32Array;
-};
 /**
  * A frozen image of the game world.
  *
@@ -71,58 +54,22 @@ export declare type NetGunShotSchema = {
 export default class GameWorld {
     /**
      * Bodies that died this round.
-     * {
-     *   id: Int32Array,
-     *   x: Int32Array,
-     *   y: Int32Array,
-     * }
      */
-    diedBodies: StructOfArrays<DiedBodiesSchema>;
+    diedBodies: StructOfArrays<DeadBodiesSchema>;
     /**
-     * Everything that isn't a bullet or indicator string.
-     * {
-     *   id: Int32Array,
-     *   team: Int8Array,
-     *   type: Int8Array,
-     *   x: Int32Array,
-     *   y: Int32Array,
-     *   bytecodesUsed: Int32Array,
-     * }
+     * Everything that isn't an indicator string.
      */
     bodies: StructOfArrays<BodiesSchema>;
     teamStats: Map<number, TeamStats>;
     mapStats: MapStats;
-    pollutionNeedsUpdate: boolean;
     /**
      * Indicator dots.
-     * {
-     *   id: Int32Array,
-     *   x: Float32Array,
-     *   y: Float32Array,
-     *   red: Int32Array,
-     *   green: Int32Array,
-     *   blue: Int32Array
-     * }
      */
     indicatorDots: StructOfArrays<IndicatorDotsSchema>;
     /**
      * Indicator lines.
-     * {
-     *   id: Int32Array,
-     *   startX: Float32Array,
-     *   startY: Float32Array,
-     *   endX: Float32Array,
-     *   endY: Float32Array,
-     *   red: Int32Array,
-     *   green: Int32Array,
-     *   blue: Int32Array
-     * }
      */
     indicatorLines: StructOfArrays<IndicatorLinesSchema>;
-    /**
-     * Net gun shots. Just an indicator line actually.
-     */
-    netGunShots: StructOfArrays<NetGunShotSchema>;
     /**
      * The current turn.
      */
@@ -144,7 +91,6 @@ export default class GameWorld {
      */
     meta: Metadata;
     private _bodiesSlot;
-    private _localPollutionsSlot;
     private _vecTableSlot1;
     private _vecTableSlot2;
     private _rgbTableSlot;
@@ -159,11 +105,8 @@ export default class GameWorld {
      * Process a set of changes.
      */
     processDelta(delta: schema.Round): void;
-    private distanceSquared;
-    calculatePollutionIfNeeded(): void;
     private insertDiedBodies;
     private insertIndicatorDots;
     private insertIndicatorLines;
-    private isBuilding;
     private insertBodies;
 }

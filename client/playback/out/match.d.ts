@@ -8,14 +8,6 @@ export declare type Log = {
     round: number;
     text: string;
 };
-export declare type Transaction = {
-    cost: number;
-    message: Array<number>;
-};
-export declare type Block = {
-    messages: Array<Transaction>;
-    round: number;
-};
 export declare type ProfilerEvent = {
     type: string;
     at: number;
@@ -68,15 +60,6 @@ export default class Match {
      */
     readonly logs: Array<Array<Log>>;
     /**
-     * The blockchain, an array of blocks per round.
-     */
-    readonly blockchain: Array<Block>;
-    /**
-     * The profiler files belong to this match.
-     * Contains 2 items (team A and team B) if profiling was enabled, empty otherwise.
-     */
-    readonly profilerFiles: Array<ProfilerFile>;
-    /**
      * The current game world.
      * DO NOT CACHE this reference between calls to seek() and compute(), it may
      * change.
@@ -123,10 +106,6 @@ export default class Match {
      * Store a schema.Round and the logs contained in it.
      */
     applyDelta(delta: schema.Round): void;
-    /**
-     * parses blockchain broadcasts
-     */
-    parseBlockchain(delta: schema.Round): void;
     /**
      * Parse logs for a round.
      */
