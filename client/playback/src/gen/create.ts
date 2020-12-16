@@ -9,17 +9,12 @@ let SIZE = 32;
 const maxID = 4096;
 
 const bodyTypeList = [
-  schema.BodyType.MINER,
-  schema.BodyType.LANDSCAPER,
-  schema.BodyType.DELIVERY_DRONE,
-  schema.BodyType.NET_GUN,
-  schema.BodyType.COW,
-  schema.BodyType.REFINERY,
-  schema.BodyType.VAPORATOR,
-  schema.BodyType.HQ,
-  schema.BodyType.DESIGN_SCHOOL,
-  schema.BodyType.FULFILLMENT_CENTER,
+  schema.BodyType.ENLIGHTENMENT_CENTER,
+  schema.BodyType.POLITICIAN,
+  schema.BodyType.SCANDAL,
+  schema.BodyType.MUCKRAKER
 ];
+
 const bodyVariety = bodyTypeList.length;
 
 // Return random integer in [l,r] (inclusive), uniformly
@@ -41,10 +36,7 @@ type BodiesType = {
 };
 
 type MapType = {
-  dirt: number[],
-  water: number[],
-  pollution: number[],
-  soup: number[]
+  passable: boolean[],
 };
 
 // Class to manage IDs of units
@@ -164,16 +156,10 @@ function createSBTable(builder: flatbuffers.Builder, bodies: BodiesType): flatbu
 function createMap(builder: flatbuffers.Builder, bodies: number, name: string, map?: MapType): flatbuffers.Offset {
   const bb_name = builder.createString(name);
 
-  const dirt: number[] = (map ? map.dirt : new Array(SIZE*SIZE));
-  const water: boolean[] = (map ? map.water : new Array(SIZE*SIZE));
-  const poll: number[] = (map ? map.pollution : new Array(SIZE*SIZE));
-  const soup: number[] = (map ? map.soup : new Array(SIZE*SIZE));
+  const passable: boolean[] = (map ? map.passable : new Array(SIZE*SIZE));
 
   // all values default to zero
-  const bb_dirt = schema.GameMap.createDirtVector(builder, dirt);
-  const bb_water = schema.GameMap.createWaterVector(builder, water);
-  const bb_poll = schema.GameMap.createPollutionVector(builder, poll);
-  const bb_soup = schema.GameMap.createSoupVector(builder, soup);
+  const bb_passable = schema.GameMap.createPassableVector(builder, passable);
 
   schema.GameMap.startGameMap(builder);
   schema.GameMap.addName(builder, bb_name);
@@ -184,11 +170,9 @@ function createMap(builder: flatbuffers.Builder, bodies: number, name: string, m
   if(!isNull(bodies)) schema.GameMap.addBodies(builder, bodies);
   schema.GameMap.addRandomSeed(builder, 42);
 
-  schema.GameMap.addDirt(builder, bb_dirt);
-  schema.GameMap.addWater(builder, bb_water);
-  schema.GameMap.addPollution(builder, bb_poll);
-  schema.GameMap.addSoup(builder, bb_soup);
-  schema.GameMap.addInitialWater(builder, 0);
+  schema.GameMap.addPassable(builder, 1); //what does passable mean?
+
+  schema.GameMap.addPassable(builder, bb_passable);
 
   return schema.GameMap.endGameMap(builder);
 }
@@ -203,15 +187,11 @@ function createGameHeader(builder: flatbuffers.Builder): flatbuffers.Offset {
     btmd.addType(builder, body);
     btmd.addSpawnSource(builder, body); // Real spawn source?
     btmd.addCost(builder, 100);
-    btmd.addDirtLimit(builder, 10);
-    btmd.addSoupLimit(builder, 100);
-    btmd.addActionCooldown(builder, 10.0);
-    btmd.addSensorRadiusSquared(builder, 3);
-    btmd.addPollutionRadiusSquared(builder, 3);
-    btmd.addLocalPollutionAdditiveEffect(builder, 1);
-    btmd.addLocalPollutionMultiplicativeEffect(builder, 1);
-    btmd.addMaxSoupProduced(builder, 0);
-    btmd.addBytecodeLimit(builder, 1000);
+    btmd.addConviction(builder, 10);
+    btmd.addPower(builder, 10);
+    btmd.addActionCooldown(builder, 10);
+    btmd.addVisionRange(builder, 10);
+    btmd.addActionRange(builder, 10);
     bodies.push(schema.BodyTypeMetadata.endBodyTypeMetadata(builder));
   }
 
@@ -350,7 +330,7 @@ function createStandGame(turns: number) {
 }
 
 // Game with every units, and picking actions to make drones filled
-function createPickGame(turns: number) {
+/*function createPickGame(turns: number) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
 
@@ -423,9 +403,10 @@ function createPickGame(turns: number) {
   const wrapper = createGameWrapper(builder, events, turns);
   builder.finish(wrapper);
   return builder.asUint8Array();
-}
+}*/
 
 // Game with spawning and dying random units
+
 function createLifeGame(turns: number) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
@@ -528,6 +509,7 @@ function createWanderGame(turns: number, unitCount: number) {
   return builder.asUint8Array();
 }
 
+/*
 function createWaterGame(turns: number) {
 
   let builder = new flatbuffers.Builder();
@@ -639,17 +621,18 @@ function createSoupGame(turns: number) {
   builder.finish(wrapper);
   return builder.asUint8Array();
 }
+*/
 
 function main(){
   const games = [
     { name: "blank", game: createBlankGame(512)},
     { name: "stand", game: createStandGame(1024) },
-    { name: "pick", game: createPickGame(1024) },
+    //{ name: "pick", game: createPickGame(1024) },
     { name: "wander", game: createWanderGame(2048, 32) },
     { name: "life", game: createLifeGame(512) },
-    { name: "water", game: createWaterGame(512) }, 
-    { name: "soup", game: createSoupGame(512) }, 
-    { name: "viewOptions", game: createViewOptionGame(512) }
+    //{ name: "water", game: createWaterGame(512) }, 
+    //{ name: "soup", game: createSoupGame(512) }, 
+    //{ name: "viewOptions", game: createViewOptionGame(512) }
   ];
   SIZE = 64;
   games.push({ name: "big-wander", game: createWanderGame(2048, 128) });
