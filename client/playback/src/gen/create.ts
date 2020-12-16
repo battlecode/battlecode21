@@ -170,8 +170,6 @@ function createMap(builder: flatbuffers.Builder, bodies: number, name: string, m
   if(!isNull(bodies)) schema.GameMap.addBodies(builder, bodies);
   schema.GameMap.addRandomSeed(builder, 42);
 
-  schema.GameMap.addPassable(builder, 1); //what does passable mean?
-
   schema.GameMap.addPassable(builder, bb_passable);
 
   return schema.GameMap.endGameMap(builder);

@@ -49,9 +49,7 @@ export default class Stats {
   // match info. Keep in mind if we ever change these, or implement this less
   // statically.
 
-  readonly robots: schema.BodyType[] = [
-    cst.MINER, cst.LANDSCAPER, cst.DRONE, cst.NET_GUN, cst.REFINERY, cst.VAPORATOR, cst.HQ, cst.DESIGN_SCHOOL, cst.FULFILLMENT_CENTER
-  ];
+  readonly robots: schema.BodyType[] = cst.bodyTypeList;
 
   constructor(conf: Config, images: AllImages, runner: Runner) {
     this.conf = conf;

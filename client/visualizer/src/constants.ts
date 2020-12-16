@@ -3,16 +3,12 @@ import {Symmetry} from './mapeditor/index';
 import { net } from 'electron';
 
 // Body types
-export const MINER = schema.BodyType.MINER;
-export const LANDSCAPER = schema.BodyType.LANDSCAPER;
-export const DRONE = schema.BodyType.DELIVERY_DRONE;
-export const NET_GUN = schema.BodyType.NET_GUN;
-export const COW = schema.BodyType.COW;
-export const REFINERY = schema.BodyType.REFINERY;
-export const VAPORATOR = schema.BodyType.VAPORATOR;
-export const HQ = schema.BodyType.HQ;
-export const DESIGN_SCHOOL = schema.BodyType.DESIGN_SCHOOL;
-export const FULFILLMENT_CENTER = schema.BodyType.FULFILLMENT_CENTER;
+export const ENLIGHTENMENT_CENTER = schema.BodyType.ENLIGHTENMENT_CENTER;
+export const POLITICIAN = schema.BodyType.POLITICIAN;
+export const SCANDAL = schema.BodyType.SCANDAL;
+export const MUCKRAKER = schema.BodyType.MUCKRAKER;
+
+export const bodyTypeList = [ENLIGHTENMENT_CENTER, POLITICIAN, SCANDAL, MUCKRAKER];
 
 
 // map colors
@@ -120,16 +116,10 @@ export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
 
 export function bodyTypeToString(bodyType: schema.BodyType) {
   switch(bodyType) {
-    case MINER:             return "miner";
-    case LANDSCAPER:        return "landscaper";
-    case DRONE:             return "drone";
-    case NET_GUN:           return "netGun";
-    case COW:               return "cow";
-    case REFINERY:          return "refinery";
-    case VAPORATOR:         return "vaporator";
-    case HQ:                return "HQ";
-    case DESIGN_SCHOOL:     return "designSchool";
-    case FULFILLMENT_CENTER:return "fulfillmentCenter";
+    case ENLIGHTENMENT_CENTER:             return "enlightenmentCenter";
+    case POLITICIAN:        return "politician";
+    case SCANDAL:             return "scandal";
+    case MUCKRAKER:           return "muckraker";
     default:                throw new Error("invalid body type");
   }
 }
@@ -144,21 +134,21 @@ export function symmetryToString(symmetry: Symmetry) {
 }
 
 // TODO: fix radius (is this vision that can be toggled in sidebar?)
-export function radiusFromBodyType(bodyType: schema.BodyType) {
-  switch(bodyType) {
-    case MINER:
-    case LANDSCAPER:
-    case DRONE:
-    case NET_GUN:
-    case COW:
-    case REFINERY:
-    case VAPORATOR:
-    case HQ:
-    case DESIGN_SCHOOL:
-    case FULFILLMENT_CENTER: return 1;
-    default: throw new Error("invalid body type");
-  }
-}
+// export function radiusFromBodyType(bodyType: schema.BodyType) {
+//   switch(bodyType) {
+//     case MINER:
+//     case LANDSCAPER:
+//     case DRONE:
+//     case NET_GUN:
+//     case COW:
+//     case REFINERY:
+//     case VAPORATOR:
+//     case HQ:
+//     case DESIGN_SCHOOL:
+//     case FULFILLMENT_CENTER: return 1;
+//     default: throw new Error("invalid body type");
+//   }
+// }
 
 export function waterLevel(x: number) {
   return (Math.exp(0.0028*x-1.38*Math.sin(0.00157*x-1.73)+1.38*Math.sin(-1.73))-1)
