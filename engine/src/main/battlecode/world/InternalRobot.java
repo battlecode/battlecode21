@@ -46,15 +46,8 @@ public strictfp class InternalRobot {
         this.type = type;
         this.location = loc;
         this.influence = influence;
-        if (this.type == POLITICIAN || this.type == SLANDERER) {
-            this.conviction = (this.influence * this.influence);
-        }
-        else if (this.type == MUCKRAKER) {
-            this.conviction = Math.ceil(this.influence * this.influence);
-        }
-        else {
-            this.conviction = 0;
-        }
+
+        this.conviction = this.type.convictionRatio * (this.influence * this.influence);
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -285,12 +278,16 @@ public strictfp class InternalRobot {
     public void processEndOfTurn() {
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
-        if (this.conviction > 0) 
-            this.roundsAlive++;
+
     }
 
     public void processEndOfRound() {
-        // OOOOOF
+        // Check if the robot has any conviction left at
+        // at the end of the turn; if not, remove it 
+        if (this.conviction > 0) 
+            this.roundsAlive++;
+        else
+            this.gameWorld.destroyRobot(this.ID);
     }
 
     // *********************************
