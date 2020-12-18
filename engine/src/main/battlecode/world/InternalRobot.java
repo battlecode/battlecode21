@@ -14,8 +14,8 @@ public strictfp class InternalRobot {
     private Team team;
     private RobotType type;
     private MapLocation location;
-    private int influence;
-    private int conviction;
+    private double influence;
+    private double conviction;
 
     private long controlBits;
     private int currentBytecodeLimit;
@@ -40,7 +40,7 @@ public strictfp class InternalRobot {
      * @param influence the influence used to create the robot
      */
     @SuppressWarnings("unchecked")
-    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, int influence) {
+    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, double influence) {
         this.ID = id;
         this.team = team;
         this.type = type;
@@ -61,7 +61,7 @@ public strictfp class InternalRobot {
         this.bytecodesUsed = 0;
 
         this.roundsAlive = 0;
-        
+
         this.cooldownTurns = 0;
 
         this.gameWorld = gw;
@@ -96,11 +96,11 @@ public strictfp class InternalRobot {
         return location;
     }
 
-    public int getInfluence() {
+    public double getInfluence() {
         return influence;
     }
 
-    public int conviction() {
+    public double getConviction() {
         return conviction;
     }
 
@@ -126,6 +126,8 @@ public strictfp class InternalRobot {
                 && this.cachedRobotInfo.ID == ID
                 && this.cachedRobotInfo.team == team
                 && this.cachedRobotInfo.type == type
+                && this.cachedRobotInfo.influence == influence
+                && this.cachedRobotInfo.influence == conviction                
                 && this.cachedRobotInfo.location.equals(location)) {
             return this.cachedRobotInfo;
         }
@@ -243,6 +245,26 @@ public strictfp class InternalRobot {
         this.cooldownTurns = newTurns;
     }
 
+    /**
+     * Adds conviction given an amount to change this
+     * robot's conviction by. Input can be negative to
+     * subtract conviction.
+     * 
+     * @param convictionAmount the amount to change conviction by (can be negative)
+     */
+    public void addConviction(double convictionAmount) {
+        setConviction(this.conviction + convictionAmount);
+    }
+    
+    /**
+     * Sets the conviction given a conviction amount.
+     * 
+     * @param newConviction the new conviction amount
+     */
+    public void setConviction(double newConviction) {
+        this.conviction = newConviction;
+    }
+
     // *********************************
     // ****** GAMEPLAY METHODS *********
     // *********************************
@@ -263,7 +285,8 @@ public strictfp class InternalRobot {
     public void processEndOfTurn() {
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
-        this.roundsAlive++;
+        if (this.conviction > 0) 
+            this.roundsAlive++;
     }
 
     public void processEndOfRound() {
