@@ -278,15 +278,16 @@ public strictfp class InternalRobot {
     public void processEndOfTurn() {
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
-
+        if (this.conviction > 0) 
+            this.roundsAlive++;
+        else
+            this.roundsAlive = -1;
     }
 
     public void processEndOfRound() {
         // Check if the robot has any conviction left at
         // at the end of the turn; if not, remove it 
-        if (this.conviction > 0) 
-            this.roundsAlive++;
-        else
+        if (this.roundsAlive == -1)
             this.gameWorld.destroyRobot(this.ID);
     }
 
