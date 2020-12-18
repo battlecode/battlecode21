@@ -13,8 +13,8 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  0,  0,  1,  2,  2,  2,  10, 0.1f,   0,  0,  20000),
-    //                       SS     MC  CR  AC  AR  DR  IR  II  IP      BF  BD  BL
+    ENLIGHTENMENT_CENTER    (null,  0,  0,  1,  2,  2,  2,  10, 0.1f, 0,  0,  20000),
+    //                       SS     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
      * converting enemy Politicians and Enlightenment Centers, and destroying
@@ -31,16 +31,16 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  1,  20, 0,  20, 20, 0,  0.1f,   0,  0,  10000),
-    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP      BF  BD  BL
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  1,  20, 0,  20, 20, 0,  0.1f, 0,  0,  10000),
+    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
     /**
      * Muckrakers search the map for enemy Slanderers to Expose, which destroys
      * the Slanderer and generates   
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  1,  0.7f,   15, 12, 40, 30, 0,  0,  1.01f,  10,  10000),
-    //                       SS                     MC  CR      AC  AR  DR  IR  II  IP  BF      BD  BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  1,  0.7f, 15, 12, 40, 30, 0,  0,  1.01f, 10,  10000),
+    //                       SS                     MC  CR    AC  AR  DR  IR  II  IP  BF     BD  BL
     ;
     
     /**
@@ -119,7 +119,7 @@ public enum RobotType {
      * @return whether the robot can build
      */
     public boolean canBuild() {
-        return this == ENLIGHTENMENT_CENTER;
+        return this == type.spawnSource;
     }
 
     /**
@@ -220,18 +220,3 @@ public enum RobotType {
         this.bytecodeLimit          = bytecodeLimit;
     }
 }
-
-    /** 
-     * RobotType spawnSource;
-     * int minCost;
-     * float convictionRatio;
-     * int actionCooldown;
-     * int actionRadiusSquared;
-     * int detectionRadiusSquared;
-     * int identificationRadiusSquared;
-     * int initialInfluence;
-     * float influencePerTurn;
-     * float empowerBuffFactor;
-     * int buffDuration;
-     * int bytecodeLimit;
-     */
