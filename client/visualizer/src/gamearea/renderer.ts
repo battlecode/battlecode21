@@ -12,31 +12,17 @@ import Victor = require('victor');
  * Note that all rendering functions draw in world-units,
  */
 export default class Renderer {
-  private conf: config.Config;
 
-  readonly canvas: HTMLCanvasElement;
   readonly ctx: CanvasRenderingContext2D;
-  readonly imgs: AllImages;
-  readonly metadata: Metadata;
-
-  // Callbacks
-  readonly onRobotSelected: (id: number) => void;
-  readonly onMouseover: (x: number, y: number, dirt: number, water: number, pollution: number, soup: number) => void;
 
   // For rendering robot information on click
   private lastSelectedID: number;
   //position currently hovered over
   private hoverPos: {x: number, y: number};
 
-  constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config, metadata: Metadata,
-    onRobotSelected: (id: number) => void,
-    onMouseover: (x: number, y: number, dirt: number, water: number, pollution: number, soup: number) => void) {
-    this.canvas = canvas;
-    this.conf = conf;
-    this.imgs = imgs;
-    this.metadata = metadata;
-    this.onRobotSelected = onRobotSelected;
-    this.onMouseover = onMouseover;
+  constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
+    readonly onRobotSelected: (id: number) => void,
+    readonly onMouseover: (x: number, y: number, passable: boolean) => void) {
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -271,38 +257,22 @@ export default class Renderer {
       const x = realXs[i];
       const y = realYs[i];
 
+      //TODO*: fetch bot image here.
+
       let img = this.imgs.cow;
 
-      if (type !== cst.COW) {
-        let tmp = this.imgs.robot[cst.bodyTypeToString(type)];
-        // TODO how to change drone?
-        if(type == cst.DRONE){
-          // tmp = (cargo[i]!=0 ? tmp.carry : tmp.empty);
-          droneIndices.push(i);
-          continue;
-        }
-        img = tmp[team];
-      }
+      // if (type !== cst.COW) {
+      //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)];
+      //   // TODO how to change drone?
+      //   if(type == cst.DRONE){
+      //     // tmp = (cargo[i]!=0 ? tmp.carry : tmp.empty);
+      //     droneIndices.push(i);
+      //     continue;
+      //   }
+      //   img = tmp[team];
+      // }
       // this.drawCircleBot(x, y, radius);
       // this.drawImage(img, x, y, radius);
-      this.drawBot(img, x, y);
-      
-      // Draw the sight radius if the robot is selected
-      if (type !== cst.COW && (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID)) {
-        this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
-      }
-    }
-    // draw all drones last
-    for (let j = 0; j < droneIndices.length; j++) {
-      let i = droneIndices[j];
-      const team = teams[i];
-      const type = types[i];
-      const x = realXs[i];
-      const y = realYs[i];
-
-      let tmp = this.imgs.robot[cst.bodyTypeToString(type)].empty;
-
-      const img = tmp[team];
       this.drawBot(img, x, y);
       
       // Draw the sight radius if the robot is selected
@@ -310,6 +280,24 @@ export default class Renderer {
         this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
       }
     }
+    // draw all drones last
+    // for (let j = 0; j < droneIndices.length; j++) {
+    //   let i = droneIndices[j];
+    //   const team = teams[i];
+    //   const type = types[i];
+    //   const x = realXs[i];
+    //   const y = realYs[i];
+
+    //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)].empty;
+
+    //   const img = tmp[team];
+    //   this.drawBot(img, x, y);
+      
+    //   // Draw the sight radius if the robot is selected
+    //   if (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID) {
+    //     this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
+    //   }
+    // }
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -337,27 +325,29 @@ export default class Renderer {
     this.ctx.fill();
   }
 
+  private drawBotRadius(x: number, y: number, radius: number, color: string) {
+    this.ctx.beginPath();
+    this.ctx.arc(x+0.5, y+0.5, radius, 0, 2 * Math.PI);
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = cst.SIGHT_RADIUS_LINE_WIDTH;
+    this.ctx.stroke();
+  }
+
   /**
    * Draws a circular outline representing the sight radius or bullet sight
    * radius of the given robot type, centered at (x, y)
    */
   private drawSightRadii(x: number, y: number, type: schema.BodyType, single?: Boolean) {
-    if (type === cst.COW) {
-      return; // cows can't see...
-    }
+    // handle bots with no radius here, if necessary
+    if (this.conf.visionRange || single) {
+      const visionRadius = Math.sqrt(this.metadata.types[type].visionRadiusSquared);
+      this.drawBotRadius(x, y, visionRadius, "#46ff00");
+    } 
 
-    if (this.conf.sightRadius || single) {
-      const sightRadiusSquared = this.metadata.types[type].sensorRadiusSquared;
-      const sightRadius = Math.sqrt(sightRadiusSquared);
-      this.ctx.beginPath();
-      this.ctx.arc(x+0.5, y+0.5, sightRadius, 0, 2 * Math.PI);
-      this.ctx.strokeStyle = "#46ff00";
-      this.ctx.lineWidth = cst.SIGHT_RADIUS_LINE_WIDTH;
-      this.ctx.stroke();
-    } else {
-      // console.log("drawSightRadii called, but should not draw it");
-    }
-
+    if (this.conf.actionRange || single) {
+      const actionRadius = Math.sqrt(this.metadata.types[type].actionRadiusSquared);
+      this.drawBotRadius(x, y, actionRadius, "#46ff00");
+    } 
   }
 
   /**
@@ -390,17 +380,18 @@ export default class Renderer {
 
       // Get the ID of the selected robot
       let selectedRobotID;
-      let possibleDroneID: number | undefined = undefined;
+      let possiblePriorityID: number | undefined = undefined;
       for (let i in ids) {
         if (xs[i] == x && ys[i] == y) {
           selectedRobotID = ids[i];
-          if(world.bodies.arrays.type[i] == cst.DRONE)
-            possibleDroneID = ids[i];
+          // if any robot should get selection priority, handle logic below
+          //if(world.bodies.arrays.type[i] == cst.DRONE)
+            //possiblePriorityID = ids[i];
         }
       }
 
       // if there are two robots in same cell, choose the drone
-      if(possibleDroneID != undefined) selectedRobotID = possibleDroneID;
+      if(possiblePriorityID != undefined) selectedRobotID = possiblePriorityID;
       // Set the info string even if the robot is undefined
       this.lastSelectedID = selectedRobotID;
       onRobotSelected(selectedRobotID);
