@@ -53,7 +53,7 @@ export interface Config {
   /**
    * Whether or not to draw a circle under each robot
    */
-  circleBots: boolean;
+  circleBots: boolean; //TODO: is this needed?
 
   /**
    * Whether or not to display indicator dots and lines
@@ -61,9 +61,14 @@ export interface Config {
   indicators: boolean;
 
   /**
-   * Whether or not to display the sight radius
+   * Whether or not to display the vision range.
    */
-  sightRadius: boolean;
+  seeVisionRange: boolean;
+
+    /**
+   * Whether or not to display the action range.
+   */
+  seeActionRange: boolean;
 
   /**
    * The mode of the game
@@ -81,25 +86,14 @@ export interface Config {
   showGrid: boolean;
 
   /**
-   * Viewoption for Dirt
+   * Viewoption for Swamp
    */
-  viewDirt: boolean;
-
-  /**
-   * Viewoption for Water
-   */
-  viewWater: boolean;
-
-  /**
-   * Viewoption for Pollution
-   */
-  viewPoll: boolean;
+  viewSwamp: boolean;
 
   /**
    * Whether logs should show shorter header
    */
   shorterLogHeader: boolean;
-  
 }
 
 /**
@@ -135,11 +129,10 @@ export function defaults(supplied?: any): Config {
     indicators: supplied.indicators || false,
     mode: supplied.mode || Mode.QUEUE,
     splash: supplied.splash || supplied.matchFileURL == null || true,
-    sightRadius: supplied.sightRadius || false,
+    seeVisionRange: supplied.seeVisionRange || false,
+    seeActionRange: supplied.seeActionRange || false,
     showGrid: supplied.showGrid || false,
-    viewDirt: supplied.viewDirt || true,
-    viewWater: supplied.viewDirt || true,
-    viewPoll: supplied.viewDirt || true,
+    viewSwamp: supplied.viewSwamp || true,
     shorterLogHeader: supplied.shorterLogHeader || false,
   };
 }
