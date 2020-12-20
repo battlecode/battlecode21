@@ -27,8 +27,8 @@ TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
 API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
-API_USERNAME = os.getenv('BC20_DB_USERNAME')
-API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
+API_USERNAME = os.getenv('BC_DB_USERNAME')
+API_PASSWORD = os.getenv('BC_DB_PASSWORD')
 
 
 # Compilation API specifications
