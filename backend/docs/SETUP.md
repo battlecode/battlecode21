@@ -43,4 +43,18 @@ python manage.py migrate
 
 ## Database Setup
 
-TODO
+In the Google Cloud project, navigate to the SQL page.
+Click on the most recently used database (eg for battlecode21, this is "bh20-db").
+Click clone, give it a good name ("bc21-db", etc, works well), and choose "clone current state of instance".
+
+Once the database is finished being created, connect to it with your Postgres editor of choice. The host will be the public IP address of the database (you can get this on Google Cloud); the port is 5432, the username and database are both "battlecode"; the password will be the same as the password of the old database you had cloned.
+
+Delete the contents of the following tables. (_Don't delete the tables themselves!_ To easily delete info, you can run a query, such as `DELETE FROM [table_name]`.) The tables are: `api_scrimmage`, `api_scrimmage_hidden`, `api_submission`, `api_team`, `api_team_users`, `api_teamsubmission`, `api_tournament`, `api_tournamentscrimmage`, `api_update`, `api_user`, `django_admin_log`.
+(You may have to delete them in a particular order. Particularly, if you get an error pertaining to a "foreign key constraint", you'll have to delete the table which uses it first. Deleting those tables is probably okay.)
+
+Updating `api_league` is slightly different. Don't delete the entry; just edit it instead. Change `name` to something more suitable (eg `bh20`), change the `start_date` and `end_date` (they don't have to be exact, so feel free to use a longer range than the actual tournament. Set `active` to true. **Set `submissions_enabled` to false and `game_released` to false.** Finally `engine_version` needs to be changed as well; ask the infrastructure team what to change it to.
+
+Next, we need to register a superuser account (for use by the infra). Run the battlecode website, and simply follow the normal account registration process. Take note of the password!
+Then, go back to your Postgres editor. In `api_user`, find the user you just created. Change `is_superuser` and `is_staff` to true. Finally, pass the username and password of this account to the infrastructure team.
+
+Then stop the old database (on its main page, press "stop").
