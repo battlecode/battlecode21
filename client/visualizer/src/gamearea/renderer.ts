@@ -18,7 +18,7 @@ export default class Renderer {
   // For rendering robot information on click
   private lastSelectedID: number;
   //position currently hovered over
-  private hoverPos: {x: number, y: number};
+  private hoverPos: {x: number, y: number} | null;
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,
@@ -195,7 +195,7 @@ export default class Renderer {
     }
 
     // draw hover box last
-    if (this.hoverPos != undefined && this.hoverPos.x >= 0) {
+    if (this.hoverPos !== null) {
       const {x, y} = this.hoverPos;
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
       this.ctx.strokeStyle = 'red';
@@ -420,7 +420,7 @@ export default class Renderer {
     };
 
     this.canvas.onmouseout = (event) => {
-      this.hoverPos = {x: -1, y: -1};
+      this.hoverPos = null;
     };
   }
 
