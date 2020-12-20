@@ -65,7 +65,7 @@ export interface Config {
    */
   seeVisionRange: boolean;
 
-    /**
+  /**
    * Whether or not to display the action range.
    */
   seeActionRange: boolean;
