@@ -11,8 +11,8 @@ logging.getLogger().setLevel(logging.INFO)
 GCLOUD_PROJECT_ID        = 'battlecode18'
 GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile-sub'
 GCLOUD_SUB_GAME_NAME     = 'bc21-game-sub'
-GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
-GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
+GCLOUD_BUCKET_SUBMISSION = 'bc21-submissions'
+GCLOUD_BUCKET_REPLAY     = 'bc21-replays'
 
 DOMAIN = os.getenv('DOMAIN')
 
