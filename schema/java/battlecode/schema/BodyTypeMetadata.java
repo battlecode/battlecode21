@@ -27,60 +27,95 @@ public final class BodyTypeMetadata extends Table {
    */
   public byte spawnSource() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
   /**
-   * The cost of the type, in influence.
+   * the minimum cost to produce a unit of this type
    */
-  public int cost() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int minCost() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The current conviction
+   * the convictionRatio of this type
    */
-  public int conviction() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public float convictionRatio() { int o = __offset(10); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
-   * The current power, in influence
+   * cooldown of this type
    */
-  public int power() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int actionCooldown() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The number of cooldowns between every two actions.
+   * action radius if this type
    */
-  public int actionCooldown() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int actionRadiusSquared() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The maximum distance squared this type can sense other robots.
+   * detection radius of this type
    */
-  public int visionRange() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int detectionRadiusSquared() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The maximum distance squared this type can affect other robots.
+   * identification radius squared for this type
    */
-  public int actionRange() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int identificationRadiusSquared() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  /**
+   * initial influence of this type
+   */
+  public int initialInfluence() { int o = __offset(20); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  /**
+   * influence per turn for this type
+   */
+  public float influencePerTurn() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  /**
+   * empower buff factor for this type
+   */
+  public float empowerBuffFactor() { int o = __offset(24); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  /**
+   * empower buff duration of this type
+   */
+  public int buffDuration() { int o = __offset(26); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  /**
+   * bytecode limit for this type
+   */
+  public int bytecodeLimit() { int o = __offset(28); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createBodyTypeMetadata(FlatBufferBuilder builder,
       byte type,
       byte spawnSource,
-      int cost,
-      int conviction,
-      int power,
+      int minCost,
+      float convictionRatio,
       int actionCooldown,
-      int visionRange,
-      int actionRange) {
-    builder.startTable(8);
-    BodyTypeMetadata.addActionRange(builder, actionRange);
-    BodyTypeMetadata.addVisionRange(builder, visionRange);
+      int actionRadiusSquared,
+      int detectionRadiusSquared,
+      int identificationRadiusSquared,
+      int initialInfluence,
+      float influencePerTurn,
+      float empowerBuffFactor,
+      int buffDuration,
+      int bytecodeLimit) {
+    builder.startTable(13);
+    BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
+    BodyTypeMetadata.addBuffDuration(builder, buffDuration);
+    BodyTypeMetadata.addEmpowerBuffFactor(builder, empowerBuffFactor);
+    BodyTypeMetadata.addInfluencePerTurn(builder, influencePerTurn);
+    BodyTypeMetadata.addInitialInfluence(builder, initialInfluence);
+    BodyTypeMetadata.addIdentificationRadiusSquared(builder, identificationRadiusSquared);
+    BodyTypeMetadata.addDetectionRadiusSquared(builder, detectionRadiusSquared);
+    BodyTypeMetadata.addActionRadiusSquared(builder, actionRadiusSquared);
     BodyTypeMetadata.addActionCooldown(builder, actionCooldown);
-    BodyTypeMetadata.addPower(builder, power);
-    BodyTypeMetadata.addConviction(builder, conviction);
-    BodyTypeMetadata.addCost(builder, cost);
+    BodyTypeMetadata.addConvictionRatio(builder, convictionRatio);
+    BodyTypeMetadata.addMinCost(builder, minCost);
     BodyTypeMetadata.addSpawnSource(builder, spawnSource);
     BodyTypeMetadata.addType(builder, type);
     return BodyTypeMetadata.endBodyTypeMetadata(builder);
   }
 
-  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startTable(8); }
+  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startTable(13); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
-  public static void addCost(FlatBufferBuilder builder, int cost) { builder.addInt(2, cost, 0); }
-  public static void addConviction(FlatBufferBuilder builder, int conviction) { builder.addInt(3, conviction, 0); }
-  public static void addPower(FlatBufferBuilder builder, int power) { builder.addInt(4, power, 0); }
-  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(5, actionCooldown, 0); }
-  public static void addVisionRange(FlatBufferBuilder builder, int visionRange) { builder.addInt(6, visionRange, 0); }
-  public static void addActionRange(FlatBufferBuilder builder, int actionRange) { builder.addInt(7, actionRange, 0); }
+  public static void addMinCost(FlatBufferBuilder builder, int minCost) { builder.addInt(2, minCost, 0); }
+  public static void addConvictionRatio(FlatBufferBuilder builder, float convictionRatio) { builder.addFloat(3, convictionRatio, 0.0f); }
+  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(4, actionCooldown, 0); }
+  public static void addActionRadiusSquared(FlatBufferBuilder builder, int actionRadiusSquared) { builder.addInt(5, actionRadiusSquared, 0); }
+  public static void addDetectionRadiusSquared(FlatBufferBuilder builder, int detectionRadiusSquared) { builder.addInt(6, detectionRadiusSquared, 0); }
+  public static void addIdentificationRadiusSquared(FlatBufferBuilder builder, int identificationRadiusSquared) { builder.addInt(7, identificationRadiusSquared, 0); }
+  public static void addInitialInfluence(FlatBufferBuilder builder, int initialInfluence) { builder.addInt(8, initialInfluence, 0); }
+  public static void addInfluencePerTurn(FlatBufferBuilder builder, float influencePerTurn) { builder.addFloat(9, influencePerTurn, 0.0f); }
+  public static void addEmpowerBuffFactor(FlatBufferBuilder builder, float empowerBuffFactor) { builder.addFloat(10, empowerBuffFactor, 0.0f); }
+  public static void addBuffDuration(FlatBufferBuilder builder, int buffDuration) { builder.addInt(11, buffDuration, 0); }
+  public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(12, bytecodeLimit, 0); }
   public static int endBodyTypeMetadata(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

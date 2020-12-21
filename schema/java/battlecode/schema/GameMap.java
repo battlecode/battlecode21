@@ -44,14 +44,14 @@ public final class GameMap extends Table {
    */
   public int randomSeed() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * Whether locations are passable
+   * the ease of passing through a block
    */
-  public boolean passable(int j) { int o = __offset(14); return o != 0 ? 0!=bb.get(__vector(o) + j * 1) : false; }
-  public int passableLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
-  public BooleanVector passableVector() { return passableVector(new BooleanVector()); }
-  public BooleanVector passableVector(BooleanVector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
-  public ByteBuffer passableAsByteBuffer() { return __vector_as_bytebuffer(14, 1); }
-  public ByteBuffer passableInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 1); }
+  public double passability(int j) { int o = __offset(14); return o != 0 ? bb.getDouble(__vector(o) + j * 8) : 0; }
+  public int passabilityLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
+  public DoubleVector passabilityVector() { return passabilityVector(new DoubleVector()); }
+  public DoubleVector passabilityVector(DoubleVector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
+  public ByteBuffer passabilityAsByteBuffer() { return __vector_as_bytebuffer(14, 8); }
+  public ByteBuffer passabilityInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 8); }
 
   public static void startGameMap(FlatBufferBuilder builder) { builder.startTable(6); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
@@ -59,9 +59,9 @@ public final class GameMap extends Table {
   public static void addMaxCorner(FlatBufferBuilder builder, int maxCornerOffset) { builder.addStruct(2, maxCornerOffset, 0); }
   public static void addBodies(FlatBufferBuilder builder, int bodiesOffset) { builder.addOffset(3, bodiesOffset, 0); }
   public static void addRandomSeed(FlatBufferBuilder builder, int randomSeed) { builder.addInt(4, randomSeed, 0); }
-  public static void addPassable(FlatBufferBuilder builder, int passableOffset) { builder.addOffset(5, passableOffset, 0); }
-  public static int createPassableVector(FlatBufferBuilder builder, boolean[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addBoolean(data[i]); return builder.endVector(); }
-  public static void startPassableVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
+  public static void addPassability(FlatBufferBuilder builder, int passabilityOffset) { builder.addOffset(5, passabilityOffset, 0); }
+  public static int createPassabilityVector(FlatBufferBuilder builder, double[] data) { builder.startVector(8, data.length, 8); for (int i = data.length - 1; i >= 0; i--) builder.addDouble(data[i]); return builder.endVector(); }
+  public static void startPassabilityVector(FlatBufferBuilder builder, int numElems) { builder.startVector(8, numElems, 8); }
   public static int endGameMap(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
