@@ -7,11 +7,9 @@ import MatchRunner from '../sidebar/matchrunner';
 import MatchQueue from '../sidebar/matchqueue';
 import Profiler from '../sidebar/profiler';
 import MapEditor from '../mapeditor/mapeditor';
-import ScaffoldCommunicator from './scaffold';
-import Runner from '../runner';
+import ScaffoldCommunicator from '../scaffold';
 
-import {http,electron} from './electron-modules';
-
+import {http,electron} from '../electron-modules';
 
 
 export default class Sidebar {
@@ -47,13 +45,14 @@ export default class Sidebar {
   cb: () => void;
 
   // onkeydownControls is an onkeydown event that uses the controls depending on the game mode
-  constructor(conf: Config, images: AllImages, runner: Runner,
+  constructor(conf: Config, images: AllImages,
     onkeydownControls: (event: KeyboardEvent) => void) {
     // Initialize fields
     this.div = document.createElement("div");
     this.innerDiv = document.createElement("div");
     this.images = images;
     this.console = new Console(conf);
+    this.stats = new Stats(conf, images);
     this.mapeditor = new MapEditor(conf, images);
     this.matchrunner = new MatchRunner(conf, () => {
       // Set callback for matchrunner in case the scaffold is loaded later
@@ -74,9 +73,7 @@ export default class Sidebar {
       this.updateUpdate();
     });
     this.profiler = new Profiler();
-    console.log("runner:", runner);
-    this.matchqueue = new MatchQueue(conf, images, this.profiler, runner);
-    this.stats = new Stats(conf, images, runner);
+    this.matchqueue = new MatchQueue(conf, images, this.profiler);
     this.help = this.initializeHelp();
     this.conf = conf;
     this.onkeydownControls = onkeydownControls;
@@ -95,7 +92,7 @@ export default class Sidebar {
     modePanelRow.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
     modePanelRow.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
     modePanelRow.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
-    // modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
+    modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
     modePanelRow.appendChild(this.modeButton(Mode.HELP, "Help"));
     modePanel.appendChild(modePanelRow);
     this.div.appendChild(modePanel);
@@ -135,15 +132,12 @@ export default class Sidebar {
     UP - Double Playback Speed<br>
     DOWN - Halve Playback Speed<br>
     P - Pause/Unpause<br>
-    O - Stop (Go to Start)<br>
-    E - Go to End<br>
+    O - Stop<br>
     V - Toggle Indicator Dots/Lines<br>
     G - Toggle Grid<br>
-    N - Toggle Action Range<br>
-    M - Toggle Vision Range<br>
+    N - Toggle Sight/Sensor Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
-    
     <br>
     <b class="red">How to Play a Match</b><br>
     <i>From the application:</i> Click <b>'Runner'</b> and follow the
@@ -324,6 +318,9 @@ export default class Sidebar {
         break;
       case Mode.QUEUE:
         this.innerDiv.appendChild(this.matchqueue.div);
+        break;
+      case Mode.MAPEDITOR:
+        this.innerDiv.appendChild(this.mapeditor.div);
         break;
       case Mode.PROFILER:
         this.innerDiv.append(this.profiler.div);

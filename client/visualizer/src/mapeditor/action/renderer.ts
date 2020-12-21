@@ -9,16 +9,17 @@ import {GameMap} from '../index';
 
 export type MapUnit = {
   loc: Victor,
-  radius: number,
   type: schema.BodyType,
   teamID?: number
 };
 
-export enum Symmetry {
-  ROTATIONAL,
-  HORIZONTAL,
-  VERTICAL
-};
+enum UnitType {
+  RED_ENLIGHTENMENT, 
+  BLUE_ENLIGHTENMENT, 
+  NEUTRAL_ENLIGHTENMENT, 
+  SWAMP, 
+  TERRAIN
+}
 
 /**
  * Renders the world.
@@ -30,24 +31,19 @@ export default class MapRenderer {
 
   readonly canvas: HTMLCanvasElement;
   readonly ctx: CanvasRenderingContext2D;
-  readonly imgs: AllImages;
-
-  // Callbacks for clicking robots and trees on the canvas
-  readonly onclickUnit: (id: number) => void;
-  readonly onclickBlank: (loc: Victor) => void;
 
   // Other useful values
-  readonly bgPattern: CanvasPattern;
+  readonly onclickTile: (Victor) => void;
   private width: number; // in world units
   private height: number; // in world units
 
-  constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config,
-    onclickUnit: (id: number) => void, onclickBlank: (loc: Victor) => void) {
+  private mousePosition: Victor;
+
+  constructor(canvas: HTMLCanvasElement, conf: config.Config, 
+              onclickTile: (Victor) => void) {
     this.canvas = canvas;
     this.conf = conf;
-    this.imgs = imgs;
-    this.onclickUnit = onclickUnit;
-    this.onclickBlank = onclickBlank;
+    this.onclickTile = onclickTile;
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -55,28 +51,17 @@ export default class MapRenderer {
     } else {
       this.ctx = ctx;
     }
-
-    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.background, 'repeat');
   }
 
   /**
    * Renders the game map.
    */
   render(map: GameMap): void {
-    const scale = this.canvas.width / map.width;
     this.width = map.width;
     this.height = map.height;
 
-    // setup correct rendering
-    this.ctx.save();
-    this.ctx.scale(scale, scale);
-
-    this.renderBackground();
-    this.renderBodies(map);
-
-    // restore default rendering
+    this.renderGraphics(map);
     this.setEventListener(map);
-    this.ctx.restore();
   }
 
   /**
@@ -93,48 +78,174 @@ export default class MapRenderer {
    * Draw the background
    */
   private renderBackground(): void {
-    this.ctx.save();
-    this.ctx.fillStyle = this.bgPattern;
-
-    const scale = 20;
-    this.ctx.scale(1/scale, 1/scale);
-
     // scale the background pattern
-    this.ctx.fillRect(0, 0, this.width * scale, this.height * scale);
-    this.ctx.restore();
+    this.ctx.fillStyle = "rgb(0,0,0)";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = "rgb(255,255,255)";
+    this.ctx.fillRect(1, 1, this.width, this.height);
+  }
+
+  private renderBlanks(map: GameMap) {
+    for (let i = 1; i <= this.width; i++) {
+      for (let j = 1; j <= this.height; j++) {
+        this.setSquare(i, j, null, map);
+      }
+    }
   }
 
   /**
    * Draw trees and units on the canvas
    */
   private renderBodies(map: GameMap) {
-
     this.ctx.fillStyle = "#84bf4b";
-    map.originalBodies.forEach((body: MapUnit) => {
+    map.units.forEach((body: MapUnit) => {
       const x = body.loc.x;
-      const y = this.flip(body.loc.y, map.height);
-      const radius = body.radius;
+      const y = body.loc.y;
       const type = body.type;
       let img: HTMLImageElement;
 
-      this.drawCircleBot(x, y, radius);
-      const teamID = body.teamID || 1;
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][teamID];
-      this.drawImage(img, x, y, radius);
-      // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
+      this.setSquare(x, y, body, map);
     });
+  }
 
-    map.symmetricBodies.forEach((body: MapUnit) => {
-      const x = body.loc.x;
-      const y = this.flip(body.loc.y, map.height);
-      const radius = body.radius;
-      let img: HTMLImageElement;
+  private renderTooltip(map: GameMap, rounded_x: number, rounded_y: number, tooltip_text: string) {
+    this.ctx.save();
+    const scale = 20;
+    const map_scale = this.canvas.width / (map.width + 2);
+    this.ctx.scale(map_scale / scale, map_scale / scale);
+    this.ctx.font = '15px Arial';
 
-      this.drawCircleBot(x, y, radius);
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][2];
-      this.drawImage(img, x, y, radius);
-      // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
-    });
+    let text_width = this.ctx.measureText(tooltip_text).width;
+
+    // Draw Rectangle
+    let buffer = 0.2 * scale;
+    let tooltip_x = rounded_x * scale - text_width / 2;
+    let tooltip_y = this.flip(rounded_y, map.height) * scale - 0.5 * scale - buffer;
+    let rect_width = text_width + buffer * 2;
+    let rect_height = 1 * scale + buffer * 2;
+    this.ctx.fillStyle = "rgb(0,0,0)";
+    this.ctx.fillRect(tooltip_x - buffer, tooltip_y, rect_width, rect_height);
+
+    // Draw triangle
+    let triangle_x = (rounded_x + 0.5) * scale;
+    let triangle_y = (this.flip(rounded_y, map.height) + 1) * scale;
+    let triangle_height = Math.abs(triangle_y - tooltip_y - rect_height);
+    this.ctx.beginPath();
+    this.ctx.moveTo(triangle_x, triangle_y);
+    this.ctx.lineTo(triangle_x + triangle_height, tooltip_y + rect_height);
+    this.ctx.lineTo(triangle_x - triangle_height, tooltip_y + rect_height);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    // Write text
+    this.ctx.fillStyle = "rgb(255,255,255)";
+    this.ctx.fillText(tooltip_text, tooltip_x, tooltip_y + 0.7 * scale);
+
+    this.ctx.restore();
+  }
+
+  private renderGraphics(map: GameMap) {
+    this.ctx.save();
+
+    const scale = this.canvas.width / (map.width + 2);
+    this.ctx.scale(scale, scale);
+
+    this.renderBackground();
+    this.renderBlanks(map);
+    this.renderBodies(map);
+
+    // restore default rendering
+    this.ctx.restore();
+  }
+
+  private getEnlightenmentType(unit: MapUnit): UnitType {
+    let unit_type: UnitType;
+    switch (unit.teamID) {
+      case 1: {
+        unit_type = UnitType.RED_ENLIGHTENMENT;
+        break;
+      };
+      case 2: {
+        unit_type = UnitType.BLUE_ENLIGHTENMENT;
+        break;
+      };
+      default: {
+        unit_type = UnitType.NEUTRAL_ENLIGHTENMENT;
+      }
+    }
+    return unit_type;
+  }
+
+  private getUnitType(unit: MapUnit | null): UnitType {
+    let unit_type = UnitType.TERRAIN;
+    if (unit) {
+      switch (unit.type) {
+        case schema.BodyType.MINER: {
+          unit_type = this.getEnlightenmentType(unit);
+          break;
+        };
+        case schema.BodyType.COW: {
+          unit_type = UnitType.SWAMP;
+          break;
+        };
+      }
+    }
+
+    return unit_type;
+  }
+
+  private getUnitTooltip(unit: MapUnit | null): string {
+    let unit_type = this.getUnitType(unit);
+    let tooltip: string;
+    switch (unit_type) {
+      case UnitType.RED_ENLIGHTENMENT: {
+        tooltip = "Red Enlightenment Center";
+        break;
+      }
+      case UnitType.BLUE_ENLIGHTENMENT: {
+        tooltip = "Blue Enlightenment Center";
+        break;
+      }
+      case UnitType.NEUTRAL_ENLIGHTENMENT: {
+        tooltip = "Neutral Enlightenment Center";
+        break;
+      }
+      case UnitType.SWAMP: {
+        tooltip = "Swampland";
+        break;
+      }
+      default: {
+        tooltip = "Terrain";
+      }
+    }
+    return tooltip;
+  }
+
+  private getUnitColor(unit: MapUnit | null): string {
+    let unit_type = this.getUnitType(unit);
+    let color: string;
+    switch (unit_type) {
+      case UnitType.RED_ENLIGHTENMENT: {
+        color = "rgb(219,54,39)";
+        break;
+      }
+      case UnitType.BLUE_ENLIGHTENMENT: {
+        color = "rgb(79,126,230)";
+        break;
+      }
+      case UnitType.NEUTRAL_ENLIGHTENMENT: {
+        color = "rgb(100,100,100)";
+        break;
+      }
+      case UnitType.SWAMP: {
+        color = "rgb(4,81,0)";
+        break;
+      }
+      default: {
+         color = "rgb(99,255,32)";
+      }
+    }
+    return color;
   }
 
   /**
@@ -142,58 +253,45 @@ export default class MapRenderer {
    * tree, or on the selected coordinate if there is no tree.
    */
   private setEventListener(map: GameMap) {
-    this.canvas.onmousedown = (event: MouseEvent) => {
-      let x = map.width * event.offsetX / this.canvas.offsetWidth;
-      let y = this.flip(map.height * event.offsetY / this.canvas.offsetHeight, map.height);
-      let loc = new Victor(x, y);
+    this.canvas.onmouseup = (event: MouseEvent) => {
+      let x = (map.width + 2) * event.offsetX / this.canvas.offsetWidth;
+      let y = this.flip((map.height + 2) * event.offsetY / this.canvas.offsetHeight - 2, map.height);
+      let rounded_x = Math.floor(x);
+      let rounded_y = Math.floor(y);
+      let loc = new Victor(rounded_x, rounded_y);
 
-      // Get the ID of the selected unit
-      let selectedID;
-      map.originalBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
-          selectedID = id;
+      this.onclickTile(loc);
+    };
+    this.canvas.onmousemove = (event: MouseEvent) => {
+      this.renderGraphics(map);
+
+      let x = (map.width + 2) * event.offsetX / this.canvas.offsetWidth;
+      let y = (map.height + 2) * event.offsetY / this.canvas.offsetHeight - 2;
+      let rounded_x = Math.floor(x);
+      let rounded_y = Math.floor(this.flip(y, map.height));
+      let loc = new Victor(rounded_x, rounded_y);
+      this.mousePosition = new Victor(rounded_x, rounded_y);
+
+      let tooltip_text = "Terrain";
+      map.units.forEach((body: MapUnit) => {
+        if (body.loc.x == loc.x && body.loc.y == loc.y) {
+          tooltip_text = this.getUnitTooltip(body);
         }
       });
-      map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
-          selectedID = id;
-        }
-      });
+      tooltip_text += " (" + rounded_x.toString() + ", " + rounded_y.toString() + ")";
 
-      if (selectedID) {
-        this.onclickUnit(selectedID);
-      } else {
-        this.onclickBlank(loc);
-      }
+      this.renderTooltip(map, rounded_x, rounded_y, tooltip_text);
     };
   }
 
   /**
-   * Draws a circle centered at (x, y) with the given radius
+   * Fills in the square centered at (x, y)
    */
-  private drawCircleBot(x: number, y: number, radius: number) {
-    if (!this.conf.circleBots) return; // skip if the option is turned off
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "#ddd";
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    this.ctx.fill();
-  }
-
-  /**
-   * Draws goodies centered at (x, y) with the given radius, if there are any
-   */
-  // private drawGoodies(x: number, y: number, radius: number, bullets: number, body: schema.BodyType) {
-  //   if (bullets > 0) this.drawImage(this.imgs.tree.bullets, x, y, radius);
-  //   if (body !== cst.NONE) this.drawImage(this.imgs.tree.robot, x, y, radius);
-  // }
-
-  /**
-   * Draws an image centered at (x, y) with the given radius
-   */
-  private drawImage(img: HTMLImageElement, x: number, y: number, radius: number) {
-    this.ctx['imageSmoothingEnabled'] = false;
-    this.ctx.drawImage(img, x-radius, y-radius, radius*2, radius*2);
+  private setSquare(x: number, y: number, unit: MapUnit | null, map: GameMap) {
+    this.ctx.fillStyle = this.getUnitColor(unit);
+    const buffer = 0.05;
+    const size = 1 - buffer * 2;
+    this.ctx.fillRect(x + buffer / 2, this.flip(y, map.height) + buffer / 2 + 1, size, size);
   }
 }
 

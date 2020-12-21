@@ -2,7 +2,7 @@ import * as cst from '../../constants';
 
 import Victor = require('victor');
 
-import {MapUnit} from '../index';
+import {MapUnit, GameMap} from '../index';
 
 export enum Symmetry {
   ROTATIONAL,
@@ -80,24 +80,12 @@ export default class SymmetryForm {
   /**
    * The symmetry of the map currently selected
    */
-  private getSymmetry(): Symmetry {
+  getSymmetry(): Symmetry {
     return parseInt(this.select.options[this.select.selectedIndex].value);
   }
 
-    // Whether or not loc lies on the point or line of symmetry
-  private onSymmetricLine(loc: Victor, width: number, height: number): boolean {
-    switch(this.getSymmetry()) {
-      case(Symmetry.ROTATIONAL):
-      return loc.x === width / 2 && loc.y === height / 2;
-      case(Symmetry.HORIZONTAL):
-      return loc.y === height / 2;
-      case(Symmetry.VERTICAL):
-      return loc.x === width / 2;
-    }
-  };
-
   // Returns the symmetric location on the canvas
-  private transformLoc (loc: Victor, width: number, height: number): Victor {
+  transformUnit (unit: MapUnit, map: GameMap): MapUnit {
     function reflect(x: number, mid: number): number {
       if (x > mid) {
         return mid - Math.abs(x - mid);
@@ -105,43 +93,33 @@ export default class SymmetryForm {
         return mid + Math.abs(x - mid);
       }
     }
+    
+    let transformedTeam = 0;
+    if (unit.teamID)
+      transformedTeam = unit.teamID ^ 3;
+    let transformedLoc: Victor;
 
-    const midX = width / 2;
-    const midY = height / 2;
+    const midX = map.width / 2;
+    const midY = map.height / 2;
     switch(this.getSymmetry()) {
-      case(Symmetry.ROTATIONAL):
-      return new Victor(reflect(loc.x, midX), reflect(loc.y, midY));
-      case(Symmetry.HORIZONTAL):
-      return new Victor(loc.x, reflect(loc.y, midY));
-      case(Symmetry.VERTICAL):
-      return new Victor(reflect(loc.x, midX), loc.y);
-    }
-  };
-
-  /**
-   * Uses the bodies stored internally to create a mapping of original body
-   * IDs to the symmetric unit. A symmetric unit is a unit with the same ID
-   * that is reflected or rotated around a line or point of symmetry based on
-   * the parameter given in the map editor form.
-   */
-  getSymmetricBodies(bodies: Map<number, MapUnit>, width: number, height: number):  Map<number, MapUnit> {
-
-    const symmetricBodies: Map<number, MapUnit> = new Map<number, MapUnit>();
-    bodies.forEach((body: MapUnit, id: number) => {
-      if (!this.onSymmetricLine(body.loc, width, height)) {
-        const type = body.type;
-        const teamID = type === cst.COW ? this.NEUTRAL_TEAM_ID : this.BLUE_TEAM_ID;
-        if (type === cst.COW) {
-            symmetricBodies.set(id, {
-            loc: this.transformLoc(body.loc, width, height),
-            radius: body.radius,
-            type: type,
-            teamID: teamID
-          });
-        }
+      case(Symmetry.ROTATIONAL): {
+        transformedLoc = new Victor(reflect(unit.loc.x, midX), reflect(unit.loc.y, midY));
+        break;
       }
-    });
+      case(Symmetry.HORIZONTAL): {
+        transformedLoc = new Victor(unit.loc.x, reflect(unit.loc.y, midY));
+        break;
+      }
+      case(Symmetry.VERTICAL): {
+        transformedLoc = new Victor(reflect(unit.loc.x, midX), unit.loc.y);
+        break;
+      }
+    }
 
-    return symmetricBodies;
-  }
+    return {
+      loc: transformedLoc,
+      type: unit.type,
+      teamID: transformedTeam
+    };
+  };
 }

@@ -1,56 +1,81 @@
+import * as cst from '../../constants';
+
+import {schema} from 'battlecode-playback';
 import Victor = require('victor');
 
 import {MapUnit} from '../index';
 
-export interface UnitForm {
+export default class UnitForm {
 
   // The public div
   readonly div: HTMLDivElement;
+  readonly selection: HTMLSelectElement;
 
-  // Form elements for base settings
-  readonly id: HTMLLabelElement;
-  readonly x: HTMLInputElement;
-  readonly y: HTMLInputElement;
-  readonly radius: HTMLInputElement;
+  // Constant
+  private readonly OPTIONS = {
+    "1": "Toggle Swampland", 
+    "2": "Toggle Neutral Enlightenment Center", 
+    "3": "Toggle Red Enlightenment Center",
+    "4": "Toggle Blue Enlightenment Center", 
+  };
 
-  // Callbacks on input change
-  readonly width: () => number;
-  readonly height: () => number;
-  readonly maxRadius: (x: number, y: number, ignoreID?: number) => number;
+  constructor() {
+    // Create HTML elements
+    this.div = document.createElement("div");
+    this.div.appendChild(document.createTextNode("Tool: "));
+    this.selection = document.createElement("select");
 
-  /**
-   * @return the value of the ID field, or undefined if it is not a number
-   */
-  getID(): number | undefined;
-
-  /**
-   * Resets the form by clearing the current location while maintaining the
-   * other settings.
-   */
-  resetForm(): void;
+    // Create the form
+    this.loadInputs();
+    this.div.appendChild(this.selection);
+  }
 
   /**
-   * Sets the location to loc, clears the ID, and sets the radius based on the
-   * loc and/or the previous radius. If both an ID and a map unit are given,
-   * sets all fields other than location to the attributes corresponding to the
-   * given map unit.
-   * @param loc: a selected location
-   * @param body: a selected robot
-   * @param id: the selected robot's ID
+   * Initializes input fields.
    */
-  setForm(loc: Victor, body?: MapUnit, id?: number): void;
+  private loadInputs(): void {
+    for (let team in this.OPTIONS) {
+      const option = document.createElement("option");
+      option.value = team;
+      option.text = this.OPTIONS[team];
+      this.selection.add(option);
+    }
+  }
 
-  /**
-   * A valid form has numerical input within a specified range for all number
-   * fields, and contains all the information necessary to describe a map unit.
-   * @return whether or not the form describes a valid map unit.
-   */
-  isValid(): boolean;
-
-  /**
-   * @param teamID: the team ID of the unit; 0=neutral, 1=red, 2=blue
-   * @return the map unit described by the form, or undefined if the form is
-   * invalid.
-   */
-  getUnit(teamID?: number): MapUnit | undefined;
+  getUnit(): MapUnit {
+    let selected_type = schema.BodyType.MINER;
+    let selected_team = 0;
+    let curr_selection = this.selection.options[this.selection.selectedIndex].value;
+    switch (curr_selection) {
+      case "1": {
+        selected_type = schema.BodyType.COW;
+        selected_team = 0;
+        break;
+      }
+      case "2": {
+        selected_type = schema.BodyType.MINER;
+        selected_team = 0;
+        break;
+      }
+      case "3": {
+        selected_type = schema.BodyType.MINER;
+        selected_team = 1;
+        break;
+      }
+      case "4": {
+        selected_type = schema.BodyType.MINER;
+        selected_team = 2;
+        break;
+      }
+      default: {
+        selected_type = schema.BodyType.COW;
+        selected_team = 0;
+      }
+    }
+    return {
+      loc: new Victor(0, 0),
+      type: selected_type, 
+      teamID: selected_team
+    }
+  }
 }
