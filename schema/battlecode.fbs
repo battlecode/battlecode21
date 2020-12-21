@@ -33,7 +33,7 @@ enum BodyType : byte {
     /// they turn into politicians at some point, and can only be identified by slanderers.
     SCANDAL,
     /// have the ability to identify scandals
-    MUCKRAKER,
+    SLANDERER,
 }
 
 /// A list of new bodies to be placed on the map.
