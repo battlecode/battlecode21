@@ -56,7 +56,6 @@ export default class Renderer {
     this.renderBodies(world, nextStep, lerpAmount);
 
     this.renderIndicatorDotsLines(world);
-    this.renderNetGunShots(world);
     this.setMouseoverEvent(world);
 
     // restore default rendering
@@ -71,9 +70,7 @@ export default class Renderer {
   }
 
   private renderBackground(world: GameWorld) {
-    let dirtLayer = this.conf.viewDirt;
-    let waterLayer = this.conf.viewWater;
-    let pollutionLayer = this.conf.viewPoll;
+    let swampLayer = this.conf.viewSwamp;
 
     this.ctx.save();
     this.ctx.fillStyle = "white";
@@ -94,7 +91,8 @@ export default class Renderer {
     const map = world.mapStats;
 
     // TODO use color pacakge for nicer manipulation?
-    const getDirtColor = (x: number): string => {
+    // TODO don't just reuse dirt function
+    const getSwampColor = (x: number): string => {
       /*
       I'm thinking the following:
       - A gradient following the rainbow of the following colors. Defined in cst.DIRT_COLORS
@@ -112,7 +110,7 @@ export default class Renderer {
       let hi: number[] = [0,0,0];
       let mx: number = -1000;
       let mn: number = -1000;
-      for (let entry of Array.from(cst.DIRT_COLORS)) {
+      for (let entry of Array.from(cst.SWAMP_COLORS)) {
         lo = hi;
         hi = entry[1];
         mn = mx;
@@ -141,13 +139,6 @@ export default class Renderer {
 
       return `rgb(${now[0]},${now[1]},${now[2]})`;
     }
-    
-    const getSoupColor = (s: number): string => {
-      // TODO is this in right dimention?
-      if (s <= 1000)  return 'white';
-      if (s <= 10000) return 'yellow';
-      return 'orange';
-    }
 
     for (let i = 0; i < width; i++) for (let j = 0; j < height; j++){
       let idxVal = map.getIdx(i,j);
@@ -155,37 +146,12 @@ export default class Renderer {
 
       const cx = (minX+i)*scale, cy = (minY+plotJ)*scale;
 
-      this.ctx.fillStyle = 'white';
       this.ctx.globalAlpha = 1;
 
+      if (swampLayer) this.ctx.fillStyle = getSwampColor(map.passable[idxVal]);
+      else this.ctx.fillStyle = getSwampColor(1); //TODO: verify default value
 
-      if (dirtLayer) {// && (map.dirt[idxVal] > 0)) {
-        // dirt should be a gradient from green to red depending on elevation
-        let thisrgbcolor: string = getDirtColor(map.dirt[idxVal]);
-        this.ctx.fillStyle = thisrgbcolor;
-      }
-
-      if (waterLayer && (map.flooded[idxVal] > 0)){
-        // water should always be the same color
-        this.ctx.fillStyle = 'rgb(' + cst.WATER_COLOR.join(',') + ')';
-      }
-
-      // water covers dirt; we can fill only once
       this.ctx.fillRect(cx, cy, scale, scale);
-
-      if (pollutionLayer) {
-        // pollution should add a clouds that are black with some opacity
-        this.ctx.fillStyle = 'black';
-        world.calculatePollutionIfNeeded();
-        this.ctx.globalAlpha = map.pollution[idxVal] / 10000.0;
-        this.ctx.fillRect(cx, cy, scale, scale);
-      }
-
-      if (map.soup[idxVal] != 0){
-        this.ctx.fillStyle = getSoupColor(map.soup[idxVal]);
-        this.ctx.globalAlpha = 1;
-        this.ctx.fillRect(cx+scale/3, cy+scale/3, scale/3, scale/3);
-      }
 
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
@@ -414,8 +380,7 @@ export default class Renderer {
       // Set the location of the mouseover
       const {x,y} = this.getIntegerLocation(event, world);
       const idx = world.mapStats.getIdx(x, y);
-      world.calculatePollutionIfNeeded();
-      onMouseover(x, y, world.mapStats.dirt[idx], world.mapStats.flooded[idx], world.mapStats.pollution[idx], world.mapStats.soup[idx]);
+      onMouseover(x, y, world.mapStats.passable[idx] === 1);
       this.hoverPos = {x: x, y: y};
     };
 
@@ -435,6 +400,7 @@ export default class Renderer {
     return {x: Math.floor(x), y: Math.floor(y+1)};
   }
 
+  /*
   private renderNetGunShots(world: GameWorld) {
     const lines = world.netGunShots;
     const minY = world.minCorner.y;
@@ -462,6 +428,7 @@ export default class Renderer {
       }
     }
   }
+  */
 
   private renderIndicatorDotsLines(world: GameWorld) {
     if (!this.conf.indicators) {

@@ -10,22 +10,18 @@ export const MUCKRAKER = schema.BodyType.MUCKRAKER;
 
 export const bodyTypeList = [ENLIGHTENMENT_CENTER, POLITICIAN, SCANDAL, MUCKRAKER];
 
+// old colors for reference
 
-// map colors
 // maps elevation to rgb values
-export const DIRT_COLORS: Map<number, Array<number>> = new Map<number, Array<number>>([
-    [-5, [0, 147, 83]], // turquoise
-    [3, [29, 201, 2]], // green
-    [10, [254,205,54]], // yellow
-    [90, [222, 145, 1]], // brown
-    [500, [255, 0, 0]], // red
-    [2000, [242, 0, 252]] // pink
+export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<number>>([
+  [-5, [0, 147, 83]], // turquoise
+  [3, [29, 201, 2]], // green
+  [10, [254,205,54]], // yellow
+  [90, [222, 145, 1]], // brown
+  [500, [255, 0, 0]], // red
+  [2000, [242, 0, 252]] // pink
 ]);
-export const WATER_COLOR = [10,100,240];
 
-
-
-// TODO: Old constants
 // Game canvas rendering sizes
 export const INDICATOR_DOT_SIZE = .3;
 export const INDICATOR_LINE_WIDTH = .3;
