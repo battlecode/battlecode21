@@ -93,6 +93,10 @@ export default class Renderer {
     // TODO use color pacakge for nicer manipulation?
     // TODO don't just reuse dirt function
     const getSwampColor = (x: number): string => {
+      // should be using image for now
+      // TODO change swamp color depending on the parameter
+
+      return `rgb(85,92,69)`;
 
       // iterate and find the two colors
       let lo: number[] = [0,0,0];
@@ -234,24 +238,6 @@ export default class Renderer {
         this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
       }
     }
-    // draw all drones last
-    // for (let j = 0; j < droneIndices.length; j++) {
-    //   let i = droneIndices[j];
-    //   const team = teams[i];
-    //   const type = types[i];
-    //   const x = realXs[i];
-    //   const y = realYs[i];
-
-    //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)].empty;
-
-    //   const img = tmp[team];
-    //   this.drawBot(img, x, y);
-      
-    //   // Draw the sight radius if the robot is selected
-    //   if (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID) {
-    //     this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
-    //   }
-    // }
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -387,36 +373,6 @@ export default class Renderer {
     const y = this.flip(_y, minY, maxY)
     return {x: Math.floor(x), y: Math.floor(y+1)};
   }
-
-  /*
-  private renderNetGunShots(world: GameWorld) {
-    const lines = world.netGunShots;
-    const minY = world.minCorner.y;
-    const maxY = world.maxCorner.y - 1;
-    
-    const linesID = lines.arrays.id;
-    const linesStartX = lines.arrays.startX;
-    const linesStartY = lines.arrays.startY;
-    const linesEndX = lines.arrays.endX;
-    const linesEndY = lines.arrays.endY;
-    this.ctx.lineWidth = 0.2;
-
-    for (let i = 0; i < lines.length; i++) {
-      if (this.lastSelectedID === undefined || linesID[i] === this.lastSelectedID) {
-        const startX = linesStartX[i]+0.5;
-        const startY = this.flip(linesStartY[i], minY, maxY)+0.5;
-        const endX = linesEndX[i]+0.5;
-        const endY = this.flip(linesEndY[i], minY, maxY)+0.5;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(startX, startY);
-        this.ctx.lineTo(endX, endY);
-        this.ctx.strokeStyle = `rgb(0,247,255)`;
-        this.ctx.stroke();
-      }
-    }
-  }
-  */
 
   private renderIndicatorDotsLines(world: GameWorld) {
     if (!this.conf.indicators) {
