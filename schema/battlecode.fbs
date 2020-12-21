@@ -64,8 +64,8 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// Whether locations are passable
-    passable: [bool];
+    /// the ease of passing through a block
+    passability: [double];
 }
 
 /// Actions that can be performed.
