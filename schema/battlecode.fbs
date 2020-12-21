@@ -50,6 +50,8 @@ table SpawnedBodyTable {
     types: [BodyType];
     /// The locations of the bodies.
     locs: VecTable;
+    /// the amount of influence paid to create this body
+    cost: int;
 }
 
 /// The map a round is played on.
