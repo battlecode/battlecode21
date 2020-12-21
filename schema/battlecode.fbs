@@ -230,7 +230,7 @@ table Round {
     /// New bodies.
     spawnedBodies: SpawnedBodyTable;
 
-    /// The IDs of bodies that died (drowned units and shot drones).
+    /// The IDs of bodies that died.
     diedIDs: [int];
 
     /// The IDs of robots that performed actions.
