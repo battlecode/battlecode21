@@ -25,9 +25,9 @@ public final class BodyType {
   /**
    * have the ability to identify scandals
    */
-  public static final byte MUCKRAKER = 3;
+  public static final byte SLANDERER = 3;
 
-  public static final String[] names = { "ENLIGHTENMENT_CENTER", "POLITICIAN", "SCANDAL", "MUCKRAKER", };
+  public static final String[] names = { "ENLIGHTENMENT_CENTER", "POLITICIAN", "SCANDAL", "SLANDERER", };
 
   public static String name(int e) { return names[e]; }
 }

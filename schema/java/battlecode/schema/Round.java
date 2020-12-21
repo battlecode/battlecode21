@@ -68,7 +68,7 @@ public final class Round extends Table {
   public battlecode.schema.SpawnedBodyTable spawnedBodies() { return spawnedBodies(new battlecode.schema.SpawnedBodyTable()); }
   public battlecode.schema.SpawnedBodyTable spawnedBodies(battlecode.schema.SpawnedBodyTable obj) { int o = __offset(14); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
-   * The IDs of bodies that died (drowned units and shot drones).
+   * The IDs of bodies that died.
    */
   public int diedIDs(int j) { int o = __offset(16); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int diedIDsLength() { int o = __offset(16); return o != 0 ? __vector_len(o) : 0; }
@@ -97,7 +97,6 @@ public final class Round extends Table {
   public ByteBuffer actionsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 20, 1); }
   /**
    * The 'targets' of the performed actions. Actions without targets may have
-   * any target (typically 0).
    */
   public int actionTargets(int j) { int o = __offset(22); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int actionTargetsLength() { int o = __offset(22); return o != 0 ? __vector_len(o) : 0; }

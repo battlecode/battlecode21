@@ -13,32 +13,32 @@ package battlecode.schema;
 public final class Action {
   private Action() { }
   /**
-   * politicians self-destruct and affect nearby bodies
+   * Politicians self-destruct and affect nearby bodies
    * Target: none
    */
   public static final byte EMPOWER = 0;
   /**
-   * scandals turn into politicians.
+   * Scandals turn into politicians.
    * Target: self.
    */
   public static final byte CAMOUFLAGE = 1;
   /**
-   * slanders are alowed to TODO.
+   * Slanders are alowed to TODO.
    * Target: TODO.
    */
   public static final byte EMBEZZLE = 2;
   /**
-   * slanderers can expose a scandal.
+   * Slanderers can expose a scandal.
    * Target: an enemy body.
    */
   public static final byte EXPOSE = 3;
   /**
-   * units can change their flag.
+   * Units can change their flag.
    * Target: self.
    */
   public static final byte SET_FLAG = 4;
   /**
-   * units can get the flag of another unit
+   * Units can get the flag of another unit
    * Target: another unit.
    */
   public static final byte GET_FLAG = 5;
@@ -48,17 +48,17 @@ public final class Action {
    */
   public static final byte SPAWN_UNIT = 6;
   /**
-   * places a bid (enlightent center).
+   * Places a bid (enlightent center).
    * Target: bid placed
    */
   public static final byte PLACE_BID = 7;
   /**
-   * a robot can change team after being empowered
+   * A robot can change team after being empowered
    * Target: self
    */
   public static final byte CHANGE_TEAM = 8;
   /**
-   * an enlightenment center can become neutral if lost all its influence
+   * An enlightenment center can become neutral if lost all its influence
    * Target: none.
    */
   public static final byte BECOME_NEUTRAL = 9;
