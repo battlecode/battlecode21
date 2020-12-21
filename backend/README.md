@@ -12,48 +12,11 @@ For a nice interface to test the backend, go to `localhost:8000/docs/`.
 
 ### First-Time Setup
 
-#### Virtual Environment
-
-Open a terminal, and `cd` into this directory. Create a virtual environment by following the instructions below.
-
-- `pip3 install virtualenv` (or `pip` if your default Python installation is 3)
-- `virtualenv venv -p python3`
-- `source venv/bin/activate` (or if this doesn't work, perhaps `source venv/Scripts/activate`, or `source env/bin/activate`; basically, just try to find an activate file)
-- `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
-
-A couple errors may occur when installing the requirements:
-
-- Sometimes psycopg2 fails to compile since it needs some prerequisites. You can follow the installation process [see here](https://www.psycopg.org/docs/install.html#install-from-source). 
-  - Alternatively, you can use `psycopg2-binary`. Comment out the `psycopg2` line in requirements.txt, run `pip install psycopg2-binary`, then `pip install -r requirements.txt`, then uncomment that line. (It's better that we use `psycopg2`, rather than the binaries, in production. So, make sure to _not commit any changes_.)
-  - Another potential fix: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
-- uWSGI may fail to build. This is fine, as you don't actually need it to develop locally. Comment it out, run `pip install -r requirements.txt`, and then uncomment it (again so that we can use it in production -- make sure to _not commit any changes_).
-
-#### Database
-
-Any time you start the backend, there must be a Postgres instance up. It's easiest to create a Postgres database running somewhere else (for example, on Google Cloud, or another deployment service), and then to provide connection info in `dev_settings.py` (and `dev_settings_sensitive.py`). (More instructions about setting up this database coming soon! If they aren't here yet, bug Nathan.)
-
-Next, run the following to initialize the database:
-
-```python3
-python manage.py migrate
-```
-
-(This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.)
-
-#### Migrations
-
-Anytime models are changed, run the following to actually make changes to the database itself:
-
-```python3
-python manage.py makemigrations
-python manage.py migrate
-```
-
-(Note that if run through Docker or docker-compose, migrations are created and applied during the Docker process.)
+The process of using a virtual environment uses a lot of one-time steps. See the `docs/SETUP.md` file for more.
 
 ### Running
 
-Make sure you work in your virtual environment. Also, if `requirements.txt` has been changed, make sure all packages are up to date (same process as before). And, if models are changed, make sure to migrate (again, same as above).
+Make sure you work in your virtual environment. Also, if `requirements.txt` has been changed, make sure all packages are up to date; and, if models are changed, make sure to migrate. (Instructions can be found in the file referenced above.)
 
 Then, set the necessary environment variables (only needed once per terminal session):
 
@@ -100,7 +63,21 @@ Note that the deployed version of the backend uses regular `docker` and this fol
 
 Also, note that the deployed version uses `uWSGI` to run (as specified in the Dockerfile), and serves out of port 80, as opposed to Django's own serving and port 8000.
 
-### Steps
+### First-Time Deployment Setup
+
+A database should be created.
+
+Also, a backend should be created.
+
+We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
+
+The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
+
+Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
+
+Ideally, we would like to move to Kubernetes for everything, as that would make everything much easier, but it doesn't currently support having a load balancer that also points to storage buckets. This is a deal-breaker, since the frontend is static.
+
+### Deploying
 
 1. Push to master.
 2. Go to [Cloud Build Triggers](https://console.cloud.google.com/cloud-build/triggers?project=battlecode18) on Google Cloud.
@@ -111,15 +88,3 @@ Also, note that the deployed version uses `uWSGI` to run (as specified in the Do
 7. Wait until all spinning blue icons have turned into green checkmarks (this takes like 10 minutes I think).
 
 This procedure is currently very long and requires too much manual intervention. We should write a script that does all of this for us (which shouldn't be too hard).
-
-### Setup
-
-A database should be created.
-
-We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
-
-The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
-
-Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
-
-Ideally, we would like to move to Kubernetes for everything, as that would make everything much easier, but it doesn't currently support having a load balancer that also points to storage buckets. This is a deal-breaker, since the frontend is static.

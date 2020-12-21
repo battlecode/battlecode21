@@ -11,8 +11,8 @@ logging.getLogger().setLevel(logging.INFO)
 GCLOUD_PROJECT_ID        = 'battlecode18'
 GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile-sub'
 GCLOUD_SUB_GAME_NAME     = 'bc21-game-sub'
-GCLOUD_BUCKET_SUBMISSION = 'bc20-submissions'
-GCLOUD_BUCKET_REPLAY     = 'bc20-replays'
+GCLOUD_BUCKET_SUBMISSION = 'bc21-submissions'
+GCLOUD_BUCKET_REPLAY     = 'bc21-replays'
 
 DOMAIN = os.getenv('DOMAIN')
 
@@ -27,8 +27,8 @@ TIMEOUT_GAME    = 10800 # Maximum execution time for game running
 GAME_WINNER = '^\[server\]\s*.*\([AB]\) wins \(round [0-9]+\)$'
 
 API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
-API_USERNAME = os.getenv('BC20_DB_USERNAME')
-API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
+API_USERNAME = os.getenv('BC_DB_USERNAME')
+API_PASSWORD = os.getenv('BC_DB_PASSWORD')
 
 
 # Compilation API specifications
