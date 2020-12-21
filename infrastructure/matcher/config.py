@@ -11,8 +11,8 @@ logging.getLogger().setLevel(logging.INFO)
 DOMAIN = os.getenv('DOMAIN')
 
 API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
-API_USERNAME = os.getenv('BC20_DB_USERNAME')
-API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
+API_USERNAME = os.getenv('BC_DB_USERNAME')
+API_PASSWORD = os.getenv('BC_DB_PASSWORD')
 
 API_SCRIM_LIST = f'{DOMAIN}/api/match/scrimmage_list/'
 API_ENQUEUE = f'{DOMAIN}/api/match/enqueue/'
