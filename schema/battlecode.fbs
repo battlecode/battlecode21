@@ -118,18 +118,28 @@ table BodyTypeMetadata {
     type: BodyType;
     /// The spawn source.
     spawnSource: BodyType;
-    /// The cost of the type, in influence.
-    cost: int;
-    /// The current conviction
-    conviction: int;
-    /// The current power, in influence
-    power: int;
-    /// The number of cooldowns between every two actions.
+    /// the minimum cost to produce a unit of this type
+    minCost: int;
+    /// the convictionRatio of this type
+    convictionRatio: float;
+    /// cooldown of this type
     actionCooldown: int;
-    /// The maximum distance squared this type can sense other robots.
-    visionRange: int;
-    /// The maximum distance squared this type can affect other robots.
-    actionRange: int;
+    /// action radius if this type
+    actionRadiusSquared: int;
+    /// detection radius of this type
+    detectionRadiusSquared: int;
+    /// identification radius squared for this type
+    identificationRadiusSquared: int;
+    /// initial influence of this type
+    initialInfluence: int;
+    /// influence per turn for this type
+    influencePerTurn: float;
+    /// empower buff factor for this type
+    empowerBuffFactor: float;
+    /// empower buff duration of this type
+    buffDuration: int;
+    /// bytecode limit for this type
+    bytecodeLimit: int;
 }
 
 /// Data relevant to a particular team.
