@@ -169,6 +169,7 @@ export default class Looper {
     // cleanup when looper is destroyed (match is switched / ended)
     die() {
         this.clearScreen();
+        this.goalUPS = 0;
         this.controls.pause();
     }
 
