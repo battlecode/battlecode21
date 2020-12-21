@@ -77,34 +77,34 @@ table GameMap {
 /// Actions may have 'targets', which are the units on which
 /// the actions were performed.
 enum Action : byte {
-    /// politicians self-destruct and affect nearby bodies
+    /// Politicians self-destruct and affect nearby bodies
     /// Target: none
     EMPOWER,
-    /// scandals turn into politicians.
+    /// Scandals turn into politicians.
     /// Target: self.
     CAMOUFLAGE,
-    /// slanders are alowed to TODO.
+    /// Slanders are alowed to TODO.
     /// Target: TODO.
     EMBEZZLE,
-    /// slanderers can expose a scandal.
+    /// Slanderers can expose a scandal.
     /// Target: an enemy body.
     EXPOSE,
-    /// units can change their flag.
+    /// Units can change their flag.
     /// Target: self.
     SET_FLAG,
-    /// units can get the flag of another unit
+    /// Units can get the flag of another unit
     /// Target: another unit.
     GET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
-    /// places a bid (enlightent center).
+    /// Places a bid (enlightent center).
     /// Target: bid placed
     PLACE_BID,
-    /// a robot can change team after being empowered
+    /// A robot can change team after being empowered
     /// Target: self
     CHANGE_TEAM,
-    /// an enlightenment center can become neutral if lost all its influence
+    /// An enlightenment center can become neutral if lost all its influence
     /// Target: none.
     BECOME_NEUTRAL,
     /// Dies due to an uncaught exception
