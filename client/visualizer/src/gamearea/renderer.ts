@@ -17,7 +17,7 @@ export default class Renderer {
 
   // For rendering robot information on click
   private lastSelectedID: number;
-  //position currently hovered over
+  // position of mouse cursor hovering
   private hoverPos: {x: number, y: number} | null;
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
@@ -93,17 +93,6 @@ export default class Renderer {
     // TODO use color pacakge for nicer manipulation?
     // TODO don't just reuse dirt function
     const getSwampColor = (x: number): string => {
-      /*
-      I'm thinking the following:
-      - A gradient following the rainbow of the following colors. Defined in cst.DIRT_COLORS
-      */
-
-      
-
-      // // (-inf~inf) -> (0~1)
-      // // TODO getting inputs for color transition?
-      // const ex = Math.exp(x / 10);
-      // const t = ex / (5 + ex);
 
       // iterate and find the two colors
       let lo: number[] = [0,0,0];
@@ -177,7 +166,6 @@ export default class Renderer {
     const length = bodies.length;
     const types = bodies.arrays.type;
     const teams = bodies.arrays.team;
-    const cargo = bodies.arrays.cargo;
     const ids = bodies.arrays.id;
     const xs = bodies.arrays.x;
     const ys = bodies.arrays.y;
