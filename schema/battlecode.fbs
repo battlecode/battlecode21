@@ -64,8 +64,8 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// Whether locations are passable
-    passable: [bool];
+    /// Number from 0 to 1 representing how influences cooldown
+    passable: [double]; 
 }
 
 /// Actions that can be performed.
