@@ -411,14 +411,11 @@ export default class Controls {
   /**
    * Updates the location readout
    */
-  setTileInfo(x: number, y: number, dirt: number, water: number, pollution: number, soup: number): void {
+  setTileInfo(x: number, y: number, passable: number): void {
     let content: string = "";
     content += 'X: ' + `${x}`.padStart(3);
     content += ' | Y: ' + `${y}`.padStart(3);
-    if(dirt !== undefined) content += ' | D: ' + `${dirt}`.padStart(3);
-    if(water !== undefined) content += ' | W: ' + `${water}`.padStart(3);
-    if(pollution !== undefined) content += ' | P: ' + `${pollution}`.padStart(3);
-    if(soup !== undefined) content += ' | S: ' + `${soup}`.padStart(3);
+    content += ' | P: ' + `${passable}`;
 
     this.tileInfo.textContent = content;
   }

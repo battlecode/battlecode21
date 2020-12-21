@@ -73,9 +73,9 @@ export default class Looper {
             this.lastSelectedID = id;
             this.console.setIDFilter(id);
         };
-        const onMouseover = (x: number, y: number, dirt: number, water: number, pollution: number, soup: number) => {
+        const onMouseover = (x: number, y: number, passable: boolean) => {
             // Better make tile type and hand that over
-            controls.setTileInfo(x, y, dirt, water, pollution, soup);
+            controls.setTileInfo(x, y, Number(passable));
         };
 
         // Configure renderer for this match
@@ -231,15 +231,8 @@ export default class Looper {
 
                 let type = bodies.type[index];
                 let bytecodes = bodies.bytecodesUsed[index];
-                if (type === cst.COW) {
-                    this.controls.setInfoString(id, x, y, on);
-                }
-                else if (type === cst.LANDSCAPER) {
-                    this.controls.setInfoString(id, x, y, on, bodies.carryDirt[index], bytecodes);
-                }
-                else {
-                    this.controls.setInfoString(id, x, y, on, undefined, bytecodes);
-                }
+                // change below depending on the unit type
+                this.controls.setInfoString(id, x, y, on, undefined, bytecodes);
             }
         }
 
@@ -271,7 +264,6 @@ export default class Looper {
             this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner);
         }
 
-        this.stats.showBlock(this.match.blockchain[this.match.current.turn]);
         this.updateStats(this.match.current, this.meta);
         this.loopID = window.requestAnimationFrame((curTime) => this.loop.call(this, curTime));
     }
@@ -289,12 +281,6 @@ export default class Looper {
             if (teamStats == undefined) {
                 throw new Error("teamStats is undefined??? figure this out NOW")
             }
-
-            // Update the Soup
-            this.stats.setSoups(teamID, (teamStats as TeamStats).soup);
-            if (teamStats.soup < 0) { console.log("Soup is negative!!!"); }
-
-            this.stats.setWaterLevel(cst.waterLevel(world.turn));
 
             // Update each robot count
             this.stats.robots.forEach((type: schema.BodyType) => {

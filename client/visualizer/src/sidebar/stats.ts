@@ -1,7 +1,7 @@
 import {Config} from '../config';
 import * as cst from '../constants';
 import {AllImages} from '../imageloader';
-import {Block,Transaction,schema} from 'battlecode-playback';
+import {schema} from 'battlecode-playback';
 import Runner from '../runner';
 
 const hex: Object = {
@@ -186,22 +186,18 @@ export default class Stats {
     this.robotTds = {};
     this.statBars = new Map<number, { soups: StatBar }>();
 
-    if (!this.conf.tournamentMode) {
-      this.div.append(this.addViewOptions());
-    } else {
-      // FOR TOURNAMENT
-      let uploadButton = this.runner.getUploadButton();
-      let tempdiv = document.createElement("div");
-      tempdiv.className = "upload-button-div";
-      tempdiv.appendChild(uploadButton);
-      this.div.appendChild(tempdiv);
+    // FOR TOURNAMENT
+    let uploadButton = this.runner.getUploadButton();
+    let tempdiv = document.createElement("div");
+    tempdiv.className = "upload-button-div";
+    tempdiv.appendChild(uploadButton);
+    this.div.appendChild(tempdiv);
 
-      // add text input field
-      this.tourIndexJump.type = "text";
-      this.tourIndexJump.onkeyup = (e) => { this.tourIndexJumpFun(e) };
-      this.tourIndexJump.onchange = (e) => { this.tourIndexJumpFun(e) };
-      this.div.appendChild(this.tourIndexJump);
-    }
+    // add text input field
+    this.tourIndexJump.type = "text";
+    this.tourIndexJump.onkeyup = (e) => { this.tourIndexJumpFun(e) };
+    this.tourIndexJump.onchange = (e) => { this.tourIndexJumpFun(e) };
+    this.div.appendChild(this.tourIndexJump);
     
     // Populate with new info
     // Add a section to the stats bar for each team in the match
@@ -224,14 +220,7 @@ export default class Stats {
         initialRobotCount[robot] = td;
       }
       this.robotTds[teamID] = initialRobotCount;
-
-      // Create the stat bar for bullets
-      // let bullets = document.createElement("div");
-      // bullets.className = "stat-bar";
-      // bullets.style.backgroundColor = hex[inGameID];
-      // let bulletsSpan = document.createElement("span");
-      // bulletsSpan.innerHTML = "0";
-
+      
       // Create the stat bar for Soups
       let soups = document.createElement("div");
       soups.className = "stat-bar";
@@ -254,10 +243,6 @@ export default class Stats {
 
       this.div.appendChild(teamDiv);
     }
-
-
-
-    this.div.appendChild(this.waterLevel());
 
     // Add stats table
     this.statsTableElement.remove();
@@ -287,168 +272,6 @@ export default class Stats {
         var h = +this.tourIndexJump.value.trim().toLowerCase();
         this.runner.seekTournament(h-1);
     }
-  }
-
-  waterLevel(): HTMLDivElement {
-    // a div
-    let waterDiv = document.createElement('div');
-
-    // add a label
-    this.waterLabel = document.createElement('h4');
-    this.waterLabel.innerText = 'Water Level: 0';
-    
-
-    // just take the log of it, after adding 10
-
-    // add an elevation gradient
-    let gradient = document.createElement('div');
-    gradient.style.height = '10px';
-    gradient.style.width = '100%';
-    gradient.className = 'waterGradient';
-    let gradString = 'linear-gradient(90deg, ';
-    // rgba(0,147,83,1) 0%, rgba(29,201,2,1) 10%, rgba(254,205,54,1) 27%, rgba(222,145,1,1) 46%, rgba(255,0,0,1) 71%, rgba(242,0,252,1) 96%);'
-    // add from cst.DIRT
-    let i = 0;
-    for (let entry of Array.from(cst.DIRT_COLORS)) {
-      gradString += 'rgb(' + entry[1][0] + ',' + entry[1][1] + ',' + entry[1][2] + ') ';
-      gradString += '' + (i * 100 / cst.DIRT_COLORS.size) + '%';
-      if (i !== cst.DIRT_COLORS.size-1) {
-        gradString += ', ';
-      }
-      i += 1;
-    }
-    gradString += ');';
-    console.log(gradString);
-    // gradient.style.background = 'linear-gradient(90deg, rgba(0,147,83,1) 0%, rgba(29,201,2,1) 10%, rgba(254,205,54,1) 27%, rgba(222,145,1,1) 46%, rgba(255,0,0,1) 71%, rgba(242,0,252,1) 96%);';
-    var sheet = document.createElement('style')
-    sheet.innerHTML = ".waterGradient {background: " + gradString + "}";
-    document.body.appendChild(sheet);
-
-
-    this.waterHorizontalSlider = document.createElement('div');
-    this.waterHorizontalSlider.style.height = '20px';
-    this.waterHorizontalSlider.style.background = 'rgb(' + cst.WATER_COLOR.join(',') + ')';
-    this.setWaterLevel(0);
-
-
-    waterDiv.appendChild(this.waterLabel);
-    waterDiv.appendChild(this.waterHorizontalSlider);
-    waterDiv.appendChild(gradient);
-    waterDiv.style.marginBottom = '20px';
-
-    return waterDiv;
-  }
-
-  public showBlock(block: Block): void {
-    if (block !== undefined) {
-      const div = document.createElement("div");
-      // Replace \n with <br>
-      const span = document.createElement("span");
-      let text = "Block #" + String(block.round) + ":<br><br>";
-      block.messages.forEach(t => {
-          text += "cost: " + t.cost + "<br>message: " + t.message.join(', ') + "<br><br>";
-      });
-      span.innerHTML = text;
-      div.appendChild(span);
-      while (this.blockchain.firstChild) {
-        this.blockchain.removeChild(this.blockchain.firstChild);
-      }
-      this.blockchain.appendChild(div);
-    }
-  }
-
-  addViewOptions(){
-    let viewOptionForm = document.createElement("form");
-    viewOptionForm.setAttribute("id", "viewoptionformid");
-    
-    let pollutionInp = document.createElement("input");
-    let pollutionLabel = document.createElement("label");
-    let pollutionSpan = document.createElement("span");
-    pollutionSpan.setAttribute("class", "viewspan");
-    pollutionInp.checked = true;
-    pollutionInp.setAttribute("type", "checkbox");
-    pollutionInp.setAttribute("name", "view");
-    pollutionInp.setAttribute("value", "pollution");
-    pollutionInp.setAttribute("id", "pollutionid");
-    pollutionLabel.setAttribute("for", "pollutionid");
-    pollutionInp.setAttribute("class", "checkbox");
-    pollutionInp.onclick = () => { this.conf.viewPoll = !this.conf.viewPoll; };
-
-    pollutionSpan.innerHTML = "pollution";
-    pollutionLabel.appendChild(pollutionInp);
-    pollutionLabel.appendChild(pollutionSpan);
-    viewOptionForm.appendChild(pollutionLabel);
-
-    let waterInp = document.createElement("input");
-    let waterLabel = document.createElement("label");
-    let waterSpan = document.createElement("span");
-    waterSpan.setAttribute("class", "viewspan");
-    waterInp.checked = true;
-    waterInp.setAttribute("type", "checkbox");
-    waterInp.setAttribute("name", "view");
-    waterInp.setAttribute("value", "water");
-    waterInp.setAttribute("id", "waterid");
-    waterLabel.setAttribute("for", "waterid");
-    waterInp.setAttribute("class", "checkbox");
-    waterInp.onclick = () => { this.conf.viewWater = !this.conf.viewWater; };
-
-    waterSpan.innerHTML = "water";
-    waterLabel.appendChild(waterInp);
-    waterLabel.appendChild(waterSpan);
-    viewOptionForm.appendChild(waterLabel);
-
-    let dirtInp = document.createElement("input");
-    let dirtLabel = document.createElement("label");
-    let dirtSpan = document.createElement("span");
-    dirtSpan.setAttribute("class", "viewspan");
-    dirtInp.checked = true;
-    dirtInp.setAttribute("type", "checkbox");
-    dirtInp.setAttribute("name", "view");
-    dirtInp.setAttribute("value", "dirt");
-    dirtInp.setAttribute("id", "dirtid");
-    dirtLabel.setAttribute("for", "dirtid");
-    dirtInp.setAttribute("class", "checkbox");
-    dirtInp.onclick = () => { this.conf.viewDirt = !this.conf.viewDirt; };
-
-    dirtSpan.innerHTML = "dirt";
-    dirtLabel.appendChild(dirtInp);
-    dirtLabel.appendChild(dirtSpan);
-    viewOptionForm.appendChild(dirtLabel);
-
-    return viewOptionForm;
-  }
-
-  /**
-   * set the water level
-   */
-  setWaterLevel(waterLevel: number) {
-      let mx: number = -1000;
-      let mn: number = -1000;
-      let i = -1;
-      for (let entry of Array.from(cst.DIRT_COLORS)) {
-        mn = mx;
-        mx = entry[0];
-        if (waterLevel <= entry[0]) {
-          break;
-        }
-        i += 1;
-      }
-      if (mn === -1000) {
-        mn = mx;
-        mx += 1;
-        i = 0;
-      }
-
-      // convert into range and truncate
-      let t = (waterLevel - mn) / (mx - mn);
-      if (waterLevel <= mn) {
-        t = 0;
-      }
-      if (waterLevel >= mx) {
-        t = 1;
-      }
-    this.waterHorizontalSlider.style.width = ((i+t) * 100 / cst.DIRT_COLORS.size) + '%';
-    this.waterLabel.innerText = 'Water Level: ' + waterLevel.toFixed(3);
   }
 
   /**
