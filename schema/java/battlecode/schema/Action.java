@@ -28,7 +28,7 @@ public final class Action {
    */
   public static final byte EMBEZZLE = 2;
   /**
-   * Muckrakers can expose a scandal.
+   * slanderers can expose a scandal.
    * Target: an enemy body.
    */
   public static final byte EXPOSE = 3;
@@ -48,37 +48,27 @@ public final class Action {
    */
   public static final byte SPAWN_UNIT = 6;
   /**
-   * places a bet (enlightent center).
-   * Target: bet placed
+   * places a bid (enlightent center).
+   * Target: bid placed
    */
-  public static final byte PLACE_BET = 7;
-  /**
-   * Dies by moving into a swamp.
-   * Target: drowning robot.
-   */
-  public static final byte DIE_DROWN = 8;
-  /**
-   * Dies for having zero influence.
-   * Target: a politician, scandal or Muckrakers.
-   */
-  public static final byte DIE_ZERO_INFLUENCE = 9;
+  public static final byte PLACE_BID = 7;
   /**
    * a robot can change team after being empowered
    * Target: self
    */
-  public static final byte CHANGE_TEAM = 10;
+  public static final byte CHANGE_TEAM = 8;
   /**
    * an enlightenment center can become neutral if lost all its influence
    * Target: none.
    */
-  public static final byte BECOME_NEUTRAL = 11;
+  public static final byte BECOME_NEUTRAL = 9;
   /**
    * Dies due to an uncaught exception
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 12;
+  public static final byte DIE_EXCEPTION = 10;
 
-  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BET", "DIE_DROWN", "DIE_ZERO_INFLUENCE", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }
