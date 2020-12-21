@@ -32,6 +32,7 @@ class Match {
         this.snapshots.push(this._current.copy());
         this.deltas = new Array(1);
         this.logs = new Array(1);
+        this.profilerFiles = [];
         this.maxTurn = header.maxRounds();
         this._lastTurn = null;
         this._seekTo = 0;
@@ -146,6 +147,31 @@ class Match {
         }
         this._lastTurn = footer.totalRounds();
         this._winner = footer.winner();
+        // for (let i = 0, iMax = footer.profilerFilesLength(); i < iMax; i++) {
+        //   const file = footer.profilerFiles(i);
+        //   const frames: string[] = [];
+        //   for (let j = 0, jMax = file.framesLength(); j < jMax; j++) {
+        //     frames.push(file.frames(j));
+        //   }
+        //   const profiles: ProfilerProfile[] = [];
+        //   for (let j = 0, jMax = file.profilesLength(); j < jMax; j++) {
+        //     const profile = file.profiles(j);
+        //     const events: ProfilerEvent[] = [];
+        //     for (let k = 0, kMax = profile.eventsLength(); k < kMax; k++) {
+        //       const event = profile.events(k);
+        //       events.push({
+        //         type: event.isOpen() ? 'O' : 'C',
+        //         at: event.at(),
+        //         frame: event.frame(),
+        //       });
+        //     }
+        //     profiles.push({
+        //       name: profile.name(),
+        //       events,
+        //     });
+        //   }
+        //   this.profilerFiles.push({ frames, profiles });
+        // }
     }
     /**
      * Attempt to set seekTo to a particular point.

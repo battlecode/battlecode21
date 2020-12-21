@@ -60,6 +60,11 @@ export default class Match {
      */
     readonly logs: Array<Array<Log>>;
     /**
+     * The profiler files belong to this match.
+     * Contains 2 items (team A and team B) if profiling was enabled, empty otherwise.
+     */
+    readonly profilerFiles: Array<ProfilerFile>;
+    /**
      * The current game world.
      * DO NOT CACHE this reference between calls to seek() and compute(), it may
      * change.
