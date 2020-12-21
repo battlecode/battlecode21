@@ -239,7 +239,6 @@ table Round {
     /// The actions performed. These actions allow us to track how much soup or dirt a body carries.
     actions: [Action];
     /// The 'targets' of the performed actions. Actions without targets may have
-    /// any target (typically 0).
     actionTargets: [int];
 
     /// The IDs of bodies that set indicator dots
