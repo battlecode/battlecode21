@@ -154,6 +154,40 @@ table TeamData {
     teamID: byte;
 }
 
+// Profiler tables
+
+/// These tables are set-up so that they match closely with speedscope's file format documented at
+/// https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
+/// The client uses speedscope to show the recorded data in an interactive interface.
+
+/// A single event in a profile. Represents either an open event (meaning a
+/// method has been entered) or a close event (meaning the method was exited).
+table ProfilerEvent {
+    /// Whether this is an open event (true) or a close event (false).
+    isOpen: bool;
+    /// The bytecode counter at the time the event occurred.
+    at: int;
+    /// The index of the method name in the ProfilerFile.frames array.
+    frame: int;
+}
+
+/// A profile contains all events and is labeled with a name.
+table ProfilerProfile {
+    /// The display-friendly name of the profile.
+    name: string;
+    /// The events that occurred in the profile.
+    events: [ProfilerEvent];
+}
+
+/// A profiler file is a collection of profiles.
+/// When profiling is enabled there is one of these per team per match.
+table ProfilerFile {
+    /// The method names that are referred to in the events.
+    frames: [string];
+    /// The recorded profiles, one per robot.
+    profiles: [ProfilerProfile];
+}
+
 // Events
 
 /// An Event is a single step that needs to be processed.
