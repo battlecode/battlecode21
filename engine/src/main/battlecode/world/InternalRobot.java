@@ -120,7 +120,7 @@ public strictfp class InternalRobot {
                 && this.cachedRobotInfo.team == team
                 && this.cachedRobotInfo.type == type
                 && this.cachedRobotInfo.influence == influence
-                && this.cachedRobotInfo.influence == conviction                
+                && this.cachedRobotInfo.conviction == conviction                
                 && this.cachedRobotInfo.location.equals(location)) {
             return this.cachedRobotInfo;
         }
