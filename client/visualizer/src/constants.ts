@@ -22,6 +22,8 @@ export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<nu
   [2000, [242, 0, 252]] // pink
 ]);
 
+export const RADIUS_COLOR = "#46ff00"; // TODO: separate into action, detection, identification
+
 // Game canvas rendering sizes
 export const INDICATOR_DOT_SIZE = .3;
 export const INDICATOR_LINE_WIDTH = .3;
@@ -146,6 +148,6 @@ export function symmetryToString(symmetry: Symmetry) {
 //   }
 // }
 
-export function waterLevel(x: number) {
-  return (Math.exp(0.0028*x-1.38*Math.sin(0.00157*x-1.73)+1.38*Math.sin(-1.73))-1)
-}
+// export function waterLevel(x: number) {
+//   return (Math.exp(0.0028*x-1.38*Math.sin(0.00157*x-1.73)+1.38*Math.sin(-1.73))-1)
+// }

@@ -61,14 +61,19 @@ export interface Config {
   indicators: boolean;
 
   /**
-   * Whether or not to display the vision range.
+   * Whether or not to display the action radius.
    */
-  seeVisionRange: boolean;
+  seeActionRadius: boolean;
 
   /**
-   * Whether or not to display the action range.
+   * Whether or not to display the detection radius.
    */
-  seeActionRange: boolean;
+  seeDetectionRadius: boolean;
+
+    /**
+   * Whether or not to display the identification radius.
+   */
+  seeIdentificationRadius: boolean;
 
   /**
    * The mode of the game
@@ -113,26 +118,27 @@ export enum Mode {
  * Handle setting up any values that the user doesn't set.
  */
 export function defaults(supplied?: any): Config {
-  supplied = supplied || {};
-  return {
-    gameVersion: supplied.gameVersion || "2020.2.0.3", //TODO: Change this on each release!
-    fullscreen: supplied.fullscreen || false,
-    width: supplied.width || 600,
-    height: supplied.height || 600,
-    defaultTPS: supplied.defaultTPS || 20,
-    websocketURL: supplied.websocketURL || null,
-    matchFileURL: supplied.matchFileURL || null,
-    pollEvery: supplied.pollEvery || 500,
-    tournamentMode: supplied.tournamentMode || false,
-    interpolate: supplied.interpolate || true,
-    circleBots: supplied.circleBots || false,
-    indicators: supplied.indicators || false,
-    mode: supplied.mode || Mode.QUEUE,
-    splash: supplied.splash || supplied.matchFileURL == null || true,
-    seeVisionRange: supplied.seeVisionRange || false,
-    seeActionRange: supplied.seeActionRange || false,
-    showGrid: supplied.showGrid || false,
-    viewSwamp: supplied.viewSwamp || true,
-    shorterLogHeader: supplied.shorterLogHeader || false,
+  let conf: Config = {
+    gameVersion: "2020.2.0.3", //TODO: Change this on each release!
+    fullscreen: false,
+    width: 600,
+    height: 600,
+    defaultTPS: 20,
+    websocketURL: null,
+    matchFileURL: null,
+    pollEvery: 500,
+    tournamentMode: false,
+    interpolate: true,
+    circleBots: false,
+    indicators: false,
+    mode: Mode.QUEUE,
+    splash: true,
+    seeActionRadius: false,
+    seeDetectionRadius: false,
+    seeIdentificationRadius: false,
+    showGrid: false,
+    viewSwamp: true,
+    shorterLogHeader: false,
   };
+  return Object.assign(conf, supplied);
 }

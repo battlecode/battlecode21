@@ -139,8 +139,9 @@ export default class Sidebar {
     E - Go to End<br>
     V - Toggle Indicator Dots/Lines<br>
     G - Toggle Grid<br>
-    N - Toggle Action Range<br>
-    M - Toggle Vision Range<br>
+    N - Toggle Action Radius<br>
+    M - Toggle Detection Radius<br>
+    , - Toggle Identification Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
     

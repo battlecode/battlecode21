@@ -190,11 +190,14 @@ export default class Runner {
           case 66: // "b" - Toggle Interpolation
             this.conf.interpolate = !this.conf.interpolate;
             break;
-          case 78: // "n" - Toggle action range
-            this.conf.seeActionRange = !this.conf.seeActionRange;
+          case 78: // "n" - Toggle action radius
+            this.conf.seeActionRadius = !this.conf.seeActionRadius;
             break;
-          case 77: // "m" - Toggle vision range
-            this.conf.seeVisionRange = !this.conf.seeVisionRange;
+          case 77: // "m" - Toggle detection radius
+            this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
+            break;
+          case 188: // "," - Toggle identification radius
+            this.conf.seeIdentificationRadius = !this.conf.seeIdentificationRadius;
             break;
           case 71: // "g" - Toogle grid view
             this.conf.showGrid = !this.conf.showGrid;

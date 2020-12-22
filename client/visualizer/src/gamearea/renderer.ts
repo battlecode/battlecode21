@@ -22,7 +22,7 @@ export default class Renderer {
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,
-    readonly onMouseover: (x: number, y: number, passable: boolean) => void) {
+    readonly onMouseover: (x: number, y: number, passability: number) => void) {
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -141,7 +141,7 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      if (swampLayer) this.ctx.fillStyle = getSwampColor(map.passable[idxVal]);
+      if (swampLayer) this.ctx.fillStyle = getSwampColor(map.passability[idxVal]);
       else this.ctx.fillStyle = getSwampColor(1); //TODO: verify default value
 
       this.ctx.fillRect(cx, cy, scale, scale);
@@ -265,9 +265,9 @@ export default class Renderer {
     this.ctx.fill();
   }
 
-  private drawBotRadius(x: number, y: number, radius: number, color: string) {
+  private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
     this.ctx.beginPath();
-    this.ctx.arc(x+0.5, y+0.5, radius, 0, 2 * Math.PI);
+    this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = cst.SIGHT_RADIUS_LINE_WIDTH;
     this.ctx.stroke();
@@ -279,14 +279,16 @@ export default class Renderer {
    */
   private drawSightRadii(x: number, y: number, type: schema.BodyType, single?: Boolean) {
     // handle bots with no radius here, if necessary
-    if (this.conf.seeVisionRange || single) {
-      const visionRadius = Math.sqrt(this.metadata.types[type].visionRadiusSquared);
-      this.drawBotRadius(x, y, visionRadius, "#46ff00");
+    if (this.conf.seeActionRadius || single) {
+      this.drawBotRadius(x, y, this.metadata.types[type].actionRadiusSquared, cst.RADIUS_COLOR);
     } 
 
-    if (this.conf.seeActionRange || single) {
-      const actionRadius = Math.sqrt(this.metadata.types[type].actionRadiusSquared);
-      this.drawBotRadius(x, y, actionRadius, "#46ff00");
+    if (this.conf.seeDetectionRadius || single) {
+      this.drawBotRadius(x, y, this.metadata.types[type].detectionRadiusSquared, cst.RADIUS_COLOR);
+    } 
+
+    if (this.conf.seeIdentificationRadius || single) {
+      this.drawBotRadius(x, y, this.metadata.types[type].identificationRadiusSquared, cst.RADIUS_COLOR);
     } 
   }
 
@@ -354,7 +356,7 @@ export default class Renderer {
       // Set the location of the mouseover
       const {x,y} = this.getIntegerLocation(event, world);
       const idx = world.mapStats.getIdx(x, y);
-      onMouseover(x, y, world.mapStats.passable[idx] === 1);
+      onMouseover(x, y, world.mapStats.passability[idx]);
       this.hoverPos = {x: x, y: y};
     };
 
