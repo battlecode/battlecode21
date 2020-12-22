@@ -154,7 +154,7 @@ export default class Renderer {
     }
 
     // draw hover box last
-    if (this.hoverPos !== null) {
+    if (this.hoverPos != null) {
       const {x, y} = this.hoverPos;
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
       this.ctx.strokeStyle = 'red';
