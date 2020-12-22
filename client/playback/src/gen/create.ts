@@ -36,7 +36,7 @@ type BodiesType = {
 };
 
 type MapType = {
-  passable: boolean[],
+  passability: number[],
 };
 
 // Class to manage IDs of units
@@ -156,10 +156,15 @@ function createSBTable(builder: flatbuffers.Builder, bodies: BodiesType): flatbu
 function createMap(builder: flatbuffers.Builder, bodies: number, name: string, map?: MapType): flatbuffers.Offset {
   const bb_name = builder.createString(name);
 
-  const passable: boolean[] = (map ? map.passable : new Array(SIZE*SIZE));
+  let passability: Array<number>;
+  if (map) passability = map.passability;
+  else {
+      passability = new Array(SIZE*SIZE);
+      passability.fill(0);
+  }
 
   // all values default to zero
-  const bb_passable = schema.GameMap.createPassableVector(builder, passable);
+  const bb_passability = schema.GameMap.createPassabilityVector(builder, passability);
 
   schema.GameMap.startGameMap(builder);
   schema.GameMap.addName(builder, bb_name);
@@ -170,7 +175,7 @@ function createMap(builder: flatbuffers.Builder, bodies: number, name: string, m
   if(!isNull(bodies)) schema.GameMap.addBodies(builder, bodies);
   schema.GameMap.addRandomSeed(builder, 42);
 
-  schema.GameMap.addPassable(builder, bb_passable);
+  schema.GameMap.addPassability(builder, bb_passability);
 
   return schema.GameMap.endGameMap(builder);
 }
@@ -181,16 +186,7 @@ function createGameHeader(builder: flatbuffers.Builder): flatbuffers.Offset {
   // Is there any way to automate this?
   for (const body of bodyTypeList) {
     const btmd = schema.BodyTypeMetadata;
-    btmd.startBodyTypeMetadata(builder);
-    btmd.addType(builder, body);
-    btmd.addSpawnSource(builder, body); // Real spawn source?
-    btmd.addCost(builder, 100);
-    btmd.addConviction(builder, 10);
-    btmd.addPower(builder, 10);
-    btmd.addActionCooldown(builder, 10);
-    btmd.addVisionRange(builder, 10);
-    btmd.addActionRange(builder, 10);
-    bodies.push(schema.BodyTypeMetadata.endBodyTypeMetadata(builder));
+    bodies.push(btmd.createBodyTypeMetadata(builder, body, body, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10000)); //TODO: make robots interesting
   }
 
   const teams: flatbuffers.Offset[] = [];
@@ -458,7 +454,6 @@ function createWanderGame(turns: number, unitCount: number) {
 
   events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
 
-
   const manager = new IDsManager(maxID);
 
   const bodies = createRandomBodies(manager, unitCount);
@@ -508,7 +503,9 @@ function createWanderGame(turns: number, unitCount: number) {
 }
 
 /*
-function createWaterGame(turns: number) {
+ Map with random passability values, no units.
+*/
+function createPassabilityGame(turns: number) {
 
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
@@ -516,15 +513,11 @@ function createWaterGame(turns: number) {
   events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
 
   const map: MapType = {
-    dirt: new Array(SIZE*SIZE),
-    water: new Array(SIZE*SIZE),
-    pollution: new Array(SIZE*SIZE),
-    soup: new Array(SIZE*SIZE)
+    passability: new Array(SIZE*SIZE)
   };
   for(let i=0; i<SIZE; i++) for(let j=0; j<SIZE; j++){
     const idxVal = i*SIZE + j;
-    map.dirt[idxVal] = random(0,50);
-    map.water[idxVal] = random(0,3);
+    map.passability[idxVal] = Math.random();
   }
 
   const bb_map = createMap(builder, null, 'Water Demo', map);
@@ -545,6 +538,7 @@ function createWaterGame(turns: number) {
   return builder.asUint8Array();
 }
 
+/*
 function createViewOptionGame(turns: number) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
@@ -628,7 +622,7 @@ function main(){
     //{ name: "pick", game: createPickGame(1024) },
     { name: "wander", game: createWanderGame(2048, 32) },
     { name: "life", game: createLifeGame(512) },
-    //{ name: "water", game: createWaterGame(512) }, 
+    { name: "passability", game: createPassabilityGame(512) }, 
     //{ name: "soup", game: createSoupGame(512) }, 
     //{ name: "viewOptions", game: createViewOptionGame(512) }
   ];
