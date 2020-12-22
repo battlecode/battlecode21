@@ -13,32 +13,32 @@ package battlecode.schema;
 public final class Action {
   private Action() { }
   /**
-   * politicians self-destruct and affect nearby bodies
+   * Politicians self-destruct and affect nearby bodies
    * Target: none
    */
   public static final byte EMPOWER = 0;
   /**
-   * scandals turn into politicians.
+   * Scandals turn into politicians.
    * Target: self.
    */
   public static final byte CAMOUFLAGE = 1;
   /**
-   * slanders are alowed to TODO.
+   * Slanders are alowed to TODO.
    * Target: TODO.
    */
   public static final byte EMBEZZLE = 2;
   /**
-   * Muckrakers can expose a scandal.
+   * Slanderers can expose a scandal.
    * Target: an enemy body.
    */
   public static final byte EXPOSE = 3;
   /**
-   * units can change their flag.
+   * Units can change their flag.
    * Target: self.
    */
   public static final byte SET_FLAG = 4;
   /**
-   * units can get the flag of another unit
+   * Units can get the flag of another unit
    * Target: another unit.
    */
   public static final byte GET_FLAG = 5;
@@ -48,37 +48,27 @@ public final class Action {
    */
   public static final byte SPAWN_UNIT = 6;
   /**
-   * places a bet (enlightent center).
-   * Target: bet placed
+   * Places a bid (enlightent center).
+   * Target: bid placed
    */
-  public static final byte PLACE_BET = 7;
+  public static final byte PLACE_BID = 7;
   /**
-   * Dies by moving into a swamp.
-   * Target: drowning robot.
-   */
-  public static final byte DIE_DROWN = 8;
-  /**
-   * Dies for having zero influence.
-   * Target: a politician, scandal or Muckrakers.
-   */
-  public static final byte DIE_ZERO_INFLUENCE = 9;
-  /**
-   * a robot can change team after being empowered
+   * A robot can change team after being empowered
    * Target: self
    */
-  public static final byte CHANGE_TEAM = 10;
+  public static final byte CHANGE_TEAM = 8;
   /**
-   * an enlightenment center can become neutral if lost all its influence
+   * An enlightenment center can become neutral if lost all its influence
    * Target: none.
    */
-  public static final byte BECOME_NEUTRAL = 11;
+  public static final byte BECOME_NEUTRAL = 9;
   /**
    * Dies due to an uncaught exception
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 12;
+  public static final byte DIE_EXCEPTION = 10;
 
-  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BET", "DIE_DROWN", "DIE_ZERO_INFLUENCE", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }

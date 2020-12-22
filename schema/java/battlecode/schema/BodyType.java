@@ -9,7 +9,7 @@ package battlecode.schema;
 public final class BodyType {
   private BodyType() { }
   /**
-   * Enlightenment centers produce politicians, scandals and muckrakers and place bets
+   * Enlightenment centers produce politicians, scandals and slanderers and place bids
    *can be neutral until captured
    */
   public static final byte ENLIGHTENMENT_CENTER = 0;
@@ -19,15 +19,15 @@ public final class BodyType {
   public static final byte POLITICIAN = 1;
   /**
    * scandals generate passive influence for the enlightenment center that created them
-   * they turn into politicians at some point, and can only be identified by muckrakers.
+   * they turn into politicians at some point, and can only be identified by slanderers.
    */
   public static final byte SCANDAL = 2;
   /**
    * have the ability to identify scandals
    */
-  public static final byte MUCKRAKER = 3;
+  public static final byte SLANDERER = 3;
 
-  public static final String[] names = { "ENLIGHTENMENT_CENTER", "POLITICIAN", "SCANDAL", "MUCKRAKER", };
+  public static final String[] names = { "ENLIGHTENMENT_CENTER", "POLITICIAN", "SCANDAL", "SLANDERER", };
 
   public static String name(int e) { return names[e]; }
 }
