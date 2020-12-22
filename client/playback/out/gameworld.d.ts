@@ -21,7 +21,7 @@ export declare type MapStats = {
     maxCorner: Victor;
     bodies: schema.SpawnedBodyTable;
     randomSeed: number;
-    passable: Int8Array;
+    passability: Float64Array;
     getIdx: (x: number, y: number) => number;
     getLoc: (idx: number) => Victor;
 };

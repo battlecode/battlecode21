@@ -31,7 +31,7 @@ export type MapStats = {
   bodies: schema.SpawnedBodyTable,
   randomSeed: number,
 
-  passable: Int8Array, // boolean
+  passability: Float64Array, // double
 
   getIdx: (x:number, y:number) => number;
   getLoc: (idx: number) => Victor;
@@ -174,7 +174,7 @@ export default class GameWorld {
       maxCorner: new Victor(0,0),
       bodies: new schema.SpawnedBodyTable(),
       randomSeed: 0,
-      passable: new Int8Array(0),
+      passability: new Float64Array(0),
       getIdx: (x:number, y:number) => 0,
       getLoc: (idx: number) => new Victor(0,0)
     };
@@ -239,7 +239,7 @@ export default class GameWorld {
 
     this.mapStats.randomSeed = map.randomSeed();
 
-    this.mapStats.passable = Int8Array.from(map.passableArray());
+    this.mapStats.passability = Float64Array.from(map.passabilityArray());
 
     const width = (maxCorner.x() - minCorner.x());
     this.mapStats.getIdx = (x:number, y:number) => (
@@ -385,57 +385,47 @@ export default class GameWorld {
           */
           
           // TODO: fill actions
-          /// politicians self-destruct and affect nearby bodies
-          /// Target: none
+              /// Politicians self-destruct and affect nearby bodies
+    /// Target: none
           case schema.Action.EMPOWER:
             break;
-          /// scandals turn into politicians.
+          /// Scandals turn into politicians.
           /// Target: self.
           case schema.Action.CAMOUFLAGE:
             break;
-          /// slanders are alowed to TODO.
+          /// Slanders are alowed to TODO.
           /// Target: TODO.
           case schema.Action.EMBEZZLE:
             break;
-          /// Muckrakers can expose a scandal.
+          /// Slanderers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
             break;
-          /// units can change their flag.
+          /// Units can change their flag.
           /// Target: self.
           case schema.Action.SET_FLAG:
             break;
-          /// units can get the flag of another unit
+          /// Units can get the flag of another unit
           /// Target: another unit.
           case schema.Action.GET_FLAG:
             break;
           /// Builds a unit (enlightent center).
           /// Target: spawned unit
-          // spawnings are handled by spawnedBodies
           case schema.Action.SPAWN_UNIT:
             break;
-          /// places a bet (enlightent center).
-          /// Target: bet placed
-          case schema.Action.PLACE_BET:
+          /// Places a bid (enlightent center).
+          /// Target: bid placed
+          case schema.Action.PLACE_BID:
             break;
-          /// Dies by moving into a swamp.
-          /// Target: drowning robot.
-          case schema.Action.DIE_DROWN:
-            break;
-          /// Dies for having zero influence.
-          /// Target: a politician or scandal or Muckrakers.
-          case schema.Action.DIE_ZERO_INFLUENCE:
-            break;
-          /// a robot can change team after being empowered
+          /// A robot can change team after being empowered
           /// Target: self
           case schema.Action.CHANGE_TEAM:
             break;
-          /// an enlightenment center can become neutral if lost all its influence
+          /// An enlightenment center can become neutral if lost all its influence
           /// Target: none.
           case schema.Action.BECOME_NEUTRAL:
             break;
-          /// Dies due to an uncaught exception
-          /// Target: none
+            
           case schema.Action.DIE_EXCEPTION:
             console.log(`Exception occured: robotID(${robotID}), target(${target}`);
             break;

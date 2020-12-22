@@ -47,7 +47,7 @@ class GameWorld {
             maxCorner: new Victor(0, 0),
             bodies: new battlecode_schema_1.schema.SpawnedBodyTable(),
             randomSeed: 0,
-            passable: new Int8Array(0),
+            passability: new Float64Array(0),
             getIdx: (x, y) => 0,
             getLoc: (idx) => new Victor(0, 0)
         };
@@ -100,7 +100,7 @@ class GameWorld {
             this.insertBodies(bodies);
         }
         this.mapStats.randomSeed = map.randomSeed();
-        this.mapStats.passable = Int8Array.from(map.passableArray());
+        this.mapStats.passability = Float64Array.from(map.passabilityArray());
         const width = (maxCorner.x() - minCorner.x());
         this.mapStats.getIdx = (x, y) => (Math.floor(y) * width + Math.floor(x));
         this.mapStats.getLoc = (idx) => (new Victor(idx % width, Math.floor(idx / width)));
@@ -231,57 +231,46 @@ class GameWorld {
                       break;
                     */
                     // TODO: fill actions
-                    /// politicians self-destruct and affect nearby bodies
+                    /// Politicians self-destruct and affect nearby bodies
                     /// Target: none
                     case battlecode_schema_1.schema.Action.EMPOWER:
                         break;
-                    /// scandals turn into politicians.
+                    /// Scandals turn into politicians.
                     /// Target: self.
                     case battlecode_schema_1.schema.Action.CAMOUFLAGE:
                         break;
-                    /// slanders are alowed to TODO.
+                    /// Slanders are alowed to TODO.
                     /// Target: TODO.
                     case battlecode_schema_1.schema.Action.EMBEZZLE:
                         break;
-                    /// Muckrakers can expose a scandal.
+                    /// Slanderers can expose a scandal.
                     /// Target: an enemy body.
                     case battlecode_schema_1.schema.Action.EXPOSE:
                         break;
-                    /// units can change their flag.
+                    /// Units can change their flag.
                     /// Target: self.
                     case battlecode_schema_1.schema.Action.SET_FLAG:
                         break;
-                    /// units can get the flag of another unit
+                    /// Units can get the flag of another unit
                     /// Target: another unit.
                     case battlecode_schema_1.schema.Action.GET_FLAG:
                         break;
                     /// Builds a unit (enlightent center).
                     /// Target: spawned unit
-                    // spawnings are handled by spawnedBodies
                     case battlecode_schema_1.schema.Action.SPAWN_UNIT:
                         break;
-                    /// places a bet (enlightent center).
-                    /// Target: bet placed
-                    case battlecode_schema_1.schema.Action.PLACE_BET:
+                    /// Places a bid (enlightent center).
+                    /// Target: bid placed
+                    case battlecode_schema_1.schema.Action.PLACE_BID:
                         break;
-                    /// Dies by moving into a swamp.
-                    /// Target: drowning robot.
-                    case battlecode_schema_1.schema.Action.DIE_DROWN:
-                        break;
-                    /// Dies for having zero influence.
-                    /// Target: a politician or scandal or Muckrakers.
-                    case battlecode_schema_1.schema.Action.DIE_ZERO_INFLUENCE:
-                        break;
-                    /// a robot can change team after being empowered
+                    /// A robot can change team after being empowered
                     /// Target: self
                     case battlecode_schema_1.schema.Action.CHANGE_TEAM:
                         break;
-                    /// an enlightenment center can become neutral if lost all its influence
+                    /// An enlightenment center can become neutral if lost all its influence
                     /// Target: none.
                     case battlecode_schema_1.schema.Action.BECOME_NEUTRAL:
                         break;
-                    /// Dies due to an uncaught exception
-                    /// Target: none
                     case battlecode_schema_1.schema.Action.DIE_EXCEPTION:
                         console.log(`Exception occured: robotID(${robotID}), target(${target}`);
                         break;

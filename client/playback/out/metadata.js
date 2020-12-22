@@ -22,7 +22,7 @@ class Metadata {
         const bodyCount = header.bodyTypeMetadataLength();
         for (let i = 0; i < bodyCount; i++) {
             const body = header.bodyTypeMetadata(i);
-            this.types[body.type()] = new BodyTypeMetaData(body.type(), body.spawnSource(), body.cost(), body.conviction(), body.power(), body.actionCooldown(), body.visionRange(), body.actionRange(), 10000);
+            this.types[body.type()] = new BodyTypeMetaData(body.type(), body.spawnSource(), body.minCost(), body.convictionRatio(), body.actionCooldown(), body.actionRadiusSquared(), body.detectionRadiusSquared(), body.identificationRadiusSquared(), body.initialInfluence(), body.influencePerTurn(), body.empowerBuffFactor(), body.buffDuration(), body.bytecodeLimit());
         }
         // SAFE
         Object.freeze(this.types);
@@ -45,17 +45,20 @@ exports.Team = Team;
  * Information about a specific body type.
  */
 class BodyTypeMetaData {
-    constructor(type, spawnSource, cost, conviction, power, actionCooldown, visionRadiusSquared, actionRadiusSquared, bytecodeLimit) {
+    constructor(type, spawnSource, minCost, convictionRatio, actionCooldown, actionRadiusSquared, detectionRadiusSquared, identificationRadiusSquared, initialInfluence, influencePerTurn, empowerBuffFactor, buffDuration, bytecodeLimit) {
         this.type = type;
         this.spawnSource = spawnSource;
-        this.cost = cost;
-        this.conviction = conviction;
-        this.power = power;
+        this.minCost = minCost;
+        this.convictionRatio = convictionRatio;
         this.actionCooldown = actionCooldown;
-        this.visionRadiusSquared = visionRadiusSquared;
         this.actionRadiusSquared = actionRadiusSquared;
+        this.detectionRadiusSquared = detectionRadiusSquared;
+        this.identificationRadiusSquared = identificationRadiusSquared;
+        this.initialInfluence = initialInfluence;
+        this.influencePerTurn = influencePerTurn;
+        this.empowerBuffFactor = empowerBuffFactor;
+        this.buffDuration = buffDuration;
         this.bytecodeLimit = bytecodeLimit;
-        Object.freeze(this);
     }
 }
 exports.BodyTypeMetaData = BodyTypeMetaData;

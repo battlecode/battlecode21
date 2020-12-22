@@ -48,13 +48,17 @@ export default class Metadata {
       this.types[body.type()] = new BodyTypeMetaData(
         body.type(),
         body.spawnSource(),
-        body.cost(),
-        body.conviction(),
-        body.power(),
+        body.minCost(),
+        body.convictionRatio(),
         body.actionCooldown(),
-        body.visionRange(),
-        body.actionRange(),
-        10000
+        body.actionRadiusSquared(),
+        body.detectionRadiusSquared(),
+        body.identificationRadiusSquared(),
+        body.initialInfluence(),
+        body.influencePerTurn(),
+        body.empowerBuffFactor(),
+        body.buffDuration(),
+        body.bytecodeLimit()
       );
     }
     // SAFE
@@ -87,31 +91,9 @@ export class Team {
  * Information about a specific body type.
  */
 export class BodyTypeMetaData {
-  // schema.BodyTypeMetadata
-
-  type: schema.BodyType;
-  spawnSource: schema.BodyType;
-  cost: number;
-  conviction: number;
-  power: number;
-  actionCooldown: number;
-  visionRadiusSquared: number;
-  actionRadiusSquared: number;
-  bytecodeLimit: number; // TODO: is this needed?
-  
-  constructor(type: schema.BodyType, spawnSource: schema.BodyType, cost: number,
-      conviction: number, power: number, actionCooldown: number,
-      visionRadiusSquared: number, actionRadiusSquared: number, bytecodeLimit: number) {
-
-    this.type = type;
-    this.spawnSource = spawnSource;
-    this.cost = cost;
-    this.conviction = conviction;
-    this.power = power;
-    this.actionCooldown = actionCooldown;
-    this.visionRadiusSquared = visionRadiusSquared;
-    this.actionRadiusSquared = actionRadiusSquared;
-    this.bytecodeLimit = bytecodeLimit;
-    Object.freeze(this);
+  constructor(public type: schema.BodyType, public spawnSource:schema.BodyType, public minCost:number, 
+    public convictionRatio:number, public actionCooldown:number, public actionRadiusSquared:number, public detectionRadiusSquared:number, 
+    public identificationRadiusSquared:number, public initialInfluence:number, public influencePerTurn:number, 
+    public empowerBuffFactor:number, public buffDuration:number, public bytecodeLimit:number) {
   }
 }

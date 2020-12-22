@@ -38,12 +38,16 @@ export declare class Team {
 export declare class BodyTypeMetaData {
     type: schema.BodyType;
     spawnSource: schema.BodyType;
-    cost: number;
-    conviction: number;
-    power: number;
+    minCost: number;
+    convictionRatio: number;
     actionCooldown: number;
-    visionRadiusSquared: number;
     actionRadiusSquared: number;
+    detectionRadiusSquared: number;
+    identificationRadiusSquared: number;
+    initialInfluence: number;
+    influencePerTurn: number;
+    empowerBuffFactor: number;
+    buffDuration: number;
     bytecodeLimit: number;
-    constructor(type: schema.BodyType, spawnSource: schema.BodyType, cost: number, conviction: number, power: number, actionCooldown: number, visionRadiusSquared: number, actionRadiusSquared: number, bytecodeLimit: number);
+    constructor(type: schema.BodyType, spawnSource: schema.BodyType, minCost: number, convictionRatio: number, actionCooldown: number, actionRadiusSquared: number, detectionRadiusSquared: number, identificationRadiusSquared: number, initialInfluence: number, influencePerTurn: number, empowerBuffFactor: number, buffDuration: number, bytecodeLimit: number);
 }
