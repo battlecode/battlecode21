@@ -101,6 +101,7 @@ class GameWorld {
         }
         this.mapStats.randomSeed = map.randomSeed();
         this.mapStats.passability = Float64Array.from(map.passabilityArray());
+        console.log("passability", this.mapStats.passability, map.passabilityArray());
         const width = (maxCorner.x() - minCorner.x());
         this.mapStats.getIdx = (x, y) => (Math.floor(y) * width + Math.floor(x));
         this.mapStats.getLoc = (idx) => (new Victor(idx % width, Math.floor(idx / width)));
@@ -399,16 +400,22 @@ class GameWorld {
         });
         // Extra initialization
         const arrays = this.bodies.arrays;
-        const initList = [
-            arrays.onDirt,
-            arrays.carryDirt,
-            arrays.cargo,
-            arrays.isCarried,
-            arrays.bytecodesUsed,
-        ];
-        initList.forEach((arr) => {
-            soa_1.default.fill(arr, 0, startIndex, this.bodies.length);
-        });
+        //TODO: Body info tracking
+        // const initList = [
+        //   arrays.onDirt,
+        //   arrays.carryDirt,
+        //   arrays.cargo,
+        //   arrays.isCarried,
+        //   arrays.bytecodesUsed,
+        // ];
+        // initList.forEach((arr) => {
+        //   StructOfArrays.fill(
+        //     arr,
+        //     0,
+        //     startIndex,
+        //     this.bodies.length
+        //   );
+        // });
     }
 }
 exports.default = GameWorld;

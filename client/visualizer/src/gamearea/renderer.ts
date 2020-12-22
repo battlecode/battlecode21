@@ -96,7 +96,7 @@ export default class Renderer {
       // should be using image for now
       // TODO change swamp color depending on the parameter
 
-      return `rgb(85,92,69)`;
+      return `rgb(${x*183 + (1 - x)*0},${x*255 + (1 - x)*171},${x*191 + (1 - x)*8})`;
 
       // iterate and find the two colors
       let lo: number[] = [0,0,0];

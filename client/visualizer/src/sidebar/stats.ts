@@ -101,7 +101,7 @@ export default class Stats {
         tdRobot.appendChild(this.images.robot[robotName]['empty'][inGameID]);
       }
       else{
-        tdRobot.appendChild(this.images.robot[robotName][inGameID]);
+        //tdRobot.appendChild(this.images.robot[robotName][inGameID]);
       }
 
       if(robotName === 'vaporator'){
