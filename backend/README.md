@@ -65,7 +65,7 @@ Also, note that the deployed version uses `uWSGI` to run (as specified in the Do
 
 ### First-Time Deployment Setup
 
-A backend must be created (in addition to the database). See the `docs/SETUP.md` file for more.
+A backend must be created (in addition to the database). See the "Deployment Setup" section in `docs/SETUP.md` file for more.
 
 We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
 
