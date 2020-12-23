@@ -28,9 +28,6 @@ services:
       - 8000:80
     environment:
       - DJANGO_SETTINGS_MODULE=dev_settings
-
-      - DB_HOST_BC_DEV=db
-    # command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && uwsgi --ini uwsgi.ini'
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
 
   compile:
