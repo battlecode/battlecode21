@@ -707,22 +707,40 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     @action(methods=['patch', 'post'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
-        submission = self.get_queryset().get(pk=pk)
-        if team != submission.team:
-            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            submission = self.get_queryset().get(pk=pk)
+            if submission.compilation_status != 0 and submission.compilation_status != 3:
+                return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+            comp_status = int(request.data.get('compilation_status'))
 
-        team_sub = TeamSubmission.objects.all().get(team=team)
+            if comp_status is None:
+                return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+            elif comp_status >= 1: #status provided in correct form
+                submission.compilation_status = comp_status
 
-        team_sub.compiling_id = None
-        team_sub.last_3_id = team_sub.last_2_id
-        team_sub.last_2_id = team_sub.last_1_id
-        team_sub.last_1_id = submission
-        submission.compilation_status = 2
+                if comp_status == 1: #compilation failed
+                    team_sub = TeamSubmission.objects.all().get(team=submission.team)
+                    if submission.id != team_sub.compiling_id:
+                        submission.save()
+                        return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_200_OK)
+                    team_sub.compiling_id = None
+                    team_sub.last_3_id = team_sub.last_2_id
+                    team_sub.last_2_id = team_sub.last_1_id
+                    team_sub.last_1_id = submission
+                    submission.compilation_status = 2
 
-        team_sub.save()
-        submission.save()
+                    team_sub.save()
 
-        return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+                submission.save()
+
+                return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+            elif comp_status == 0: #trying to set to compiling
+                return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Only superuser can update compilation status'}, status.HTTP_401_UNAUTHORIZED)
 
     
     @action(methods=['get'], detail=True)
