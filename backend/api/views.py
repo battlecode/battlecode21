@@ -712,15 +712,15 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             submission = self.get_queryset().get(pk=pk)
             if submission.compilation_status != 0 and submission.compilation_status != 3:
                 return Response({'message': 'Response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
-            comp_status = int(request.data.get('compilation_status'))
+            new_comp_status = int(request.data.get('compilation_status'))
 
-            if comp_status is None:
+            if new_comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+            elif new_comp_status >= 1: #status provided in correct form
                 # TODO ^ this check seems nonexhaustive
-            elif comp_status >= 1: #status provided in correct form
-                submission.compilation_status = comp_status
+                submission.compilation_status = new_comp_status
 
-                if comp_status == 1: #compilation failed
+                if new_comp_status == 1: #compilation failed
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
                     if submission.id != team_sub.compiling_id:
                         # TODO should this check be earlier (unsure here)?
@@ -738,7 +738,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 submission.save()
 
                 return Response({'message': 'Status updated'}, status.HTTP_200_OK)
-            elif comp_status == 0: #trying to set to compiling
+            elif new_comp_status == 0: #trying to set to compiling
                 return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
