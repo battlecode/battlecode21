@@ -86,9 +86,6 @@ enum Action : byte {
     /// Units can change their flag.
     /// Target: self
     SET_FLAG,
-    /// Units can get the flag of another unit
-    /// Target: another unit
-    GET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
