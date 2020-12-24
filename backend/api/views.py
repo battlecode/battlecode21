@@ -716,8 +716,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
             if new_comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
-            elif new_comp_status >= 1: #status provided in correct form
-                # TODO ^ this check seems nonexhaustive
+            elif new_comp_status in (1, 2, 3): #status provided in correct form
                 submission.compilation_status = new_comp_status
 
                 if new_comp_status == 1: #compilation succeeded
