@@ -729,10 +729,14 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
                 if new_comp_status == 1: #compilation succeeded
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
-                    team_sub.last_3_id = team_sub.last_2_id
-                    team_sub.last_2_id = team_sub.last_1_id
-                    team_sub.last_1_id = submission
-                    team_sub.save()
+                    # Only if this submission is newer than what's already been processed,
+                    # update the submission history. 
+                    # (to prevent reverting to older submissions that took longer to process)
+                    if submission.id > team_sub.last_1_id:
+                        team_sub.last_3_id = team_sub.last_2_id
+                        team_sub.last_2_id = team_sub.last_1_id
+                        team_sub.last_1_id = submission
+                        team_sub.save()
 
                 return Response({'message': 'Status updated'}, status.HTTP_200_OK)
             elif new_comp_status == 0: # Trying to set to compilation in progress, which shouldn't be a valid result
