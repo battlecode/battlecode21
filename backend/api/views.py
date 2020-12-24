@@ -720,6 +720,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
             elif new_comp_status in (1, 2, 3): #status provided in correct form
                 submission.compilation_status = new_comp_status
+                submission.save()
 
                 if new_comp_status == 1: #compilation succeeded
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
@@ -727,10 +728,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                     team_sub.last_3_id = team_sub.last_2_id
                     team_sub.last_2_id = team_sub.last_1_id
                     team_sub.last_1_id = submission
-
                     team_sub.save()
-
-                submission.save()
 
                 return Response({'message': 'Status updated'}, status.HTTP_200_OK)
             elif new_comp_status == 0: # Trying to set to compilation in progress, which shouldn't be a valid result
