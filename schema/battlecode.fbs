@@ -24,7 +24,7 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// Enlightenment centers produce politicians, Muckarakers and slanderers and place bids
+    /// Enlightenment centers produce politicians, Muckrakers and slanderers and place bids
     ///can be neutral until captured
     ENLIGHTENMENT_CENTER,
     /// politicians use their influence to self destruct and capture other units
@@ -33,7 +33,7 @@ enum BodyType : byte {
     /// they turn into politicians at some point, and can only be identified by slanderers.
     SLANDERER,
     /// have the ability to identify slanderers
-    MUCKRAKERS,
+    MUCKRAKER,
 }
 
 /// A list of new bodies to be placed on the map.
