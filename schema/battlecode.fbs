@@ -145,7 +145,7 @@ table TeamData {
     teamID: byte;
 }
 
-// Profiler tables
+/// Profiler tables
 
 /// These tables are set-up so that they match closely with speedscope's file format documented at
 /// https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
@@ -179,7 +179,7 @@ table ProfilerFile {
     profiles: [ProfilerProfile];
 }
 
-// Events
+/// Events
 
 /// An Event is a single step that needs to be processed.
 /// A saved game simply consists of a long list of Events.
