@@ -710,6 +710,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     @action(methods=['patch', 'post'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
+        # Also make sure that the admin is on a team! Otherwise you may get a 403.
         if is_admin:
             submission = self.get_queryset().get(pk=pk)
             if submission.compilation_status == 1:
