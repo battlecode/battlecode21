@@ -723,10 +723,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
                 if new_comp_status == 1: #compilation succeeded
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
-                    if submission.id != team_sub.compiling_id:
-                        # TODO should this check be earlier (unsure here)?
-                        submission.save()
-                        return Response({'message': 'Team replaced this submission with new submission'}, status.HTTP_200_OK)
                     team_sub.compiling_id = None
                     team_sub.last_3_id = team_sub.last_2_id
                     team_sub.last_2_id = team_sub.last_1_id
