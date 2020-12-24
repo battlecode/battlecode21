@@ -262,7 +262,7 @@ public strictfp class InternalRobot {
 
     // should be called at the beginning of every round
     public void processBeginningOfRound() {
-        // this.healthChanged = false;
+        // anything
     }
 
     public void processBeginningOfTurn() {
@@ -276,17 +276,11 @@ public strictfp class InternalRobot {
     public void processEndOfTurn() {
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
-        if (this.conviction > 0) 
-            this.roundsAlive++;
-        else
-            this.roundsAlive = -1;
+        this.roundsAlive++;
     }
 
     public void processEndOfRound() {
-        // Check if the robot has any conviction left at
-        // at the end of the turn; if not, remove it 
-        if (this.roundsAlive == -1)
-            this.gameWorld.destroyRobot(this.ID);
+        // empty
     }
 
     // *********************************
@@ -295,10 +289,6 @@ public strictfp class InternalRobot {
 
     // TODO
     public boolean canExecuteCode() {
-        // if (getHealth() <= 0.0)
-        //     return false;
-        // if(type.isBuildable())
-        //     return roundsAlive >= 20;
         return true;
     }
 
@@ -316,7 +306,6 @@ public strictfp class InternalRobot {
 
     public void suicide(){
         this.gameWorld.destroyRobot(getID());
-
         this.gameWorld.getMatchMaker().addAction(getID(), Action.DIE_SUICIDE, -1);
     }
 
