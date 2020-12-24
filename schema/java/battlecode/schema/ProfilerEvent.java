@@ -9,6 +9,7 @@ import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 /**
+ * Profiler tables
  * These tables are set-up so that they match closely with speedscope's file format documented at
  * https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
  * The client uses speedscope to show the recorded data in an interactive interface.
@@ -16,10 +17,9 @@ import com.google.flatbuffers.*;
  * method has been entered) or a close event (meaning the method was exited).
  */
 public final class ProfilerEvent extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static ProfilerEvent getRootAsProfilerEvent(ByteBuffer _bb) { return getRootAsProfilerEvent(_bb, new ProfilerEvent()); }
   public static ProfilerEvent getRootAsProfilerEvent(ByteBuffer _bb, ProfilerEvent obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
   public ProfilerEvent __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
@@ -39,27 +39,20 @@ public final class ProfilerEvent extends Table {
       boolean isOpen,
       int at,
       int frame) {
-    builder.startTable(3);
+    builder.startObject(3);
     ProfilerEvent.addFrame(builder, frame);
     ProfilerEvent.addAt(builder, at);
     ProfilerEvent.addIsOpen(builder, isOpen);
     return ProfilerEvent.endProfilerEvent(builder);
   }
 
-  public static void startProfilerEvent(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startProfilerEvent(FlatBufferBuilder builder) { builder.startObject(3); }
   public static void addIsOpen(FlatBufferBuilder builder, boolean isOpen) { builder.addBoolean(0, isOpen, false); }
   public static void addAt(FlatBufferBuilder builder, int at) { builder.addInt(1, at, 0); }
   public static void addFrame(FlatBufferBuilder builder, int frame) { builder.addInt(2, frame, 0); }
   public static int endProfilerEvent(FlatBufferBuilder builder) {
-    int o = builder.endTable();
+    int o = builder.endObject();
     return o;
-  }
-
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
-
-    public ProfilerEvent get(int j) { return get(new ProfilerEvent(), j); }
-    public ProfilerEvent get(ProfilerEvent obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 
