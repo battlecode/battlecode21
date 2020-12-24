@@ -55,6 +55,7 @@ Delete the contents of the following tables. (_Don't delete the tables themselve
 Updating `api_league` is slightly different. Don't delete the entry; just edit it instead. Change `name` to something more suitable (eg `bh20`), change the `start_date` and `end_date` (they don't have to be exact, so feel free to use a longer range than the actual tournament. Set `active` to true. **Set `submissions_enabled` to false and `game_released` to false.** Finally `engine_version` needs to be changed as well; ask the infrastructure team what to change it to.
 
 Next, we need to register a superuser account (for use by the infra). Run the battlecode website, and simply follow the normal account registration process. Take note of the password!
+Also, have this superuser create and join a team (this is necessary for some permissions).
 Then, go back to your Postgres editor. In `api_user`, find the user you just created. Change `is_superuser` and `is_staff` to true. Finally, pass the username and password of this account to the infrastructure team.
 
 Then stop the old database (on its main page, press "stop").
