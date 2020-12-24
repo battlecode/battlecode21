@@ -716,7 +716,10 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 # If a compilation has already succeeded, keep as so.
                 # (Would make sense for failed / errored compiles to flip to successes upon retry, so allow for this)
                 return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
-            new_comp_status = int(request.data.get('compilation_status'))
+            try: 
+                new_comp_status = int(request.data.get('compilation_status'))
+            except:
+                return Response({'message': 'No status provided. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
 
             if new_comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
