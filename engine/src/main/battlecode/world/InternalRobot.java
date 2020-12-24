@@ -46,7 +46,6 @@ public strictfp class InternalRobot {
         this.type = type;
         this.location = loc;
         this.influence = influence;
-
         this.conviction = this.type.convictionRatio * (this.influence * this.influence);
 
         this.controlBits = 0;
@@ -54,7 +53,6 @@ public strictfp class InternalRobot {
         this.bytecodesUsed = 0;
 
         this.roundsAlive = 0;
-
         this.cooldownTurns = 0;
 
         this.gameWorld = gw;
