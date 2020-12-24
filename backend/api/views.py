@@ -663,6 +663,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         submission = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub = TeamSubmission.objects.all().get(team=team)
+        # compiling_id holds id of last submission created for this team
+        # (regardless of compilation status)
         team_sub.compiling_id = submission
         team_sub.save()
 
