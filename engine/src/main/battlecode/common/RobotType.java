@@ -112,13 +112,13 @@ public enum RobotType {
      */
     public final int bytecodeLimit;
 
-
     /**
-     * Returns whether the unit can build robots.
+     * Returns whether the type can build robots of the specified type.
      *
-     * @return whether the robot can build
+     * @param type the RobotType to be built
+     * @return whether the robot can build robots of the specified type
      */
-    public boolean canBuild() {
+    public boolean canBuild(RobotType type) {
         return this == type.spawnSource;
     }
 
