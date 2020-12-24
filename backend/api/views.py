@@ -792,20 +792,12 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         if pk != str(team.id):
             return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
 
-        try:
-            team_data = self.get_queryset().get(pk=pk)
-            comp_id = team_data.compiling_id
-            if comp_id is not None:
-                comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
-                return Response({'status': comp_status}, status.HTTP_200_OK)
-            else:
-                if team_data.last_1_id is not None:
-                    # case where submission has been moved out of compilation cell
-                    return Response({'status': '2'}, status.HTTP_200_OK)
-                else:
-                    return Response({'status': None}, status.HTTP_200_OK)
-        except:
-            # case where this team has no submission data stored
+        team_data = self.get_queryset().get(pk=pk)
+        comp_id = team_data.compiling_id
+        if comp_id is not None:
+            comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
+            return Response({'status': comp_status}, status.HTTP_200_OK)
+        else:
             return Response({'status': None}, status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
