@@ -80,12 +80,6 @@ enum Action : byte {
     /// Politicians self-destruct and affect nearby bodies
     /// Target: none
     EMPOWER,
-    /// Slanderers turn into politicians.
-    /// Target: self
-    CAMOUFLAGE,
-    /// Slanderers passively generate income.
-    /// Target: the enlightenment center that spawned them
-    EMBEZZLE,
     /// Muckrakers can expose a slanderer.
     /// Target: an enemy body
     EXPOSE,
