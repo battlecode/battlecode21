@@ -81,19 +81,19 @@ enum Action : byte {
     /// Target: none
     EMPOWER,
     /// Slanderers turn into politicians.
-    /// Target: self.
+    /// Target: self
     CAMOUFLAGE,
-    /// Slanderers are alowed to TODO.
-    /// Target: TODO.
+    /// Slanderers passively generate income.
+    /// Target: the enlightenment center that spawned them
     EMBEZZLE,
-    /// Muckarakers can expose a slanderer.
-    /// Target: an enemy body.
+    /// Muckrakers can expose a slanderer.
+    /// Target: an enemy body
     EXPOSE,
     /// Units can change their flag.
-    /// Target: self.
+    /// Target: self
     SET_FLAG,
     /// Units can get the flag of another unit
-    /// Target: another unit.
+    /// Target: another unit
     GET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
