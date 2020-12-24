@@ -3,6 +3,7 @@
 package battlecode.schema;
 
 /**
+ * Events
  * An Event is a single step that needs to be processed.
  * A saved game simply consists of a long list of Events.
  * Events can be divided by either being sent separately (e.g. as separate

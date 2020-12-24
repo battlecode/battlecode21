@@ -24,28 +24,16 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// The hq produces miners, is also a net gun and a refinery.
-    HQ,
-    /// Miners extract crude soup and bring it to the refineries.
-    MINER,
-    /// Refineries turn crude soup into refined soup, and produce pollution.
-    REFINERY,
-    /// Vaporators reduce pollution.
-    VAPORATOR,
-    /// Design schools create landscapers.
-    DESIGN_SCHOOL,
-    /// Fulfillment centers create drones.
-    FULFILLMENT_CENTER,
-    /// Landscapers take dirt from adjacent (decreasing the elevation)
-    /// squares or deposit dirt onto adjacent squares, including
-    /// into water (increasing the elevation).
-    LANDSCAPER,
-    /// Drones pick up any unit and drop them somewhere else.
-    DELIVERY_DRONE,
-    /// Net guns shoot down drones.
-    NET_GUN,
-    /// Cows produce pollution.
-    COW
+    /// Enlightenment centers produce politicians, Muckrakers and slanderers and place bids
+    ///can be neutral until captured
+    ENLIGHTENMENT_CENTER,
+    /// politicians use their influence to self destruct and capture other units
+    POLITICIAN,
+    /// slanderers generate passive influence for the enlightenment center that created them
+    /// they turn into politicians at some point, and can only be identified by slanderers.
+    SLANDERER,
+    /// have the ability to identify slanderers
+    MUCKRAKER,
 }
 
 /// A list of new bodies to be placed on the map.
@@ -62,18 +50,8 @@ table SpawnedBodyTable {
     types: [BodyType];
     /// The locations of the bodies.
     locs: VecTable;
-}
-
-/// A table of pollution effects
-/// The pollution effect at a location is (global pollution + all additive effects) * all multiplicative effects
-table LocalPollutionTable {
-    /// The origin and radius of the circle defining the pollution effect.
-    locations: VecTable;
-    radiiSquared: [int];
-    /// The additive amount of the pollution effect.
-    additiveEffects: [int];
-    /// The multiplicative coefficient.
-    multiplicativeEffects: [float];
+    /// the amount of influence paid to create these bodies
+    cost: [int];
 }
 
 /// The map a round is played on.
@@ -88,16 +66,8 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// The dirt levels.
-    dirt: [int];
-    /// The water levels (above dirt).
-    water: [bool];
-    /// The pollution levels.
-    pollution: [int];
-    /// The amount of crude soup to be mined.
-    soup: [int];
-    /// The initial water level.
-    initialWater: int;
+    /// The factor to scale cooldowns by
+    passability: [double];
 }
 
 /// Actions that can be performed.
@@ -107,45 +77,27 @@ table GameMap {
 /// Actions may have 'targets', which are the units on which
 /// the actions were performed.
 enum Action : byte {
-    /// Mines a unit of soup (miners).
-    /// Target: location.
-    MINE_SOUP,
-    /// Deposits a unit of soup (miners).
-    /// Target: refinery.
-    DEPOSIT_SOUP,
-    /// Refines a unit of soup (refinery).
-    /// Target: none.
-    REFINE_SOUP,
-    /// Digs a unit of dirt (landscapers).
-    /// Target: location.
-    DIG_DIRT,
-    /// Deposits a unit of dirt (landscapers).
-    /// Target: location.
-    DEPOSIT_DIRT,
-    /// Picks up a unit (drones).
-    /// Target: unit picked up.
-    PICK_UNIT,
-    /// Drops off a unit (drones).
-    /// Target: unit dropped off.
-    DROP_UNIT,
-    /// Builds a unit.
+    /// Politicians self-destruct and affect nearby bodies
+    /// Target: none
+    EMPOWER,
+    /// Muckrakers can expose a slanderer.
+    /// Target: an enemy body
+    EXPOSE,
+    /// Units can change their flag.
+    /// Target: self
+    SET_FLAG,
+    /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
-    /// Shoots a drone.
-    /// Target: drone shot.
-    SHOOT,
-    /// Dies from drowning.
+    /// Places a bid (enlightent center).
+    /// Target: bid placed
+    PLACE_BID,
+    /// A robot can change team after being empowered
+    /// Target: self
+    CHANGE_TEAM,
+    /// An enlightenment center can become neutral if lost all its influence
     /// Target: none.
-    DIE_DROWN,
-    /// Dies from being shot (drones).
-    /// Target: drone.
-    DIE_SHOT,
-    /// Dies due to having too much dirt on top (buildings).
-    /// Target: landscaper
-    DIE_TOO_MUCH_DIRT,
-    /// Dies from suicide.
-    /// Target: none.
-    DIE_SUICIDE,
+    BECOME_NEUTRAL,
     /// Dies due to an uncaught exception
     /// Target: none
     DIE_EXCEPTION
@@ -159,27 +111,27 @@ table BodyTypeMetadata {
     type: BodyType;
     /// The spawn source.
     spawnSource: BodyType;
-    /// The cost of the type, in soup.
-    cost: int;
-    /// The maximum amount of dirt the type can carry.
-    dirtLimit: int;
-    /// The maximum amount of soup the type can carry.
-    soupLimit: int;
-    /// The number of cooldowns between every two actions, for pollution 0.
-    actionCooldown: float;
-    /// The maximum distance squared this type can sense other robots.
-    sensorRadiusSquared: int;
-    /// The radius squared of local pollution effects.
-    pollutionRadiusSquared: int;
-    /// The amount of pollution created when refining soup locally.
-    localPollutionAdditiveEffect: int;
-    /// The fraction that the local pollution is multiplied by around vaporators.
-    localPollutionMultiplicativeEffect: float;
-    /// The amount of global pollution this type creates.
-    globalPollutionAmount: int;
-    /// The maximum amount of soup this type processes every turn.
-    maxSoupProduced: int;
-    /// The bytecode limit of this type.
+    /// the minimum cost to produce a unit of this type
+    minCost: int;
+    /// the convictionRatio of this type
+    convictionRatio: float;
+    /// cooldown of this type
+    actionCooldown: int;
+    /// action radius if this type
+    actionRadiusSquared: int;
+    /// detection radius of this type
+    detectionRadiusSquared: int;
+    /// identification radius squared for this type
+    identificationRadiusSquared: int;
+    /// initial influence of this type
+    initialInfluence: int;
+    /// influence per turn for this type
+    influencePerTurn: float;
+    /// empower buff factor for this type
+    empowerBuffFactor: float;
+    /// empower buff duration of this type
+    buffDuration: int;
+    /// bytecode limit for this type
     bytecodeLimit: int;
 }
 
@@ -193,7 +145,41 @@ table TeamData {
     teamID: byte;
 }
 
-// Events
+/// Profiler tables
+
+/// These tables are set-up so that they match closely with speedscope's file format documented at
+/// https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
+/// The client uses speedscope to show the recorded data in an interactive interface.
+
+/// A single event in a profile. Represents either an open event (meaning a
+/// method has been entered) or a close event (meaning the method was exited).
+table ProfilerEvent {
+    /// Whether this is an open event (true) or a close event (false).
+    isOpen: bool;
+    /// The bytecode counter at the time the event occurred.
+    at: int;
+    /// The index of the method name in the ProfilerFile.frames array.
+    frame: int;
+}
+
+/// A profile contains all events and is labeled with a name.
+table ProfilerProfile {
+    /// The display-friendly name of the profile.
+    name: string;
+    /// The events that occurred in the profile.
+    events: [ProfilerEvent];
+}
+
+/// A profiler file is a collection of profiles.
+/// When profiling is enabled there is one of these per team per match.
+table ProfilerFile {
+    /// The method names that are referred to in the events.
+    frames: [string];
+    /// The recorded profiles, one per robot.
+    profiles: [ProfilerProfile];
+}
+
+/// Events
 
 /// An Event is a single step that needs to be processed.
 /// A saved game simply consists of a long list of Events.
@@ -255,8 +241,11 @@ table MatchFooter {
 table Round {
     /// The IDs of teams in the Game.
     teamIDs: [int];
-    /// The refined soup counts of the teams.
-    teamSoups: [int];
+    /// whether a team gets a vp
+    teamVPs: [bool];
+    /// the id of the enlightenment center got the bid
+    teamVoterID: [int];
+
 
     /// The IDs of bodies that moved.
     movedIDs: [int];
@@ -266,7 +255,7 @@ table Round {
     /// New bodies.
     spawnedBodies: SpawnedBodyTable;
 
-    /// The IDs of bodies that died (drowned units and shot drones).
+    /// The IDs of bodies that died.
     diedIDs: [int];
 
     /// The IDs of robots that performed actions.
@@ -275,36 +264,7 @@ table Round {
     /// The actions performed. These actions allow us to track how much soup or dirt a body carries.
     actions: [Action];
     /// The 'targets' of the performed actions. Actions without targets may have
-    /// any target (typically 0).
     actionTargets: [int];
-
-    /// The indexes of the locations whose dirt amount changed.
-    dirtChangedLocs: VecTable;
-    /// The amount the dirt changed by.
-    dirtChanges: [int];
-
-    /// The indexes of the locations whose flood situation changed.
-    waterChangedLocs: VecTable;
-
-    /// The global pollution level
-    globalPollution: int;
-    /// The local pollution infos
-    localPollutions: LocalPollutionTable;
-
-    /// The indexes of the locations whose soup amount changed.
-    soupChangedLocs: VecTable;
-    /// The amount the soup changed by.
-    soupChanges: [int];
-
-    /// Costs of new message requests.
-    newMessagesCosts: [int];
-    /// New message requests.
-    newMessages: [string];
-
-    /// Costs of broadcasted messages.
-    broadcastedMessagesCosts: [int];
-    /// Broadcasted messages.
-    broadcastedMessages: [string];
 
     /// The IDs of bodies that set indicator dots
     indicatorDotIDs: [int];

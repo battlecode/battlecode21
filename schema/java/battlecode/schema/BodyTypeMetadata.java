@@ -13,8 +13,9 @@ import com.google.flatbuffers.*;
  */
 public final class BodyTypeMetadata extends Table {
   public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb) { return getRootAsBodyTypeMetadata(_bb, new BodyTypeMetadata()); }
-  public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb, BodyTypeMetadata obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public BodyTypeMetadata __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb, BodyTypeMetadata obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public BodyTypeMetadata __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The relevant type.
@@ -25,76 +26,76 @@ public final class BodyTypeMetadata extends Table {
    */
   public byte spawnSource() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
   /**
-   * The cost of the type, in soup.
+   * the minimum cost to produce a unit of this type
    */
-  public int cost() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int minCost() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The maximum amount of dirt the type can carry.
+   * the convictionRatio of this type
    */
-  public int dirtLimit() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public float convictionRatio() { int o = __offset(10); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
-   * The maximum amount of soup the type can carry.
+   * cooldown of this type
    */
-  public int soupLimit() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int actionCooldown() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The number of cooldowns between every two actions, for pollution 0.
+   * action radius if this type
    */
-  public float actionCooldown() { int o = __offset(14); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  public int actionRadiusSquared() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The maximum distance squared this type can sense other robots.
+   * detection radius of this type
    */
-  public int sensorRadiusSquared() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int detectionRadiusSquared() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The radius squared of local pollution effects.
+   * identification radius squared for this type
    */
-  public int pollutionRadiusSquared() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int identificationRadiusSquared() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The amount of pollution created when refining soup locally.
+   * initial influence of this type
    */
-  public int localPollutionAdditiveEffect() { int o = __offset(20); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int initialInfluence() { int o = __offset(20); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The fraction that the local pollution is multiplied by around vaporators.
+   * influence per turn for this type
    */
-  public float localPollutionMultiplicativeEffect() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0; }
+  public float influencePerTurn() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
-   * The amount of global pollution this type creates.
+   * empower buff factor for this type
    */
-  public int globalPollutionAmount() { int o = __offset(24); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public float empowerBuffFactor() { int o = __offset(24); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
-   * The maximum amount of soup this type processes every turn.
+   * empower buff duration of this type
    */
-  public int maxSoupProduced() { int o = __offset(26); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int buffDuration() { int o = __offset(26); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The bytecode limit of this type.
+   * bytecode limit for this type
    */
   public int bytecodeLimit() { int o = __offset(28); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createBodyTypeMetadata(FlatBufferBuilder builder,
       byte type,
       byte spawnSource,
-      int cost,
-      int dirtLimit,
-      int soupLimit,
-      float actionCooldown,
-      int sensorRadiusSquared,
-      int pollutionRadiusSquared,
-      int localPollutionAdditiveEffect,
-      float localPollutionMultiplicativeEffect,
-      int globalPollutionAmount,
-      int maxSoupProduced,
+      int minCost,
+      float convictionRatio,
+      int actionCooldown,
+      int actionRadiusSquared,
+      int detectionRadiusSquared,
+      int identificationRadiusSquared,
+      int initialInfluence,
+      float influencePerTurn,
+      float empowerBuffFactor,
+      int buffDuration,
       int bytecodeLimit) {
     builder.startObject(13);
     BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
-    BodyTypeMetadata.addMaxSoupProduced(builder, maxSoupProduced);
-    BodyTypeMetadata.addGlobalPollutionAmount(builder, globalPollutionAmount);
-    BodyTypeMetadata.addLocalPollutionMultiplicativeEffect(builder, localPollutionMultiplicativeEffect);
-    BodyTypeMetadata.addLocalPollutionAdditiveEffect(builder, localPollutionAdditiveEffect);
-    BodyTypeMetadata.addPollutionRadiusSquared(builder, pollutionRadiusSquared);
-    BodyTypeMetadata.addSensorRadiusSquared(builder, sensorRadiusSquared);
+    BodyTypeMetadata.addBuffDuration(builder, buffDuration);
+    BodyTypeMetadata.addEmpowerBuffFactor(builder, empowerBuffFactor);
+    BodyTypeMetadata.addInfluencePerTurn(builder, influencePerTurn);
+    BodyTypeMetadata.addInitialInfluence(builder, initialInfluence);
+    BodyTypeMetadata.addIdentificationRadiusSquared(builder, identificationRadiusSquared);
+    BodyTypeMetadata.addDetectionRadiusSquared(builder, detectionRadiusSquared);
+    BodyTypeMetadata.addActionRadiusSquared(builder, actionRadiusSquared);
     BodyTypeMetadata.addActionCooldown(builder, actionCooldown);
-    BodyTypeMetadata.addSoupLimit(builder, soupLimit);
-    BodyTypeMetadata.addDirtLimit(builder, dirtLimit);
-    BodyTypeMetadata.addCost(builder, cost);
+    BodyTypeMetadata.addConvictionRatio(builder, convictionRatio);
+    BodyTypeMetadata.addMinCost(builder, minCost);
     BodyTypeMetadata.addSpawnSource(builder, spawnSource);
     BodyTypeMetadata.addType(builder, type);
     return BodyTypeMetadata.endBodyTypeMetadata(builder);
@@ -103,16 +104,16 @@ public final class BodyTypeMetadata extends Table {
   public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startObject(13); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
-  public static void addCost(FlatBufferBuilder builder, int cost) { builder.addInt(2, cost, 0); }
-  public static void addDirtLimit(FlatBufferBuilder builder, int dirtLimit) { builder.addInt(3, dirtLimit, 0); }
-  public static void addSoupLimit(FlatBufferBuilder builder, int soupLimit) { builder.addInt(4, soupLimit, 0); }
-  public static void addActionCooldown(FlatBufferBuilder builder, float actionCooldown) { builder.addFloat(5, actionCooldown, 0.0f); }
-  public static void addSensorRadiusSquared(FlatBufferBuilder builder, int sensorRadiusSquared) { builder.addInt(6, sensorRadiusSquared, 0); }
-  public static void addPollutionRadiusSquared(FlatBufferBuilder builder, int pollutionRadiusSquared) { builder.addInt(7, pollutionRadiusSquared, 0); }
-  public static void addLocalPollutionAdditiveEffect(FlatBufferBuilder builder, int localPollutionAdditiveEffect) { builder.addInt(8, localPollutionAdditiveEffect, 0); }
-  public static void addLocalPollutionMultiplicativeEffect(FlatBufferBuilder builder, float localPollutionMultiplicativeEffect) { builder.addFloat(9, localPollutionMultiplicativeEffect, 0.0f); }
-  public static void addGlobalPollutionAmount(FlatBufferBuilder builder, int globalPollutionAmount) { builder.addInt(10, globalPollutionAmount, 0); }
-  public static void addMaxSoupProduced(FlatBufferBuilder builder, int maxSoupProduced) { builder.addInt(11, maxSoupProduced, 0); }
+  public static void addMinCost(FlatBufferBuilder builder, int minCost) { builder.addInt(2, minCost, 0); }
+  public static void addConvictionRatio(FlatBufferBuilder builder, float convictionRatio) { builder.addFloat(3, convictionRatio, 0.0f); }
+  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(4, actionCooldown, 0); }
+  public static void addActionRadiusSquared(FlatBufferBuilder builder, int actionRadiusSquared) { builder.addInt(5, actionRadiusSquared, 0); }
+  public static void addDetectionRadiusSquared(FlatBufferBuilder builder, int detectionRadiusSquared) { builder.addInt(6, detectionRadiusSquared, 0); }
+  public static void addIdentificationRadiusSquared(FlatBufferBuilder builder, int identificationRadiusSquared) { builder.addInt(7, identificationRadiusSquared, 0); }
+  public static void addInitialInfluence(FlatBufferBuilder builder, int initialInfluence) { builder.addInt(8, initialInfluence, 0); }
+  public static void addInfluencePerTurn(FlatBufferBuilder builder, float influencePerTurn) { builder.addFloat(9, influencePerTurn, 0.0f); }
+  public static void addEmpowerBuffFactor(FlatBufferBuilder builder, float empowerBuffFactor) { builder.addFloat(10, empowerBuffFactor, 0.0f); }
+  public static void addBuffDuration(FlatBufferBuilder builder, int buffDuration) { builder.addInt(11, buffDuration, 0); }
   public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(12, bytecodeLimit, 0); }
   public static int endBodyTypeMetadata(FlatBufferBuilder builder) {
     int o = builder.endObject();
