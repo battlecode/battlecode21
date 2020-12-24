@@ -66,7 +66,7 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// the ease of passing through a block
+    /// The factor to scale cooldowns by
     passability: [double];
 }
 
