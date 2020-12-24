@@ -111,19 +111,17 @@ public strictfp class InternalRobot {
         return cooldownTurns;
     }
 
-    // TODO: update RobotInfo.java
     public RobotInfo getRobotInfo() {
         if (this.cachedRobotInfo != null
                 && this.cachedRobotInfo.ID == ID
                 && this.cachedRobotInfo.team == team
-                && this.cachedRobotInfo.type == type
                 && this.cachedRobotInfo.influence == influence
                 && this.cachedRobotInfo.conviction == conviction                
                 && this.cachedRobotInfo.location.equals(location)) {
             return this.cachedRobotInfo;
         }
         return this.cachedRobotInfo = new RobotInfo(
-                ID, team, type, location, influence, conviction);
+                ID, team, influence, conviction, location);
     }
 
     // **********************************
