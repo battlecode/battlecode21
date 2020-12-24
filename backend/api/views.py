@@ -720,7 +720,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 # TODO ^ this check seems nonexhaustive
                 submission.compilation_status = new_comp_status
 
-                if new_comp_status == 1: #compilation failed
+                if new_comp_status == 1: #compilation succeeded
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
                     if submission.id != team_sub.compiling_id:
                         # TODO should this check be earlier (unsure here)?
