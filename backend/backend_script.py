@@ -1,4 +1,5 @@
-domain = 'http://2021.battlecode.org/'
+# domain = 'http://2021.battlecode.org/'
+domain = 'http://localhost:8000/'
 
 import dev_settings_sensitive
 import requests
