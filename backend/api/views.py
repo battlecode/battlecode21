@@ -737,7 +737,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                 submission.save()
 
                 return Response({'message': 'Status updated'}, status.HTTP_200_OK)
-            elif new_comp_status == 0: #trying to set to compiling
+            elif new_comp_status == 0: # Trying to set to compilation in progress, which shouldn't be a valid result
                 return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
