@@ -727,8 +727,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                     team_sub.last_3_id = team_sub.last_2_id
                     team_sub.last_2_id = team_sub.last_1_id
                     team_sub.last_1_id = submission
-                    submission.compilation_status = 2
-                    # TODO ^ shouldn't this be set to 1? in fact, shouldn't it be set to new_comp_status?
 
                     team_sub.save()
 
