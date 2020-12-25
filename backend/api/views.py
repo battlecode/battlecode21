@@ -237,6 +237,7 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
 
 class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
+    serializer_class = serializers.Serializer
 
     @action(detail=False, methods=['get'])
     def scrimmage_list(self, request):
