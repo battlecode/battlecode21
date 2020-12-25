@@ -110,3 +110,5 @@ Finally, click update!
 Delete old instance groups: go to "Compute Engine" -> "Instance groups", check any old instance groups that are no longer in use, and click "delete".
 Delete old instance template: go to "Compute Engine" -> "Instance templates", check any old templates that are no longer in use, and click "delete".
 Delete old, unused backend services and buckets, if you're up to it, instructions in previous section. But this can be a pain and is certainly not necessary.
+
+<!-- TODO note about cors policy -->
