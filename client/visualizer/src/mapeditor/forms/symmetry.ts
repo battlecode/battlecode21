@@ -125,22 +125,23 @@ export default class SymmetryForm {
    * the parameter given in the map editor form.
    */
   getSymmetricBodies(bodies: Map<number, MapUnit>, width: number, height: number):  Map<number, MapUnit> {
+    // no symmetric (neutral) body in 2021 game
 
     const symmetricBodies: Map<number, MapUnit> = new Map<number, MapUnit>();
-    bodies.forEach((body: MapUnit, id: number) => {
-      if (!this.onSymmetricLine(body.loc, width, height)) {
-        const type = body.type;
-        const teamID = type === cst.COW ? this.NEUTRAL_TEAM_ID : this.BLUE_TEAM_ID;
-        if (type === cst.COW) {
-            symmetricBodies.set(id, {
-            loc: this.transformLoc(body.loc, width, height),
-            radius: body.radius,
-            type: type,
-            teamID: teamID
-          });
-        }
-      }
-    });
+    // bodies.forEach((body: MapUnit, id: number) => {
+    //   if (!this.onSymmetricLine(body.loc, width, height)) {
+    //     const type = body.type;
+    //     const teamID = type === cst.COW ? this.NEUTRAL_TEAM_ID : this.BLUE_TEAM_ID;
+    //     if (type === cst.COW) {
+    //         symmetricBodies.set(id, {
+    //         loc: this.transformLoc(body.loc, width, height),
+    //         radius: body.radius,
+    //         type: type,
+    //         teamID: teamID
+    //       });
+    //     }
+    //   }
+    // });
 
     return symmetricBodies;
   }

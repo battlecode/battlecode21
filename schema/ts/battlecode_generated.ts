@@ -30,7 +30,8 @@ export enum BodyType{
    * have the ability to identify scandals
    */
   MUCKRAKER= 3
-}};
+};
+}
 
 /**
  * Actions that can be performed.
@@ -109,7 +110,8 @@ export enum Action{
    * Target: none
    */
   DIE_EXCEPTION= 10
-}};
+};
+}
 
 /**
  * An Event is a single step that needs to be processed.
@@ -151,7 +153,39 @@ export enum Event{
    * There should only be one GameFooter, at the end of the stream.
    */
   GameFooter= 5
-}};
+};
+
+export function unionToEvent(
+  type: Event,
+  accessor: (obj:battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round) => battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round|null
+): battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round|null {
+  switch(battlecode.schema.Event[type]) {
+    case 'NONE': return null; 
+    case 'GameHeader': return accessor(new battlecode.schema.GameHeader())! as battlecode.schema.GameHeader;
+    case 'MatchHeader': return accessor(new battlecode.schema.MatchHeader())! as battlecode.schema.MatchHeader;
+    case 'Round': return accessor(new battlecode.schema.Round())! as battlecode.schema.Round;
+    case 'MatchFooter': return accessor(new battlecode.schema.MatchFooter())! as battlecode.schema.MatchFooter;
+    case 'GameFooter': return accessor(new battlecode.schema.GameFooter())! as battlecode.schema.GameFooter;
+    default: return null;
+  }
+}
+
+export function unionListToEvent(
+  type: Event, 
+  accessor: (index: number, obj:battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round) => battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round|null, 
+  index: number
+): battlecode.schema.GameFooter|battlecode.schema.GameHeader|battlecode.schema.MatchFooter|battlecode.schema.MatchHeader|battlecode.schema.Round|null {
+  switch(battlecode.schema.Event[type]) {
+    case 'NONE': return null; 
+    case 'GameHeader': return accessor(index, new battlecode.schema.GameHeader())! as battlecode.schema.GameHeader;
+    case 'MatchHeader': return accessor(index, new battlecode.schema.MatchHeader())! as battlecode.schema.MatchHeader;
+    case 'Round': return accessor(index, new battlecode.schema.Round())! as battlecode.schema.Round;
+    case 'MatchFooter': return accessor(index, new battlecode.schema.MatchFooter())! as battlecode.schema.MatchFooter;
+    case 'GameFooter': return accessor(index, new battlecode.schema.GameFooter())! as battlecode.schema.GameFooter;
+    default: return null;
+  }
+}
+}
 
 /**
  * A vector in two-dimensional space. Discrete space, of course.
@@ -188,6 +222,13 @@ x():number {
 y():number {
   return this.bb!.readInt32(this.bb_pos + 4);
 };
+
+/**
+ * @returns number
+ */
+static sizeOf():number {
+  return 8;
+}
 
 /**
  * @param flatbuffers.Builder builder
@@ -314,7 +355,12 @@ static addXs(builder:flatbuffers.Builder, xsOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createXsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createXsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createXsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createXsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -343,7 +389,12 @@ static addYs(builder:flatbuffers.Builder, ysOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createYsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createYsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createYsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createYsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -511,7 +562,12 @@ static addRed(builder:flatbuffers.Builder, redOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createRedVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createRedVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createRedVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createRedVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -540,7 +596,12 @@ static addGreen(builder:flatbuffers.Builder, greenOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createGreenVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createGreenVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createGreenVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createGreenVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -569,7 +630,12 @@ static addBlue(builder:flatbuffers.Builder, blueOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createBlueVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createBlueVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createBlueVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createBlueVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -786,7 +852,12 @@ static addRobotIDs(builder:flatbuffers.Builder, robotIDsOffset:flatbuffers.Offse
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createRobotIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createRobotIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createRobotIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createRobotIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -815,7 +886,12 @@ static addTeamIDs(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset)
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createTeamIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Int8Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Int8Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(1, data.length, 1);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt8(data[i]);
@@ -881,7 +957,12 @@ static addCost(builder:flatbuffers.Builder, costOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createCostVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createCostVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createCostVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createCostVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -906,15 +987,6 @@ static endSpawnedBodyTable(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createSpawnedBodyTable(builder:flatbuffers.Builder, robotIDsOffset:flatbuffers.Offset, teamIDsOffset:flatbuffers.Offset, typesOffset:flatbuffers.Offset, locsOffset:flatbuffers.Offset, costOffset:flatbuffers.Offset):flatbuffers.Offset {
-  SpawnedBodyTable.startSpawnedBodyTable(builder);
-  SpawnedBodyTable.addRobotIDs(builder, robotIDsOffset);
-  SpawnedBodyTable.addTeamIDs(builder, teamIDsOffset);
-  SpawnedBodyTable.addTypes(builder, typesOffset);
-  SpawnedBodyTable.addLocs(builder, locsOffset);
-  SpawnedBodyTable.addCost(builder, costOffset);
-  return SpawnedBodyTable.endSpawnedBodyTable(builder);
-}
 }
 }
 /**
@@ -1100,7 +1172,12 @@ static addPassability(builder:flatbuffers.Builder, passabilityOffset:flatbuffers
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createPassabilityVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createPassabilityVector(builder:flatbuffers.Builder, data:number[]|Float64Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createPassabilityVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createPassabilityVector(builder:flatbuffers.Builder, data:number[]|Float64Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(8, data.length, 8);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addFloat64(data[i]);
@@ -1125,16 +1202,6 @@ static endGameMap(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createGameMap(builder:flatbuffers.Builder, nameOffset:flatbuffers.Offset, minCornerOffset:flatbuffers.Offset, maxCornerOffset:flatbuffers.Offset, bodiesOffset:flatbuffers.Offset, randomSeed:number, passabilityOffset:flatbuffers.Offset):flatbuffers.Offset {
-  GameMap.startGameMap(builder);
-  GameMap.addName(builder, nameOffset);
-  GameMap.addMinCorner(builder, minCornerOffset);
-  GameMap.addMaxCorner(builder, maxCornerOffset);
-  GameMap.addBodies(builder, bodiesOffset);
-  GameMap.addRandomSeed(builder, randomSeed);
-  GameMap.addPassability(builder, passabilityOffset);
-  return GameMap.endGameMap(builder);
-}
 }
 }
 /**
@@ -2967,7 +3034,12 @@ static addTeamIDs(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset)
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createTeamIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createTeamIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3025,7 +3097,12 @@ static addTeamVoterID(builder:flatbuffers.Builder, teamVoterIDOffset:flatbuffers
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3054,7 +3131,12 @@ static addMovedIDs(builder:flatbuffers.Builder, movedIDsOffset:flatbuffers.Offse
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createMovedIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createMovedIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createMovedIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createMovedIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3099,7 +3181,12 @@ static addDiedIDs(builder:flatbuffers.Builder, diedIDsOffset:flatbuffers.Offset)
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createDiedIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createDiedIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createDiedIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createDiedIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3128,7 +3215,12 @@ static addActionIDs(builder:flatbuffers.Builder, actionIDsOffset:flatbuffers.Off
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createActionIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createActionIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createActionIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createActionIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3186,7 +3278,12 @@ static addActionTargets(builder:flatbuffers.Builder, actionTargetsOffset:flatbuf
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createActionTargetsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createActionTargetsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createActionTargetsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createActionTargetsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3215,7 +3312,12 @@ static addIndicatorDotIDs(builder:flatbuffers.Builder, indicatorDotIDsOffset:fla
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createIndicatorDotIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createIndicatorDotIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createIndicatorDotIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createIndicatorDotIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3260,7 +3362,12 @@ static addIndicatorLineIDs(builder:flatbuffers.Builder, indicatorLineIDsOffset:f
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createIndicatorLineIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createIndicatorLineIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createIndicatorLineIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createIndicatorLineIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3329,7 +3436,12 @@ static addBytecodeIDs(builder:flatbuffers.Builder, bytecodeIDsOffset:flatbuffers
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createBytecodeIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createBytecodeIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createBytecodeIDsVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createBytecodeIDsVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3358,7 +3470,12 @@ static addBytecodesUsed(builder:flatbuffers.Builder, bytecodesUsedOffset:flatbuf
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createBytecodesUsedVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createBytecodesUsedVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createBytecodesUsedVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createBytecodesUsedVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3383,31 +3500,6 @@ static endRound(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset, teamVPsOffset:flatbuffers.Offset, teamVoterIDOffset:flatbuffers.Offset, movedIDsOffset:flatbuffers.Offset, movedLocsOffset:flatbuffers.Offset, spawnedBodiesOffset:flatbuffers.Offset, diedIDsOffset:flatbuffers.Offset, actionIDsOffset:flatbuffers.Offset, actionsOffset:flatbuffers.Offset, actionTargetsOffset:flatbuffers.Offset, indicatorDotIDsOffset:flatbuffers.Offset, indicatorDotLocsOffset:flatbuffers.Offset, indicatorDotRGBsOffset:flatbuffers.Offset, indicatorLineIDsOffset:flatbuffers.Offset, indicatorLineStartLocsOffset:flatbuffers.Offset, indicatorLineEndLocsOffset:flatbuffers.Offset, indicatorLineRGBsOffset:flatbuffers.Offset, logsOffset:flatbuffers.Offset, roundID:number, bytecodeIDsOffset:flatbuffers.Offset, bytecodesUsedOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Round.startRound(builder);
-  Round.addTeamIDs(builder, teamIDsOffset);
-  Round.addTeamVPs(builder, teamVPsOffset);
-  Round.addTeamVoterID(builder, teamVoterIDOffset);
-  Round.addMovedIDs(builder, movedIDsOffset);
-  Round.addMovedLocs(builder, movedLocsOffset);
-  Round.addSpawnedBodies(builder, spawnedBodiesOffset);
-  Round.addDiedIDs(builder, diedIDsOffset);
-  Round.addActionIDs(builder, actionIDsOffset);
-  Round.addActions(builder, actionsOffset);
-  Round.addActionTargets(builder, actionTargetsOffset);
-  Round.addIndicatorDotIDs(builder, indicatorDotIDsOffset);
-  Round.addIndicatorDotLocs(builder, indicatorDotLocsOffset);
-  Round.addIndicatorDotRGBs(builder, indicatorDotRGBsOffset);
-  Round.addIndicatorLineIDs(builder, indicatorLineIDsOffset);
-  Round.addIndicatorLineStartLocs(builder, indicatorLineStartLocsOffset);
-  Round.addIndicatorLineEndLocs(builder, indicatorLineEndLocsOffset);
-  Round.addIndicatorLineRGBs(builder, indicatorLineRGBsOffset);
-  Round.addLogs(builder, logsOffset);
-  Round.addRoundID(builder, roundID);
-  Round.addBytecodeIDs(builder, bytecodeIDsOffset);
-  Round.addBytecodesUsed(builder, bytecodesUsedOffset);
-  return Round.endRound(builder);
-}
 }
 }
 /**
@@ -3675,7 +3767,12 @@ static addMatchHeaders(builder:flatbuffers.Builder, matchHeadersOffset:flatbuffe
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createMatchHeadersVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createMatchHeadersVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createMatchHeadersVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createMatchHeadersVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -3704,7 +3801,12 @@ static addMatchFooters(builder:flatbuffers.Builder, matchFootersOffset:flatbuffe
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createMatchFootersVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createMatchFootersVector(builder:flatbuffers.Builder, data:number[]|Int32Array):flatbuffers.Offset;
+/**
+ * @deprecated This Uint8Array overload will be removed in the future.
+ */
+static createMatchFootersVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset;
+static createMatchFootersVector(builder:flatbuffers.Builder, data:number[]|Int32Array|Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);

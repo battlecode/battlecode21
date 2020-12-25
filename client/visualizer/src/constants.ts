@@ -132,21 +132,22 @@ export function symmetryToString(symmetry: Symmetry) {
 }
 
 // TODO: fix radius (is this vision that can be toggled in sidebar?)
-// export function radiusFromBodyType(bodyType: schema.BodyType) {
-//   switch(bodyType) {
-//     case MINER:
-//     case LANDSCAPER:
-//     case DRONE:
-//     case NET_GUN:
-//     case COW:
-//     case REFINERY:
-//     case VAPORATOR:
-//     case HQ:
-//     case DESIGN_SCHOOL:
-//     case FULFILLMENT_CENTER: return 1;
-//     default: throw new Error("invalid body type");
-//   }
-// }
+export function radiusFromBodyType(bodyType: schema.BodyType) {
+  return -1;
+  // switch(bodyType) {
+  //   case MINER:
+  //   case LANDSCAPER:
+  //   case DRONE:
+  //   case NET_GUN:
+  //   case COW:
+  //   case REFINERY:
+  //   case VAPORATOR:
+  //   case HQ:
+  //   case DESIGN_SCHOOL:
+  //   case FULFILLMENT_CENTER: return 1;
+  //   default: throw new Error("invalid body type");
+  // }
+}
 
 // export function waterLevel(x: number) {
 //   return (Math.exp(0.0028*x-1.38*Math.sin(0.00157*x-1.73)+1.38*Math.sin(-1.73))-1)

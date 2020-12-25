@@ -26,7 +26,7 @@ export default class RobotForm implements UnitForm {
   // Constant
   // NOTE: Bullet trees cannot be spawned until we get server support
   private readonly ROBOT_TYPES: schema.BodyType[] = [
-    cst.MINER, cst.LANDSCAPER, cst.DRONE, cst.NET_GUN, cst.COW
+    cst.ENLIGHTENMENT_CENTER, cst.POLITICIAN, cst.SCANDAL, cst.MUCKRAKER
   ];
   private readonly TEAMS = {
     "1": "Red",
@@ -64,7 +64,7 @@ export default class RobotForm implements UnitForm {
     this.y.type = "text";
     this.radius.type = "text";
     this.radius.disabled = true;
-    this.radius.value = String(cst.radiusFromBodyType(cst.MINER));
+    this.radius.value = String(cst.radiusFromBodyType(cst.POLITICIAN));
     this.ROBOT_TYPES.forEach((type: schema.BodyType) => {
       const option = document.createElement("option");
       option.value = String(type);
