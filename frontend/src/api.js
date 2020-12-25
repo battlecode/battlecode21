@@ -22,9 +22,8 @@ class Api {
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
     // get the url from the real api
-    $.post(`${URL}/api/${LEAGUE}/submission/`, {
-      team: Cookies.get('team_id')
-    }).done((data, status) => {
+    $.post(`${URL}/api/${LEAGUE}/submission/`)
+    .done((data, status) => {
       console.log("got URL")
       Cookies.set('submission_id', data['submission_id']);
       $.ajax({
