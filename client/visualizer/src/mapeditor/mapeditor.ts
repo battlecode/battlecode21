@@ -32,14 +32,17 @@ export default class MapEditor {
     this.canvas = document.createElement("canvas");
     this.form = new MapEditorForm(conf, images, this.canvas);
     this.scaffold = null;
-    this.div = this.basediv();
     this.images = images;
     this.conf = conf;
+    this.div = this.basediv();
+
   }
 
   private basediv(): HTMLDivElement {
     let div = document.createElement("div");
     div.id = "mapEditor";
+
+    div.appendChild(document.createElement("b"));
 
     div.appendChild(document.createElement("br"));
     div.appendChild(this.form.div);

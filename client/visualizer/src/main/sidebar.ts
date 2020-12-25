@@ -94,8 +94,8 @@ export default class Sidebar {
     modePanelRow.appendChild(this.modeButton(Mode.LOGS, "Logs"));
     modePanelRow.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
     modePanelRow.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
-    modePanelRow.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
-    // modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
+    // modePanelRow.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
+    modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
     modePanelRow.appendChild(this.modeButton(Mode.HELP, "Help"));
     modePanel.appendChild(modePanelRow);
     this.div.appendChild(modePanel);
@@ -325,6 +325,9 @@ export default class Sidebar {
         break;
       case Mode.QUEUE:
         this.innerDiv.appendChild(this.matchqueue.div);
+        break;
+      case Mode.MAPEDITOR:
+        this.innerDiv.appendChild(this.mapeditor.div);
         break;
       case Mode.PROFILER:
         this.innerDiv.append(this.profiler.div);
