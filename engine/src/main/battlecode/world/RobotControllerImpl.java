@@ -140,8 +140,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
  
-    public int getInfluence() {
+    public double getInfluence() {
         return this.robot.getInfluence();  
+    }
+
+    public double getConviction() {
+        return this.robot.getConviction();  
     }
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
@@ -427,23 +431,37 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanEmpower();
         InternalRobot[] allEmpoweredRobots = gameWorld.getAllRobotsWithinRadiusSquared(getLocation(),
                 getType().actionRadiusSquared);
-        // TODO: put here (a) a method to get the muckraker factor for empowering for this robot's type: from where?
-        //                (b) a method to modify the conviction of each of the empowered robots
-        //                (c) a method that, for each empowered robot, will kill it or change its team, if necessary [can be part of (b)]
-        disintegrate();
+        if (allEmpoweredRobots.length != 1) { // 1 because allEmpoweredRobots includes this robot by default
+            double convictionChange = getConviction() / (allEmpoweredRobots.length - 1) * this.gameWorld.getEmpowerFactor(getTeam()) ; 
+            for (InternalRobot empowered : allEmpoweredRobots) {
+                if (this.robot.equals(empowered)) {
+                    continue;
+                }
+                empowered.addConviction(convictionChange * ((empowered.getTeam() == getTeam()) ? 1 : -1));
+            }
+            
+        }
+        this.robot.setConviction(0);
     }
 
 
     // ***********************************
     // ****** MUCKRAKER METHODS ********** 
-    // ***********************************
+    // *********************************** 
+    
     private void assertCanExpose(MapLocation loc) throws GameActionException {
         assertIsReady();
         if (!getType().canExpose())
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot expose.");  
-        assertNotNull(loc);
-        assertCanSenseLocation(loc);
+        assertNotNull(loc); 
+        if (!this.robot.canIdentifyLocation(loc))
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location can't be exposed because it is out of range."); 
+        if (!gameWorld.getGameMap().onTheMap(loc))
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location is not on the map."); 
+
     }
 
     @Override //TODO: UPDATE THIS!!
@@ -461,19 +479,41 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (bot == null || !(bot.getType().canBeExposed()) ) {
             throw new GameActionException(NO_ROBOT_THERE, "Robot tried to expose at location that does not have a Robot that can be Exposed.");
         } else {
-            // TODO: call method for exposing the bot we just saw (from where?)
-        }
-            
+            bot.setConviction(0);
+            this.gameWorld.addEmpowerFactor(getTeam()); 
+        } 
     }
     
+    private void assertCanSeek() throws GameActionException {
+        assertIsReady();
+        if (!getType().canExpose()) // using .canExpose() because they do the same thing (return true iff muckraker)
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot seek.");   
+    }
+
     @Override //TODO: UPDATE THIS!!
     public boolean canSeekLocations() {
-        return false;
+        try {
+            assertCanSeek();
+            return true;
+        } catch (GameActionException e) { return false; }  
     }
     
     @Override //TODO: UPDATE THIS!!
-    public void seekLocations() throws GameActionException {
-        int chili = 0;
+    public void seekLocations() throws GameActionException { 
+        assertCanSeek();
+        MapLocation[] allSeekedLocations = gameWorld.getAllLocationsWithinRadiusSquared(getLocation(), this.robot.getIdentificationRadiusSquared());
+        List<MapLocation> validSeekedLocations = new ArrayList<>();
+        for(MapLocation seekedLoc: seekedLocations){
+            // check if not the robot's location
+            if (getLocation().equals(seekedLoc)) //not sure if this is valid? 
+                continue;
+            // check if occupied
+            if (!isLocationOccupied(seekedLoc))
+                continue; 
+            validSeekedLocations.add(seekedLoc);
+        }
+        return validSeekedLocations.toArray(new MapLocation[validSeekedLocations.size()]);
     } 
     
     // ***********************************
@@ -493,25 +533,59 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
-     
+    
+    
+    private void assertCanSetFlag() throws GameActionException {
+        assertIsReady(); 
+    }
+
+
     @Override //TODO: UPDATE THIS!!
     public boolean canSetFlag(); {
-        return false;
+        try {
+            assertCanSetFlag();
+            return true;
+        } catch (GameActionException e) {return false;} 
     }
 
     @Override //TODO: UPDATE THIS!!
     public void setFlag(int flag1, int flag2) throws GameActionException {
-        int chili = 0;
-    } 
+        assertCanSetFlag();
+        this.robot.setFlag(flag1, flag2);
+    }
 
-    @Override //TODO: UPDATE THIS!!
-    public boolean canGetFlag(MapLocation loc); {
-        return false;
+    private void assertCanGetFlag(MapLocation loc) throws GameActionException {
+        assertIsReady(); 
+        if (!gameWorld.getGameMap().onTheMap(loc))
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location is not on the map."); 
+        if (!isLocationOccupied(loc))
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location is not occupied with robot of the same team."); 
+        InternalRobot bot = gameWorld.getRobot(loc);
+        if (bot.getTeam() != getTeam())  
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location is not occupied with robot of the same team."); 
+        if (bot.getType() != ENLIGHTENMENT_CENTER && getLocation().distanceSquaredTo(bot.getLocation()) > 8)  
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot of same team doesn't meet conditions for getting flag."); 
+                 
+                    
     }
 
     @Override //TODO: UPDATE THIS!!
-    public void getFlag(MapLocation loc) throws GameActionException {
-        int chili = 0;
+    public boolean canGetFlag(MapLocation loc); {
+        try {
+            assertCanGetFlag(loc);
+            return true;
+        } catch (GameActionException e) { return false; }
+    }
+
+    @Override //TODO: UPDATE THIS!!
+    public int[] getFlag(MapLocation loc) throws GameActionException {
+        assertCanGetFlag(loc);
+        InternalRobot bot = gameWorld.getRobot(loc);
+        return bot.getFlag();
     } 
 
 
