@@ -112,3 +112,5 @@ Delete old instance template: go to "Compute Engine" -> "Instance templates", ch
 Delete old, unused backend services and buckets, if you're up to it, instructions in previous section. But this can be a pain and is certainly not necessary.
 
 <!-- TODO note about cors policy -->
+<!-- TODO note about Google Application credentials: get the service account json from an infra dev. (Or, if they haven't made it, feel free to skip this step for now, but come back to it!!) Set it in dev_settings_sensitive.py (formatting is a little weird, -- it has to be enclosed in quotes ina  particular manner -- find an use old values of the json in dev_settings_sensitive.py as an example), and in the instance template (you can just copy paste it). 
+End note -- make sure google app credentials are set in dev_settings_sensitive.py, and as an env in the template. submissions will be broken otherwise til then -->

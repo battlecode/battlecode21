@@ -272,4 +272,5 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 
 # google cloud
+# TODO the env name shouldn't have json at the end. Remember to change deployment too!!!!
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
