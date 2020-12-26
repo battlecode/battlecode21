@@ -95,6 +95,15 @@ ELO_START = 1200
 # real elo will more or less never get to 0 so this is fine
 ELO_NULL = -1000000
 
+class CompileStatus:
+    """
+    Class used to enum compile status constants used in compilation_update
+    """
+    PROGRESS = 0
+    SUCCESS = 1
+    FAIL = 2
+    ERROR = 3
+
 
 # Application definition
 

@@ -29,3 +29,17 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=dev_settings
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:80'
+
+  compile:
+    build:
+      context: './infrastructure/worker'
+      dockerfile: ./../compile.Dockerfile
+    environment:
+      - DOMAIN=localhost:8000
+
+  game:
+    build:
+      context: './infrastructure/worker'
+      dockerfile: ./../game.Dockerfile
+    environment:
+      - DOMAIN=localhost:8000
