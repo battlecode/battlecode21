@@ -49,7 +49,6 @@ public strictfp class LiveMap {
     private final RobotInfo[] initialBodies; // only contains COEs
 
     private double[] passabilityArray; // factor to multiply cooldowns by
-    private boolean[] centerOfEnlightenmentArray; // whether there is a COE
 
     public LiveMap(int width,
                    int height,
@@ -66,7 +65,6 @@ public strictfp class LiveMap {
         this.mapName = mapName;
         this.initialBodies = Arrays.copyOf(initialBodies, initialBodies.length);
         this.passabilityArray = new double[width * height];
-        this.centerOfEnlightenmentArray = new boolean[width * height];
 
         // invariant: bodies is sorted by id
         Arrays.sort(this.initialBodies, (a, b) -> Integer.compare(a.getID(), b.getID()));
@@ -79,8 +77,7 @@ public strictfp class LiveMap {
                    int rounds,
                    String mapName,
                    RobotInfo[] initialBodies,
-                   double[] passabilityArray,
-                   boolean[] centerOfEnlightenmentArray) {
+                   double[] passabilityArray) {
         this.width = width;
         this.height = height;
         this.origin = origin;
@@ -89,10 +86,8 @@ public strictfp class LiveMap {
         this.mapName = mapName;
         this.initialBodies = Arrays.copyOf(initialBodies, initialBodies.length);
         this.passabilityArray = new double[passabilityArray.length];
-        this.centerOfEnlightenmentArray = new boolean[centerOfEnlightenmentArray.length];
         for (int i = 0; i < passabilityArray.length; i++) {
             this.passabilityArray[i] = passabilityArray[i];
-            this.centerOfEnlightenmentArray[i] = centerOfEnlightenmentArray[i];
         }
 
         // invariant: bodies is sorted by id
@@ -106,7 +101,7 @@ public strictfp class LiveMap {
      */
     public LiveMap(LiveMap gm) {
         this(gm.width, gm.height, gm.origin, gm.seed, gm.rounds, gm.mapName, gm.initialBodies,
-             gm.passabilityArray, gm.centerOfEnlightenmentArray);
+             gm.passabilityArray);
     }
 
     @Override
@@ -130,7 +125,6 @@ public strictfp class LiveMap {
         if (!this.mapName.equals(other.mapName)) return false;
         if (!this.origin.equals(other.origin)) return false;
         if (!Arrays.equals(this.passabilityArray, other.passabilityArray)) return false;
-        if (!Arrays.equals(this.centerOfEnlightenmentArray, other.centerOfEnlightenmentArray)) return false;
         return Arrays.equals(this.initialBodies, other.initialBodies);
     }
 
@@ -143,7 +137,6 @@ public strictfp class LiveMap {
         result = 31 * result + rounds;
         result = 31 * result + mapName.hashCode();
         result = 31 * result + Arrays.hashCode(passabilityArray);
-        result = 31 * result + Arrays.hashCode(centerOfEnlightenmentArray);
         result = 31 * result + Arrays.hashCode(initialBodies);
         return result;
     }
@@ -254,10 +247,6 @@ public strictfp class LiveMap {
         return passabilityArray;
     }
 
-    public boolean[] getCenterOfEnlightenmentArray() {
-        return centerOfEnlightenmentArray;
-    }
-
     @Override
     public String toString() {
         if (passabilityArray.length == 0)
@@ -280,7 +269,6 @@ public strictfp class LiveMap {
                     ", mapName='" + mapName + '\'' +
                     ", initialBodies=" + Arrays.toString(initialBodies) +
                     ", passabilityArray=:)" +  Arrays.toString(passabilityArray) +
-                    ", centerOfEnlightenmentArray=:)" + Arrays.toString(centerOfEnlightenmentArray) +
                     "}"; 
     }
 }
