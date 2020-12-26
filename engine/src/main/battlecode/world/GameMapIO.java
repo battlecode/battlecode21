@@ -29,9 +29,9 @@ public final strictfp class GameMapIO {
     private static final ClassLoader BACKUP_LOADER = GameMapIO.class.getClassLoader();
 
     /**
-     * The file extension for battlecode 2017 match files.
+     * The file extension for battlecode 2021 match files.
      */
-    public static final String MAP_EXTENSION = ".map20";
+    public static final String MAP_EXTENSION = ".map21";
 
     /**
      * The package we check for maps in if they can't be found in the file system.
@@ -228,16 +228,9 @@ public final strictfp class GameMapIO {
             final int seed = raw.randomSeed();
             final int rounds = GameConstants.GAME_MAX_NUMBER_OF_ROUNDS;
             final String mapName = raw.name();
-            final int initialWater = raw.initialWater();
-            int[] soupArray = new int[width * height];
-            int[] pollutionArray = new int[width * height];
-            boolean[] waterArray = new boolean[width * height];
-            int[] dirtArray = new int[width * height];
+            double[] passabilityArray = new int[width * height];
             for (int i = 0; i < width * height; i++) {
-                soupArray[i] = raw.soup(i);
-                pollutionArray[i] = raw.pollution(i);
-                waterArray[i] = raw.water(i);
-                dirtArray[i] = raw.dirt(i);
+                passabilityArray[i] = raw.passability(i);
             }
             ArrayList<RobotInfo> initBodies = new ArrayList<>();
             SpawnedBodyTable bodyTable = raw.bodies();
@@ -246,8 +239,7 @@ public final strictfp class GameMapIO {
             RobotInfo[] initialBodies = initBodies.toArray(new RobotInfo[initBodies.size()]);
 
             return new LiveMap(
-                width, height, origin, seed, rounds, mapName, initialBodies,
-                soupArray, pollutionArray, waterArray, dirtArray, initialWater
+                width, height, origin, seed, rounds, mapName, initialBodies, passabilityArray
             );
         }
 
@@ -262,27 +254,17 @@ public final strictfp class GameMapIO {
         public static int serialize(FlatBufferBuilder builder, LiveMap gameMap) {
             int name = builder.createString(gameMap.getMapName());
             int randomSeed = gameMap.getSeed();
-            int[] soupArray = gameMap.getSoupArray();
-            int[] pollutionArray = gameMap.getPollutionArray();
-            boolean[] waterArray = gameMap.getWaterArray();
-            int[] dirtArray = gameMap.getDirtArray();
-            int waterLevel = gameMap.getWaterLevel();
+            int[] passabilityArray = gameMap.getPassabilityArray();
             // Make body tables
             ArrayList<Integer> bodyIDs = new ArrayList<>();
             ArrayList<Byte> bodyTeamIDs = new ArrayList<>();
             ArrayList<Byte> bodyTypes = new ArrayList<>();
             ArrayList<Integer> bodyLocsXs = new ArrayList<>();
             ArrayList<Integer> bodyLocsYs = new ArrayList<>();
-            ArrayList<Integer> soupArrayList = new ArrayList<>();
-            ArrayList<Integer> pollutionArrayList = new ArrayList<>();
-            ArrayList<Boolean> waterArrayList = new ArrayList<>();
-            ArrayList<Integer> dirtArrayList = new ArrayList<>();
+            ArrayList<Double> passabilityArrayList = new ArrayList<>();
 
             for (int i = 0; i < gameMap.getWidth() * gameMap.getHeight(); i++) {
-                soupArrayList.add(soupArray[i]);
-                pollutionArrayList.add(pollutionArray[i]);
-                waterArrayList.add(waterArray[i]);
-                dirtArrayList.add(dirtArray[i]);
+                passabilityArrayList.add(passabilityArray[i]);
             }
 
             for (RobotInfo robot : gameMap.getInitialBodies()) {
@@ -305,10 +287,7 @@ public final strictfp class GameMapIO {
             SpawnedBodyTable.addTypes(builder, types);
             SpawnedBodyTable.addLocs(builder, locs);
             int bodies = SpawnedBodyTable.endSpawnedBodyTable(builder);
-            int soupArrayInt = battlecode.schema.GameMap.createSoupVector(builder, ArrayUtils.toPrimitive(soupArrayList.toArray(new Integer[soupArrayList.size()])));
-            int pollutionArrayInt = battlecode.schema.GameMap.createPollutionVector(builder, ArrayUtils.toPrimitive(pollutionArrayList.toArray(new Integer[pollutionArrayList.size()])));
-            int waterArrayInt = battlecode.schema.GameMap.createWaterVector(builder, ArrayUtils.toPrimitive(waterArrayList.toArray(new Boolean[waterArrayList.size()])));
-            int dirtArrayInt = battlecode.schema.GameMap.createDirtVector(builder, ArrayUtils.toPrimitive(dirtArrayList.toArray(new Integer[dirtArrayList.size()])));
+            int passabilityArrayInt = battlecode.schema.GameMap.createPassabilityVector(builder, ArrayUtils.toPrimitive(passabilityArrayList.toArray(new Double[passabilityArrayList.size()])));
             // Build LiveMap for flatbuffer
             battlecode.schema.GameMap.startGameMap(builder);
             battlecode.schema.GameMap.addName(builder, name);
@@ -317,11 +296,7 @@ public final strictfp class GameMapIO {
                     gameMap.getOrigin().y + gameMap.getHeight()));
             battlecode.schema.GameMap.addBodies(builder, bodies);
             battlecode.schema.GameMap.addRandomSeed(builder, randomSeed);
-            battlecode.schema.GameMap.addSoup(builder, soupArrayInt);
-            battlecode.schema.GameMap.addPollution(builder, pollutionArrayInt);
-            battlecode.schema.GameMap.addWater(builder, waterArrayInt);
-            battlecode.schema.GameMap.addDirt(builder, dirtArrayInt);
-            battlecode.schema.GameMap.addInitialWater(builder, waterLevel);
+            battlecode.schema.GameMap.addPassability(builder, passabilityArrayInt);
             return battlecode.schema.GameMap.endGameMap(builder);
         }
 
@@ -332,13 +307,15 @@ public final strictfp class GameMapIO {
         private static void initInitialBodiesFromSchemaBodyTable(SpawnedBodyTable bodyTable, ArrayList<RobotInfo> initialBodies) {
             VecTable locs = bodyTable.locs();
             for (int i = 0; i < bodyTable.robotIDsLength(); i++) {
-                RobotType bodyType = FlatHelpers.getRobotTypeFromBodyType(bodyTable.types(i));
+                // all initial bodies should be centers of enlightenment, with some influence and 0 conviction
+                // RobotType bodyType = FlatHelpers.getRobotTypeFromBodyType(bodyTable.types(i));
                 int bodyID = bodyTable.robotIDs(i);
                 int bodyX = locs.xs(i);
                 int bodyY = locs.ys(i);
                 Team bodyTeam = TeamMapping.team(bodyTable.teamIDs(i));
+                double bodyInfluence = bodyTable.costs(i);
                 if (bodyType != null)
-                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyType, new MapLocation(bodyX, bodyY)));
+                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
             }
         }
     }
