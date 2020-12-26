@@ -46,14 +46,10 @@ public strictfp class LiveMap {
      * i.e. in game correct MapLocations that need to have the origin
      * subtracted from them to be used to index into the map arrays.
      */
-    private final RobotInfo[] initialBodies;
+    private final RobotInfo[] initialBodies; // only contains COEs
 
-    private int[] soupArray;
-    private int[] pollutionArray;
-    private boolean[] waterArray;
-    private int[] dirtArray;
-
-    private int waterLevel;
+    private double[] passabilityArray; // factor to multiply cooldowns by
+    private boolean[] centerOfEnlightenmentArray; // whether there is a COE
 
     public LiveMap(int width,
                    int height,
@@ -69,11 +65,8 @@ public strictfp class LiveMap {
         this.rounds = rounds;
         this.mapName = mapName;
         this.initialBodies = Arrays.copyOf(initialBodies, initialBodies.length);
-        this.soupArray = new int[width * height];
-        this.pollutionArray = new int[width * height];
-        this.waterArray = new boolean[width * height];
-        this.dirtArray = new int[width * height];
-        this.waterLevel = 0;
+        this.passabilityArray = new double[width * height];
+        this.centerOfEnlightenmentArray = new boolean[width * height];
 
         // invariant: bodies is sorted by id
         Arrays.sort(this.initialBodies, (a, b) -> Integer.compare(a.getID(), b.getID()));
@@ -86,11 +79,8 @@ public strictfp class LiveMap {
                    int rounds,
                    String mapName,
                    RobotInfo[] initialBodies,
-                   int[] soupArray,
-                   int[] pollutionArray,
-                   boolean[] waterArray,
-                   int[] dirtArray,
-                   int initialWater) {
+                   double[] passabilityArray,
+                   boolean[] centerOfEnlightenmentArray) {
         this.width = width;
         this.height = height;
         this.origin = origin;
@@ -98,17 +88,13 @@ public strictfp class LiveMap {
         this.rounds = rounds;
         this.mapName = mapName;
         this.initialBodies = Arrays.copyOf(initialBodies, initialBodies.length);
-        this.soupArray = new int[soupArray.length];
-        this.pollutionArray = new int[pollutionArray.length];
-        this.waterArray = new boolean[waterArray.length];
-        this.dirtArray = new int[dirtArray.length];
-        for (int i = 0; i < soupArray.length; i++) {
-            this.soupArray[i] = soupArray[i];
-            this.pollutionArray[i] = pollutionArray[i];
-            this.waterArray[i] = waterArray[i];
-            this.dirtArray[i] = dirtArray[i];
+        this.passabilityArray = new double[passabilityArray.length];
+        this.centerOfEnlightenmentArray = new boolean[centerOfEnlightenmentArray.length];
+        for (int i = 0; i < passabilityArray.length; i++) {
+            this.passabilityArray[i] = passabilityArray[i];
+            this.centerOfEnlightenmentArray[i] = centerOfEnlightenmentArray[i];
         }
-        this.waterLevel = initialWater;
+
         // invariant: bodies is sorted by id
         Arrays.sort(this.initialBodies, (a, b) -> Integer.compare(a.getID(), b.getID()));
     }
@@ -120,7 +106,7 @@ public strictfp class LiveMap {
      */
     public LiveMap(LiveMap gm) {
         this(gm.width, gm.height, gm.origin, gm.seed, gm.rounds, gm.mapName, gm.initialBodies,
-             gm.soupArray, gm.pollutionArray, gm.waterArray, gm.dirtArray, gm.waterLevel);
+             gm.passabilityArray, gm.centerOfEnlightenmentArray);
     }
 
     @Override
@@ -143,11 +129,8 @@ public strictfp class LiveMap {
         if (this.seed != other.seed) return false;
         if (!this.mapName.equals(other.mapName)) return false;
         if (!this.origin.equals(other.origin)) return false;
-        if (this.waterLevel != other.waterLevel) return false;
-        if (!Arrays.equals(this.soupArray, other.soupArray)) return false;
-        if (!Arrays.equals(this.pollutionArray, other.pollutionArray)) return false;
-        if (!Arrays.equals(this.waterArray, other.waterArray)) return false;
-        if (!Arrays.equals(this.dirtArray, other.dirtArray)) return false;
+        if (!Arrays.equals(this.passabilityArray, other.passabilityArray)) return false;
+        if (!Arrays.equals(this.centerOfEnlightenmentArray, other.centerOfEnlightenmentArray)) return false;
         return Arrays.equals(this.initialBodies, other.initialBodies);
     }
 
@@ -159,11 +142,8 @@ public strictfp class LiveMap {
         result = 31 * result + seed;
         result = 31 * result + rounds;
         result = 31 * result + mapName.hashCode();
-        result = 31 * result + waterLevel;
-        result = 31 * result + Arrays.hashCode(soupArray);
-        result = 31 * result + Arrays.hashCode(pollutionArray);
-        result = 31 * result + Arrays.hashCode(waterArray);
-        result = 31 * result + Arrays.hashCode(dirtArray);
+        result = 31 * result + Arrays.hashCode(passabilityArray);
+        result = 31 * result + Arrays.hashCode(centerOfEnlightenmentArray);
         result = 31 * result + Arrays.hashCode(initialBodies);
         return result;
     }
@@ -270,29 +250,17 @@ public strictfp class LiveMap {
         return origin;
     }
 
-    public int[] getSoupArray() {
-        return soupArray;
+    public double[] getPassabilityArray() {
+        return passabilityArray;
     }
 
-    public int[] getPollutionArray() {
-        return pollutionArray;
-    }
-
-    public boolean[] getWaterArray() {
-        return waterArray;
-    }
-
-    public int[] getDirtArray() {
-        return dirtArray;
-    }
-
-    public int getWaterLevel() {
-        return waterLevel;
+    public boolean[] getCenterOfEnlightenmentArray() {
+        return centerOfEnlightenmentArray;
     }
 
     @Override
     public String toString() {
-        if (soupArray.length == 0)
+        if (passabilityArray.length == 0)
             return "LiveMap{" +
                     "width=" + width +
                     ", height=" + height +
@@ -301,7 +269,7 @@ public strictfp class LiveMap {
                     ", rounds=" + rounds +
                     ", mapName='" + mapName + '\'' +
                     ", initialBodies=" + Arrays.toString(initialBodies) +
-                    ", len=" + Integer.toString(soupArray.length) +
+                    ", len=" + Integer.toString(passabilityArray.length) +
                     "}";
         else return "LiveMap{" +
                     "width=" + width +
@@ -311,11 +279,8 @@ public strictfp class LiveMap {
                     ", rounds=" + rounds +
                     ", mapName='" + mapName + '\'' +
                     ", initialBodies=" + Arrays.toString(initialBodies) +
-                    ", soupArray=:)" +  // Arrays.toString(soupArray) +
-                    ", pollutionArray=:)" + // Arrays.toString(pollutionArray) +
-                    ", waterArray=:)" + // Arrays.toString(waterArray) +
-                    ", dirtArray=" +  Arrays.toString(dirtArray) +
-                    ", waterLevel=" + waterLevel +
+                    ", passabilityArray=:)" +  Arrays.toString(passabilityArray) +
+                    ", centerOfEnlightenmentArray=:)" + Arrays.toString(centerOfEnlightenmentArray) +
                     "}"; 
     }
 }
