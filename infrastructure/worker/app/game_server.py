@@ -11,12 +11,13 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result):
+def game_report_result(gametype, gameid, result, score="0-0"):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_game_update(gametype, gameid), data={
-            'status': result
+            'status': result,
+            'score': score
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
@@ -178,10 +179,11 @@ def game_worker(gameinfo):
         except:
             game_log_error(gametype, gameid, 'Could not determine winner')
         else:
+            score = "{}-{}".format(wins[0], wins[1])
             if wins[0] > wins[1]:
-                game_report_result(gametype, gameid, GAME_REDWON)
+                game_report_result(gametype, gameid, GAME_REDWON, score)
             elif wins[1] > wins[0]:
-                game_report_result(gametype, gameid, GAME_BLUEWON)
+                game_report_result(gametype, gameid, GAME_BLUEWON, score)
             else:
                 game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
