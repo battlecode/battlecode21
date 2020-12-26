@@ -65,6 +65,9 @@ public strictfp class LiveMap {
         this.mapName = mapName;
         this.initialBodies = Arrays.copyOf(initialBodies, initialBodies.length);
         this.passabilityArray = new double[width * height];
+        for (int i = 0; i < passabilityArray.length; i++) {
+            this.passabilityArray[i] = 1; // default cooldown factor is 1
+        }
 
         // invariant: bodies is sorted by id
         Arrays.sort(this.initialBodies, (a, b) -> Integer.compare(a.getID(), b.getID()));
