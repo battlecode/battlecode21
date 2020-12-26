@@ -140,7 +140,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
  
-    public double getInfluence() {
+    public int getInfluence() {
         return this.robot.getInfluence();  
     }
 
@@ -417,7 +417,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (!getType().canEmpower())
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot empower.");
-        
     }
 
     @Override //TODO: UPDATE THIS!!
@@ -457,7 +456,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot is of type " + getType() + " which cannot expose.");  
         assertNotNull(loc); 
         if (!this.robot.canIdentifyLocation(loc))
-            throw new GameActionException(CANT_DO_THAT,
+            throw new GameActionException(OUT_OF_RANGE,
                     "Location can't be exposed because it is out of range."); 
         if (!gameWorld.getGameMap().onTheMap(loc))
             throw new GameActionException(CANT_DO_THAT,
@@ -521,13 +520,32 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-    @Override //TODO: UPDATE THIS!!
+    @Override //TODO: updated
+    private void assertCanBid(int influence) throws GameActionException {
+        assertIsReady();
+        if (!getType().canBid(influence)) {
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot bid.");
+        } else if (influence < 0) {
+            throw new GameActionException(CANT_DO_THAT,
+                    "Not possible to bid nonnegative amount of influence.");
+        } else if (influence > getInfluence()) {
+            throw new GameActionException(CANT_DO_THAT,
+                    "Not possible to bid influence you don't have.");
+        }
+    }
+
+    @Override //TODO: updated
     public boolean canBid(int influence) {
-        return false;
+        try {
+            assertCanBid(influence);
+            return true;
+        } catch (GameActionException e) { return false; }  
     }
 
     @Override //TODO: UPDATE THIS!!
     public void bid(int influence) throws GameActionException {
+        assertCanBid(influence);
         int chili = 0;
     }
 

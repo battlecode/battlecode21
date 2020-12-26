@@ -44,6 +44,7 @@ public strictfp class InternalRobot {
         this.ID = id;
         this.team = team;
         this.type = type;
+        this.influence = 0;
         this.location = loc;
         this.influence = influence;
         this.conviction = this.type.convictionRatio * (this.influence * this.influence);
@@ -81,6 +82,10 @@ public strictfp class InternalRobot {
 
     public RobotType getType() {
         return type;
+    }
+
+    public RobotType getInfluence() {
+        return influence;
     }
 
     public MapLocation getLocation() {

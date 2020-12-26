@@ -504,7 +504,6 @@ public strictfp interface RobotController {
      *
      * @throws GameActionException if conditions for bidding are not satisfied
      * @battlecode.doc.costlymethod 
-     * @return an array of MapLoctions that are occupied within detection radius
      */
     void bid(int influence) throws GameActionException;
 
