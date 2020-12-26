@@ -38,33 +38,11 @@ public class MapTestSmall {
 
     public static void makeSimple() throws IOException {
         MapBuilder mapBuilder = new MapBuilder(mapName, 32, 32, 30);
-        mapBuilder.setWaterLevel(0);
-        mapBuilder.addSymmetricHQ(5, 5);
+        mapBuilder.addSymmetricCOE(5, 5, 0);
 
-        for(int i = 0; i < mapBuilder.width; i++) {
-            for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricSoup(i, j,  i * j + i + j);
-            }
-        }
-
-        for(int i = 0; i < mapBuilder.width/2; i++) {
-            for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricWater(i, j,  false);
-                if (i < 4 && j < 4) {
-                    mapBuilder.setSymmetricWater(i,j,true);
-                }
-            }
-        }
-
-        for(int i = 0; i < mapBuilder.width/2; i++) {
-            for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricDirt(i, j,  3);
-                if (i < 16 && j < 8) {
-                    mapBuilder.setSymmetricDirt(i,j,2);
-                }
-                if (i < 8 && j < 8) {
-                    mapBuilder.setSymmetricDirt(i,j,1);
-                }
+        for(int i = 0; i < mapBuilder.width / 2; i++) {
+            for (int j = 0; j < mapBuilder.height / 2; j++) {
+                mapBuilder.setSymmetricPassability(i, j,  (i * j + i + j) / (i * j));
             }
         }
 
