@@ -51,19 +51,19 @@ public final class SpawnedBodyTable extends Table {
    * the amount of influence paid to create these bodies
    * for initial Centers of Enlightenment, this is the amount of influence needed to take over
    */
-  public int cost(int j) { int o = __offset(12); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
-  public int costLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }
-  public ByteBuffer costAsByteBuffer() { return __vector_as_bytebuffer(12, 4); }
-  public ByteBuffer costInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 12, 4); }
+  public int costs(int j) { int o = __offset(12); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
+  public int costsLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }
+  public ByteBuffer costsAsByteBuffer() { return __vector_as_bytebuffer(12, 4); }
+  public ByteBuffer costsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 12, 4); }
 
   public static int createSpawnedBodyTable(FlatBufferBuilder builder,
       int robotIDsOffset,
       int teamIDsOffset,
       int typesOffset,
       int locsOffset,
-      int costOffset) {
+      int costsOffset) {
     builder.startObject(5);
-    SpawnedBodyTable.addCost(builder, costOffset);
+    SpawnedBodyTable.addCosts(builder, costsOffset);
     SpawnedBodyTable.addLocs(builder, locsOffset);
     SpawnedBodyTable.addTypes(builder, typesOffset);
     SpawnedBodyTable.addTeamIDs(builder, teamIDsOffset);
@@ -82,9 +82,9 @@ public final class SpawnedBodyTable extends Table {
   public static int createTypesVector(FlatBufferBuilder builder, byte[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addByte(data[i]); return builder.endVector(); }
   public static void startTypesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
   public static void addLocs(FlatBufferBuilder builder, int locsOffset) { builder.addOffset(3, locsOffset, 0); }
-  public static void addCost(FlatBufferBuilder builder, int costOffset) { builder.addOffset(4, costOffset, 0); }
-  public static int createCostVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
-  public static void startCostVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addCosts(FlatBufferBuilder builder, int costsOffset) { builder.addOffset(4, costsOffset, 0); }
+  public static int createCostsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
+  public static void startCostsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endSpawnedBodyTable(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;
