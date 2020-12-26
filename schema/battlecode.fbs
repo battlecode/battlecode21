@@ -51,6 +51,7 @@ table SpawnedBodyTable {
     /// The locations of the bodies.
     locs: VecTable;
     /// the amount of influence paid to create these bodies
+    /// for initial Centers of Enlightenment, this is the amount of influence needed to take over
     cost: [int];
 }
 
