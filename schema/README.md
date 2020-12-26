@@ -16,7 +16,7 @@ The battlecode server hosts an unsecured websocket server on port 6175. When you
 3. Change line 3 of `ts/battlecode_generated.ts` from `import { flatbuffers } from "./flatbuffers"` to `import { flatbuffers } from "flatbuffers"`.
 4. Copy the Java files over to `../engine` and run `npm install` in both `../client/playback` and then `../client/visualizer`.
 
-#### ADDITIONAL NOTES FOR 2020+:
+#### ADDITIONAL NOTES FOR 2020:
 Since flatbuffers has upgraded and seem to not be very back compatible, make the following manual changes to any generated java files before moving them to the engine folder:
 
 1. Within the generated class, at the top, there will be four lines that resemble below:
