@@ -43,17 +43,12 @@ public final class Action {
    */
   public static final byte CHANGE_TEAM = 5;
   /**
-   * An enlightenment center can become neutral if lost all its influence
-   * Target: none.
-   */
-  public static final byte BECOME_NEUTRAL = 6;
-  /**
    * Dies due to an uncaught exception
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 7;
+  public static final byte DIE_EXCEPTION = 6;
 
-  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }
