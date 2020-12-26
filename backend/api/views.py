@@ -615,16 +615,6 @@ class TeamViewSet(viewsets.GenericViewSet,
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class CompileStatus:
-    """
-    Class used to enum compile status constants used in compilation_update
-    """
-    PROGRESS = 0
-    SUCCESS = 1
-    FAIL = 2
-    ERROR = 3
-
-
 class SubmissionViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin):
