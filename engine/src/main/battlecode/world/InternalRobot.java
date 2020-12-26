@@ -41,6 +41,7 @@ public strictfp class InternalRobot {
         this.ID = id;
         this.team = team;
         this.type = type;
+        this.influence = 0;
         this.location = loc;
 
         this.controlBits = 0;
@@ -77,6 +78,10 @@ public strictfp class InternalRobot {
 
     public RobotType getType() {
         return type;
+    }
+
+    public RobotType getInfluence() {
+        return influence;
     }
 
     public MapLocation getLocation() {

@@ -246,6 +246,8 @@ public strictfp class GameWorld {
             robot.processBeginningOfRound();
             return true;
         });
+
+        // TODO: process bidding from all enlightenment centers here
     }
 
     public void setWinner(Team t, DominationFactor d)  {
