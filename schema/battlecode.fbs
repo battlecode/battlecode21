@@ -52,7 +52,7 @@ table SpawnedBodyTable {
     locs: VecTable;
     /// the amount of influence paid to create these bodies
     /// for initial Centers of Enlightenment, this is the amount of influence needed to take over
-    cost: [int];
+    costs: [int];
 }
 
 /// The map a round is played on.
