@@ -5,7 +5,7 @@ package battlecode.common;
  */
 public enum RobotType {
 
-    // spawnSource, minCost, convictionRatio, actionCooldown, actionRadius, detectRadius, identifyRadius, initInfluence, influencePerTurn, buffFactor, buffDuration, bytecodeLimit
+    // spawnSource, convictionRatio, actionCooldown, actionRadiusSquared, sensorRadiusSquared, detectionRadiusSquared, bytecodeLimit
     /**
      * Enlightenment Centers produce various types of robots, as well as
      * passively generate influence and bid for votes each round. Can be
@@ -13,8 +13,8 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  0,  0,  1,  2,  2,  2,  10, 0.1f, 0,  0,  20000),
-    //                       SS     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
+    ENLIGHTENMENT_CENTER    (null,  0,  1,  2,  40,  40,  20000),
+    //                       SS     CR  AC  AR  SR   DR   BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
      * converting enemy Politicians and Enlightenment Centers, and destroying
@@ -22,8 +22,8 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  10, 2,  25, 25, 0,  0,  0,  0,  10000),
-    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP  BF  BD  BL
+    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  10,  9,  25,  25,  10000),
+    //                       SS                     CR  AC   AR  SR   DR   BL
     /**
      * Slanderers passively generate influence for their parent Enlightenment
      * Center each round. They are camoflauged as Politicians to enemy units.
@@ -31,16 +31,16 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  1,  20, 0,  20, 20, 0,  0.1f, 0,  0,  10000),
-    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  20,  0,  20,  20,  10000),
+    //                       SS                     CR  AC   AR  SR   DR   BL
     /**
      * Muckrakers search the map for enemy Slanderers to Expose, which destroys
-     * the Slanderer and generates   
+     * the Slanderer and generates gives a buff to their team.
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  1,  0.7f, 15, 12, 40, 30, 0,  0,  1.01f, 10,  10000),
-    //                       SS                     MC  CR    AC  AR  DR  IR  II  IP  BF     BD  BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  15,  12,  30,  40,  10000),
+    //                       SS                     CR     AC   AR   SR   DR   BL
     ;
     
     /**
@@ -49,12 +49,7 @@ public enum RobotType {
     public final RobotType spawnSource;
 
     /**
-     * Minimum influence (cost) one can expend to create the robot.
-     */
-    public final int minCost;
-
-    /**
-     * The ratio of influence^2 to apply when determining the
+     * The ratio of influence to apply when determining the
      * robot's conviction.
      */
     public final float convictionRatio;
@@ -73,62 +68,32 @@ public enum RobotType {
     public final int actionRadiusSquared;
 
     /**
+     * The radius in which the robot can sense another
+     * robot's information. For Politicians, Slanderers, and
+     * Enlightenment Centers, this is the same as their detection
+     * radius. For Muckrakers, slightly reduced.
+     */
+    public final int sensorRadiusSquared;
+
+    /**
      * The radius in which the robot can detect the presence
      * of other robots.
      */
     public final int detectionRadiusSquared;
 
     /**
-     * The radius in which the robot can identify another
-     * robot's type. For Politicians and Slanderers, same as
-     * their detection radius. For Muckrakers, slightly reduced.
-     */
-    public final int identificationRadiusSquared;
-
-    /**
-     * Amount of influence units start with. Zero for all units
-     * except Centers of Enlightenment.
-     */
-    public final int initialInfluence;
-
-    /**
-     * The amount of influence a unit generates per turn.
-     */
-    public final float influencePerTurn;
-
-    /**
-     * The amount that Muckrakers buff their team's empowers.
-     * Calculated by empowerBuffFactor^(Muckraker influence).
-     */
-    public final float empowerBuffFactor;
-
-    /**
-     * The duration of the Muckraker's buff, in number of rounds.
-     */
-    public final int buffDuration;
-
-    /**
      * Base bytecode limit of this robot.
      */
     public final int bytecodeLimit;
 
-
     /**
-     * Returns whether the unit can build robots.
+     * Returns whether the type can build robots of the specified type.
      *
-     * @return whether the robot can build
+     * @param type the RobotType to be built
+     * @return whether the robot can build robots of the specified type
      */
-    public boolean canBuild() {
+    public boolean canBuild(RobotType type) {
         return this == type.spawnSource;
-    }
-
-    /**
-     * Returns whether the unit can generate per-turn influence.
-     *
-     * @return whether the unit can generate per-turn influence
-     */
-    public boolean canGenerateInfluence() {
-        return this == ENLIGHTENMENT_CENTER || this == SLANDERER;
     }
 
     /**
@@ -195,28 +160,23 @@ public enum RobotType {
     }
 
     /**
-     * Returns whether the robot is a building.
+     * Returns whether the robot can submit a bid.
      * 
-     * @return whether the robot is a building
+     * @return whether the robot can submit a bid
      */
-    public boolean isBuilding() {
-        return (this == ENLIGHTENMENT_CENTER);
+    public boolean canBid() {
+        return this == ENLIGHTENMENT_CENTER;
     }
 
-    RobotType(RobotType spawnSource, int minCost, float convictionRatio, int actionCooldown,
-              int actionRadiusSquared, int detectionRadiusSquared, int identificationRadiusSquared,
-              int initialInfluence, float influencePerTurn, float empowerBuffFactor, int buffDuration, int bytecodeLimit) {
+    RobotType(RobotType spawnSource, float convictionRatio, int actionCooldown,
+              int actionRadiusSquared, int sensorRadiusSquared, int detectionRadiusSquared,
+              int bytecodeLimit) {
         this.spawnSource            = spawnSource;
-        this.minCost                = minCost;
         this.convictionRatio        = convictionRatio;
         this.actionCooldown         = actionCooldown;
         this.actionRadiusSquared    = actionRadiusSquared;
+        this.sensorRadiusSquared    = sensorRadiusSquared;
         this.detectionRadiusSquared = detectionRadiusSquared;
-        this.identificationRadiusSquared = identificationRadiusSquared;
-        this.initialInfluence       = initialInfluence;
-        this.influencePerTurn       = influencePerTurn;
-        this.empowerBuffFactor      = empowerBuffFactor;
-        this.buffDuration           = buffDuration;
         this.bytecodeLimit          = bytecodeLimit;
     }
 }

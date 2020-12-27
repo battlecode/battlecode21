@@ -81,7 +81,7 @@ public final class Round extends Table {
   public ByteBuffer actionsAsByteBuffer() { return __vector_as_bytebuffer(20, 1); }
   public ByteBuffer actionsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 20, 1); }
   /**
-   * The 'targets' of the performed actions. Actions without targets may have
+   * The 'targets' of the performed actions. Actions without targets may have any value
    */
   public int actionTargets(int j) { int o = __offset(22); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int actionTargetsLength() { int o = __offset(22); return o != 0 ? __vector_len(o) : 0; }

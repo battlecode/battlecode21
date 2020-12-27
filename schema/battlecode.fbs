@@ -51,7 +51,9 @@ table SpawnedBodyTable {
     /// The locations of the bodies.
     locs: VecTable;
     /// the amount of influence paid to create these bodies
-    cost: [int];
+    /// for initial Enlightenment Centers, this is the amount of influence
+    /// needed to take over
+    influences: [int];
 }
 
 /// The map a round is played on.
@@ -66,7 +68,7 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// The factor to scale cooldowns by
+    /// The factor to divide cooldowns by
     passability: [double];
 }
 
@@ -77,28 +79,32 @@ table GameMap {
 /// Actions may have 'targets', which are the units on which
 /// the actions were performed.
 enum Action : byte {
-    /// Politicians self-destruct and affect nearby bodies
+    /// Politicians self-destruct and affect nearby bodies.
     /// Target: none
     EMPOWER,
     /// Muckrakers can expose a slanderer.
     /// Target: an enemy body
     EXPOSE,
     /// Units can change their flag.
-    /// Target: self
+    /// Target: new flag value
     SET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
     /// Places a bid (enlightent center).
-    /// Target: bid placed
+    /// Target: bid value
     PLACE_BID,
-    /// A robot can change team after being empowered
-    /// Target: self
+    /// A robot can change team after being empowered,
+    /// or when a Enlightenment Center is taken over.
+    /// Target: teamID
     CHANGE_TEAM,
-    /// An enlightenment center can become neutral if lost all its influence
-    /// Target: none.
-    BECOME_NEUTRAL,
-    /// Dies due to an uncaught exception
+    /// A robot's influence changes.
+    /// Target: delta value
+    CHANGE_INFLUENCE,
+    /// A robot's conviction changes.
+    /// Target: delta value, i.e. red 5 -> blue 3 is -2
+    CHANGE_CONVICTION,
+    /// Dies due to an uncaught exception.
     /// Target: none
     DIE_EXCEPTION
 }
@@ -111,26 +117,16 @@ table BodyTypeMetadata {
     type: BodyType;
     /// The spawn source.
     spawnSource: BodyType;
-    /// the minimum cost to produce a unit of this type
-    minCost: int;
     /// the convictionRatio of this type
     convictionRatio: float;
     /// cooldown of this type
     actionCooldown: int;
     /// action radius if this type
     actionRadiusSquared: int;
+    /// sensor radius squared for this type
+    sensorRadiusSquared: int;
     /// detection radius of this type
     detectionRadiusSquared: int;
-    /// identification radius squared for this type
-    identificationRadiusSquared: int;
-    /// initial influence of this type
-    initialInfluence: int;
-    /// influence per turn for this type
-    influencePerTurn: float;
-    /// empower buff factor for this type
-    empowerBuffFactor: float;
-    /// empower buff duration of this type
-    buffDuration: int;
     /// bytecode limit for this type
     bytecodeLimit: int;
 }
@@ -246,7 +242,6 @@ table Round {
     /// the id of the enlightenment center got the bid
     teamVoterID: [int];
 
-
     /// The IDs of bodies that moved.
     movedIDs: [int];
     /// The new locations of bodies that have moved.
@@ -263,7 +258,7 @@ table Round {
     actionIDs: [int];
     /// The actions performed. These actions allow us to track how much soup or dirt a body carries.
     actions: [Action];
-    /// The 'targets' of the performed actions. Actions without targets may have
+    /// The 'targets' of the performed actions. Actions without targets may have any value
     actionTargets: [int];
 
     /// The IDs of bodies that set indicator dots
