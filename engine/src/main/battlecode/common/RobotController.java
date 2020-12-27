@@ -36,32 +36,13 @@ public strictfp interface RobotController {
 
     /**
      * Returns the number of robots on your team, including Centers of Enlightenment.
-     * If this number ever reaches zero, and you have less votes than your opponent,
-     * you lose by default (because you can't get any more votes with no Centers of Enlightenment).
+     * If this number ever reaches zero, you immediately lose.
      *
      * @return the number of robots on your team
      *
      * @battlecode.doc.costlymethod
      */
     int getRobotCount();
-
-    /**
-     * Returns the width of the map.
-     *
-     * @return the width of the map.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getMapWidth();
-
-    /**
-     * Returns the height of the map.
-     *
-     * @return the height of the map.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    int getMapHeight();
 
     // *********************************
     // ****** UNIT QUERY METHODS *******
@@ -112,6 +93,15 @@ public strictfp interface RobotController {
      */
      int getSensorRadiusSquared();
 
+    /**
+     * Returns the robot's detection radius squared.
+     *
+     * @return an int, the current detection radius squared
+     *
+     * @battlecode.doc.costlymethod
+     */
+     int getDetectionRadiusSquared();
+
 
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
@@ -130,7 +120,7 @@ public strictfp interface RobotController {
     boolean onTheMap(MapLocation loc) throws GameActionException;
 
     /**
-     * Senses whether the given location is within the robot's sensor range, and if it is on the map.
+     * Checks whether the given location is within the robot's sensor range, and if it is on the map.
      *
      * @param loc the location to check
      * @return true if the given location is within the robot's sensor range and is on the map; false otherwise.
@@ -140,7 +130,7 @@ public strictfp interface RobotController {
     boolean canSenseLocation(MapLocation loc);
 
     /**
-     * Senses whether a point at the given radius squared is within the robot's sensor range.
+     * Checks whether a point at the given radius squared is within the robot's sensor range.
      *
      * @param radiusSquared the radius to check
      * @return true if the given radius is within the robot's sensor range; false otherwise.
@@ -150,11 +140,31 @@ public strictfp interface RobotController {
     boolean canSenseRadiusSquared(int radiusSquared);
 
     /**
-     * Senses whether there is a robot at the given location.
+     * Checks whether the given location is within the robot's detection range, and if it is on the map.
+     *
+     * @param loc the location to check
+     * @return true if the given location is within the robot's detection range and is on the map; false otherwise.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canDetectLocation(MapLocation loc);
+
+    /**
+     * Checks whether a point at the given radius squared is within the robot's detection range.
+     *
+     * @param radiusSquared the radius to check
+     * @return true if the given radius is within the robot's detection range; false otherwise.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canDetectRadiusSquared(int radiusSquared);
+
+    /**
+     * Detects whether there is a robot at the given location.
      *
      * @param loc the location to check
      * @return true if there is a robot at the given location; false otherwise.
-     * @throws GameActionException if the location is not within sensor range.
+     * @throws GameActionException if the location is not within detection range.
      *
      * @battlecode.doc.costlymethod
      */
@@ -173,11 +183,12 @@ public strictfp interface RobotController {
     RobotInfo senseRobotAtLocation(MapLocation loc) throws GameActionException;
 
     /**
-     * Tests whether the given robot exists and if it is
-     * within this robot's sensor range.
+     * Tests whether the given robot exists and if it is within this robot's
+     * sensor range.
      *
      * @param id the ID of the robot to query
-     * @return true if the given robot is within this robot's sensor range; false otherwise.
+     * @return true if the given robot is within this robot's sensor range;
+     * false otherwise.
      *
      * @battlecode.doc.costlymethod
      */
@@ -196,7 +207,7 @@ public strictfp interface RobotController {
     RobotInfo senseRobot(int id) throws GameActionException;
 
     /**
-     * Returns all robots within sense radius. The objects are returned in no
+     * Returns all robots within sensor radius. The objects are returned in no
      * particular order.
      *
      * @return array of RobotInfo objects, which contain information about all
@@ -249,18 +260,75 @@ public strictfp interface RobotController {
     RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
 
     /**
-     * Given a location, returns the amount of swamping on that location, as a double.
+     * Returns locations of all robots within detection radius. The objects are
+     * returned in no particular order.
      *
-     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
+     * @return array of MapLocation objects, which are the locations of all the
+     * robots you detected.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detectNearbyRobots();
+
+    /**
+     * Returns locations of all robots that can be detected within a certain
+     * distance of this robot. The objects are returned in no particular order.
+     *
+     * @param radiusSquared return robots this distance away from the center of
+     * this robot. If -1 is passed, all robots within detection radius are
+     * returned.
+     * @return array of MapLocation objects of all the robots you detected.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detectNearbyRobots(int radiusSquared);
+
+    /**
+     * Returns locations of all robots of a given team that can be detected
+     * within a certain distance of this robot. The objects are returned in no
+     * particular order.
+     *
+     * @param radiusSquared return robots this distance away from the center of
+     * this robot. If -1 is passed, all robots within detection radius are
+     * returned.
+     * @param team filter game objects by the given team. If null is passed,
+     * robots from any team are returned
+     * @return array of MapLocation objects of all the robots you detected.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detectNearbyRobots(int radiusSquared, Team team);
+
+    /**
+     * Returns all robots of a given team that can be detected within a certain
+     * radius of a specified location. The objects are returned in order of
+     * increasing distance from the specified center.
+     *
+     * @param center center of the given search radius
+     * @param radius return robots this distance away from the given center
+     * location. If -1 is passed, all robots within detected radius are returned
+     * @param team filter game objects by the given team. If null is passed,
+     * objects from all teams are returned.
+     * @return array of MapLocation objects of all the robots you detected.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    MapLocation[] detectNearbyRobots(MapLocation center, int radius, Team team);
+
+    /**
+     * Given a location, returns the passability of that location.
+     *
+     * Lower passability means that robots on this location may be penalized
+     * greater cooldowns for making actions.
      * 
      * @param loc the given location
-     * @return the amount of swamping on the location as a double
+     * @return the passability of that location.
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
      */
-    double senseSwamping(MapLocation loc) throws GameActionException;
-  
+    double sensePassability(MapLocation loc) throws GameActionException;
+
     /**
      * Returns the location adjacent to current location in the given direction.
      *
@@ -274,7 +342,7 @@ public strictfp interface RobotController {
     // ***********************************
     // ****** READINESS METHODS **********
     // ***********************************
-    
+
     /**
      * Tests whether the robot can perform an action. Returns
      * <code>getCooldownTurns() &lt; 1</code>.
@@ -286,29 +354,25 @@ public strictfp interface RobotController {
     boolean isReady();
 
     /**
-     * Returns the number of cooldown turns remaining before this unit can act again.
-     * When this number is strictly less than 1, isReady() is true and the robot
+     * Returns the current cooldown of the unit.
+     * When this number is strictly less than 10, isReady() is true and the robot
      * can perform actions again.
      *
-     * @return the number of cooldown turns remaining before this unit can act again.
+     * @return the current cooldown of the unit.
      *
      * @battlecode.doc.costlymethod
      */
-    float getCooldownTurns();
+    int getCooldown();
 
     // ***********************************
     // ****** MOVEMENT METHODS ***********
     // ***********************************
 
     /**
-     * Tells whether this robot can move one step in the given direction.
-     * Returns false if the robot is a building, if the target location
-     * is not on the map, if the target location is occupied, and if the robot is not ready
-     * based on the cooldown. Does not check if the location is covered with swamp;
-     * bots may choose to enter the swamp.
-     *
-     * If a bot enters the swamp then their cooldown is increased,
-     * which means that they take more turns for a given action.
+     * Checks whether this robot can move one step in the given direction.
+     * Returns false if the robot is a building, if the target location is not
+     * on the map, if the target location is occupied, or if the robot is not
+     * ready due to cooldown.
      *
      * @param dir the direction to move in
      * @return true if it is possible to call <code>move</code> without an exception
@@ -316,7 +380,7 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     boolean canMove(Direction dir);
-    
+
     /**
      * Moves one step in the given direction.
      *
@@ -336,11 +400,11 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can build a robot of the given type in the
-     * given direction. Checks that the robot is of a type that can build bots, 
-     * that the robot can build the desired type, that the target location is 
-     * on the map,  that the target location is not occupied, that the robot has 
-     * the amount of influence it's trying to spend, and that there are 
-     * cooldown turns remaining.
+     * given direction. Checks that the robot is of a type that can build,
+     * that the robot can build the desired type, that the target location is
+     * on the map, that the target location is not occupied, that the robot has
+     * the amount of influence it's trying to spend, and that the cooldown is
+     * low enough to act.
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -371,8 +435,7 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can empower.
-     * Checks that the robot is a politician, and if there are cooldown
-     * turns remaining.
+     * Checks that the robot is a politician, and if the cooldown is low enough.
      * 
      * @return whether it is possible to empower on that round.
      *
@@ -381,18 +444,14 @@ public strictfp interface RobotController {
     boolean canEmpower();
 
     /**
-     * Runs the "empower" ability of a politician:
-     * Divides all of its current conviction evenly among any units within the Politician's
-     * empower radius; the share received by a unit is at most the Politician's current conviction.
-     * 
-     * For each friendly unit, increase its conviction by that amount.
-     * For each unfriendly unit, decrease its conviction by that amount.
-     * If an unfriendly unit's conviction becomes negative, it disappears
-     * from the map on the next round, unless it is a Politician, in which case
-     * it becomes a Politician of your team.
+     * Runs the "empower" ability of a politician.
      *
-     * This also causes the politician unit to self-destruct; 
-     * on the next round it will no longer be in the world. 
+     * Friendly units will have conviction increased, and unfriendly units will
+     * have conviction decreased. Enemy politicians with negative conviction
+     * will join your team.
+     *
+     * This also causes the politician unit to self-destruct; on the next round
+     * it will no longer be in the world.
      *
      * @throws GameActionException if conditions for empowering are not all satisfied
      * @battlecode.doc.costlymethod
@@ -406,56 +465,42 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can expose at a given location.
-     * Checks that the robot is a muckraker, that the robot is within
-     * sensor radius of the muckraker, and if there are cooldown
-     * turns remaining.
-     * 
-     * Does not check if a slanderer is on the location given.
+     * Checks that the robot is a muckraker, that the robot is within action
+     * radius of the muckraker, that the cooldown is low enough, and that a
+     * slanderer is present on the location.
+     *
      * @param loc the location being checked
-     * @return whether it is possible to expose on that round at that location. 
+     * @return whether it is possible to expose on that round at that location.
      *
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
 
-    /** 
-     * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
-     * If a slanderer is exposed then on the next round it will no longer be in the world.
-     * Aside from this, a successful expose temporarily increases the total conviction
-     * of all Politicians on the same team by a factor 1.01^(influence) for the next
-     * <code> GameConstants.EMPOWER_RADIUS_SQUARED </code> turns
+    /**
+     * Tests whether the robot can expose a given robot.
+     * Checks that the robot is a muckraker, that the targeted robot is an enemy
+     * slanderer, that the robot is within action radius, and that the cooldown
+     * is low enough.
      *
-     * If the conditions for exposing are all met but loc does not contain a slanderer,
-     * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
+     * @param id the robot being checked
+     * @return whether it is possible to expose that robot on this round.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canExpose(int id);
+
+    /**
+     * Exposes a slanderer at a given location.
+     * The slanderer will be destroyed, and all attempts to empower by friendly
+     * Politicians will be temporarily increased by a multiplicative factor.
+     *
      * @throws GameActionException if conditions for exposing are not all satisfied 
+     *
      * @battlecode.doc.costlymethod
      */
     void expose(MapLocation loc) throws GameActionException;
 
-    /**
-     * Tests whether the robot can seek, which is a weaker form of sensing with a larger range.
-     * Seeking only returns a list of occupied MapLocations within a large range, but not
-     * the RobotInfo for the bots on each location occupied.
-     * Checks that the robot is a muckraker, and if there are cooldown
-     * turns remaining.
-     *  
-     * @return whether it is possible to seek on that round at that location.
-     *
-     * @throws GameActionException if conditions for empowering are not all satisfied
-     * @battlecode.doc.costlymethod
-     */
-    boolean canSeekLocations();
 
-    /** 
-     * Returns the map locations of all locations within seeking radius,
-     * that contain a bot, without specifying the bots that are on each location.
-     * @throws GameActionException if conditions for seeking are not satisfied
-     * @battlecode.doc.costlymethod 
-     * @return an array of MapLocations that are occupied within seeking radius
-     */
-    MapLocation[] seekLocations() throws GameActionException;
- 
-    
     // **************************************
     // *** CENTER OF ENLIGHTENMENT METHODS **
     // **************************************
@@ -463,8 +508,8 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can bid the specified amount of influence on that round.
      * 
-     * Checks that the robot is an Center of Enlightenment, that the robot has at least 
-     * that amount of influence, and that the amount of influence is positive. 
+     * Checks that the robot is an Enlightenment Center, that the robot has at least
+     * that amount of influence, and that the amount of influence is non-negative.
      *
      * @param influence the amount of influence being bid 
      * @return whether it is possible to bid that amount of influence.
@@ -474,11 +519,7 @@ public strictfp interface RobotController {
     boolean canBid(int influence);
 
     /** 
-     * If the conditions for bidding are met, bids the specified amount of influence.
-     * If this robot has the highest bid of all bids on that round, then the team that
-     * the robot is on gains 1 vote and this robot loses the amount bid. 
-     * If the robot doesn't have the highest bid then it only loses 50% of the amount bid,
-     * rounded up to the nearest integer. 
+     * Enter an influence bid for the vote on that turn.
      *
      * @throws GameActionException if conditions for bidding are not satisfied
      * @battlecode.doc.costlymethod 
@@ -488,28 +529,15 @@ public strictfp interface RobotController {
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
-     
-    /**
-     * Tests whether the robot can set its flag on that round, which is an ordered list of 2 integers.
-     * This flag, if set, persists for future rounds as long as it doesn't get overwritten.
-     *  
-     * Checks if there are cooldown turns remaining.
-     * @return whether it is possible to set the robot's flag on that round.
+
+    /** 
+     * Sets a robot's flag to an integer.
+     *
+     * @param flag the flag value.
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canSetFlag();
-
-    /** 
-     * Sets a robot's flag to an ordered list of the two integers passed in.  
-     *
-     * @param flag1 first integer in flag
-     * @param flag2 second integer in flag
-     * @throws GameActionException if conditions for setting the flag are not satisfied
-     *
-     * @battlecode.doc.costlymethod  
-     */
-    void setFlag(int flag1, int flag2) throws GameActionException;
+    void setFlag(int flag) throws GameActionException;
 
     /**
      * Given a MapLocation, checks if a robot can get the flag of the robot on that location,
@@ -517,7 +545,7 @@ public strictfp interface RobotController {
      *
      * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
      * that the robot on the target location is on the same team, and that either (a) the
-     * robot is a Center of Enlightenment or (b) the squared distance between the target location and
+     * robot is a Enlightenment Center or (b) the squared distance between the target location and
      * the current location is &leq; 8. 
      *
      * @param loc MapLocation being targeted by canGetFlag
@@ -528,15 +556,17 @@ public strictfp interface RobotController {
     boolean canGetFlag(MapLocation loc);
 
     /** 
-     * Given a MapLocation, returns an int[] corresponding to the 
-     * flag of the robot on that MapLocation, if the conditions of canGetFlag(loc) are satisfied.
+     * Given a MapLocation, returns a the flag of the robot at that location.
      *
      * @param loc MapLocation being targeted by getFlag
      * @throws GameActionException if conditions for getting the flag are not satisfied
-     * @return the flag of the robot on the location specified, as an array of 2 integers
-     * @battlecode.doc.costlymethod  
+     * @return the flag of the robot on the location specified
+     *
+     * @battlecode.doc.costlymethod
      */
-    int[] getFlag(MapLocation loc) throws GameActionException;
+    int getFlag(MapLocation loc) throws GameActionException;
+
+
     // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************
