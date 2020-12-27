@@ -17,6 +17,7 @@ public strictfp class InternalRobot {
     private MapLocation location;
     private int influence;
     private int conviction;
+    private int flag;
 
     private long controlBits;
     private int currentBytecodeLimit;
@@ -51,6 +52,7 @@ public strictfp class InternalRobot {
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
+        this.flag = 0;
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -101,6 +103,10 @@ public strictfp class InternalRobot {
 
     public int getConviction() {
         return conviction;
+    }
+
+    public int getFlag() {
+        return flag;
     }
 
     public long getControlBits() {
@@ -275,6 +281,15 @@ public strictfp class InternalRobot {
      */
     public void setConviction(int newConviction) {
         this.conviction = newConviction;
+    }
+
+    /**
+     * Sets the flag given a new flag value.
+     * 
+     * @param newFlag the new flag value
+     */
+    public void setFlag(int newFlag) {
+        this.flag = newFlag;
     }
 
     // *********************************
