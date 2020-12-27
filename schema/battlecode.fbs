@@ -68,7 +68,7 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// The factor to scale cooldowns by
+    /// The factor to divide cooldowns by
     passability: [double];
 }
 
