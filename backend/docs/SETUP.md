@@ -62,7 +62,14 @@ Then stop the old database (on its main page, press "stop").
 
 ## Deployment Setup
 
-Deployment is done through the Google Cloud Platform. You'll need access to the Google Cloud project. (If you don't have access already, ask a dev to add you.) With that, you can start here:
+Deployment is done through the Google Cloud Platform. You'll need access to the Google Cloud project. (If you don't have access already, ask a dev to add you.) It's also helpful to install gsutil, a command line application for managing GCP. Link here: https://cloud.google.com/storage/docs/gsutil.
+
+With that, you can start here --
+
+### Storage Buckets
+Go to "Storage" on GCP console. A bucket for submissions should have been created (if not, instructions are in the infrastructure readme.)
+Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year.
+More info is here: https://cloud.google.com/storage/docs/configuring-cors#gsutil
 
 ### Cloud Build Triggers
 Go to "Cloud Build" triggers on GCP console, here: https://console.cloud.google.com/cloud-build/triggers?project=battlecode18
@@ -111,6 +118,5 @@ Delete old instance groups: go to "Compute Engine" -> "Instance groups", check a
 Delete old instance template: go to "Compute Engine" -> "Instance templates", check any old templates that are no longer in use, and click "delete".
 Delete old, unused backend services and buckets, if you're up to it, instructions in previous section. But this can be a pain and is certainly not necessary.
 
-<!-- TODO note about cors policy -->
 <!-- TODO note about Google Application credentials: get the service account json from an infra dev. (Or, if they haven't made it, feel free to skip this step for now, but come back to it!!) Set it in dev_settings_sensitive.py (formatting is a little weird, -- it has to be enclosed in quotes ina  particular manner -- find an use old values of the json in dev_settings_sensitive.py as an example), and in the instance template (you can just copy paste it). 
 End note -- make sure google app credentials are set in dev_settings_sensitive.py, and as an env in the template. submissions will be broken otherwise til then -->
