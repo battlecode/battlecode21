@@ -307,15 +307,16 @@ public final strictfp class GameMapIO {
         private static void initInitialBodiesFromSchemaBodyTable(SpawnedBodyTable bodyTable, ArrayList<RobotInfo> initialBodies) {
             VecTable locs = bodyTable.locs();
             for (int i = 0; i < bodyTable.robotIDsLength(); i++) {
-                // all initial bodies should be centers of enlightenment, with some influence and 0 conviction
-                // RobotType bodyType = FlatHelpers.getRobotTypeFromBodyType(bodyTable.types(i));
+                // all initial bodies should be enlightenment centers, with some influence and 0 conviction
+                RobotType bodyType = FlatHelpers.getRobotTypeFromBodyType(bodyTable.types(i));
                 int bodyID = bodyTable.robotIDs(i);
                 int bodyX = locs.xs(i);
                 int bodyY = locs.ys(i);
                 Team bodyTeam = TeamMapping.team(bodyTable.teamIDs(i));
                 double bodyInfluence = bodyTable.costs(i);
-                if (bodyType != null)
+                if (bodyType == RobotType.ENLIGHTENMENT_CENTER)
                     initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
+                // ignore robots that are not enlightenment centers, TODO throw error?
             }
         }
     }

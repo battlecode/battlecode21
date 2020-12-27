@@ -54,7 +54,7 @@ public class MapBuilder {
         return x + y * width;
     }
 
-    public void addCenterOfEnlightenment(int id, Team team, int influence, MapLocation loc){
+    public void addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc){
         // check if something already exists here, if so shout
         for (RobotInfo r : bodies) {
             if (r.location.equals(loc)) {
@@ -65,13 +65,13 @@ public class MapBuilder {
                 id,
                 team,
                 influence,
-                0, // COEs have 0 conviction
+                0, // Enlightenment Centers have 0 conviction
                 loc
         ));
     }
 
-    public void addCenterOfEnlightenment(int x, int y, Team team, int influence) {
-        addRobot(
+    public void addEnlightenmentCenter(int x, int y, Team team, int influence) {
+        addEnlightenmentCenter(
                 idCounter++,
                 team,
                 influence,
@@ -126,18 +126,18 @@ public class MapBuilder {
     }
 
     /**
-     * Add team A Center of Enlightenment to (x,y) and team B Center of Enlightenment to symmetric position.
+     * Add team A Enlightenment Center to (x,y) and team B Enlightenment Center to symmetric position.
      * @param x x position
      * @param y y position
      */
-    public void addSymmetricCOE(int x, int y, int influence) {
-        addCenterOfEnlightenment(x, y, Team.A, influence);
-        addCenterOfEnlightenment(symmetricX(x), symmetricY(y), Team.B, influence);
+    public void addSymmetricEnlightenmentCenter(int x, int y, int influence) {
+        addEnlightenmentCenter(x, y, Team.A, influence);
+        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.B, influence);
     }
 
-    public void addSymmetricNeutralCOE(int x, int y, int influence) {
-        addCenterOfEnlightenment(x, y, Team.NEUTRAL, influence);
-        addCenterOfEnlightenment(symmetricX(x), symmetricY(y), Team.NEUTRAL, influence);
+    public void addSymmetricNeutralEnlightenmentCenter(int x, int y, int influence) {
+        addEnlightenmentCenter(x, y, Team.NEUTRAL, influence);
+        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.NEUTRAL, influence);
     }
 
     public void setSymmetricPassability(int x, int y, double value) {
@@ -187,8 +187,8 @@ public class MapBuilder {
         if (width < 32 || height < 32 || width > 64 || height > 64)
             throw new RuntimeException("The map size must be between 32x32 and 64x64, inclusive.");
 
-        // checks at least one COE of each team
-        // only needs to check there's a COE of Team A, because symmetry is checked
+        // checks at least one Enlightenment Center of each team
+        // only needs to check there's an Enlightenment Center of Team A, because symmetry is checked
         boolean noTeamARobots = true;
         for (RobotInfo r : bodies) {
             if (r.getTeam() == Team.A) {
@@ -200,7 +200,7 @@ public class MapBuilder {
             throw new RuntimeException("Map must have starting robots of each team");
         }
 
-        // assert passability and COE symmetry
+        // assert passability and Enlightenment Center symmetry
         ArrayList<MapSymmetry> allMapSymmetries = getSymmetry(robots);
         System.out.println("This map has the following symmetries: " + allMapSymmetries);
         boolean doesContain = false;
@@ -208,7 +208,7 @@ public class MapBuilder {
             if (sss == symmetry) doesContain = true;
         }
         if (!doesContain) {
-            throw new RuntimeException("Passability and Centers of Enlightenment must be symmetric according to the given symmetry; they are not currently.");
+            throw new RuntimeException("Passability and Enlightenment Centers must be symmetric according to the given symmetry; they are not currently.");
         }
     }
 
