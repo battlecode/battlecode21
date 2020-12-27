@@ -438,32 +438,10 @@ public strictfp interface RobotController {
      * the RobotInfo for the bots on each location occupied.
      * Checks that the robot is a muckraker, and if there are cooldown
      * turns remaining.
-     * 
-     * @param loc the location being checked
-     * @return whether it is possible to detect on that round at that location.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canDetect(MapLocation loc);
-
-     /** 
-     * Returns the map locations of all locations within detection radius,
-     * that contain a bot, without specifying the bots that are on each location.
-     * @throws GameActionException if conditions for seeking are not satisfied
-     * @battlecode.doc.costlymethod 
-     * @return an array of MapLocations that are occupied within seeking radius
-     */
-    MapLocation[] detect() throws GameActionException;
-
-    /**
-     * Tests whether the robot can detect, which is a weaker form of sensing with a larger range.
-     * When you detect you only get the list of occupied MapLocations within a large range, but not
-     * the RobotInfo for the bots on each location occupied.
-     * Checks that the robot is a muckraker, and if there are cooldown
-     * turns remaining.
      *  
      * @return whether it is possible to seek on that round at that location.
      *
+     * @throws GameActionException if conditions for empowering are not all satisfied
      * @battlecode.doc.costlymethod
      */
     boolean canSeekLocations();
@@ -559,7 +537,6 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod  
      */
     int[] getFlag(MapLocation loc) throws GameActionException;
-
     // ***********************************
     // ****** OTHER ACTION METHODS *******
     // ***********************************

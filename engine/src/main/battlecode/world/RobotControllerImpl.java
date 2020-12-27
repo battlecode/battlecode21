@@ -447,8 +447,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
 
     // ***********************************
-    // ****** MUCKRAKER METHODS ********* 
-    // ***********************************
+    // ****** MUCKRAKER METHODS ********** 
+    // *********************************** 
+    
     private void assertCanExpose(MapLocation loc) throws GameActionException {
         assertIsReady();
         if (!getType().canExpose())
@@ -471,7 +472,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
             return true;
         } catch (GameActionException e) { return false; }  
     }
-
+    
     @Override //TODO: UPDATE THIS!!
     public void expose(MapLocation loc) throws GameActionException {
         assertCanExpose(loc);
@@ -500,7 +501,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
     
     @Override //TODO: UPDATE THIS!!
-    public MapLocation[] seekLocations() throws GameActionException { 
+    public MapLocation[] seekLocations() { 
         assertCanSeek();
         MapLocation[] allSeekedLocations = gameWorld.getAllLocationsWithinRadiusSquared(getLocation(), this.robot.getIdentificationRadiusSquared());
         List<MapLocation> validSeekedLocations = new ArrayList<>();
@@ -548,7 +549,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBid(influence);
         int chili = 0;
     }
-
+    
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
@@ -587,9 +588,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Location is not occupied with robot of the same team."); 
         if (bot.getType() != ENLIGHTENMENT_CENTER && getLocation().distanceSquaredTo(bot.getLocation()) > 8)  
             throw new GameActionException(CANT_DO_THAT,
-                    "Robot of same team doesn't meet conditions for getting flag."); 
-                 
-                    
+                    "Robot of same team doesn't meet conditions for getting flag.");            
     }
 
     @Override //TODO: UPDATE THIS!!
