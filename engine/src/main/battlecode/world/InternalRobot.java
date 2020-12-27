@@ -10,6 +10,7 @@ public strictfp class InternalRobot {
     private final RobotControllerImpl controller;
     private final GameWorld gameWorld;
 
+    private final int parentID;
     private final int ID;
     private Team team;
     private RobotType type;
@@ -40,14 +41,15 @@ public strictfp class InternalRobot {
      * @param influence the influence used to create the robot
      */
     @SuppressWarnings("unchecked")
-    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, int influence) {
+    public InternalRobot(GameWorld gw, int parentID, int id, RobotType type, MapLocation loc, Team team, int influence) {
+        this.parentID = parentID;
         this.ID = id;
         this.team = team;
         this.type = type;
         this.influence = 0;
         this.location = loc;
         this.influence = influence;
-        this.conviction = this.type.convictionRatio * (this.influence * this.influence);
+        this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -72,6 +74,10 @@ public strictfp class InternalRobot {
         return gameWorld;
     }
 
+    public int getParentID() {
+        return parentID;
+    }
+
     public int getID() {
         return ID;
     }
@@ -92,7 +98,7 @@ public strictfp class InternalRobot {
         return influence;
     }
 
-    public double getConviction() {
+    public int getConviction() {
         return conviction;
     }
 
@@ -130,20 +136,6 @@ public strictfp class InternalRobot {
     // **********************************
 
     /**
-     * Returns the robot's detection radius squared.
-     */
-    public int getDetectionRadiusSquared() {
-        return this.type.detectionRadiusSquared;
-    }
-
-    /**
-     * Returns the robot's identification radius squared.
-     */
-    public int getIdentificationRadiusSquared() {
-        return this.type.identificationRadiusSquared;
-    }
-
-    /**
      * Returns the robot's action radius squared.
      */
     public int getActionRadiusSquared() {
@@ -151,21 +143,17 @@ public strictfp class InternalRobot {
     }
 
     /**
-     * Returns whether this robot can detect the given location.
-     * 
-     * @param toSense the MapLocation to sense
+     * Returns the robot's sensor radius squared.
      */
-    public boolean canDetectLocation(MapLocation toSense){
-        return this.location.distanceSquaredTo(toSense) <= getDetectionRadiusSquared();
+    public int getSensorRadiusSquared() {
+        return this.type.sensorRadiusSquared;
     }
 
     /**
-     * Returns whether this robot can identify the given location.
-     * 
-     * @param toSense the MapLocation to sense
+     * Returns the robot's detection radius squared.
      */
-    public boolean canIdentifyLocation(MapLocation toSense){
-        return this.location.distanceSquaredTo(toSense) <= getIdentificationRadiusSquared();
+    public int getDetectionRadiusSquared() {
+        return this.type.detectionRadiusSquared;
     }
 
     /**
@@ -178,21 +166,21 @@ public strictfp class InternalRobot {
     }
 
     /**
-     * Returns whether this robot can sense something a given radius away.
+     * Returns whether this robot can sense the given location.
      * 
-     * @param radiusSquared the distance squared to sense
+     * @param toSense the MapLocation to sense
      */
-    public boolean canDetectRadiusSquared(int radiusSquared) {
-        return radiusSquared <= getDetectionRadiusSquared();
+    public boolean canSenseLocation(MapLocation toSense){
+        return this.location.distanceSquaredTo(toSense) <= getSensorRadiusSquared();
     }
 
     /**
-     * Returns whether this robot can sense something a given radius away.
+     * Returns whether this robot can detect the given location.
      * 
-     * @param radiusSquared the distance squared to sense
+     * @param toSense the MapLocation to sense
      */
-    public boolean canIdentifyRadiusSquared(int radiusSquared) {
-        return radiusSquared <= getIdentificationRadiusSquared();
+    public boolean canDetectLocation(MapLocation toSense){
+        return this.location.distanceSquaredTo(toSense) <= getDetectionRadiusSquared();
     }
 
     /**
@@ -204,6 +192,23 @@ public strictfp class InternalRobot {
         return radiusSquared <= getActionRadiusSquared();
     }
 
+    /**
+     * Returns whether this robot can sense something a given radius away.
+     * 
+     * @param radiusSquared the distance squared to sense
+     */
+    public boolean canSenseRadiusSquared(int radiusSquared) {
+        return radiusSquared <= getSensorRadiusSquared();
+    }
+
+    /**
+     * Returns whether this robot can sense something a given radius away.
+     * 
+     * @param radiusSquared the distance squared to sense
+     */
+    public boolean canDetectRadiusSquared(int radiusSquared) {
+        return radiusSquared <= getDetectionRadiusSquared();
+    }
 
     // ******************************************
     // ****** UPDATE METHODS ********************
@@ -223,7 +228,9 @@ public strictfp class InternalRobot {
      * Resets the action cooldown.
      */
     public void addCooldownTurns() {
-        setCooldownTurns(this.cooldownTurns + this.type.actionCooldown);
+        double passability = this.gameWorld.getPassability(this.location);
+        float newCooldownTurns = this.type.actionCooldown / passability;
+        setCooldownTurns(this.cooldownTurns + newCooldownTurns);
     }
     
     /**
@@ -242,7 +249,7 @@ public strictfp class InternalRobot {
      * 
      * @param convictionAmount the amount to change conviction by (can be negative)
      */
-    public void addConviction(double convictionAmount) {
+    public void addConviction(int convictionAmount) {
         setConviction(this.conviction + convictionAmount);
     }
     
@@ -251,7 +258,7 @@ public strictfp class InternalRobot {
      * 
      * @param newConviction the new conviction amount
      */
-    public void setConviction(double newConviction) {
+    public void setConviction(int newConviction) {
         this.conviction = newConviction;
     }
 
@@ -266,7 +273,7 @@ public strictfp class InternalRobot {
 
     public void processBeginningOfTurn() {
         if (this.cooldownTurns > 0)
-            this.cooldownTurns = Math.max(0, this.cooldownTurns-1);
+            this.cooldownTurns = Math.max(0, this.cooldownTurns - 1);
         this.currentBytecodeLimit = getType().bytecodeLimit;
     }
 
