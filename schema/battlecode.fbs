@@ -79,7 +79,7 @@ table GameMap {
 /// Actions may have 'targets', which are the units on which
 /// the actions were performed.
 enum Action : byte {
-    /// Politicians self-destruct and affect nearby bodies
+    /// Politicians self-destruct and affect nearby bodies.
     /// Target: none
     EMPOWER,
     /// Muckrakers can expose a slanderer.
@@ -94,10 +94,17 @@ enum Action : byte {
     /// Places a bid (enlightent center).
     /// Target: bid value
     PLACE_BID,
-    /// A robot can change team after being empowered
-    /// Target: self
+    /// A robot can change team after being empowered,
+    /// or when a Enlightenment Center is taken over.
+    /// Target: teamID
     CHANGE_TEAM,
-    /// Dies due to an uncaught exception
+    /// A robot's influence changes.
+    /// Target: delta value
+    CHANGE_INFLUENCE,
+    /// A robot's conviction changes.
+    /// Target: delta value, i.e. red 5 -> blue 3 is -2
+    CHANGE_CONVICTION,
+    /// Dies due to an uncaught exception.
     /// Target: none
     DIE_EXCEPTION
 }
