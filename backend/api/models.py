@@ -33,19 +33,10 @@ TOURNAMENT_DIVISION_CHOICES = (
 
 def send_email(recipient, subject, content, is_html):
     from_address = settings.EMAIL_HOST_USER
-    # msg = EmailMultiAlternatives(subject, content, from_address, [recipient])
-    # EmailMultiAlternatives
-    # if is_html:
-    #     msg.content_subtype = "html"
-    # msg.send()
-    print("sending through sendgrid")
     message = Mail(from_email=from_address, to_emails=recipient, subject=subject, html_content=content)
     try:
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
         response = sg.send(message)
-        # print(response.status_code)
-        # print(response.body)
-        # print(response.headers)
     except Exception as e:
         print(str(e))
 
