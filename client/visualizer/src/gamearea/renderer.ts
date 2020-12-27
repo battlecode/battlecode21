@@ -332,7 +332,7 @@ export default class Renderer {
         }
       }
 
-      // if there are two robots in same cell, choose the drone
+      // if there are two robots in same cell, choose the one with selection priority
       if(possiblePriorityID != undefined) selectedRobotID = possiblePriorityID;
       // Set the info string even if the robot is undefined
       this.lastSelectedID = selectedRobotID;

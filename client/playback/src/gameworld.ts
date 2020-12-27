@@ -13,13 +13,17 @@ export type DeadBodiesSchema = {
   y: Int32Array,
 }
 
+const NEUTRAL_TEAM = 0;
+
 export type BodiesSchema = {
   id: Int32Array,
   team: Int8Array,
   type: Int8Array,
   x: Int32Array,
   y: Int32Array,
-  // TODO other stats like power or convictions?
+  influence: Int32Array;
+  conviction: Int32Array;
+  flag: Int8Array;
   bytecodesUsed: Int32Array, // TODO: is this needed?
 };
 
@@ -149,6 +153,9 @@ export default class GameWorld {
       type: new Int8Array(0),
       x: new Int32Array(0),
       y: new Int32Array(0),
+      influence: new Int32Array(0),
+      conviction: new Int32Array(0),
+      flag: new Int8Array(0),
       bytecodesUsed: new Int32Array(0),
     }, 'id');
 
@@ -301,7 +308,6 @@ export default class GameWorld {
       this.insertBodies(bodies);
     }
 
-    let shootID = 0;
     // Action
     if(delta.actionsLength() > 0){
       const arrays = this.bodies.arrays;
@@ -385,17 +391,19 @@ export default class GameWorld {
           */
           
           // TODO: fill actions
-              /// Politicians self-destruct and affect nearby bodies
-    /// Target: none
+          /// Politicians self-destruct and affect nearby bodies
+          /// Target: none
           case schema.Action.EMPOWER:
+
             break;
-          /// Slanderers can expose a scandal.
+          /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
             break;
           /// Units can change their flag.
           /// Target: self.
           case schema.Action.SET_FLAG:
+            this.bodies.alter({ id: target, flag: target});
             break;
           /// Builds a unit (enlightent center).
           /// Target: spawned unit
@@ -408,12 +416,9 @@ export default class GameWorld {
           /// A robot can change team after being empowered
           /// Target: self
           case schema.Action.CHANGE_TEAM:
+            this.bodies.alter({ id: robotID, team: target});
             break;
-          /// An enlightenment center can become neutral if lost all its influence
-          /// Target: none.
-          case schema.Action.BECOME_NEUTRAL:
-            break;
-            
+
           case schema.Action.DIE_EXCEPTION:
             console.log(`Exception occured: robotID(${robotID}), target(${target}`);
             break;
@@ -424,6 +429,8 @@ export default class GameWorld {
         }
       }
     }
+
+    // TODO Passive Changes
     
     // Died bodies
     if (delta.diedIDsLength() > 0) {
@@ -561,7 +568,7 @@ export default class GameWorld {
     // Extra initialization
     const arrays = this.bodies.arrays;
 
-    //TODO: Body info tracking
+    // TODO: extra initialization
     
     // const initList = [
     //   arrays.onDirt,
@@ -582,6 +589,3 @@ export default class GameWorld {
   }
 
 }
-
-// TODO(jhgilles): encode in flatbuffers
-const NEUTRAL_TEAM = 0;

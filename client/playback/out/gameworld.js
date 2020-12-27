@@ -24,6 +24,9 @@ class GameWorld {
             type: new Int8Array(0),
             x: new Int32Array(0),
             y: new Int32Array(0),
+            influence: new Int32Array(0),
+            conviction: new Int32Array(0),
+            flag: new Int8Array(0),
             bytecodesUsed: new Int32Array(0),
         }, 'id');
         // Instantiate teamStats
@@ -150,7 +153,6 @@ class GameWorld {
         if (bodies) {
             this.insertBodies(bodies);
         }
-        let shootID = 0;
         // Action
         if (delta.actionsLength() > 0) {
             const arrays = this.bodies.arrays;
@@ -235,7 +237,7 @@ class GameWorld {
                     /// Target: none
                     case battlecode_schema_1.schema.Action.EMPOWER:
                         break;
-                    /// Slanderers can expose a scandal.
+                    /// Muckrakers can expose a scandal.
                     /// Target: an enemy body.
                     case battlecode_schema_1.schema.Action.EXPOSE:
                         break;
@@ -268,6 +270,7 @@ class GameWorld {
                 }
             }
         }
+        // TODO Passive Changes
         // Died bodies
         if (delta.diedIDsLength() > 0) {
             // Update team stats
@@ -387,7 +390,7 @@ class GameWorld {
         });
         // Extra initialization
         const arrays = this.bodies.arrays;
-        //TODO: Body info tracking
+        // TODO: extra initialization
         // const initList = [
         //   arrays.onDirt,
         //   arrays.carryDirt,

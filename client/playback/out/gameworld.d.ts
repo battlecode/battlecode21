@@ -13,6 +13,9 @@ export declare type BodiesSchema = {
     type: Int8Array;
     x: Int32Array;
     y: Int32Array;
+    influence: Int32Array;
+    conviction: Int32Array;
+    flag: Int8Array;
     bytecodesUsed: Int32Array;
 };
 export declare type MapStats = {
