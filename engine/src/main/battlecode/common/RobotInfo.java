@@ -20,19 +20,19 @@ public class RobotInfo {
     /**
      * The influence of the robot.
      */
-    public final double influence;
+    public final int influence;
 
     /**
      * The conviction of the robot.
      */
-    public final double conviction;
+    public final int conviction;
 
     /**
      * The current location of the robot.
      */
     public final MapLocation location;
 
-    public RobotInfo(int ID, Team team, double influence, double conviction, MapLocation location) {
+    public RobotInfo(int ID, Team team, int influence, int conviction, MapLocation location) {
         super();
         this.ID = ID;
         this.team = team;
@@ -64,7 +64,7 @@ public class RobotInfo {
      *
      * @return the influence of this robot
      */
-    public double getInfluence() {
+    public int getInfluence() {
         return influence;
     }
 
@@ -73,7 +73,7 @@ public class RobotInfo {
      *
      * @return the conviction of this robot
      */
-    public double conviction() {
+    public int conviction() {
         return conviction;
     }
 
@@ -105,8 +105,8 @@ public class RobotInfo {
         int result;
         result = ID;
         result = 31 * result + team.hashCode();
-        result = 31 * result + Double.hashCode(influence);
-        result = 31 * result + Double.hashCode(conviction);
+        result = 31 * result + influence;
+        result = 31 * result + conviction;
         result = 31 * result + location.hashCode();
         return result;
     }

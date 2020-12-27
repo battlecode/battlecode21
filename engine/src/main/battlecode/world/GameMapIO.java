@@ -313,7 +313,7 @@ public final strictfp class GameMapIO {
                 int bodyX = locs.xs(i);
                 int bodyY = locs.ys(i);
                 Team bodyTeam = TeamMapping.team(bodyTable.teamIDs(i));
-                double bodyInfluence = bodyTable.costs(i);
+                int bodyInfluence = bodyTable.influences(i);
                 if (bodyType == RobotType.ENLIGHTENMENT_CENTER)
                     initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
                 // ignore robots that are not enlightenment centers, TODO throw error?
