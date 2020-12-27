@@ -101,7 +101,6 @@ class GameWorld {
         }
         this.mapStats.randomSeed = map.randomSeed();
         this.mapStats.passability = Float64Array.from(map.passabilityArray());
-        console.log("passability", this.mapStats.passability, map.passabilityArray());
         const width = (maxCorner.x() - minCorner.x());
         this.mapStats.getIdx = (x, y) => (Math.floor(y) * width + Math.floor(x));
         this.mapStats.getLoc = (idx) => (new Victor(idx % width, Math.floor(idx / width)));
@@ -236,14 +235,6 @@ class GameWorld {
                     /// Target: none
                     case battlecode_schema_1.schema.Action.EMPOWER:
                         break;
-                    /// Scandals turn into politicians.
-                    /// Target: self.
-                    case battlecode_schema_1.schema.Action.CAMOUFLAGE:
-                        break;
-                    /// Slanders are alowed to TODO.
-                    /// Target: TODO.
-                    case battlecode_schema_1.schema.Action.EMBEZZLE:
-                        break;
                     /// Slanderers can expose a scandal.
                     /// Target: an enemy body.
                     case battlecode_schema_1.schema.Action.EXPOSE:
@@ -251,10 +242,6 @@ class GameWorld {
                     /// Units can change their flag.
                     /// Target: self.
                     case battlecode_schema_1.schema.Action.SET_FLAG:
-                        break;
-                    /// Units can get the flag of another unit
-                    /// Target: another unit.
-                    case battlecode_schema_1.schema.Action.GET_FLAG:
                         break;
                     /// Builds a unit (enlightent center).
                     /// Target: spawned unit

@@ -11,7 +11,7 @@ const maxID = 4096;
 const bodyTypeList = [
   schema.BodyType.ENLIGHTENMENT_CENTER,
   schema.BodyType.POLITICIAN,
-  schema.BodyType.SCANDAL,
+  schema.BodyType.SLANDERER,
   schema.BodyType.MUCKRAKER
 ];
 

@@ -85,7 +85,7 @@ class Match {
         // TODO regex this properly
         // Regex
         let lines = logs.split(/\r?\n/);
-        let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SCANDAL|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
+        let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SLANDERER|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
         let roundLogs = new Array();
         // Parse each line
         let index = 0;
@@ -107,7 +107,7 @@ class Match {
             let shortenRobot = new Map();
             shortenRobot.set("ENLIGHTENMENT_CENTER", "EC");
             shortenRobot.set("POLITICIAN", "P");
-            shortenRobot.set("SCANDAL", "SC");
+            shortenRobot.set("SLANDERER", "SL");
             shortenRobot.set("MUCKRAKER", "MR");
             // Get the matches
             let team = matches[1];

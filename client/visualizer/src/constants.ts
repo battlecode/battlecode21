@@ -5,7 +5,7 @@ import { net } from 'electron';
 // Body types
 export const ENLIGHTENMENT_CENTER = schema.BodyType.ENLIGHTENMENT_CENTER;
 export const POLITICIAN = schema.BodyType.POLITICIAN;
-export const SCANDAL = schema.BodyType.SCANDAL;
+export const SCANDAL = schema.BodyType.SLANDERER;
 export const MUCKRAKER = schema.BodyType.MUCKRAKER;
 
 export const bodyTypeList = [ENLIGHTENMENT_CENTER, POLITICIAN, SCANDAL, MUCKRAKER];

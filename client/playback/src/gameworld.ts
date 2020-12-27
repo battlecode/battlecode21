@@ -161,7 +161,7 @@ export default class GameWorld {
           robots: [
             0, // ENLIGHTENMENT_CENTER
             0, // POLITICIAN
-            0, // SCANDAL
+            0, // SLANDERER
             0, // MUCKRAKER
             0, // NONE
         ]});
@@ -240,7 +240,6 @@ export default class GameWorld {
     this.mapStats.randomSeed = map.randomSeed();
 
     this.mapStats.passability = Float64Array.from(map.passabilityArray());
-    console.log("passability", this.mapStats.passability, map.passabilityArray());
 
     const width = (maxCorner.x() - minCorner.x());
     this.mapStats.getIdx = (x:number, y:number) => (
@@ -390,14 +389,6 @@ export default class GameWorld {
     /// Target: none
           case schema.Action.EMPOWER:
             break;
-          /// Scandals turn into politicians.
-          /// Target: self.
-          case schema.Action.CAMOUFLAGE:
-            break;
-          /// Slanders are alowed to TODO.
-          /// Target: TODO.
-          case schema.Action.EMBEZZLE:
-            break;
           /// Slanderers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
@@ -405,10 +396,6 @@ export default class GameWorld {
           /// Units can change their flag.
           /// Target: self.
           case schema.Action.SET_FLAG:
-            break;
-          /// Units can get the flag of another unit
-          /// Target: another unit.
-          case schema.Action.GET_FLAG:
             break;
           /// Builds a unit (enlightent center).
           /// Target: spawned unit

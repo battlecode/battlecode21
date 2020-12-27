@@ -25,9 +25,8 @@ export default class RobotForm implements UnitForm {
 
   // Constant
   // NOTE: Bullet trees cannot be spawned until we get server support
-  private readonly ROBOT_TYPES: schema.BodyType[] = [
-    cst.ENLIGHTENMENT_CENTER, cst.POLITICIAN, cst.SCANDAL, cst.MUCKRAKER
-  ];
+  private readonly ROBOT_TYPES: schema.BodyType[] = cst.bodyTypeList;
+
   private readonly TEAMS = {
     "1": "Red",
     "2": "Blue"
