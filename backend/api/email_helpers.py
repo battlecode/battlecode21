@@ -26,4 +26,5 @@ class EmailMiddleware(object):
     def process_exception(self, request, exception):
         traceback_string = traceback.format_exc()
         print(traceback_string)
+        send_email("n8kim1@gmail.com", "Django Error Occured", traceback_string, False)
         return None
