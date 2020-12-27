@@ -15,6 +15,7 @@ from datetime import timedelta
 from settings import *
 
 # Import sensitive settings.
+# The settings that should be specified in dev_settings_sensitive.py are listed in the except block below.
 try:
     from dev_settings_sensitive import *
 except ImportError:
