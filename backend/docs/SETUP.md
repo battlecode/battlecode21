@@ -87,7 +87,7 @@ Set the contents of this file into dev_settings_sensitive.py, as GOOGLE_APPLICAT
 From Google Cloud console, "Compute Engine" -> “Instance Templates”. Click on an old backend template, and then click on “Create similar”. Change the name to something descriptive enough and conventional. ("bc21-backend-template", for example, works well. Also I’ve found that including the current date and time in the name can help keep things straight.) For machine type, we've found the `n1-standard-n1` to be cheap and work well, especially providing enough memory.
 
 Check the checkbox of "Deploy a container image to this VM instance", and change the container image to the image name you've just written in the cloud build trigger.
-Then, click "Advanced container options" to see a place to set environment variables. Find the variables set in `dev_settings_sensitive.py`, and set all of those keys/values here, too. (Here, these values should not be enclosed in quotes) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template.
+Then, click "Advanced container options" to see a place to set environment variables. Find the variables set in `dev_settings_sensitive.py`, and set all of those keys/values here, too. (Here, these values should not be enclosed in quotes.) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template. ("Create Similar" on the instance template's page is helpful here.)
 
 (For now, keep the boot disk the same; it may be good to change it to a later version down the road. Be sure to test that the VMs still work, though.)
 
