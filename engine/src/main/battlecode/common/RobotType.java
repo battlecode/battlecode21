@@ -90,79 +90,89 @@ public enum RobotType {
      * Returns whether the type can build robots of the specified type.
      *
      * @param type the RobotType to be built
-     * @return whether the robot can build robots of the specified type
+     * @return whether the type can build robots of the specified type
      */
     public boolean canBuild(RobotType type) {
         return this == type.spawnSource;
     }
 
     /**
-     * Returns whether the robot can apply a teamwide buff.
+     * Returns whether the type can distinguish slanderers and politicians.
      *
-     * @return whether the robot can apply a teamwide buff
+     * @param type the RobotType to be built
+     * @return whether the type can distinguish slanderers and politicians.
+     */
+    public boolean canTrueSense(RobotType type) {
+        return this == ENLIGHTENMENT_CENTER || this == MUCKRAKER;
+    }
+
+    /**
+     * Returns whether the type can apply a teamwide buff.
+     *
+     * @return whether the type can apply a teamwide buff
      */
     public boolean canBuffTeam() {
         return this == MUCKRAKER;
     }
 
     /**
-     * Returns whether the robot can move.
+     * Returns whether the type can move.
      *
-     * @return whether the robot can move
+     * @return whether the type can move
      */
     public boolean canMove() {
         return this == POLITICIAN || this == SLANDERER || this == MUCKRAKER;
     }
 
     /**
-     * Returns whether the robot can Empower adjacent units.
+     * Returns whether the type can Empower adjacent units.
      *
-     * @return whether the robot can Empower adjacent units
+     * @return whether the type can Empower adjacent units
      */
     public boolean canEmpower() {
         return this == POLITICIAN;
     }
 
     /**
-     * Returns whether the robot can camouflage themselves.
+     * Returns whether the type can camouflage themselves.
      *
-     * @return whether the robot can camouflage themselves
+     * @return whether the type can camouflage themselves
      */
     public boolean canCamouflage() {
         return this == SLANDERER;
     }
 
     /**
-     * Returns whether the robot can Expose nearby robots.
+     * Returns whether the type can Expose nearby robots.
      *
-     * @return whether the robot can Expose nearby robots
+     * @return whether the type can Expose nearby robots
      */
     public boolean canExpose() {
         return this == MUCKRAKER;
     }
 
     /**
-     * Returns whether the robot can be Exposed.
+     * Returns whether the type can be Exposed.
      *
-     * @return whether the robot can be Exposed
+     * @return whether the type can be Exposed
      */
     public boolean canBeExposed() {
         return this == SLANDERER;
     }
 
     /**
-     * Returns whether the robot can be converted to the other team.
+     * Returns whether the type can be converted to the other team.
      *
-     * @return whether the robot can be converted to the other team
+     * @return whether the type can be converted to the other team
      */
     public boolean canBeConverted() {
         return this == ENLIGHTENMENT_CENTER || this == POLITICIAN;
     }
 
     /**
-     * Returns whether the robot can submit a bid.
+     * Returns whether the type can submit a bid.
      * 
-     * @return whether the robot can submit a bid
+     * @return whether the type can submit a bid
      */
     public boolean canBid() {
         return this == ENLIGHTENMENT_CENTER;
