@@ -64,6 +64,7 @@ public class MapBuilder {
         bodies.add(new RobotInfo(
                 id,
                 team,
+                RobotType.ENLIGHTENMENT_CENTER,
                 influence,
                 0, // Enlightenment Centers have 0 conviction
                 loc

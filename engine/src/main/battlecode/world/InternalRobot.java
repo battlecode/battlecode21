@@ -29,7 +29,8 @@ public strictfp class InternalRobot {
     /**
      * Used to avoid recreating the same RobotInfo object over and over.
      */
-    private RobotInfo cachedRobotInfo;
+    private RobotInfo cachedRobotInfoTrue; // true RobotType included
+    private RobotInfo cachedRobotInfoFake; // slanderers appear as politicians, null for all other robot types
 
     /**
      * Create a new internal representation of a robot
@@ -118,17 +119,31 @@ public strictfp class InternalRobot {
         return cooldownTurns;
     }
 
-    public RobotInfo getRobotInfo() {
-        if (this.cachedRobotInfo != null
-                && this.cachedRobotInfo.ID == ID
-                && this.cachedRobotInfo.team == team
-                && this.cachedRobotInfo.influence == influence
-                && this.cachedRobotInfo.conviction == conviction                
-                && this.cachedRobotInfo.location.equals(location)) {
-            return this.cachedRobotInfo;
+    public RobotInfo getRobotInfo(boolean trueSense) {
+        RobotInfo cachedRobotInfo = this.cachedRobotInfoTrue;
+        RobotType infoType = type;
+        if (!trueSense && type == RobotType.SLANDERER) {
+            cachedRobotInfo = this.cachedRobotInfoFake;
+            infoType = RobotType.POLITICIAN;
         }
-        return this.cachedRobotInfo = new RobotInfo(
-                ID, team, influence, conviction, location);
+
+        if (cachedRobotInfo != null
+                && cachedRobotInfo.ID == ID
+                && cachedRobotInfo.team == team
+                && cachedRobotInfo.type == infoType
+                && cachedRobotInfo.influence == influence
+                && cachedRobotInfo.conviction == conviction                
+                && cachedRobotInfo.location.equals(location)) {
+            return cachedRobotInfo;
+        }
+
+        RobotInfo newRobotInfo = new RobotInfo(ID, team, infoType, influence, conviction, location);
+        if (!trueSense && type == RobotType.SLANDERER) {
+            this.cachedRobotInfoFake = newRobotInfo;
+        } else {
+            this.cachedRobotInfoTrue = newRobotInfo;
+        }
+        return newRobotInfo;
     }
 
     // **********************************

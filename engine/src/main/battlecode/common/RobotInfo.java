@@ -18,6 +18,11 @@ public class RobotInfo {
     public final Team team;
 
     /**
+     * The type of the robot.
+     */
+    public final RobotType type;
+
+    /**
      * The influence of the robot.
      */
     public final int influence;
@@ -32,10 +37,11 @@ public class RobotInfo {
      */
     public final MapLocation location;
 
-    public RobotInfo(int ID, Team team, int influence, int conviction, MapLocation location) {
+    public RobotInfo(int ID, Team team, RobotType type, int influence, int conviction, MapLocation location) {
         super();
         this.ID = ID;
         this.team = team;
+        this.type = type;
         this.influence = influence;
         this.conviction = conviction;
         this.location = location;
@@ -57,6 +63,15 @@ public class RobotInfo {
      */
     public Team getTeam() {
         return team;
+    }
+
+    /**
+     * Returns the type of this robot.
+     *
+     * @return the type of this robot.
+     */
+    public RobotType getType() {
+        return type;
     }
 
     /**
@@ -95,6 +110,7 @@ public class RobotInfo {
 
         if (ID != robotInfo.ID) return false;
         if (team != robotInfo.team) return false;
+        if (type != robotInfo.type) return false;
         if (influence != robotInfo.influence) return false;
         if (conviction != robotInfo.conviction) return false;
         return location.equals(robotInfo.location);
@@ -105,6 +121,7 @@ public class RobotInfo {
         int result;
         result = ID;
         result = 31 * result + team.hashCode();
+        result = 31 * result + type;
         result = 31 * result + influence;
         result = 31 * result + conviction;
         result = 31 * result + location.hashCode();
@@ -116,6 +133,7 @@ public class RobotInfo {
         return "RobotInfo{" +
                 "ID=" + ID +
                 ", team=" + team +
+                ", type=" + type +
                 ", influence=" + influence +
                 ", conviction=" + conviction +
                 ", location=" + location +

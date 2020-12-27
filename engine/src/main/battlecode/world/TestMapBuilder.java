@@ -35,6 +35,7 @@ public class TestMapBuilder {
         bodies.add(new RobotInfo(
                 id,
                 team,
+                RobotType.ENLIGHTENMENT_CENTER,
                 influence,
                 0,
                 loc
