@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 
 # The URL of the application
-THIS_URL = 'https://bh2020.battlecode.org'
+THIS_URL = 'https://2021.battlecode.org'
 
 # TODO: update this every time we update maps
 SERVER_MAPS = [
@@ -132,6 +132,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'api.email_helpers.EmailMiddleware'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -140,15 +141,17 @@ APPEND_SLASH = True
 
 # Email
 # Gmail:
+# (As of now, gmail is unused, since it's difficult for the backend server to log in -- 
+# Gmail blocks this for security reasons)
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mitbattlecode@gmail.com'
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASS", "dyna-lando-t")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASS", "redacted")
 ROOT_URLCONF = 'urls'
 
 # Sendgrid:
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "dyna-lando-t")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "redacted")
 
 TEMPLATES = [
     {
