@@ -521,6 +521,7 @@ class Api {
         else if (s[i].status === 'bluewon') s[i].status = on_red ? 'lost' : 'won';
 
         if (s[i].status !== 'lost' && s[i].status !== 'won') {
+
           s[i].replay = undefined;
         }
 
