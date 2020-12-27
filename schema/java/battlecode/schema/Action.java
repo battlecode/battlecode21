@@ -24,7 +24,7 @@ public final class Action {
   public static final byte EXPOSE = 1;
   /**
    * Units can change their flag.
-   * Target: self
+   * Target: new flag value
    */
   public static final byte SET_FLAG = 2;
   /**
@@ -34,7 +34,7 @@ public final class Action {
   public static final byte SPAWN_UNIT = 3;
   /**
    * Places a bid (enlightent center).
-   * Target: bid placed
+   * Target: bid value
    */
   public static final byte PLACE_BID = 4;
   /**
