@@ -38,7 +38,7 @@ public class MapTestSmall {
 
     public static void makeSimple() throws IOException {
         MapBuilder mapBuilder = new MapBuilder(mapName, 32, 32, 30);
-        mapBuilder.addSymmetricCOE(5, 5, 0);
+        mapBuilder.addSymmetricEnlightenmentCenter(5, 5, 0);
 
         for(int i = 0; i < mapBuilder.width / 2; i++) {
             for (int j = 0; j < mapBuilder.height / 2; j++) {

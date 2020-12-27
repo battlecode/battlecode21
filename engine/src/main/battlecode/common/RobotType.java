@@ -86,8 +86,8 @@ public enum RobotType {
     public final int identificationRadiusSquared;
 
     /**
-     * Amount of influence units start with. Zero for all units
-     * except Centers of Enlightenment.
+     * Amount of influence units start with. Defined as zero
+     * for all units except Enlightenment Centers.
      */
     public final int initialInfluence;
 

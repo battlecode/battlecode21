@@ -49,7 +49,7 @@ public final class SpawnedBodyTable extends Table {
   public VecTable locs(VecTable obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * the amount of influence paid to create these bodies
-   * for initial Centers of Enlightenment, this is the amount of influence needed to take over
+   * for initial Enlightenment Centers, this is the amount of influence needed to take over
    */
   public int costs(int j) { int o = __offset(12); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int costsLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }

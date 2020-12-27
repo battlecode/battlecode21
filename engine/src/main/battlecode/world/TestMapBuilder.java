@@ -31,7 +31,7 @@ public class TestMapBuilder {
         this.bodies = new ArrayList<>();
     }
 
-    public TestMapBuilder addCOE(int id, Team team, int influence, MapLocation loc){
+    public TestMapBuilder addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc) {
         bodies.add(new RobotInfo(
                 id,
                 team,
