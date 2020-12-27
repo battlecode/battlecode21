@@ -11,7 +11,7 @@ def send_email(recipient, subject, content, is_html):
     except Exception as e:
         print(str(e))
 
-# Middleware that sends an email on exceeptions.
+# Middleware that sends an email on exceptions.
 # https://docs.djangoproject.com/en/2.2/topics/http/middleware/
 # https://simpleisbetterthancomplex.com/tutorial/2016/07/18/how-to-create-a-custom-django-middleware.html
 class EmailMiddleware(object):
