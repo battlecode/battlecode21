@@ -94,6 +94,9 @@ enum Action : byte {
     /// Places a bid (enlightent center).
     /// Target: bid value
     PLACE_BID,
+    /// A robot can change team after being empowered
+    /// Target: self
+    CHANGE_TEAM,
     /// Dies due to an uncaught exception
     /// Target: none
     DIE_EXCEPTION
@@ -231,7 +234,6 @@ table Round {
     teamVPs: [bool];
     /// the id of the enlightenment center got the bid
     teamVoterID: [int];
-
 
     /// The IDs of bodies that moved.
     movedIDs: [int];
