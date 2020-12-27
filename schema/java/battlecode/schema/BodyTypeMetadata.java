@@ -12,10 +12,9 @@ import com.google.flatbuffers.*;
  * Metadata about all bodies of a particular type.
  */
 public final class BodyTypeMetadata extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb) { return getRootAsBodyTypeMetadata(_bb, new BodyTypeMetadata()); }
   public static BodyTypeMetadata getRootAsBodyTypeMetadata(ByteBuffer _bb, BodyTypeMetadata obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
   public BodyTypeMetadata __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
@@ -85,7 +84,7 @@ public final class BodyTypeMetadata extends Table {
       float empowerBuffFactor,
       int buffDuration,
       int bytecodeLimit) {
-    builder.startTable(13);
+    builder.startObject(13);
     BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
     BodyTypeMetadata.addBuffDuration(builder, buffDuration);
     BodyTypeMetadata.addEmpowerBuffFactor(builder, empowerBuffFactor);
@@ -102,7 +101,7 @@ public final class BodyTypeMetadata extends Table {
     return BodyTypeMetadata.endBodyTypeMetadata(builder);
   }
 
-  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startTable(13); }
+  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startObject(13); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
   public static void addMinCost(FlatBufferBuilder builder, int minCost) { builder.addInt(2, minCost, 0); }
@@ -117,15 +116,8 @@ public final class BodyTypeMetadata extends Table {
   public static void addBuffDuration(FlatBufferBuilder builder, int buffDuration) { builder.addInt(11, buffDuration, 0); }
   public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(12, bytecodeLimit, 0); }
   public static int endBodyTypeMetadata(FlatBufferBuilder builder) {
-    int o = builder.endTable();
+    int o = builder.endObject();
     return o;
-  }
-
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
-
-    public BodyTypeMetadata get(int j) { return get(new BodyTypeMetadata(), j); }
-    public BodyTypeMetadata get(BodyTypeMetadata obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

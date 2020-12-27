@@ -117,7 +117,8 @@ public class RobotControllerTest {
 
         // The following specifies the code to be executed in the next round.
         // Bytecodes are not counted, and yields are automatic at the end.
-        game.getWorld().getTeamInfo().adjustSoup(Team.A, 500000);
+        // TODO? fix test?
+        // game.getWorld().getTeamInfo().adjustSoup(Team.A, 500000);
         game.round((id, rc) -> {
             assertTrue("Can't build robot", rc.canBuildRobot(RobotType.MINER, Direction.EAST));
             rc.buildRobot(RobotType.MINER, Direction.EAST);

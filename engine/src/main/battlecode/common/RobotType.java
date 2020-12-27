@@ -5,70 +5,42 @@ package battlecode.common;
  */
 public enum RobotType {
 
-    // spawnSource, soupCost, dirtLimit, soupLimit, actionCooldown, sensorRadius, pollutionRadius, pollutionAdditive, pollutionMultiplicative, globalPollution, maxSoup, bytecodeLimit
+    // spawnSource, minCost, convictionRatio, actionCooldown, actionRadius, detectRadius, identifyRadius, initInfluence, influencePerTurn, buffFactor, buffDuration, bytecodeLimit
     /**
-     * The base produces miners, is also a net gun and a refinery.
+     * Enlightenment Centers produce various types of robots, as well as
+     * passively generate influence and bid for votes each round. Can be
+     * converted by Politicians.
+     * 
      * @battlecode.doc.robottype
      */
-    HQ                      (null,  0,  50,  0,  1,  48,  35,  500,  1,  1,  20,  20000),
-    //                       SS     C   DL   SL  AC  SR   PR   PA   PM  GP  MS   BL
+    ENLIGHTENMENT_CENTER    (null,  0,  0,  1,  2,  2,  2,  10, 0.1f, 0,  0,  20000),
+    //                       SS     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
     /**
-     * Miners extract crude soup and bring it to the refineries.
+     * Politicians Empower adjacent units, strengthening friendly robots, 
+     * converting enemy Politicians and Enlightenment Centers, and destroying
+     * enemy Slanderers and Muckrakers with their impassioned speeches.
      *
      * @battlecode.doc.robottype
      */
-    MINER                   (HQ,  70,  0,  100,  1,  35,  0,  0,  1,  0,  0,  10000),
-    //                       SS   C    DL  SL   AC  SR   PR  PA  PM  GP  MS  BL
+    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  10, 2,  25, 25, 0,  0,  0,  0,  10000),
+    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP  BF  BD  BL
     /**
-     * Refineries turn crude soup into refined soup, and produce pollution.
+     * Slanderers passively generate influence for their parent Enlightenment
+     * Center each round. They are camoflauged as Politicians to enemy units.
+     * Can be converted by Politicians.
+     *
      * @battlecode.doc.robottype
      */
-    REFINERY                (MINER,  200,  15,  0,  1,  24,  35,  500, 1,  1,  20,  5000),
-    //                       SS      C     DL   SL  AC  SR   PR   PA   PM  GP  MS   BL
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  1,  20, 0,  20, 20, 0,  0.1f, 0,  0,  10000),
+    //                       SS                     MC  CR  AC  AR  DR  IR  II  IP    BF  BD  BL
     /**
-     * Vaporators condense soup from the air, reducing pollution.
+     * Muckrakers search the map for enemy Slanderers to Expose, which destroys
+     * the Slanderer and generates   
+     *
      * @battlecode.doc.robottype
      */
-    VAPORATOR               (MINER,  1000,  15,  0,  1,  24,  35,  0,  0.67f,  -1,  7,  5000),
-    //                       SS      C      DL   SL  AC  SR   PR   PA  PM      GP   MS   BL
-    /**
-     * Design schools create landscapers.
-     * @battlecode.doc.robottype
-     */
-    DESIGN_SCHOOL           (MINER,  150,  15,  0,  1,  24,  0,  0,  1,  0,  0,  5000),
-    //                       SS      C     DL   SL  AC  SR   PR  PA  PM  GP  MS  BL
-    /**
-     * Fulfillment centers create drones.
-     * @battlecode.doc.robottype
-     */
-    FULFILLMENT_CENTER      (MINER,  150,  15,  0,  1,  24,  0,  0,  1,  0,  0,  5000),
-    //                       SS      C     DL   SL  AC  SR   PR  PA  PM  GP  MS  BL
-    /**
-     * Landscapers take dirt from adjacent squares (decreasing the elevation)
-     * or deposit dirt onto adjacent squares, including
-     * into water (increasing the elevation).
-     * @battlecode.doc.robottype
-     */
-    LANDSCAPER              (DESIGN_SCHOOL,  150,  25,  0,  1,  24,  0,  0,  1,  0,  0,  10000),
-    //                       SS              C     DL   SL  AC  SR   PR  PA  PM  GP  MS  BL
-    /**
-     * Drones pick up any unit and drop them somewhere else.
-     * @battlecode.doc.robottype
-     */
-    DELIVERY_DRONE          (FULFILLMENT_CENTER,  150,  0,  0,  1.5f,  24,  0,  0,  1,  0,  0,  10000),
-    //                       SS                   C     DL  SL  AC     SR   PR  PA  PM  GP  MS  BL
-    /**
-     * Net guns shoot down drones.
-     * @battlecode.doc.robottype
-     */
-    NET_GUN                 (MINER,  250,  15,  0,  1,  24,  0,  0,  1,  0,  0,  7000),
-    //                       SS      C     DL   SL  AC  SR   PR  PA  PM  GP  MS  BL
-    /**
-     * Cows produce pollution (and they moo).
-     * @battlecode.doc.robottype
-     */
-    COW                     (null,  0,  0,  0,  2,  10000,  15,  2000,  1,  0,  0,  0),
-    //                       SS     C   DL  SL  AC  SR     PR   PA     PM  GP  MS  BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  1,  0.7f, 15, 12, 40, 30, 0,  0,  1.01f, 10,  10000),
+    //                       SS                     MC  CR    AC  AR  DR  IR  II  IP  BF     BD  BL
     ;
     
     /**
@@ -77,55 +49,63 @@ public enum RobotType {
     public final RobotType spawnSource;
 
     /**
-     * Cost for creating the robot.
+     * Minimum influence (cost) one can expend to create the robot.
      */
-    public final int cost;
+    public final int minCost;
 
     /**
-     * Limit for amount of dirt robot can hold.
+     * The ratio of influence^2 to apply when determining the
+     * robot's conviction.
      */
-    public final int dirtLimit;
-
-    /**
-     * Limit for amount of crude soup robot can hold.
-     */
-    public final int soupLimit;
+    public final float convictionRatio;
 
     /**
      * Cooldown turns for how long before a robot can take 
-     * action (build, move, dig, drop, mine, shoot) again.
+     * action (build/Empower/Expose) again.
      */
-    public final float actionCooldown;
+    public final int actionCooldown;
 
     /**
-     * Range for sensing robots and trees.
+     * Range of robots' abilities. For Politicians, this is
+     * the AoE range of their Empower ability. For Muckrakers,
+     * this is from how far they can Expose a Slanderer.
      */
-    public final int sensorRadiusSquared;
+    public final int actionRadiusSquared;
 
     /**
-     * The radius of local pollution effects.
+     * The radius in which the robot can detect the presence
+     * of other robots.
      */
-    public final int pollutionRadiusSquared;
+    public final int detectionRadiusSquared;
 
     /**
-     * Amount of pollution created when refining soup locally.
+     * The radius in which the robot can identify another
+     * robot's type. For Politicians and Slanderers, same as
+     * their detection radius. For Muckrakers, slightly reduced.
      */
-    public final int localPollutionAdditiveEffect;
+    public final int identificationRadiusSquared;
 
     /**
-     * The fraction that the local pollution is multiplied by around vaporators.
+     * Amount of influence units start with. Zero for all units
+     * except Centers of Enlightenment.
      */
-    public final float localPollutionMultiplicativeEffect;
+    public final int initialInfluence;
 
     /**
-     * Amount of global pollution created when refining soup.
+     * The amount of influence a unit generates per turn.
      */
-    public final int globalPollutionAmount;
+    public final float influencePerTurn;
 
     /**
-     * Maximum amount of soup to be refined per turn.
+     * The amount that Muckrakers buff their team's empowers.
+     * Calculated by empowerBuffFactor^(Muckraker influence).
      */
-    public final int maxSoupProduced;
+    public final float empowerBuffFactor;
+
+    /**
+     * The duration of the Muckraker's buff, in number of rounds.
+     */
+    public final int buffDuration;
 
     /**
      * Base bytecode limit of this robot.
@@ -134,31 +114,30 @@ public enum RobotType {
 
 
     /**
-     * Returns whether the robot can build buildings.
+     * Returns whether the unit can build robots.
      *
-     * @param type the RobotType of the robot to get information on
      * @return whether the robot can build
      */
-    public boolean canBuild(RobotType type) {
+    public boolean canBuild() {
         return this == type.spawnSource;
     }
 
     /**
-     * Returns whether the robot can refine crude soup into refined soup.
+     * Returns whether the unit can generate per-turn influence.
      *
-     * @return whether the robot can refine crude soup into refined soup
+     * @return whether the unit can generate per-turn influence
      */
-    public boolean canRefine() {
-        return this == REFINERY || this == HQ;
+    public boolean canGenerateInfluence() {
+        return this == ENLIGHTENMENT_CENTER || this == SLANDERER;
     }
 
     /**
-     * Returns whether the robot can affect pollution.
+     * Returns whether the robot can apply a teamwide buff.
      *
-     * @return whether the robot can affect pollution
+     * @return whether the robot can apply a teamwide buff
      */
-    public boolean canAffectPollution() {
-        return this == REFINERY || this == VAPORATOR || this == HQ || this == COW;
+    public boolean canBuffTeam() {
+        return this == MUCKRAKER;
     }
 
     /**
@@ -167,97 +146,52 @@ public enum RobotType {
      * @return whether the robot can move
      */
     public boolean canMove() {
-        return this == MINER || this == LANDSCAPER || this == DELIVERY_DRONE || this == COW;
+        return this == POLITICIAN || this == SLANDERER || this == MUCKRAKER;
     }
 
     /**
-     * Returns whether the robot can fly.
+     * Returns whether the robot can Empower adjacent units.
      *
-     * @return whether the robot can fly
+     * @return whether the robot can Empower adjacent units
      */
-    public boolean canFly() {
-        return this == DELIVERY_DRONE;
+    public boolean canEmpower() {
+        return this == POLITICIAN;
     }
 
     /**
-     * Returns whether the robot can dig.
+     * Returns whether the robot can camouflage themselves.
      *
-     * @return whether the robot can dig
+     * @return whether the robot can camouflage themselves
      */
-    public boolean canDig() {
-        return this == LANDSCAPER;
+    public boolean canCamouflage() {
+        return this == SLANDERER;
     }
 
     /**
-     * Returns whether the robot can deposit dirt.
+     * Returns whether the robot can Expose nearby robots.
      *
-     * @return whether the robot can deposit dirt
+     * @return whether the robot can Expose nearby robots
      */
-    public boolean canDepositDirt() {
-        return this == LANDSCAPER;
+    public boolean canExpose() {
+        return this == MUCKRAKER;
     }
 
     /**
-     * Returns whether the robot can mine.
+     * Returns whether the robot can be Exposed.
      *
-     * @return whether the robot can mine
+     * @return whether the robot can be Exposed
      */
-    public boolean canMine() {
-        return this == MINER;
+    public boolean canBeExposed() {
+        return this == SLANDERER;
     }
 
     /**
-     * Returns whether the robot can deposit soup.
+     * Returns whether the robot can be converted to the other team.
      *
-     * @return whether the robot can deposit soup
+     * @return whether the robot can be converted to the other team
      */
-    public boolean canDepositSoup() {
-        return this == MINER;
-    }
-
-    /**
-     * Returns whether the robot can shoot drones.
-     *
-     * @return whether the robot can shoot
-     */
-    public boolean canShoot() {
-        return this == NET_GUN || this == HQ;
-    }
-
-    /**
-     * Returns whether the robot can be shot.
-     *
-     * @return whether the robot can be shot
-     */
-    public boolean canBeShot() {
-        return this == DELIVERY_DRONE;
-    }
-
-    /**
-     * Returns whether the robot can pick up units.
-     *
-     * @return whether the robot can pick up units
-     */
-    public boolean canPickUpUnits() {
-        return this == DELIVERY_DRONE;
-    }
-
-    /**
-     * Returns whether the robot can drop off units.
-     *
-     * @return whether the robot can drop off units
-     */
-    public boolean canDropOffUnits() {
-        return this == DELIVERY_DRONE;
-    }
-
-    /**
-     * Returns whether the robot can be picked up.
-     *
-     * @return whether the robot can be picked up
-     */
-    public boolean canBePickedUp() {
-        return this == MINER || this == LANDSCAPER || this == COW;
+    public boolean canBeConverted() {
+        return this == ENLIGHTENMENT_CENTER || this == POLITICIAN;
     }
 
     /**
@@ -266,26 +200,23 @@ public enum RobotType {
      * @return whether the robot is a building
      */
     public boolean isBuilding() {
-        return (this == HQ || this == REFINERY || this == VAPORATOR ||
-                this == DESIGN_SCHOOL || this == FULFILLMENT_CENTER ||
-                this == NET_GUN);
+        return (this == ENLIGHTENMENT_CENTER);
     }
 
-    RobotType(RobotType spawnSource, int cost, int dirtLimit, int soupLimit,
-              float actionCooldown, int sensorRadiusSquared, int pollutionRadiusSquared, int localPollutionAdditiveEffect,
-              float localPollutionMultiplicativeEffect,
-              int globalPollutionAmount, int maxSoupProduced, int bytecodeLimit) {
-        this.spawnSource           = spawnSource;
-        this.cost                  = cost;
-        this.dirtLimit             = dirtLimit;
-        this.soupLimit             = soupLimit;
-        this.actionCooldown        = actionCooldown;
-        this.sensorRadiusSquared = sensorRadiusSquared;
-        this.pollutionRadiusSquared = pollutionRadiusSquared;
-        this.localPollutionAdditiveEffect = localPollutionAdditiveEffect;
-        this.localPollutionMultiplicativeEffect = localPollutionMultiplicativeEffect;
-        this.globalPollutionAmount = globalPollutionAmount;
-        this.maxSoupProduced       = maxSoupProduced;
-        this.bytecodeLimit         = bytecodeLimit;
+    RobotType(RobotType spawnSource, int minCost, float convictionRatio, int actionCooldown,
+              int actionRadiusSquared, int detectionRadiusSquared, int identificationRadiusSquared,
+              int initialInfluence, float influencePerTurn, float empowerBuffFactor, int buffDuration, int bytecodeLimit) {
+        this.spawnSource            = spawnSource;
+        this.minCost                = minCost;
+        this.convictionRatio        = convictionRatio;
+        this.actionCooldown         = actionCooldown;
+        this.actionRadiusSquared    = actionRadiusSquared;
+        this.detectionRadiusSquared = detectionRadiusSquared;
+        this.identificationRadiusSquared = identificationRadiusSquared;
+        this.initialInfluence       = initialInfluence;
+        this.influencePerTurn       = influencePerTurn;
+        this.empowerBuffFactor      = empowerBuffFactor;
+        this.buffDuration           = buffDuration;
+        this.bytecodeLimit          = bytecodeLimit;
     }
 }

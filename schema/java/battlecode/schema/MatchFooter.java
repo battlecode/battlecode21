@@ -12,10 +12,9 @@ import com.google.flatbuffers.*;
  * Sent to end a match.
  */
 public final class MatchFooter extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static MatchFooter getRootAsMatchFooter(ByteBuffer _bb) { return getRootAsMatchFooter(_bb, new MatchFooter()); }
   public static MatchFooter getRootAsMatchFooter(ByteBuffer _bb, MatchFooter obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
   public MatchFooter __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
@@ -30,25 +29,18 @@ public final class MatchFooter extends Table {
   public static int createMatchFooter(FlatBufferBuilder builder,
       byte winner,
       int totalRounds) {
-    builder.startTable(2);
+    builder.startObject(2);
     MatchFooter.addTotalRounds(builder, totalRounds);
     MatchFooter.addWinner(builder, winner);
     return MatchFooter.endMatchFooter(builder);
   }
 
-  public static void startMatchFooter(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void startMatchFooter(FlatBufferBuilder builder) { builder.startObject(2); }
   public static void addWinner(FlatBufferBuilder builder, byte winner) { builder.addByte(0, winner, 0); }
   public static void addTotalRounds(FlatBufferBuilder builder, int totalRounds) { builder.addInt(1, totalRounds, 0); }
   public static int endMatchFooter(FlatBufferBuilder builder) {
-    int o = builder.endTable();
+    int o = builder.endObject();
     return o;
-  }
-
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
-
-    public MatchFooter get(int j) { return get(new MatchFooter(), j); }
-    public MatchFooter get(MatchFooter obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

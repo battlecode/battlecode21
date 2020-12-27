@@ -24,16 +24,16 @@ table RGBTable {
 /// The possible types of things that can exist.
 /// Note that bullets are not treated as bodies.
 enum BodyType : byte {
-    /// Enlightenment centers produce politicians, scandals and slanderers and place bids
+    /// Enlightenment centers produce politicians, Muckrakers and slanderers and place bids
     ///can be neutral until captured
     ENLIGHTENMENT_CENTER,
     /// politicians use their influence to self destruct and capture other units
     POLITICIAN,
-    /// scandals generate passive influence for the enlightenment center that created them
+    /// slanderers generate passive influence for the enlightenment center that created them
     /// they turn into politicians at some point, and can only be identified by slanderers.
-    SCANDAL,
-    /// have the ability to identify scandals
-    MUCKRAKER, //keep as muckraker for now
+    SLANDERER,
+    /// have the ability to identify slanderers
+    MUCKRAKER,
 }
 
 /// A list of new bodies to be placed on the map.
@@ -66,7 +66,7 @@ table GameMap {
     bodies: SpawnedBodyTable;
     /// The random seed of the map.
     randomSeed: int;
-    /// the ease of passing through a block
+    /// The factor to scale cooldowns by
     passability: [double];
 }
 
@@ -80,21 +80,12 @@ enum Action : byte {
     /// Politicians self-destruct and affect nearby bodies
     /// Target: none
     EMPOWER,
-    /// Scandals turn into politicians.
-    /// Target: self.
-    CAMOUFLAGE,
-    /// Slanders are alowed to TODO.
-    /// Target: TODO.
-    EMBEZZLE,
-    /// Slanderers can expose a scandal.
-    /// Target: an enemy body.
+    /// Muckrakers can expose a slanderer.
+    /// Target: an enemy body
     EXPOSE,
     /// Units can change their flag.
-    /// Target: self.
+    /// Target: self
     SET_FLAG,
-    /// Units can get the flag of another unit
-    /// Target: another unit.
-    GET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
@@ -154,7 +145,7 @@ table TeamData {
     teamID: byte;
 }
 
-// Profiler tables
+/// Profiler tables
 
 /// These tables are set-up so that they match closely with speedscope's file format documented at
 /// https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
@@ -188,7 +179,7 @@ table ProfilerFile {
     profiles: [ProfilerProfile];
 }
 
-// Events
+/// Events
 
 /// An Event is a single step that needs to be processed.
 /// A saved game simply consists of a long list of Events.

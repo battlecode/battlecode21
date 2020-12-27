@@ -18,57 +18,42 @@ public final class Action {
    */
   public static final byte EMPOWER = 0;
   /**
-   * Scandals turn into politicians.
-   * Target: self.
+   * Muckrakers can expose a slanderer.
+   * Target: an enemy body
    */
-  public static final byte CAMOUFLAGE = 1;
-  /**
-   * Slanders are alowed to TODO.
-   * Target: TODO.
-   */
-  public static final byte EMBEZZLE = 2;
-  /**
-   * Slanderers can expose a scandal.
-   * Target: an enemy body.
-   */
-  public static final byte EXPOSE = 3;
+  public static final byte EXPOSE = 1;
   /**
    * Units can change their flag.
-   * Target: self.
+   * Target: self
    */
-  public static final byte SET_FLAG = 4;
-  /**
-   * Units can get the flag of another unit
-   * Target: another unit.
-   */
-  public static final byte GET_FLAG = 5;
+  public static final byte SET_FLAG = 2;
   /**
    * Builds a unit (enlightent center).
    * Target: spawned unit
    */
-  public static final byte SPAWN_UNIT = 6;
+  public static final byte SPAWN_UNIT = 3;
   /**
    * Places a bid (enlightent center).
    * Target: bid placed
    */
-  public static final byte PLACE_BID = 7;
+  public static final byte PLACE_BID = 4;
   /**
    * A robot can change team after being empowered
    * Target: self
    */
-  public static final byte CHANGE_TEAM = 8;
+  public static final byte CHANGE_TEAM = 5;
   /**
    * An enlightenment center can become neutral if lost all its influence
    * Target: none.
    */
-  public static final byte BECOME_NEUTRAL = 9;
+  public static final byte BECOME_NEUTRAL = 6;
   /**
    * Dies due to an uncaught exception
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 10;
+  public static final byte DIE_EXCEPTION = 7;
 
-  public static final String[] names = { "EMPOWER", "CAMOUFLAGE", "EMBEZZLE", "EXPOSE", "SET_FLAG", "GET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }
