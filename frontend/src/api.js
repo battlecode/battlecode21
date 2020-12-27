@@ -524,6 +524,14 @@ class Api {
           s[i].replay = undefined;
         }
 
+        if (s[i].status === 'won'){
+          s[i].winscore = `${s[i].winscore} - ${3-s[i].winscore}`;
+        }else if (s[i].status === 'lost'){
+          s[i].winscore = `${3-s[i].winscore} - ${s[i].winscore}`;
+        }else{
+          s[i].winscore = ' - ';
+        }
+
         s[i].status = s[i].status.charAt(0).toUpperCase() + s[i].status.slice(1);
 
         s[i].date = new Date(s[i].updated_at).toLocaleDateString();
@@ -531,7 +539,6 @@ class Api {
 
         s[i].team = on_red ? s[i].blue_team : s[i].red_team;
         s[i].color = on_red ? 'Red' : 'Blue';
-
 
         requests.push(s[i]);
       } callback(requests);

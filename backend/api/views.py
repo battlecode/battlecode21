@@ -1013,6 +1013,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 sc_status = request.data['status']
                 sc_winscore = request.data['winscore']
                 if sc_status == "redwon" or sc_status == "bluewon":
+                    if sc_winscore < 2:
+                        return Response({'message': 'Winscore invalid: it must be at least 2.'}, status.HTTP_400_BAD_REQUEST)
                     scrimmage.status = sc_status
                     scrimmage.winscore = sc_winscore
 
