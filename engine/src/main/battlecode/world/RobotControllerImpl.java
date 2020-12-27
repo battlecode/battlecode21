@@ -119,16 +119,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.robot.getLocation();
     }
 
-    @Override
-    public int getSensorRadiusSquared() {
-        return this.robot.getSensorRadiusSquared();
-    }
-
-    @Override
-    public int getDetectionRadiusSquared() {
-        return this.robot.getDetectionRadiusSquared();
-    }
-
     private InternalRobot getRobotByID(int id) {
         if (!gameWorld.getObjectInfo().existsRobot(id))
             return null;
@@ -241,7 +231,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     @Override
     public RobotInfo[] senseNearbyRobots(MapLocation center, int radiusSquared, Team team) {
         assertNotNull(center);
-        int sensorRadiusSquaredUpperBound = (int) Math.ceil(this.robot.getSensorRadiusSquared());
+        int sensorRadiusSquaredUpperBound = (int) Math.ceil(getType().sensorRadiusSquared);
         InternalRobot[] allSensedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center,
                 radiusSquared == -1 ? sensorRadiusSquaredUpperBound : Math.min(radiusSquared, sensorRadiusSquaredUpperBound));
         List<RobotInfo> validSensedRobots = new ArrayList<>();
@@ -278,7 +268,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     @Override
     public MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared, Team team) {
         assertNotNull(center);
-        int detectionRadiusSquaredUpperBound = (int) Math.ceil(this.robot.getDetectionRadiusSquared());
+        int detectionRadiusSquaredUpperBound = (int) Math.ceil(getType().detectionRadiusSquared);
         InternalRobot[] allDetectedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center,
                 radiusSquared == -1 ? detectionRadiusSquaredUpperBound : Math.min(radiusSquared, detectionRadiusSquaredUpperBound));
         List<MapLocation> validDetectedRobots = new ArrayList<>();

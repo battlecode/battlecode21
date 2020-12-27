@@ -84,24 +84,6 @@ public strictfp interface RobotController {
      */
     MapLocation getLocation();
 
-    /**
-     * Returns the robot's sensor radius squared.
-     *
-     * @return an int, the current sensor radius squared
-     *
-     * @battlecode.doc.costlymethod
-     */
-     int getSensorRadiusSquared();
-
-    /**
-     * Returns the robot's detection radius squared.
-     *
-     * @return an int, the current detection radius squared
-     *
-     * @battlecode.doc.costlymethod
-     */
-     int getDetectionRadiusSquared();
-
 
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
