@@ -51,8 +51,9 @@ table SpawnedBodyTable {
     /// The locations of the bodies.
     locs: VecTable;
     /// the amount of influence paid to create these bodies
-    /// for initial Enlightenment Centers, this is the amount of influence needed to take over
-    costs: [int];
+    /// for initial Enlightenment Centers, this is the amount of influence
+    /// needed to take over
+    influences: [int];
 }
 
 /// The map a round is played on.
@@ -85,17 +86,14 @@ enum Action : byte {
     /// Target: an enemy body
     EXPOSE,
     /// Units can change their flag.
-    /// Target: self
+    /// Target: new flag value
     SET_FLAG,
     /// Builds a unit (enlightent center).
     /// Target: spawned unit
     SPAWN_UNIT,
     /// Places a bid (enlightent center).
-    /// Target: bid placed
+    /// Target: bid value
     PLACE_BID,
-    /// A robot can change team after being empowered
-    /// Target: self
-    CHANGE_TEAM,
     /// Dies due to an uncaught exception
     /// Target: none
     DIE_EXCEPTION
@@ -109,26 +107,16 @@ table BodyTypeMetadata {
     type: BodyType;
     /// The spawn source.
     spawnSource: BodyType;
-    /// the minimum cost to produce a unit of this type
-    minCost: int;
     /// the convictionRatio of this type
     convictionRatio: float;
     /// cooldown of this type
     actionCooldown: int;
     /// action radius if this type
     actionRadiusSquared: int;
+    /// sensor radius squared for this type
+    sensorRadiusSquared: int;
     /// detection radius of this type
     detectionRadiusSquared: int;
-    /// identification radius squared for this type
-    identificationRadiusSquared: int;
-    /// initial influence of this type
-    initialInfluence: int;
-    /// influence per turn for this type
-    influencePerTurn: float;
-    /// empower buff factor for this type
-    empowerBuffFactor: float;
-    /// empower buff duration of this type
-    buffDuration: int;
     /// bytecode limit for this type
     bytecodeLimit: int;
 }
@@ -261,7 +249,7 @@ table Round {
     actionIDs: [int];
     /// The actions performed. These actions allow us to track how much soup or dirt a body carries.
     actions: [Action];
-    /// The 'targets' of the performed actions. Actions without targets may have
+    /// The 'targets' of the performed actions. Actions without targets may have any value
     actionTargets: [int];
 
     /// The IDs of bodies that set indicator dots
