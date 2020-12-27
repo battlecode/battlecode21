@@ -354,15 +354,15 @@ public strictfp interface RobotController {
     boolean isReady();
 
     /**
-     * Returns the current cooldown of the unit.
-     * When this number is strictly less than 10, isReady() is true and the robot
+     * Returns the number of cooldown turns remaining before this unit can act again.
+     * When this number is strictly less than 1, isReady() is true and the robot
      * can perform actions again.
      *
-     * @return the current cooldown of the unit.
+     * @return the number of cooldown turns remaining before this unit can act again.
      *
      * @battlecode.doc.costlymethod
      */
-    int getCooldown();
+    float getCooldownTurns();
 
     // ***********************************
     // ****** MOVEMENT METHODS ***********
@@ -371,8 +371,8 @@ public strictfp interface RobotController {
     /**
      * Checks whether this robot can move one step in the given direction.
      * Returns false if the robot is a building, if the target location is not
-     * on the map, if the target location is occupied, or if the robot is not
-     * ready due to cooldown.
+     * on the map, if the target location is occupied, or if there are cooldown
+     * turns remaining.
      *
      * @param dir the direction to move in
      * @return true if it is possible to call <code>move</code> without an exception
@@ -403,8 +403,8 @@ public strictfp interface RobotController {
      * given direction. Checks that the robot is of a type that can build,
      * that the robot can build the desired type, that the target location is
      * on the map, that the target location is not occupied, that the robot has
-     * the amount of influence it's trying to spend, and that the cooldown is
-     * low enough to act.
+     * the amount of influence it's trying to spend, and that there are no
+     * cooldown turns remaining.
      *
      * @param type the type of robot to build
      * @param dir the direction to build in
@@ -435,7 +435,8 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can empower.
-     * Checks that the robot is a politician, and if the cooldown is low enough.
+     * Checks that the robot is a politician, and if there are no cooldown turns
+     * remaining.
      * 
      * @return whether it is possible to empower on that round.
      *
@@ -466,8 +467,8 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can expose at a given location.
      * Checks that the robot is a muckraker, that the robot is within action
-     * radius of the muckraker, that the cooldown is low enough, and that a
-     * slanderer is present on the location.
+     * radius of the muckraker, that there are no cooldown turns remaining, and
+     * that a slanderer is present on the location.
      *
      * @param loc the location being checked
      * @return whether it is possible to expose on that round at that location.
@@ -479,8 +480,8 @@ public strictfp interface RobotController {
     /**
      * Tests whether the robot can expose a given robot.
      * Checks that the robot is a muckraker, that the targeted robot is an enemy
-     * slanderer, that the robot is within action radius, and that the cooldown
-     * is low enough.
+     * slanderer, that the robot is within action radius, and that there are no
+     * cooldown turns remaining.
      *
      * @param id the robot being checked
      * @return whether it is possible to expose that robot on this round.
@@ -543,10 +544,10 @@ public strictfp interface RobotController {
      * Given a MapLocation, checks if a robot can get the flag of the robot on that location,
      * if a robot exists there.
      *
-     * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
-     * that the robot on the target location is on the same team, and that either (a) the
-     * robot is a Enlightenment Center or (b) the squared distance between the target location and
-     * the current location is &leq; 8. 
+     * Checks that a robot is on the MapLocation given, that the robot on the
+     * target location is on the same team, and that either (a) the robot is an
+     * Enlightenment Center or (b) the squared distance between the target
+     * location and the current location is &leq; 8.
      *
      * @param loc MapLocation being targeted by canGetFlag
      * @return whether it is possible to set the robot's flag on that round.
