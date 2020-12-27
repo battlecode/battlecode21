@@ -526,11 +526,11 @@ class Api {
         }
 
         if (s[i].status === 'won'){
-          s[i].winscore = `${s[i].winscore} - ${3-s[i].winscore}`;
+          s[i].score = `${s[i].winscore} - ${s[i].losescore}`;
         }else if (s[i].status === 'lost'){
-          s[i].winscore = `${3-s[i].winscore} - ${s[i].winscore}`;
+          s[i].score = `${s[i].losescore} - ${s[i].winscore}`;
         }else{
-          s[i].winscore = ' - ';
+          s[i].score = ' - ';
         }
 
         s[i].status = s[i].status.charAt(0).toUpperCase() + s[i].status.slice(1);

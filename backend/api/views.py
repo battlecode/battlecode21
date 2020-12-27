@@ -1011,17 +1011,19 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             if 'status' in request.data:
                 sc_status = request.data['status']
-                sc_winscore = request.data['winscore']
+                sc_winscore = request.data['winscore'] if request.data['winscore'] else None
+                sc_losescore = request.data['losescore'] if request.data['losescore'] else None
                 if sc_status == "redwon" or sc_status == "bluewon":
-                    if sc_winscore < 2:
-                        return Response({'message': 'Winscore invalid: it must be at least 2.'}, status.HTTP_400_BAD_REQUEST)
+                    if int(sc_winscore) < (float(sc_winscore) + float(sc_losescore))/2.0:
+                        return Response({'message': 'Scores invalid. Winscore must be at least half of total games.'}, status.HTTP_400_BAD_REQUEST)
                     scrimmage.status = sc_status
                     scrimmage.winscore = sc_winscore
+                    scrimmage.losescore = sc_losescore
 
                     # if tournament, then return here
                     if scrimmage.tournament_id is not None:
                         scrimmage.save()
-                        return Response({'status': sc_status, 'winscore': sc_winscore}, status.HTTP_200_OK)
+                        return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
 
                     # update rankings using elo
                     # get team info
@@ -1055,12 +1057,12 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     lost.save()
 
                     scrimmage.save()
-                    return Response({'status': sc_status, 'winscore': sc_winscore}, status.HTTP_200_OK)
+                    return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 elif sc_status == "error":
                     scrimmage.status = sc_status
 
                     scrimmage.save()
-                    return Response({'status': sc_status, 'winscore': sc_winscore}, status.HTTP_200_OK)
+                    return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:
