@@ -14,8 +14,8 @@ public strictfp class InternalRobot {
     private Team team;
     private RobotType type;
     private MapLocation location;
-    private double influence;
-    private double conviction;
+    private int influence;
+    private int conviction;
 
     private long controlBits;
     private int currentBytecodeLimit;
@@ -40,7 +40,7 @@ public strictfp class InternalRobot {
      * @param influence the influence used to create the robot
      */
     @SuppressWarnings("unchecked")
-    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, double influence) {
+    public InternalRobot(GameWorld gw, int id, RobotType type, MapLocation loc, Team team, int influence) {
         this.ID = id;
         this.team = team;
         this.type = type;
@@ -84,15 +84,11 @@ public strictfp class InternalRobot {
         return type;
     }
 
-    public RobotType getInfluence() {
-        return influence;
-    }
-
     public MapLocation getLocation() {
         return location;
     }
 
-    public double getInfluence() {
+    public int getInfluence() {
         return influence;
     }
 

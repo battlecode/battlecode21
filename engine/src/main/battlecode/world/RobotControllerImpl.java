@@ -529,7 +529,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot is of type " + getType() + " which cannot bid.");
         } else if (influence < 0) {
             throw new GameActionException(CANT_DO_THAT,
-                    "Not possible to bid nonnegative amount of influence.");
+                    "Not possible to bid negative amount of influence.");
         } else if (influence > getInfluence()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Not possible to bid influence you don't have.");

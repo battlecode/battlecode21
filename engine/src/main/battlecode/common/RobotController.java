@@ -35,9 +35,9 @@ public strictfp interface RobotController {
     int getTeamVotes();
 
     /**
-     * Returns the number of robots on your team, including Enlightenment Centers.
+     * Returns the number of robots on your team, including Centers of Enlightenment.
      * If this number ever reaches zero, and you have less votes than your opponent,
-     * you lose by default (because you can't get any more votes with no Enlightenment Centers).
+     * you lose by default (because you can't get any more votes with no Centers of Enlightenment).
      *
      * @return the number of robots on your team
      *
@@ -251,10 +251,10 @@ public strictfp interface RobotController {
     /**
      * Given a location, returns the amount of swamping on that location, as a double.
      *
+     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
+     * 
      * @param loc the given location
      * @return the amount of swamping on the location as a double
-     *
-     * Higher amounts of swamping mean that robots on this location take more turns for any given action.
      * @throws GameActionException if the robot cannot sense the given location
      *
      * @battlecode.doc.costlymethod
@@ -456,18 +456,18 @@ public strictfp interface RobotController {
     MapLocation[] seekLocations() throws GameActionException;
  
     
-    // ***********************************
-    // *** ENLIGHTENMENT CENTER METHODS **
-    // ***********************************
+    // **************************************
+    // *** CENTER OF ENLIGHTENMENT METHODS **
+    // **************************************
 
     /**
      * Tests whether the robot can bid the specified amount of influence on that round.
      * 
-     * Checks that the robot is an Enlightenment Center, that the robot has at least that amount of influence,
-     * , and that the amount of influence is positive. 
+     * Checks that the robot is an Center of Enlightenment, that the robot has at least 
+     * that amount of influence, and that the amount of influence is positive. 
      *
      * @param influence the amount of influence being bid 
-     * @return whether it is possible to detect on that round at that location.
+     * @return whether it is possible to bid that amount of influence.
      *
      * @battlecode.doc.costlymethod
      */
@@ -517,7 +517,7 @@ public strictfp interface RobotController {
      *
      * Checks if there are cooldown turns remaining, that a robot is on the MapLocation given,
      * that the robot on the target location is on the same team, and that either (a) the
-     * robot is an Enlightenment Center or (b) the squared distance between the target location and
+     * robot is a Center of Enlightenment or (b) the squared distance between the target location and
      * the current location is &leq; 8. 
      *
      * @param loc MapLocation being targeted by canGetFlag
