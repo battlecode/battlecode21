@@ -92,12 +92,11 @@ export default class Renderer {
 
     // TODO use color pacakge for nicer manipulation?
     // TODO don't just reuse dirt function
-    const getSwampColor = (x: number): string => {
+    const getTileColor = (x: number): string => {
       // should be using image for now
       // TODO change swamp color depending on the parameter
 
-      return `rgb(${x*183 + (1 - x)*0},${x*255 + (1 - x)*171},${x*191 + (1 - x)*8})`;
-
+      return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
       // iterate and find the two colors
       let lo: number[] = [0,0,0];
       let hi: number[] = [0,0,0];
@@ -141,8 +140,8 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      if (swampLayer) this.ctx.fillStyle = getSwampColor(map.passability[idxVal]);
-      else this.ctx.fillStyle = getSwampColor(1); //TODO: verify default value
+      if (swampLayer) this.ctx.fillStyle = getTileColor(map.passability[idxVal]);
+      else this.ctx.fillStyle = getTileColor(1); 
 
       this.ctx.fillRect(cx, cy, scale, scale);
 
@@ -280,15 +279,15 @@ export default class Renderer {
   private drawSightRadii(x: number, y: number, type: schema.BodyType, single?: Boolean) {
     // handle bots with no radius here, if necessary
     if (this.conf.seeActionRadius || single) {
-      this.drawBotRadius(x, y, this.metadata.types[type].actionRadiusSquared, cst.RADIUS_COLOR);
+      this.drawBotRadius(x, y, this.metadata.types[type].actionRadiusSquared, cst.ACTION_RADIUS_COLOR);
     } 
+
+    if (this.conf.seeSensorRadius || single) {
+      this.drawBotRadius(x, y, this.metadata.types[type].sensorRadiusSquared, cst.SENSOR_RADIUS_COLOR);
+    }
 
     if (this.conf.seeDetectionRadius || single) {
-      this.drawBotRadius(x, y, this.metadata.types[type].detectionRadiusSquared, cst.RADIUS_COLOR);
-    } 
-
-    if (this.conf.seeIdentificationRadius || single) {
-      this.drawBotRadius(x, y, this.metadata.types[type].identificationRadiusSquared, cst.RADIUS_COLOR);
+      this.drawBotRadius(x, y, this.metadata.types[type].detectionRadiusSquared, cst.SENSOR_RADIUS_COLOR);
     } 
   }
 

@@ -140,8 +140,8 @@ export default class Sidebar {
     V - Toggle Indicator Dots/Lines<br>
     G - Toggle Grid<br>
     N - Toggle Action Radius<br>
-    M - Toggle Detection Radius<br>
-    , - Toggle Identification Radius<br>
+    M - Toggle Sensor Radius<br>
+    , - Toggle Detection Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
     

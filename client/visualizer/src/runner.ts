@@ -193,11 +193,11 @@ export default class Runner {
           case 78: // "n" - Toggle action radius
             this.conf.seeActionRadius = !this.conf.seeActionRadius;
             break;
-          case 77: // "m" - Toggle detection radius
-            this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
-            break;
-          case 188: // "," - Toggle identification radius
-            this.conf.seeIdentificationRadius = !this.conf.seeIdentificationRadius;
+          case 77: // "m" - Toggle sensor radius
+            this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
+          break;
+          case 188: // "," - Toggle detection radius
+          this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
             break;
           case 71: // "g" - Toogle grid view
             this.conf.showGrid = !this.conf.showGrid;

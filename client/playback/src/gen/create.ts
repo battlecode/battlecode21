@@ -33,6 +33,7 @@ type BodiesType = {
   types: number[],
   xs: number[],
   ys: number[],
+  influences: number[]
 };
 
 type MapType = {
@@ -110,6 +111,7 @@ function createRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
     types: Array(unitCount),
     xs: Array(unitCount),
     ys: Array(unitCount),
+    influences: Array(unitCount)
   };
 
   for(let i=0; i<unitCount; i++){
@@ -118,6 +120,7 @@ function createRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
     bodies.types[i] = bodyTypeList[random(0, bodyVariety-1)];
     bodies.xs[i] = random(0, SIZE-1);
     bodies.ys[i] = random(0, SIZE-1);
+    bodies.influences[i] = 0;
   }
 
   return bodies;
@@ -144,12 +147,14 @@ function createSBTable(builder: flatbuffers.Builder, bodies: BodiesType): flatbu
   const bb_robotIDs = schema.SpawnedBodyTable.createRobotIDsVector(builder, bodies.robotIDs);
   const bb_teamIDs = schema.SpawnedBodyTable.createTeamIDsVector(builder, bodies.teamIDs);
   const bb_types = schema.SpawnedBodyTable.createTypesVector(builder, bodies.types);
+  const bb_influences = schema.SpawnedBodyTable.createInfluencesVector(builder, bodies.influences);
 
   schema.SpawnedBodyTable.startSpawnedBodyTable(builder)
   schema.SpawnedBodyTable.addLocs(builder, bb_locs);
   schema.SpawnedBodyTable.addRobotIDs(builder, bb_robotIDs);
   schema.SpawnedBodyTable.addTeamIDs(builder, bb_teamIDs);
   schema.SpawnedBodyTable.addTypes(builder, bb_types);
+  schema.SpawnedBodyTable.addInfluences(builder, bb_influences);
   return schema.SpawnedBodyTable.endSpawnedBodyTable(builder);
 }
 
@@ -186,7 +191,7 @@ function createGameHeader(builder: flatbuffers.Builder): flatbuffers.Offset {
   // Is there any way to automate this?
   for (const body of bodyTypeList) {
     const btmd = schema.BodyTypeMetadata;
-    bodies.push(btmd.createBodyTypeMetadata(builder, body, body, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10000)); //TODO: make robots interesting
+    bodies.push(btmd.createBodyTypeMetadata(builder, body, body, 10, 10, 2, 6, 10, 10000)); //TODO: make robots interesting
   }
 
   const teams: flatbuffers.Offset[] = [];
@@ -282,6 +287,7 @@ function createStandGame(turns: number) {
   let types = new Array(unitCount);
   let xs = new Array(unitCount);
   let ys = new Array(unitCount);
+  let influences = new Array(unitCount);
   for (let i = 0; i < unitCount; i++) {
     robotIDs[i] = i;
     teamIDs[i] = i%2+1; // 1 2 1 2 1 2 ...
@@ -298,11 +304,13 @@ function createStandGame(turns: number) {
   const bb_robotIDs = schema.SpawnedBodyTable.createRobotIDsVector(builder, robotIDs);
   const bb_teamIDs = schema.SpawnedBodyTable.createTeamIDsVector(builder, teamIDs);
   const bb_types = schema.SpawnedBodyTable.createTypesVector(builder, types);
+  const bb_influences = schema.SpawnedBodyTable.createInfluencesVector(builder, influences);
   schema.SpawnedBodyTable.startSpawnedBodyTable(builder)
   schema.SpawnedBodyTable.addLocs(builder, bb_locs);
   schema.SpawnedBodyTable.addRobotIDs(builder, bb_robotIDs);
   schema.SpawnedBodyTable.addTeamIDs(builder, bb_teamIDs);
   schema.SpawnedBodyTable.addTypes(builder, bb_types);
+  schema.SpawnedBodyTable.addInfluences(builder, bb_influences);
   const bodies = schema.SpawnedBodyTable.endSpawnedBodyTable(builder);
 
   const map = createMap(builder, bodies, "Stand Demo");

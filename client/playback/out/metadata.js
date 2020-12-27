@@ -22,7 +22,7 @@ class Metadata {
         const bodyCount = header.bodyTypeMetadataLength();
         for (let i = 0; i < bodyCount; i++) {
             const body = header.bodyTypeMetadata(i);
-            this.types[body.type()] = new BodyTypeMetaData(body.type(), body.spawnSource(), body.minCost(), body.convictionRatio(), body.actionCooldown(), body.actionRadiusSquared(), body.detectionRadiusSquared(), body.identificationRadiusSquared(), body.initialInfluence(), body.influencePerTurn(), body.empowerBuffFactor(), body.buffDuration(), body.bytecodeLimit());
+            this.types[body.type()] = new BodyTypeMetaData(body.type(), body.spawnSource(), body.convictionRatio(), body.actionCooldown(), body.actionRadiusSquared(), body.sensorRadiusSquared(), body.detectionRadiusSquared(), body.bytecodeLimit());
         }
         // SAFE
         Object.freeze(this.types);
@@ -45,19 +45,14 @@ exports.Team = Team;
  * Information about a specific body type.
  */
 class BodyTypeMetaData {
-    constructor(type, spawnSource, minCost, convictionRatio, actionCooldown, actionRadiusSquared, detectionRadiusSquared, identificationRadiusSquared, initialInfluence, influencePerTurn, empowerBuffFactor, buffDuration, bytecodeLimit) {
+    constructor(type, spawnSource, convictionRatio, actionCooldown, actionRadiusSquared, sensorRadiusSquared, detectionRadiusSquared, bytecodeLimit) {
         this.type = type;
         this.spawnSource = spawnSource;
-        this.minCost = minCost;
         this.convictionRatio = convictionRatio;
         this.actionCooldown = actionCooldown;
         this.actionRadiusSquared = actionRadiusSquared;
+        this.sensorRadiusSquared = sensorRadiusSquared;
         this.detectionRadiusSquared = detectionRadiusSquared;
-        this.identificationRadiusSquared = identificationRadiusSquared;
-        this.initialInfluence = initialInfluence;
-        this.influencePerTurn = influencePerTurn;
-        this.empowerBuffFactor = empowerBuffFactor;
-        this.buffDuration = buffDuration;
         this.bytecodeLimit = bytecodeLimit;
     }
 }

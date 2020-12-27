@@ -22,7 +22,8 @@ export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<nu
   [2000, [242, 0, 252]] // pink
 ]);
 
-export const RADIUS_COLOR = "#46ff00"; // TODO: separate into action, detection, identification
+export const ACTION_RADIUS_COLOR = "#46ff00";
+export const SENSOR_RADIUS_COLOR = "#0000ff";
 
 // Game canvas rendering sizes
 export const INDICATOR_DOT_SIZE = .3;

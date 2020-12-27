@@ -394,14 +394,13 @@ export default class GameWorld {
           /// Politicians self-destruct and affect nearby bodies
           /// Target: none
           case schema.Action.EMPOWER:
-
             break;
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
             break;
           /// Units can change their flag.
-          /// Target: self.
+          /// Target: a new flag value.
           case schema.Action.SET_FLAG:
             this.bodies.alter({ id: target, flag: target});
             break;
@@ -414,11 +413,23 @@ export default class GameWorld {
           case schema.Action.PLACE_BID:
             break;
           /// A robot can change team after being empowered
-          /// Target: self
+          /// Target: teamID
           case schema.Action.CHANGE_TEAM:
             this.bodies.alter({ id: robotID, team: target});
             break;
-
+          /// A robot's influence changes.
+          /// Target: delta value
+          case schema.Action.CHANGE_INFLUENCE:
+            const old_influence = this.bodies.lookup(robotID).influence; 
+            this.bodies.alter({ id: robotID, influence: old_influence + target});
+            break;
+          /// A robot's conviction changes.
+          /// Target: delta value, i.e. red 5 -> blue 3 is -2
+          case schema.Action.CHANGE_CONVICTION:
+            const old_conviction = this.bodies.lookup(robotID).conviction; 
+            this.bodies.alter({ id: robotID, influence: old_conviction + target});
+            break;
+    
           case schema.Action.DIE_EXCEPTION:
             console.log(`Exception occured: robotID(${robotID}), target(${target}`);
             break;
@@ -430,7 +441,8 @@ export default class GameWorld {
       }
     }
 
-    // TODO Passive Changes
+    // TODO Passive Changes, need game constants.
+
     
     // Died bodies
     if (delta.diedIDsLength() > 0) {
@@ -540,9 +552,13 @@ export default class GameWorld {
 
   private insertBodies(bodies: schema.SpawnedBodyTable) {
 
-    // Update spawn stats
+    // Store frequently used arrays
     var teams = bodies.teamIDsArray();
     var types = bodies.typesArray();
+    var influences = bodies.influencesArray();
+    console.log("test:", teams, types, influences);
+
+    // Update spawn stats
     for(let i = 0; i < bodies.robotIDsLength(); i++) {
       if(teams[i] == 0) continue;
       var statObj = this.teamStats.get(teams[i]);
@@ -557,35 +573,39 @@ export default class GameWorld {
     // (pointer, length) pairs.
     // You can't reuse TypedArrays easily, so I'm inclined to
     // let this slide for now.
+    
+    // Prepare new bodies
+
+    var convictions = new Int32Array(bodies.robotIDsLength());
+    for (let i = 0; i < bodies.robotIDsLength(); i++) {
+      convictions[i] = influences[i] * this.meta.types[types[i]].convictionRatio;
+    }
+
     const startIndex = this.bodies.insertBulk({
       id: bodies.robotIDsArray(),
-      team: bodies.teamIDsArray(),
-      type: bodies.typesArray(),
+      team: teams,
+      type: types,
+      influence: influences,
+      conviction: convictions,
       x: locs.xsArray(),
-      y: locs.ysArray(),
+      y: locs.ysArray()
     });
 
-    // Extra initialization
     const arrays = this.bodies.arrays;
-
-    // TODO: extra initialization
     
-    // const initList = [
-    //   arrays.onDirt,
-    //   arrays.carryDirt,
-    //   arrays.cargo,
-    //   arrays.isCarried,
-    //   arrays.bytecodesUsed,
-    // ];
+    const initList = [
+      arrays.flag,
+      arrays.bytecodesUsed
+    ];
 
-    // initList.forEach((arr) => {
-    //   StructOfArrays.fill(
-    //     arr,
-    //     0,
-    //     startIndex,
-    //     this.bodies.length
-    //   );
-    // });
+    initList.forEach((arr) => {
+      StructOfArrays.fill(
+        arr,
+        0,
+        startIndex,
+        this.bodies.length
+      );
+    });
   }
 
 }

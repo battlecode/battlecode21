@@ -5,6 +5,7 @@ const battlecode_schema_1 = require("battlecode-schema");
 // necessary because victor doesn't use exports.default
 const Victor = require("victor");
 const deepcopy = require("deepcopy");
+const NEUTRAL_TEAM = 0;
 /**
  * A frozen image of the game world.
  *
@@ -242,8 +243,9 @@ class GameWorld {
                     case battlecode_schema_1.schema.Action.EXPOSE:
                         break;
                     /// Units can change their flag.
-                    /// Target: self.
+                    /// Target: a new flag value.
                     case battlecode_schema_1.schema.Action.SET_FLAG:
+                        this.bodies.alter({ id: target, flag: target });
                         break;
                     /// Builds a unit (enlightent center).
                     /// Target: spawned unit
@@ -254,12 +256,21 @@ class GameWorld {
                     case battlecode_schema_1.schema.Action.PLACE_BID:
                         break;
                     /// A robot can change team after being empowered
-                    /// Target: self
+                    /// Target: teamID
                     case battlecode_schema_1.schema.Action.CHANGE_TEAM:
+                        this.bodies.alter({ id: robotID, team: target });
                         break;
-                    /// An enlightenment center can become neutral if lost all its influence
-                    /// Target: none.
-                    case battlecode_schema_1.schema.Action.BECOME_NEUTRAL:
+                    /// A robot's influence changes.
+                    /// Target: delta value
+                    case battlecode_schema_1.schema.Action.CHANGE_INFLUENCE:
+                        const old_influence = this.bodies.lookup(robotID).influence;
+                        this.bodies.alter({ id: robotID, influence: old_influence + target });
+                        break;
+                    /// A robot's conviction changes.
+                    /// Target: delta value, i.e. red 5 -> blue 3 is -2
+                    case battlecode_schema_1.schema.Action.CHANGE_CONVICTION:
+                        const old_conviction = this.bodies.lookup(robotID).conviction;
+                        this.bodies.alter({ id: robotID, influence: old_conviction + target });
                         break;
                     case battlecode_schema_1.schema.Action.DIE_EXCEPTION:
                         console.log(`Exception occured: robotID(${robotID}), target(${target}`);
@@ -270,7 +281,7 @@ class GameWorld {
                 }
             }
         }
-        // TODO Passive Changes
+        // TODO Passive Changes, need game constants.
         // Died bodies
         if (delta.diedIDsLength() > 0) {
             // Update team stats
@@ -364,9 +375,12 @@ class GameWorld {
         }
     }
     insertBodies(bodies) {
-        // Update spawn stats
+        // Store frequently used arrays
         var teams = bodies.teamIDsArray();
         var types = bodies.typesArray();
+        var influences = bodies.influencesArray();
+        console.log("test:", teams, types, influences);
+        // Update spawn stats
         for (let i = 0; i < bodies.robotIDsLength(); i++) {
             if (teams[i] == 0)
                 continue;
@@ -381,16 +395,22 @@ class GameWorld {
         // (pointer, length) pairs.
         // You can't reuse TypedArrays easily, so I'm inclined to
         // let this slide for now.
+        // Prepare new bodies
+        var convictions = new Int32Array(bodies.robotIDsLength());
+        for (let i = 0; i < bodies.robotIDsLength(); i++) {
+            convictions[i] = influences[i] * this.meta.types[types[i]].convictionRatio;
+        }
         const startIndex = this.bodies.insertBulk({
             id: bodies.robotIDsArray(),
-            team: bodies.teamIDsArray(),
-            type: bodies.typesArray(),
+            team: teams,
+            type: types,
+            influence: influences,
+            conviction: convictions,
             x: locs.xsArray(),
-            y: locs.ysArray(),
+            y: locs.ysArray()
         });
-        // Extra initialization
         const arrays = this.bodies.arrays;
-        // TODO: extra initialization
+        // TODO: defaults for new bodies
         // const initList = [
         //   arrays.onDirt,
         //   arrays.carryDirt,
@@ -409,5 +429,3 @@ class GameWorld {
     }
 }
 exports.default = GameWorld;
-// TODO(jhgilles): encode in flatbuffers
-const NEUTRAL_TEAM = 0;

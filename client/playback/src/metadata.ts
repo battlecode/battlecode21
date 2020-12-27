@@ -48,16 +48,11 @@ export default class Metadata {
       this.types[body.type()] = new BodyTypeMetaData(
         body.type(),
         body.spawnSource(),
-        body.minCost(),
         body.convictionRatio(),
         body.actionCooldown(),
         body.actionRadiusSquared(),
+        body.sensorRadiusSquared(),
         body.detectionRadiusSquared(),
-        body.identificationRadiusSquared(),
-        body.initialInfluence(),
-        body.influencePerTurn(),
-        body.empowerBuffFactor(),
-        body.buffDuration(),
         body.bytecodeLimit()
       );
     }
@@ -91,9 +86,8 @@ export class Team {
  * Information about a specific body type.
  */
 export class BodyTypeMetaData {
-  constructor(public type: schema.BodyType, public spawnSource:schema.BodyType, public minCost:number, 
-    public convictionRatio:number, public actionCooldown:number, public actionRadiusSquared:number, public detectionRadiusSquared:number, 
-    public identificationRadiusSquared:number, public initialInfluence:number, public influencePerTurn:number, 
-    public empowerBuffFactor:number, public buffDuration:number, public bytecodeLimit:number) {
+  constructor(public type: schema.BodyType, public spawnSource:schema.BodyType,
+    public convictionRatio:number, public actionCooldown:number, public actionRadiusSquared:number, public sensorRadiusSquared:number, 
+    public detectionRadiusSquared:number, public bytecodeLimit:number) {
   }
 }

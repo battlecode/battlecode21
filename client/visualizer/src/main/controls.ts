@@ -3,6 +3,7 @@ import * as imageloader from '../imageloader';
 import * as cst from '../constants';
 import {Game, Match, Metadata} from 'battlecode-playback';
 import Runner from '../runner';
+import { BodyTypeMetaData } from 'battlecode-playback/out/metadata';
 
 type ButtonInfo = {
   img: HTMLImageElement,
@@ -428,15 +429,11 @@ export default class Controls {
    * Bytecodes Used: bytecodes"
    */
   // TODO fix this (different stats)
-  setInfoString(id, x: number, y: number, onDirt: number, carryDirt?: number, bytecodes?: number): void {
+  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes?: number): void {
     // console.log(carryDirt);
-    let infoString = `Robot ID ${id} <br>
+    let infoString = `Robot ID ${id} (${bodyType})<br>
       Location: (${x}, ${y})<br>
-      Dirt on this: ${onDirt}`;
-
-      if (carryDirt !== undefined) {
-        infoString += `, Carrying ${carryDirt} dirt`;
-      }
+      Influence: ${influence}, Conviction: ${conviction}`;
 
       if (bytecodes !== undefined) {
         infoString += `<br>Bytecodes Used: ${bytecodes}`;

@@ -227,12 +227,13 @@ export default class Looper {
                 let x = bodies.x[index];
                 let y = bodies.y[index];
 
-                let on = bodies.onDirt[index];
+                let influence = bodies.influence[index];
+                let conviction = bodies.conviction[index];
 
                 let type = bodies.type[index];
                 let bytecodes = bodies.bytecodesUsed[index];
                 // change below depending on the unit type
-                this.controls.setInfoString(id, x, y, on, undefined, bytecodes);
+                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes);
             }
         }
 

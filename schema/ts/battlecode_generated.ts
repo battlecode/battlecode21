@@ -45,7 +45,7 @@ export enum BodyType{
 export namespace battlecode.schema{
 export enum Action{
   /**
-   * Politicians self-destruct and affect nearby bodies
+   * Politicians self-destruct and affect nearby bodies.
    * Target: none
    */
   EMPOWER= 0,
@@ -58,7 +58,7 @@ export enum Action{
 
   /**
    * Units can change their flag.
-   * Target: self
+   * Target: new flag value
    */
   SET_FLAG= 2,
 
@@ -70,27 +70,34 @@ export enum Action{
 
   /**
    * Places a bid (enlightent center).
-   * Target: bid placed
+   * Target: bid value
    */
   PLACE_BID= 4,
 
   /**
-   * A robot can change team after being empowered
-   * Target: self
+   * A robot can change team after being empowered,
+   * or when a Enlightenment Center is taken over.
+   * Target: teamID
    */
   CHANGE_TEAM= 5,
 
   /**
-   * An enlightenment center can become neutral if lost all its influence
-   * Target: none.
+   * A robot's influence changes.
+   * Target: delta value
    */
-  BECOME_NEUTRAL= 6,
+  CHANGE_INFLUENCE= 6,
 
   /**
-   * Dies due to an uncaught exception
+   * A robot's conviction changes.
+   * Target: delta value, i.e. red 5 -> blue 3 is -2
+   */
+  CHANGE_CONVICTION= 7,
+
+  /**
+   * Dies due to an uncaught exception.
    * Target: none
    */
-  DIE_EXCEPTION= 7
+  DIE_EXCEPTION= 8
 }};
 
 /**
@@ -724,11 +731,13 @@ locs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
 
 /**
  * the amount of influence paid to create these bodies
+ * for initial Enlightenment Centers, this is the amount of influence
+ * needed to take over
  *
  * @param number index
  * @returns number
  */
-cost(index: number):number|null {
+influences(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
   return offset ? this.bb!.readInt32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
@@ -736,7 +745,7 @@ cost(index: number):number|null {
 /**
  * @returns number
  */
-costLength():number {
+influencesLength():number {
   var offset = this.bb!.__offset(this.bb_pos, 12);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -744,7 +753,7 @@ costLength():number {
 /**
  * @returns Int32Array
  */
-costArray():Int32Array|null {
+influencesArray():Int32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
   return offset ? new Int32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -853,10 +862,10 @@ static addLocs(builder:flatbuffers.Builder, locsOffset:flatbuffers.Offset) {
 
 /**
  * @param flatbuffers.Builder builder
- * @param flatbuffers.Offset costOffset
+ * @param flatbuffers.Offset influencesOffset
  */
-static addCost(builder:flatbuffers.Builder, costOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(4, costOffset, 0);
+static addInfluences(builder:flatbuffers.Builder, influencesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(4, influencesOffset, 0);
 };
 
 /**
@@ -864,7 +873,7 @@ static addCost(builder:flatbuffers.Builder, costOffset:flatbuffers.Offset) {
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createCostVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createInfluencesVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -876,7 +885,7 @@ static createCostVector(builder:flatbuffers.Builder, data:number[] | Uint8Array)
  * @param flatbuffers.Builder builder
  * @param number numElems
  */
-static startCostVector(builder:flatbuffers.Builder, numElems:number) {
+static startInfluencesVector(builder:flatbuffers.Builder, numElems:number) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -889,13 +898,13 @@ static endSpawnedBodyTable(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createSpawnedBodyTable(builder:flatbuffers.Builder, robotIDsOffset:flatbuffers.Offset, teamIDsOffset:flatbuffers.Offset, typesOffset:flatbuffers.Offset, locsOffset:flatbuffers.Offset, costOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createSpawnedBodyTable(builder:flatbuffers.Builder, robotIDsOffset:flatbuffers.Offset, teamIDsOffset:flatbuffers.Offset, typesOffset:flatbuffers.Offset, locsOffset:flatbuffers.Offset, influencesOffset:flatbuffers.Offset):flatbuffers.Offset {
   SpawnedBodyTable.startSpawnedBodyTable(builder);
   SpawnedBodyTable.addRobotIDs(builder, robotIDsOffset);
   SpawnedBodyTable.addTeamIDs(builder, teamIDsOffset);
   SpawnedBodyTable.addTypes(builder, typesOffset);
   SpawnedBodyTable.addLocs(builder, locsOffset);
-  SpawnedBodyTable.addCost(builder, costOffset);
+  SpawnedBodyTable.addInfluences(builder, influencesOffset);
   return SpawnedBodyTable.endSpawnedBodyTable(builder);
 }
 }
@@ -997,7 +1006,7 @@ randomSeed():number {
 };
 
 /**
- * The factor to scale cooldowns by
+ * The factor to divide cooldowns by
  *
  * @param number index
  * @returns number
@@ -1181,22 +1190,12 @@ spawnSource():battlecode.schema.BodyType {
 };
 
 /**
- * the minimum cost to produce a unit of this type
- *
- * @returns number
- */
-minCost():number {
-  var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
-};
-
-/**
  * the convictionRatio of this type
  *
  * @returns number
  */
 convictionRatio():number {
-  var offset = this.bb!.__offset(this.bb_pos, 10);
+  var offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
 };
 
@@ -1206,7 +1205,7 @@ convictionRatio():number {
  * @returns number
  */
 actionCooldown():number {
-  var offset = this.bb!.__offset(this.bb_pos, 12);
+  var offset = this.bb!.__offset(this.bb_pos, 10);
   return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
 };
 
@@ -1216,6 +1215,16 @@ actionCooldown():number {
  * @returns number
  */
 actionRadiusSquared():number {
+  var offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * sensor radius squared for this type
+ *
+ * @returns number
+ */
+sensorRadiusSquared():number {
   var offset = this.bb!.__offset(this.bb_pos, 14);
   return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
 };
@@ -1231,62 +1240,12 @@ detectionRadiusSquared():number {
 };
 
 /**
- * identification radius squared for this type
- *
- * @returns number
- */
-identificationRadiusSquared():number {
-  var offset = this.bb!.__offset(this.bb_pos, 18);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
-};
-
-/**
- * initial influence of this type
- *
- * @returns number
- */
-initialInfluence():number {
-  var offset = this.bb!.__offset(this.bb_pos, 20);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
-};
-
-/**
- * influence per turn for this type
- *
- * @returns number
- */
-influencePerTurn():number {
-  var offset = this.bb!.__offset(this.bb_pos, 22);
-  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
-};
-
-/**
- * empower buff factor for this type
- *
- * @returns number
- */
-empowerBuffFactor():number {
-  var offset = this.bb!.__offset(this.bb_pos, 24);
-  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
-};
-
-/**
- * empower buff duration of this type
- *
- * @returns number
- */
-buffDuration():number {
-  var offset = this.bb!.__offset(this.bb_pos, 26);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
-};
-
-/**
  * bytecode limit for this type
  *
  * @returns number
  */
 bytecodeLimit():number {
-  var offset = this.bb!.__offset(this.bb_pos, 28);
+  var offset = this.bb!.__offset(this.bb_pos, 18);
   return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
 };
 
@@ -1294,7 +1253,7 @@ bytecodeLimit():number {
  * @param flatbuffers.Builder builder
  */
 static startBodyTypeMetadata(builder:flatbuffers.Builder) {
-  builder.startObject(13);
+  builder.startObject(8);
 };
 
 /**
@@ -1315,18 +1274,10 @@ static addSpawnSource(builder:flatbuffers.Builder, spawnSource:battlecode.schema
 
 /**
  * @param flatbuffers.Builder builder
- * @param number minCost
- */
-static addMinCost(builder:flatbuffers.Builder, minCost:number) {
-  builder.addFieldInt32(2, minCost, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
  * @param number convictionRatio
  */
 static addConvictionRatio(builder:flatbuffers.Builder, convictionRatio:number) {
-  builder.addFieldFloat32(3, convictionRatio, 0.0);
+  builder.addFieldFloat32(2, convictionRatio, 0.0);
 };
 
 /**
@@ -1334,7 +1285,7 @@ static addConvictionRatio(builder:flatbuffers.Builder, convictionRatio:number) {
  * @param number actionCooldown
  */
 static addActionCooldown(builder:flatbuffers.Builder, actionCooldown:number) {
-  builder.addFieldInt32(4, actionCooldown, 0);
+  builder.addFieldInt32(3, actionCooldown, 0);
 };
 
 /**
@@ -1342,7 +1293,15 @@ static addActionCooldown(builder:flatbuffers.Builder, actionCooldown:number) {
  * @param number actionRadiusSquared
  */
 static addActionRadiusSquared(builder:flatbuffers.Builder, actionRadiusSquared:number) {
-  builder.addFieldInt32(5, actionRadiusSquared, 0);
+  builder.addFieldInt32(4, actionRadiusSquared, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number sensorRadiusSquared
+ */
+static addSensorRadiusSquared(builder:flatbuffers.Builder, sensorRadiusSquared:number) {
+  builder.addFieldInt32(5, sensorRadiusSquared, 0);
 };
 
 /**
@@ -1355,50 +1314,10 @@ static addDetectionRadiusSquared(builder:flatbuffers.Builder, detectionRadiusSqu
 
 /**
  * @param flatbuffers.Builder builder
- * @param number identificationRadiusSquared
- */
-static addIdentificationRadiusSquared(builder:flatbuffers.Builder, identificationRadiusSquared:number) {
-  builder.addFieldInt32(7, identificationRadiusSquared, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number initialInfluence
- */
-static addInitialInfluence(builder:flatbuffers.Builder, initialInfluence:number) {
-  builder.addFieldInt32(8, initialInfluence, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number influencePerTurn
- */
-static addInfluencePerTurn(builder:flatbuffers.Builder, influencePerTurn:number) {
-  builder.addFieldFloat32(9, influencePerTurn, 0.0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number empowerBuffFactor
- */
-static addEmpowerBuffFactor(builder:flatbuffers.Builder, empowerBuffFactor:number) {
-  builder.addFieldFloat32(10, empowerBuffFactor, 0.0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number buffDuration
- */
-static addBuffDuration(builder:flatbuffers.Builder, buffDuration:number) {
-  builder.addFieldInt32(11, buffDuration, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
  * @param number bytecodeLimit
  */
 static addBytecodeLimit(builder:flatbuffers.Builder, bytecodeLimit:number) {
-  builder.addFieldInt32(12, bytecodeLimit, 0);
+  builder.addFieldInt32(7, bytecodeLimit, 0);
 };
 
 /**
@@ -1410,20 +1329,15 @@ static endBodyTypeMetadata(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createBodyTypeMetadata(builder:flatbuffers.Builder, type:battlecode.schema.BodyType, spawnSource:battlecode.schema.BodyType, minCost:number, convictionRatio:number, actionCooldown:number, actionRadiusSquared:number, detectionRadiusSquared:number, identificationRadiusSquared:number, initialInfluence:number, influencePerTurn:number, empowerBuffFactor:number, buffDuration:number, bytecodeLimit:number):flatbuffers.Offset {
+static createBodyTypeMetadata(builder:flatbuffers.Builder, type:battlecode.schema.BodyType, spawnSource:battlecode.schema.BodyType, convictionRatio:number, actionCooldown:number, actionRadiusSquared:number, sensorRadiusSquared:number, detectionRadiusSquared:number, bytecodeLimit:number):flatbuffers.Offset {
   BodyTypeMetadata.startBodyTypeMetadata(builder);
   BodyTypeMetadata.addType(builder, type);
   BodyTypeMetadata.addSpawnSource(builder, spawnSource);
-  BodyTypeMetadata.addMinCost(builder, minCost);
   BodyTypeMetadata.addConvictionRatio(builder, convictionRatio);
   BodyTypeMetadata.addActionCooldown(builder, actionCooldown);
   BodyTypeMetadata.addActionRadiusSquared(builder, actionRadiusSquared);
+  BodyTypeMetadata.addSensorRadiusSquared(builder, sensorRadiusSquared);
   BodyTypeMetadata.addDetectionRadiusSquared(builder, detectionRadiusSquared);
-  BodyTypeMetadata.addIdentificationRadiusSquared(builder, identificationRadiusSquared);
-  BodyTypeMetadata.addInitialInfluence(builder, initialInfluence);
-  BodyTypeMetadata.addInfluencePerTurn(builder, influencePerTurn);
-  BodyTypeMetadata.addEmpowerBuffFactor(builder, empowerBuffFactor);
-  BodyTypeMetadata.addBuffDuration(builder, buffDuration);
   BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
   return BodyTypeMetadata.endBodyTypeMetadata(builder);
 }
@@ -2699,7 +2613,7 @@ actionsArray():Int8Array|null {
 };
 
 /**
- * The 'targets' of the performed actions. Actions without targets may have
+ * The 'targets' of the performed actions. Actions without targets may have any value
  *
  * @param number index
  * @returns number
