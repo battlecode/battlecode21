@@ -1,6 +1,7 @@
 from django.conf import settings
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import traceback
 
 def send_email(recipient, subject, content, is_html):
     from_address = settings.EMAIL_HOST_USER
@@ -23,5 +24,6 @@ class EmailMiddleware(object):
         return response
 
     def process_exception(self, request, exception):
-        print("exception")
+        traceback_string = traceback.format_exc()
+        print(traceback_string)
         return None
