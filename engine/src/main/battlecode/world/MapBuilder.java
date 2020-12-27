@@ -256,12 +256,10 @@ public class MapBuilder {
     }
 
     private boolean symmetricTeams(Team a, Team b) {
-        if (a == Team.A) {
-            return b == Team.B;
-        } else if (a == Team.B) {
-            return b == Team.A;
-        } else {
-            return b == Team.NEUTRAL;
+        switch (a) {
+            case Team.A: return b == Team.B;
+            case Team.B: return b == Team.A;
+            default: return b == Team.NEUTRAL;
         }
     }
 }
