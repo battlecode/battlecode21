@@ -141,6 +141,8 @@ APPEND_SLASH = True
 
 # Email
 # Gmail:
+# (As of now, gmail is unused, since it's difficult for the backend server to log in -- 
+# Gmail blocks this for security reasons)
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

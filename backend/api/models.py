@@ -253,6 +253,7 @@ def gen_registration_key(sender, instance, raw, update_fields, **kwargs):
             instance.registration_key
         }
         content = render_to_string('email/verification.html', context)
+        # Unused, would be helpful for email verification if/when we work on that.
         # send_email(email, 'Email Verification', content, True)
         # try:
         #     send_email(email, 'Email Verification', content, True)
