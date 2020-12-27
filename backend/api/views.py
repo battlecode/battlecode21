@@ -1008,12 +1008,18 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 scrimmage = Scrimmage.objects.all().get(pk=pk)
             except:
                 return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
-
+            # return Response(request.data, status.HTTP_200_OK)
             if 'status' in request.data:
                 sc_status = request.data['status']
-                sc_winscore = request.data['winscore'] if request.data['winscore'] else None
-                sc_losescore = request.data['losescore'] if request.data['losescore'] else None
                 if sc_status == "redwon" or sc_status == "bluewon":
+
+                    if 'winscore' in request.data and 'losescore' in request.data:
+                        sc_winscore = request.data['winscore']
+                        sc_losescore = request.data['losescore']
+                    else:
+                        return Response({'message': 'Must include both winscore and losescore in request.'},
+                                        status.HTTP_400_BAD_REQUEST)
+
                     if int(sc_winscore) < (float(sc_winscore) + float(sc_losescore))/2.0:
                         return Response({'message': 'Scores invalid. Winscore must be at least half of total games.'}, status.HTTP_400_BAD_REQUEST)
                     scrimmage.status = sc_status
@@ -1062,7 +1068,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.status = sc_status
 
                     scrimmage.save()
-                    return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
+                    return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:
