@@ -27,6 +27,7 @@ public strictfp class GameWorld {
     protected final IDGenerator idGenerator;
     protected final GameStats gameStats;
     
+    private double[] passability;
     private InternalRobot[][] robots;
     private final LiveMap gameMap;
     private final TeamInfo teamInfo;
@@ -39,6 +40,7 @@ public strictfp class GameWorld {
 
     @SuppressWarnings("unchecked")
     public GameWorld(LiveMap gm, RobotControlProvider cp, GameMaker.MatchMaker matchMaker) {
+        this.passability = gm.getPassabilityArray();
         this.robots = new InternalRobot[gm.getWidth()][gm.getHeight()]; // if represented in cartesian, should be height-width, but this should allow us to index x-y
         this.currentRound = 0;
         this.idGenerator = new IDGenerator(gm.getSeed());
@@ -162,6 +164,10 @@ public strictfp class GameWorld {
 
     public int getCurrentRound() {
         return this.currentRound;
+    }
+
+    public double getPassability(MapLocation loc) {
+        return this.passability[locationToIndex(loc)];
     }
 
     /**
