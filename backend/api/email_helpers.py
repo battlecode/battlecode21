@@ -25,6 +25,13 @@ class EmailMiddleware(object):
 
     def process_exception(self, request, exception):
         traceback_string = traceback.format_exc()
-        print(traceback_string)
+        # TODO clean up the email:
+        # Formatting isn't the best. Would be better with html template and legit formatting;
+        # see our password reset for an example.
+        # With a template it'd be easy to include more info too (timestamp, api call, 
+        # maybe a dump of request data?)
+        # Could use a more clear subject line.
+        # Recipients ought to be made into a configurable setting
+        # (or better yet, a webmoira list we maintain).
         send_email("n8kim1@gmail.com", "Django Error Occured", traceback_string, False)
         return None
