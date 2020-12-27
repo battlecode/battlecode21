@@ -15,8 +15,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 # from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from api.email_helpers import send_email
 
 HIGHSCHOOL = 'highschool'
 NEWBIE     = 'newbie'
@@ -30,15 +29,6 @@ TOURNAMENT_DIVISION_CHOICES = (
     (COLLEGE, 'College'),
     (PRO, 'Pro'),
 )
-
-def send_email(recipient, subject, content, is_html):
-    from_address = settings.EMAIL_HOST_USER
-    message = Mail(from_email=from_address, to_emails=recipient, subject=subject, html_content=content)
-    try:
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-        response = sg.send(message)
-    except Exception as e:
-        print(str(e))
 
 class User(AbstractUser):
     email            = models.EmailField(unique=True)
