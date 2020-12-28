@@ -727,18 +727,20 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if team != submission.team:
             return Response({'message': 'Not authenticated on the right team'}, status.HTTP_401_UNAUTHORIZED)
         
-        # TODO checks for old status, before setting
-        # (eg a submission w status success shouldn't be tossed on the pubsub again.)
-        # (might make sense for any other status to be tossed on again, though)
+        # If a compilation has already succeeded, keep as so; no need to re-do.
+        # (Might make sense to re-do for other submissions, however.)
+        if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
+            return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
 
-        # TODO save to a status that indicates confirmation of submission being in a bucket
-        submission.compilation_status = 0
+        # indicate submission being in a bucket
+        submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
         submission.save()
 
         # TODO call the pubsub here
 
-        # TODO if message successfully added to pubsub, 
-        # change to a status that indicates being queued
+        # indicate submission being queued
+        submission.compilation_status = settings.COMPILE_STATUS.QUEUED
+        submission.save()
 
         return Response({'message': 'Status updated'}, status.HTTP_200_OK)
 
