@@ -37,16 +37,23 @@ class Api {
         console.log(data, status)
         $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
           team: Cookies.get('team_id')
-        }).done((data, status) => {
+        })
+        .done((data, status) => {
           console.log("Definitely done!")
           // console.log(data, status)
           Cookies.set('submitting', 0)
           // TODO make this display done on screen
         })
+        .fail((xhr, status, error) => {
+          console.log("Error in compilation update callback: ", xhr, status, error)
+        })
       })
-    }).fail((xhr, status, error) => {
-      console.log("Error in post:", error)
-      
+      .fail((xhr, status, error) => {
+        console.log("Error in put request of file to bucket: ", xhr, status, error)
+      })
+    })
+    .fail((xhr, status, error) => {
+      console.log("Error in post request for upload: ", xhr, status, error)      
     });
 
   }
