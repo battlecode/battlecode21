@@ -722,6 +722,27 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
 
     @action(methods=['patch', 'post'], detail=True)
+    def compilation_pubsub_call(self, request, team, league_id, pk=None):
+        submission = self.get_queryset().get(pk=pk)
+        if team != submission.team:
+            return Response({'message': 'Not authenticated on the right team'}, status.HTTP_401_UNAUTHORIZED)
+        
+        # TODO checks for old status, before setting
+        # (eg a submission w status success shouldn't be tossed on the pubsub again.)
+        # (might make sense for any other status to be tossed on again, though)
+
+        # TODO save to a status that indicates confirmation of submission being in a bucket
+        submission.compilation_status = 0
+        submission.save()
+
+        # TODO call the pubsub here
+
+        # TODO if message successfully added to pubsub, 
+        # change to a status that indicates being queued
+
+        return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+
+    @action(methods=['patch', 'post'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         # Also make sure that the admin is on a team! Otherwise you may get a 403.
