@@ -140,7 +140,14 @@ class GCloudUploadDownload():
         """
 
         blob = GCloudUploadDownload.get_blob(file_path, bucket)
-        return blob.create_resumable_upload_session()
+        # Origin is necessary to prevent CORS errors later:
+        # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
+        # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
+        # https://googleapis.dev/python/storage/latest/blobs.html
+        # TODO this should be dynamic.
+        # in fact, "this website" should become a config setting;
+        # also, in the setup readme, should be a note about changing this setting
+        return blob.create_resumable_upload_session(origin='http://localhost:3000')
 
     @staticmethod
     def signed_download_url(file_path, bucket):
