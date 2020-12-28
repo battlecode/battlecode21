@@ -684,6 +684,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
+        # TODO everything that this comment talks about
         # The submission process is problematic: if the IDs are recorded, before the code is actually uploaded, then code that fails to upload will have dead IDs associated with it, and the team will be sad
         # Also, if user navigates away before the upload_url is returned,
         # then no code makes it into the bucket
@@ -827,6 +828,7 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
             return Response({'compilation_id': comp_id}, status.HTTP_200_OK)
         else:
             # this is bad, replace with something thats actually None
+            # ^ TODO should address this
             return Response({'compilation_id': -1}, status.HTTP_200_OK)
               
 
