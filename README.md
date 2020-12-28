@@ -1,6 +1,6 @@
-# Battlehack SP20
+# Battlecode 2021
 
-♛
+🚩
 
 ## Repository Structure
 
