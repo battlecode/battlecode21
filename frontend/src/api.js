@@ -23,6 +23,7 @@ class Api {
   // TODO there's a better wayy to work with 'submitting' in cookies
   // TODO 'submitting' could probably use a better name
   // TODO review code in the submissions js
+  // TODO errors in these callbacks should also display messages in frontend
 
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
