@@ -73,7 +73,7 @@ class Tournaments extends Component {
                                                 <b>Final Tournament: 1/30.</b> The top 16 teams, as determined by the qualifying tournaments, compete for glory, fame and a big prize pool. The tournament will take place live, and will be streamed online for 2021. There will not be a component on MIT campus this year.
                                             </li>
                                         </ul>
-                                        The deadline to submit code for each tournament is 7 pm EST <i>the day before</i> the tournament. 
+                                        The deadline to submit code for each non-final tournament is 7 pm EST <i>the day before</i> the tournament. 
                                        </p> 
 
 
@@ -109,20 +109,15 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Thanks to our sponsors!
+                                        Thanks to our gold sponsor, Five Rings!
                                         <ul>
-                                            {/* <li><b>1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed)</li>
-                                            
-                                            <li><b>Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). A list of bugs known before launch can be found <a href="#">here</a>; duplicating these bugs will not result in any prizes awarded. This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlecode21/issues">here</a>.</li>
-                                            
-                                            <li><b>L33t H4ck3r prize:</b> escape the sandbox into our servers. 
-                                            Split across all teams who contact us and demonstrate a unique exploit, that can either read the value
-                                            of an environment variable (e.g. <code>echo $SECRET_KEY</code>) or read the contents of an arbitrary
-                                            file (e.g. <code>open("api_key.json","r")</code>).
-                                            Please do NOT submit them publicly (i.e. no GitHub issue). Email us or DM us on Discord.
+                                            <li><b>1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed). Smaller prizes for subsequent placers.</li>
+                                            <li>Smaller prizes for top placers in other non-final (newbie, high school, sprint) tournaments.</li>                                           
+                                            <li><b>More prizes???</b> TBA, maybe 👀
+                                                <ul>
+                                                    <li>Historically, we have given out prizes for creative strategies, major bugs found, and other game-specific topics. Have fun with your strategies, write-ups, and overall participation in Battlecode!</li>
+                                                </ul>
                                             </li>
-                                            
-                                            <li><b>More prizes???</b> TBA, maybe 👀</li> */}
                                         </ul>
                                     </p>
                                 </div>
