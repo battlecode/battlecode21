@@ -688,6 +688,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # then no code makes it into the bucket
         # This is fixed(?) by uploading in the backend,
         # or by uploading the file and then pressing another button to officialy submit
+        # (note: ended up doing this^, except instead of a button press, the submission process is automatically continued along)
         # The best way for now would be to have the upload, when done,
         # call a function in the backend that adjusts sub IDs
         # TODO somehow fix this problem
