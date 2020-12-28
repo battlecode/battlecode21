@@ -80,4 +80,6 @@ cd battlecode21
 git pull ../battlehack20-export —allow-unrelated-histories
 ```
 
-Note that if you want to rename directories, that is also possible. (git filter-repo can do lots of cool things; see its documenation, old examples in our repo, etc. for ideas.)
+(Git filter-repo can do lots of cool things; see its documenation, old examples in our repo, etc. for ideas. For example, renaming directories is possible. )
+
+Then, port all of the codebase! Don't forget to update the files in the highest level of the repo too, such as this readme itself, and the release script.
