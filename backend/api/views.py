@@ -12,7 +12,6 @@ from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from api.serializers import *
 from api.permissions import *
-from backend.settings import CompileStatus
 
 
 from google.cloud import storage
