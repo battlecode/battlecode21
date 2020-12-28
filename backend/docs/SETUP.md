@@ -66,6 +66,10 @@ Deployment is done through the Google Cloud Platform. You'll need access to the 
 
 With that, you can start here --
 
+### Configuring Settings
+
+After registering a domain name for the competition, set `THIS_URL` (in `settings.py`) to that domain.
+
 ### Storage Buckets
 Go to "Storage" on GCP console. A bucket for submissions should have been created (if not, instructions are in the infrastructure readme.)
 Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year.
