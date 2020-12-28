@@ -35,17 +35,6 @@ class Api {
       })
       .done((data, status) => {
         console.log(data, status)
-      })
-      // Even when upload succeeds, an error is thrown...
-      // We make the dangerous assumption that the upload succeeded,
-      // ie that the submission exists in a bucket
-      // TODO this is a dangerous assumption, find a better solution
-      // (maybe revolving around the upload working error-free, 
-      // and hooking callbacks to done rather than fail)
-      // TODO it's possible that the fail callback occurs
-      // before the upload finishes
-      .fail((xhr, status, error) => {
-        // console.log(data);
         $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
           team: Cookies.get('team_id')
         }).done((data, status) => {
