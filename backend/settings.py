@@ -104,6 +104,8 @@ class COMPILE_STATUS:
     SUCCESS = 1
     FAIL = 2
     ERROR = 3
+    UPLOADED = 4
+    QUEUED = 5
 
 
 # Application definition
