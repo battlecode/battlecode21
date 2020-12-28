@@ -46,6 +46,11 @@ class Submissions extends Component {
 
 
     // makes an api call to upload the selected file
+    // TODO clean this method up
+    // TODO add explanation
+    // TODO submission table should be what exactly? 
+    // Latest submission in progress, and last 3 good submissions? (and then make this clear in frontend) -- think I'm leaning towards this one
+    // Last 3 submissions, period? (this might need revisions in backend)
     uploadData = () => {
         // let status_str = "Submitting..."
         Cookies.set('submitting', 1)
