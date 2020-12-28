@@ -682,17 +682,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
 
-        # TODO everything that this comment talks about
-        # The submission process is problematic: if the IDs are recorded, before the code is actually uploaded, then code that fails to upload will have dead IDs associated with it, and the team will be sad
-        # Also, if user navigates away before the upload_url is returned,
-        # then no code makes it into the bucket
-        # This is fixed(?) by uploading in the backend,
-        # or by uploading the file and then pressing another button to officialy submit
-        # (note: ended up doing this^, except instead of a button press, the submission process is automatically continued along)
-        # The best way for now would be to have the upload, when done,
-        # call a function in the backend that adjusts sub IDs
-        # TODO somehow fix this problem
-
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
 

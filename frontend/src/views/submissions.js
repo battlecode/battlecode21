@@ -51,6 +51,10 @@ class Submissions extends Component {
     // TODO submission table should be what exactly? 
     // Latest submission in progress, and last 3 good submissions? (and then make this clear in frontend) -- think I'm leaning towards this one
     // Last 3 submissions, period? (this might need revisions in backend)
+    // TODO update how we display the most recent submission (including its status.)
+    // Also now that we have new statuses, we need to figue out what we should display in the frontend for each of them.
+    // (eg if user navigates away before the upload link is returned / before the upload finishes, or if submission fails to get queued/compiled,
+    // what should the user do? what should we tell them?)
     uploadData = () => {
         // let status_str = "Submitting..."
         Cookies.set('submitting', 1)
