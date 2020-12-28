@@ -48,7 +48,8 @@ public class GameConstants {
     // *********************************
     // ****** GAME MECHANICS ***********
     // ********************************* 
-
+    public static final double EXPOSE_FACTOR = 1.1;
+    public static final int EMPOWER_TAX = 69;
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******
     // *********************************

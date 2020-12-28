@@ -55,7 +55,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     /**
      * @return the robot this controller is connected to
      */
-    public InternalRobot getRobot() {
+    private InternalRobot getRobot() {
         return robot;
     }
 
@@ -71,7 +71,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     @Override
-    public int hashCode() {
+    private int hashCode() {
         return robot.getID();
     }
 
@@ -125,11 +125,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
  
-    public int getInfluence() {
+    private int getInfluence() {
         return this.robot.getInfluence();
     }
 
-    public double getConviction() {
+    private double getConviction() {
         return this.robot.getConviction();  
     }
 
@@ -194,7 +194,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanSenseLocation(loc);
         InternalRobot bot = gameWorld.getRobot(loc);
         if(bot != null)
-            return bot.getRobotInfo();
+            return bot.getRobotInfo(getType().canTrueSense());
         return null;
     }
 
@@ -210,7 +210,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_SENSE_THAT,
                     "Can't sense given robot; It may not exist anymore");
         }
-        return getRobotByID(id).getRobotInfo();
+        return getRobotByID(id).getRobotInfo(getType().canTrueSense());
     }
 
     @Override
@@ -241,11 +241,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
                 continue;
             // check if can sense
             if (!canSenseLocation(sensedRobot.getLocation()))
-                continue;
-            // check if right team
-            if (team != null && sensedRobot.getTeam() != team)
-                continue;
-            validSensedRobots.add(sensedRobot.getRobotInfo());
+                continue; 
+            validSensedRobots.add(sensedRobot.getRobotInfo(getType().canTrueSense()));
         }
         return validSensedRobots.toArray(new RobotInfo[validSensedRobots.size()]);
     }
@@ -278,10 +275,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                 continue;
             // check if can detect
             if (!canDetectLocation(detectedRobot.getLocation()))
-                continue;
-            // check if right team
-            if (team != null && detectedRobot.getTeam() != team)
-                continue;
+                continue; 
             validDetectedRobots.add(detectedRobot.getLocation());
         }
         return validDetectedRobots.toArray(new MapLocation[validDetectedRobots.size()]);
@@ -319,7 +313,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
      */
     @Override
     public boolean isReady() {
-        return getCooldownTurns() < 1;
+        return getCooldownTurns() < 10;
     }
 
     /**
@@ -454,37 +448,28 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
     // ****** POLITICIAN METHODS ********* 
     // ***********************************
-    private void assertCanEmpower() throws GameActionException {
+    private void assertCanEmpower(int radiusSquared) throws GameActionException {
         assertIsReady();
         if (!getType().canEmpower())
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot empower.");
+        if (radiusSquared > getType().actionRadiusSquared)
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot's empower radius is smaller than radius specified");
     }
 
     @Override //TODO: UPDATE THIS!!
-    public boolean canEmpower() {
+    public boolean canEmpower(int radiusSquared) {
         try {
-            assertCanEmpower();
+            assertCanEmpower(radiusSquared);
             return true;
         } catch (GameActionException e) { return false; } 
     }
     
     @Override //TODO: UPDATE THIS!! FIXME: Move details to GameWorld ?
-    public void empower() throws GameActionException {
-        assertCanEmpower();
-        InternalRobot[] allEmpoweredRobots = gameWorld.getAllRobotsWithinRadiusSquared(getLocation(),
-                getType().actionRadiusSquared);
-        if (allEmpoweredRobots.length != 1) { // 1 because allEmpoweredRobots includes this robot by default
-            double convictionChange = getConviction() / (allEmpoweredRobots.length - 1) * this.gameWorld.getEmpowerFactor(getTeam()) ; 
-            for (InternalRobot empowered : allEmpoweredRobots) {
-                if (this.robot.equals(empowered)) {
-                    continue;
-                }
-                empowered.addConviction(convictionChange * ((empowered.getTeam() == getTeam()) ? 1 : -1));
-            }
-            
-        }
-        this.robot.setConviction(0);
+    public void empower(int radiusSquared) throws GameActionException {
+        assertCanEmpower(radiusSquared);
+        this.robot.empower(radiusSquared); // assumes method in InternalRobot void empower(int radiusSquared)
     }
 
 
@@ -498,13 +483,17 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot expose.");  
         assertNotNull(loc); 
-        if (!this.robot.canIdentifyLocation(loc))
-            throw new GameActionException(OUT_OF_RANGE,
-                    "Location can't be exposed because it is out of range."); 
         if (!gameWorld.getGameMap().onTheMap(loc))
             throw new GameActionException(CANT_DO_THAT,
                     "Location is not on the map."); 
-
+        if (!this.robot.canIdentifyLocation(loc))
+            throw new GameActionException(CANT_DO_THAT,
+                    "Location can't be exposed because it is out of range or it does not have a bot that can be exposed."); 
+        InternalRobot bot = gameWorld.getRobot(loc);
+        if (bot == null || !(bot.getType().canBeExposed()) ) {
+            throw new GameActionException(CANT_DO_THAT, 
+                    "Location can't be exposed because it is out of range or it does not have a bot that can be exposed."); 
+        }
     }
 
     @Override //TODO: UPDATE THIS!!
@@ -517,14 +506,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
     
     @Override //TODO: UPDATE THIS!! FIXME: move details to GameWorld ?
     public void expose(MapLocation loc) throws GameActionException {
-        assertCanExpose(loc);
-        InternalRobot bot = gameWorld.getRobot(loc);
-        if (bot == null || !(bot.getType().canBeExposed()) ) {
-            throw new GameActionException(NO_ROBOT_THERE, "Robot tried to expose at location that does not have a Robot that can be Exposed.");
-        } else {
-            bot.setConviction(0);
-            this.gameWorld.addEmpowerFactor(getTeam()); 
-        } 
+        assertCanExpose(loc); 
+        this.robot.expose(loc); // assumes method in InternalRobot void expose(MapLocation loc)  
     }
 
     // ***********************************
