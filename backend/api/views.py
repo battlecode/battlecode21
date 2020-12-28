@@ -663,6 +663,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+        # Note that IDs are needed to generate the link.
         serializer.save() #save it once, link will be undefined since we don't have any way to know id
         serializer.save() #save again, link automatically set
 
@@ -715,6 +716,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     @action(methods=['patch', 'post'], detail=True)
     def compilation_pubsub_call(self, request, team, league_id, pk=None):
+        # It is better if compile server gets requests for compiling submissions that are actually in buckets. 
+        # So, only after an upload is done, the frontend calls this endpoint to give the compile server a request.
         submission = self.get_queryset().get(pk=pk)
         if team != submission.team:
             return Response({'message': 'Not authenticated on the right team'}, status.HTTP_401_UNAUTHORIZED)
