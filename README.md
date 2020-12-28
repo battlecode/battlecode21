@@ -35,29 +35,24 @@ The replay file will be in `/matches`. Use `headlessX` for bots that are in `bat
 
 ## Notes for porting this to battlecode21
 
-When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Mainting git history is nice. Use `git-filter-repo` for this:
+When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Maintaining git history is nice. Use `git-filter-repo` for this:
+
 ```
 pip3 install git-filter-repo
 ```
 
-Make sure you have a recent git version (run `git --version` and make sure it's compatible with git-filter-repo). The following steps were taken to port from `battlecode20` to this repo:
+Make sure you have a recent git version (run `git --version` and make sure it's compatible with git-filter-repo). The following steps were taken to port from `battlehack20` to this repo:
+
+First, create a fresh `battlecode21` repo on GitHub. Clone it. Then, starting in that repo:
 
 ```
 cd ..
-git clone https://github.com/battlecode/battlecode20
-cd battlecode20
-git checkout -b battlecode20export
-git filter-repo --path backend --path frontend --path infrastructure --path specs --path docker-compose-b.yml --path docker-compose.yml --path README.md --path pre_release.py --path post_release.py --tag-rename '':'bc20-'
+git clone https://github.com/battlecode/battlehack20 battlehack20-export
+cd battlehack20-export
+git filter-repo --tag-rename '':'bh20-'
 cd ..
-cd battlehack20
-git pull ../battlecode20 —allow-unrelated-histories
+cd battlecode21
+git pull ../battlehack20-export —allow-unrelated-histories
 ```
 
-Note that if you want to rename directories, that is also possible.
-
-For the engine, the same procedure was followed, but the `filter-repo` commands were as follows instead:
-
-```
-git filter-repo --invert-paths --path-regex '(arvidplayer)|(ezouplayer)|(lectureplayer)|(testplayer)'
-git filter-repo --to-subdirectory-filter engine
-```
+Note that if you want to rename directories, that is also possible. (git filter-repo can do lots of cool things; see its documenation, old examples in our repo, etc. for ideas.)
