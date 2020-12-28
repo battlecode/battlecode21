@@ -10,7 +10,8 @@
             "https://2021.battlecode.org"
         ],
         "responseHeader": [
-            "authorization"
+            "authorization",
+            "content-type"
         ]
     }
 ]
