@@ -691,14 +691,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # call a function in the backend that adjusts sub IDs
         # TODO somehow fix this problem
 
-        # call to compile server
-        print('attempting call to compile server')
-        print('id:', serializer.data['id'])
-        data = str(serializer.data['id'])
-        data_bytestring = data.encode('utf-8')
-        print(type(data_bytestring))
-        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
-
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
 
@@ -736,7 +728,13 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
         submission.save()
 
-        # TODO call the pubsub here
+        # call to compile server
+        print('attempting call to compile server')
+        print('id:', serializer.data['id'])
+        data = str(serializer.data['id'])
+        data_bytestring = data.encode('utf-8')
+        print(type(data_bytestring))
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         # indicate submission being queued
         submission.compilation_status = settings.COMPILE_STATUS.QUEUED
