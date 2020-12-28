@@ -99,10 +99,9 @@ public enum RobotType {
     /**
      * Returns whether the type can distinguish slanderers and politicians.
      *
-     * @param type the RobotType to be built
      * @return whether the type can distinguish slanderers and politicians.
      */
-    public boolean canTrueSense(RobotType type) {
+    public boolean canTrueSense() {
         return this == ENLIGHTENMENT_CENTER || this == MUCKRAKER;
     }
 
