@@ -728,6 +728,10 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
         submission.save()
 
+        data = {
+            'team': team.id
+        }
+        serializer = self.get_serializer(data=data)
         # call to compile server
         print('attempting call to compile server')
         print('id:', serializer.data['id'])
