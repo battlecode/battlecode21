@@ -728,14 +728,11 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
         submission.save()
 
-        data = {
-            'team': team.id
-        }
-        serializer = self.get_serializer(data=data)
+        id = submission.id
         # call to compile server
         print('attempting call to compile server')
-        print('id:', serializer.data['id'])
-        data = str(serializer.data['id'])
+        print('id:', id)
+        data = str(id)
         data_bytestring = data.encode('utf-8')
         print(type(data_bytestring))
         pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
