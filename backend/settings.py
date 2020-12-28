@@ -96,7 +96,7 @@ ELO_START = 1200
 ELO_NULL = -1000000
 
 
-class CompileStatus:
+class COMPILE_STATUS:
     """
     Class used to enum compile status constants used in compilation_update
     """

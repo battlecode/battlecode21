@@ -714,7 +714,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # Also make sure that the admin is on a team! Otherwise you may get a 403.
         if is_admin:
             submission = self.get_queryset().get(pk=pk)
-            if submission.compilation_status == CompileStatus.SUCCESS:
+            if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
                 # If a compilation has already succeeded, keep as so.
                 # (Would make sense for failed / errored compiles to flip to successes upon retry, so allow for this)
                 return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
@@ -725,11 +725,11 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
             if new_comp_status is None:
                 return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
-            elif new_comp_status in (CompileStatus.SUCCESS, CompileStatus.FAIL, CompileStatus.ERROR): #status provided in correct form
+            elif new_comp_status in (settings.COMPILE_STATUS.SUCCESS, settings.COMPILE_STATUS.FAIL, settings.COMPILE_STATUS.ERROR): #status provided in correct form
                 submission.compilation_status = new_comp_status
                 submission.save()
 
-                if new_comp_status == CompileStatus.SUCCESS: #compilation succeeded
+                if new_comp_status == settings.COMPILE_STATUS.SUCCESS: #compilation succeeded
                     team_sub = TeamSubmission.objects.all().get(team=submission.team)
                     # Only if this submission is newer than what's already been processed,
                     # update the submission history. 
@@ -741,7 +741,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                         team_sub.save()
 
                 return Response({'message': 'Status updated'}, status.HTTP_200_OK)
-            elif new_comp_status == CompileStatus.PROGRESS: # Trying to set to compilation in progress, which shouldn't be a valid result
+            elif new_comp_status == settings.COMPILE_STATUS.PROGRESS: # Trying to set to compilation in progress, which shouldn't be a valid result
                 return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
