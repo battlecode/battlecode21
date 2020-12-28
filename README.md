@@ -8,6 +8,9 @@
 - `/frontend`: Frontend dashboard in React
 - `/engine`: Game engine in Java
 - `/specs`: Game specs in Markdown (and HTML generation)
+- `/schema`: Game serialization schema (basically, an encoding of all units and events in a game)
+- `/client`: Game client (visualizer and playback) in TypeScript
+- `/example-bots`: A bunch of example bots for the game!
 
 ## Development
 
@@ -32,6 +35,28 @@ To run a game, run
 ```
 
 The replay file will be in `/matches`. Use `headlessX` for bots that are in `battlecode20-internal-test-bots`. You can specify the robot code and map like this: `./gradlew headless -Pmaps=maptestsmall -PteamA=examplefuncsplayer -PteamB=examplefuncsplayer`.
+
+### Client
+
+(Make sure you have a recent version of `npm`: `sudo npm cache clean -f && sudo npm install -g n && sudo n stable && PATH="$PATH"`.)
+
+First run `npm install` in the `schema` folder, followed by `npm run install_all` in the `client` folder. You can then run
+
+```
+npm run watch
+```
+
+which will launch the client on http://localhost:8080 (if available).
+
+### Docs
+
+You can generate javadocs as follows:
+
+```
+./gradlew release_docs_zip -Prelease_version=2020.0.0.0.0.1
+```
+
+This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
 
 ## Notes for porting this to battlecode21
 
