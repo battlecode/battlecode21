@@ -42,15 +42,11 @@ class Api {
       })
       .done((data, status) => {
         console.log(data, status)
-        // TODO instead of setting compilation_update, this should (I think) shove something onto to compile pub/sub, 
-        // through a backend endpoint.
-        // (probably can see bc20 code for help, although the order of when things occur may need changes from original, see #101 and (less relevantly) #42 for some discussion. #10 may also be relevant, too.)
         $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_pubsub_call/`)
         .done((data, status) => {
           console.log("Definitely done!")
           // console.log(data, status)
           Cookies.set('submitting', 0)
-          // TODO make this display done on screen
         })
         .fail((xhr, status, error) => {
           console.log("Error in compilation update callback: ", xhr, status, error)
