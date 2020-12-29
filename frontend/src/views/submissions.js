@@ -339,26 +339,28 @@ class Submissions extends Component {
                     )
                 } else { 
                     let status_str = ""
-                    switch (submission.status) {
-                        // TODO fill in rest of cases, revise strings
+                    switch (submission.compilation_status) {
                         // TODO don't show the download button in some cases
-                        case -1:
-                            status_str = "Waiting to start submission..."
-                            break
                         case 0:
-                            status_str = "Currently submitting..."
+                            status_str = "Submission initialized, but not yet uploaded... If this persists, try re-submitting your code."
                             break
                         case 1:
-                            status_str = "Successfully submitted!"
+                            status_str = "Successfully submitted and compiled!"
                             break
                         case 2:
-                            status_str = "Submission failed."
+                            status_str = "Submitted, but compiler threw a compile error. Fix and re-submit your code."
                             break
                         case 3:
                             status_str = "Internal server error. Try re-submitting your code."
                             break
+                        case 4:
+                            status_str = "Code uploaded, but not yet queued for compilation... If this persists, try re-submitting your code."
+                            break
+                        case 5:
+                            status_str = "Code queued for compilation -- check back for updates."
+                            break    
                         default:
-                            status_str = "A really long other string. TBD, fill in the rest of cases"
+                            status_str = ""
                             break
                     }
                     return (
