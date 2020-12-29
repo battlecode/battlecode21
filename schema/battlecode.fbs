@@ -88,10 +88,10 @@ enum Action : byte {
     /// Units can change their flag.
     /// Target: new flag value
     SET_FLAG,
-    /// Builds a unit (enlightent center).
+    /// Builds a unit.
     /// Target: spawned unit
     SPAWN_UNIT,
-    /// Places a bid (enlightent center).
+    /// Places a bid.
     /// Target: bid value
     PLACE_BID,
     /// A robot can change team after being empowered,

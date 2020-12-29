@@ -28,12 +28,12 @@ public final class Action {
    */
   public static final byte SET_FLAG = 2;
   /**
-   * Builds a unit (enlightent center).
+   * Builds a unit.
    * Target: spawned unit
    */
   public static final byte SPAWN_UNIT = 3;
   /**
-   * Places a bid (enlightent center).
+   * Places a bid.
    * Target: bid value
    */
   public static final byte PLACE_BID = 4;
