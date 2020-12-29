@@ -234,13 +234,14 @@ class Submissions extends Component {
                         </p> */}
                         <p>
                             Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
+                        </p><p>
+                        Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
+
                         </p>
-                        <label htmlFor="file_upload">
-                            <div className="btn"> Choose File </div> <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span>
-                        </label>
-                        <input id="file_upload" type="file" accept=".zip" onChange={this.onChangeHandler} style={{display: "none"}}/>
+                        {file_button}
+                        {file_button_2}
                         {button}
-                        <p className="text-center category"> {status_str}</p>
+                        {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
                     </div>
                 </div>
             )
