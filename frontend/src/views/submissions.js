@@ -74,8 +74,9 @@ class Submissions extends Component {
                 }
                 this.renderHelperSubmissionStatus()
                 
-                // refresh team submission listing
+                // refresh team submission tables
                 Api.getTeamSubmissions(this.gotSubmissions);
+                this.renderHelperCurrentTable()
                 this.renderHelperLastTable()
 
                 clearInterval(this.interval)
