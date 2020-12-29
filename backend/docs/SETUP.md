@@ -91,7 +91,7 @@ Set the contents of this file into dev_settings_sensitive.py, as GOOGLE_APPLICAT
 From Google Cloud console, "Compute Engine" -> “Instance Templates”. Click on an old backend template, and then click on “Create similar”. Change the name to something descriptive enough and conventional. ("bc21-backend-template", for example, works well. Also I’ve found that including the current date and time in the name can help keep things straight.) For machine type, we've found the `n1-standard-n1` to be cheap and work well, especially providing enough memory.
 
 Check the checkbox of "Deploy a container image to this VM instance", and change the container image to the image name you've just written in the cloud build trigger.
-Then, click "Advanced container options" to see a place to set environment variables. Find the variables set in `dev_settings_sensitive.py`, and set all of those keys/values here, too. (Here, these values should not be enclosed in quotes.) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template. ("Create Similar" on the instance template's page is helpful here.)
+Then, click "Advanced container options" to see a place to set environment variables. Find the variables set in `dev_settings_sensitive.py`, and set all of those keys/values here, too. (Here, these values should not be enclosed in quotes.) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template. See the "Deploying new instance template" for more info on this.
 
 (For now, keep the boot disk the same; it may be good to change it to a later version down the road. Be sure to test that the VMs still work, though.)
 
@@ -126,3 +126,9 @@ Make sure the CORS policy and Google Application credentials are all set up, as 
 Delete old instance groups: go to "Compute Engine" -> "Instance groups", check any old instance groups that are no longer in use, and click "delete".
 Delete old instance template: go to "Compute Engine" -> "Instance templates", check any old templates that are no longer in use, and click "delete".
 Delete old, unused backend services and buckets, if you're up to it, instructions in previous section. But this can be a pain and is certainly not necessary.
+
+## Deploying new instance template
+Sometimes you'll have to change your instance template (for example, if you change an environment variable). To do so:
+Create a new instance template (if you're looking to make just small changes, "Create Similar" on the original instance template's page is helpful here).
+Click on your already-present instance group in use, and on its page, click "Edit Group". Find the "instance template" dropdown and change to the newly created instance template.
+Finally, click on "rolling restart/replace". Change operation from `Restart` to `Replace`, let maximum surge be 1 and **maximum unavailable be 0** (we don't want our server to go down). Wait for the spinning icons to become checkmarks.
