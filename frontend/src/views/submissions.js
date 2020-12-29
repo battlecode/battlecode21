@@ -364,7 +364,6 @@ class Submissions extends Component {
                     <tr>
                         <th>Submission at</th>
                         <th>Status</th>
-                        <th>Download Btn</th>
                     </tr>
                     </thead>
                     <tbody>
