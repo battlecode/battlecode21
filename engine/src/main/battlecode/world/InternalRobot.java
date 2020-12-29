@@ -180,7 +180,7 @@ public strictfp class InternalRobot {
     /**
      * Returns whether this robot can perform actions on the given location.
      * 
-     * @param toSense the MapLocation to sense
+     * @param toSense the MapLocation to act
      */
     public boolean canActLocation(MapLocation toSense){
         return this.location.distanceSquaredTo(toSense) <= getActionRadiusSquared();
@@ -198,16 +198,16 @@ public strictfp class InternalRobot {
     /**
      * Returns whether this robot can detect the given location.
      * 
-     * @param toSense the MapLocation to sense
+     * @param toSense the MapLocation to detect
      */
     public boolean canDetectLocation(MapLocation toSense){
         return this.location.distanceSquaredTo(toSense) <= getDetectionRadiusSquared();
     }
 
     /**
-     * Returns whether this robot can sense something a given radius away.
+     * Returns whether this robot can act at a given radius away.
      * 
-     * @param radiusSquared the distance squared to sense
+     * @param radiusSquared the distance squared to act
      */
     public boolean canActRadiusSquared(int radiusSquared) {
         return radiusSquared <= getActionRadiusSquared();
@@ -223,9 +223,9 @@ public strictfp class InternalRobot {
     }
 
     /**
-     * Returns whether this robot can sense something a given radius away.
+     * Returns whether this robot can detect something a given radius away.
      * 
-     * @param radiusSquared the distance squared to sense
+     * @param radiusSquared the distance squared to detect
      */
     public boolean canDetectRadiusSquared(int radiusSquared) {
         return radiusSquared <= getDetectionRadiusSquared();

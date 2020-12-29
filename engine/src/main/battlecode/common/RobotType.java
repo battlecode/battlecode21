@@ -13,7 +13,7 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  0,  1,  2,  40,  40,  20000),
+    ENLIGHTENMENT_CENTER    (null,  0,  2,  2,  40,  40,  20000),
     //                       SS     CR  AC  AR  SR   DR   BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
@@ -22,8 +22,8 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  10,  9,  25,  25,  10000),
-    //                       SS                     CR  AC   AR  SR   DR   BL
+    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  9,  25,  25,  10000),
+    //                       SS                     CR  AC  AR  SR   DR   BL
     /**
      * Slanderers passively generate influence for their parent Enlightenment
      * Center each round. They are camoflauged as Politicians to enemy units.
@@ -31,16 +31,16 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  20,  0,  20,  20,  10000),
-    //                       SS                     CR  AC   AR  SR   DR   BL
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  2,  0,  20,  20,  10000),
+    //                       SS                     CR  AC  AR  SR   DR   BL
     /**
      * Muckrakers search the map for enemy Slanderers to Expose, which destroys
-     * the Slanderer and generates gives a buff to their team.
+     * the Slanderer and gives a buff to their team.
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  15,  12,  30,  40,  10000),
-    //                       SS                     CR     AC   AR   SR   DR   BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5,  12,  30,  40,  10000),
+    //                       SS                     CR     AC    AR   SR   DR   BL
     ;
     
     /**
@@ -56,27 +56,27 @@ public enum RobotType {
 
     /**
      * Cooldown turns for how long before a robot can take 
-     * action (build/Empower/Expose) again.
+     * action (Build/Move/Empower/Expose) again.
      */
-    public final int actionCooldown;
+    public final float actionCooldown;
 
     /**
-     * Range of robots' abilities. For Politicians, this is
-     * the AoE range of their Empower ability. For Muckrakers,
-     * this is from how far they can Expose a Slanderer.
+     * Radius squared range of robots' abilities. For Politicians, this is
+     * the AoE range of their Empower ability. For Muckrakers, this is
+     * from how far they can Expose a Slanderer.
      */
     public final int actionRadiusSquared;
 
     /**
-     * The radius in which the robot can sense another
+     * The radius squared range in which the robot can sense another
      * robot's information. For Politicians, Slanderers, and
      * Enlightenment Centers, this is the same as their detection
-     * radius. For Muckrakers, slightly reduced.
+     * radius squared. For Muckrakers, slightly reduced.
      */
     public final int sensorRadiusSquared;
 
     /**
-     * The radius in which the robot can detect the presence
+     * The radius squared range in which the robot can detect the presence
      * of other robots.
      */
     public final int detectionRadiusSquared;
@@ -177,7 +177,7 @@ public enum RobotType {
         return this == ENLIGHTENMENT_CENTER;
     }
 
-    RobotType(RobotType spawnSource, float convictionRatio, int actionCooldown,
+    RobotType(RobotType spawnSource, float convictionRatio, float actionCooldown,
               int actionRadiusSquared, int sensorRadiusSquared, int detectionRadiusSquared,
               int bytecodeLimit) {
         this.spawnSource            = spawnSource;
