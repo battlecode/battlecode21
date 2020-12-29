@@ -441,9 +441,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void empower(int radiusSquared) throws GameActionException {
         assertCanEmpower(radiusSquared);
 
+        this.robot.addCooldownTurns(); // not needed but here for the sake of consistency
         this.robot.empower(radiusSquared); // TODO: assumes method in InternalRobot void empower(int radiusSquared)
         // that method also needs to give matchmaker all conviction/influence/team changes
-        // self-destruct? no need to increase cooldown, or tell schema that conviction changed
+        // self-destruct? no need to tell schema that conviction changed
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
     }
 
@@ -500,7 +501,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     private void assertCanBid(int influence) throws GameActionException {
-        assertIsReady();
         if (!getType().canBid()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot bid.");
