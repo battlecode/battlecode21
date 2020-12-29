@@ -31,7 +31,6 @@ class Submissions extends Component {
     }
 
     componentDidMount() {
-        Api.getCompilationStatus(this.gotStatus);
         Api.getTeamSubmissions(this.gotSubmissions);
         Api.getLeague(function (l) {
             this.setState({ league: l});
@@ -101,12 +100,6 @@ class Submissions extends Component {
     KEYS_CURRENT = ['compiling'] 
     KEYS_LAST = ['last_1', 'last_2', 'last_3']
     KEYS_TOUR = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint', 'tour_hs', 'tour_intl_qual', 'tour_newbie']
-
-    // called when status of teams compilation request is received 
-    // 0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
-    gotStatus = (data) => {
-        this.setState(data)
-    }
 
     // called when submission data is initially received
     // this will be maps of the label of type of submission to submission id
