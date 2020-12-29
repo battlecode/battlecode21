@@ -328,7 +328,7 @@ class Submissions extends Component {
                     let download_button = <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button>
                     switch (submission.compilation_status) {
                         case 0:
-                            status_str = "Submission initialized, but not yet uploaded... If this persists, try re-submitting your code."
+                            status_str = "Submission initialized, but not yet uploaded... If this persists, try re-submitting your code. Also, make sure to stay on this page."
                             download_button = ""
                             break
                         case 1:
