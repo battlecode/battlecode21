@@ -330,13 +330,12 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ****** MOVEMENT METHODS ***********
     // ***********************************
 
-    private void assertCanMove(MapLocation loc) throws GameActionException {
+    private void assertCanMove(Direction dir) throws GameActionException {
+        assertNotNull(dir);
         if (!getType().canMove())
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot move.");
-        if (!getLocation().isAdjacentTo(loc))
-            throw new GameActionException(OUT_OF_RANGE,
-                    "Can only move to adjacent locations; " + loc + " is not adjacent to " + getLocation() + ".");
+        MapLocation loc = adjacentLocation(dir);
         if (!onTheMap(loc))
             throw new GameActionException(OUT_OF_RANGE,
                     "Can only move to locations on the map; " + loc + " is not on the map.");
@@ -350,24 +349,17 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public boolean canMove(Direction dir) {
-        assertNotNull(dir);
-        return canMove(adjacentLocation(dir));
-    }
-
-    private boolean canMove(MapLocation location) {
         try {
-            assertNotNull(location);
-            assertCanMove(location);
+            assertCanMove(dir);
             return true;
         } catch (GameActionException e) { return false; }
     }
 
-    // TODO: update this method
     @Override
     public void move(Direction dir) throws GameActionException {
-        assertNotNull(dir);
+        assertCanMove(dir);
+
         MapLocation center = adjacentLocation(dir);
-        assertCanMove(center);
         this.robot.addCooldownTurns();
         this.gameWorld.moveRobot(getLocation(), center);
         this.robot.setLocation(center);
