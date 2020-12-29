@@ -258,16 +258,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public MapLocation[] detectNearbyRobots(int radiusSquared) {
-        return detectNearbyRobots(radiusSquared, null);
+        return detectNearbyRobots(getLocation(), radiusSquared);
     }
 
     @Override
-    public MapLocation[] detectNearbyRobots(int radiusSquared, Team team) {
-        return detectNearbyRobots(getLocation(), radiusSquared, team);
-    }
-
-    @Override
-    public MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared, Team team) {
+    public MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared) {
         assertNotNull(center);
         int actualRadiusSquared = radiusSquared == -1 ? getType().detectionRadiusSquared : Math.min(radiusSquared, getType().detectionRadiusSquared)
         InternalRobot[] allDetectedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center, actualRadiusSquared);
@@ -278,9 +273,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
                 continue;
             // check if can detect
             if (!canDetectLocation(detectedRobot.getLocation()))
-                continue;
-            // check if right team
-            if (team != null && detectedRobot.getTeam() != team)
                 continue;
             validDetectedRobots.add(detectedRobot.getLocation());
         }
@@ -391,6 +383,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
 
     private void assertCanBuildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
+        assertNotNull(type);
+        assertNotNull(dir);
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
@@ -417,30 +411,19 @@ public final strictfp class RobotControllerImpl implements RobotController {
     @Override
     public boolean canBuildRobot(RobotType type, Direction dir, int influence) {
         try {
-            assertNotNull(type);
-            assertNotNull(dir);
             assertCanBuildRobot(type, dir, influence);
             return true;
         } catch (GameActionException e) { return false; }
     }
 
-    //TODO: update maybe?
     @Override
     public void buildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
-        assertNotNull(type);
-        assertNotNull(dir);
         assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
-        // TODO: replace with using up resource
-        // gameWorld.getTeamInfo().adjustSoup(getTeam(), -type.cost);
-        influence = Math.min(influence, this.getInfluence());
-        this.robot.removeInfluence(influence); // corresponding method in InternalRobot.java not yet exist
+        this.robot.removeInfluence(influence); // TODO: corresponding method in InternalRobot.java not yet exist
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
-        // TODO: set cooldown based on cost/type/new constant/etc.
-        getRobotByID(robotID).setCooldownTurns(GameConstants.INITIAL_COOLDOWN_TURNS); // should this be as function of robot type? 
-
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
 

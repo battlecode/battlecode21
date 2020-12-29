@@ -273,23 +273,6 @@ public strictfp interface RobotController {
     MapLocation[] detectNearbyRobots(int radiusSquared);
 
     /**
-     * Returns locations of all robots of a given team that can be detected
-     * within a certain distance of this robot. The objects are returned in no
-     * particular order.
-     *
-     * @param radiusSquared return robots this distance away from the center of
-     * this robot. If -1 is passed, all robots within detection radius are returned.
-     * if radiusSquared is larger than the robot's detection radius, the detection
-     * radius is used.
-     * @param team filter game objects by the given team. If null is passed,
-     * robots from any team are returned
-     * @return array of MapLocation objects of all the robots you detected.
-     *
-     * @battlecode.doc.costlymethod
-     */
-    MapLocation[] detectNearbyRobots(int radiusSquared, Team team);
-
-    /**
      * Returns all robots of a given team that can be detected within a certain
      * radius of a specified location. The objects are returned in order of
      * increasing distance from the specified center.
@@ -299,13 +282,11 @@ public strictfp interface RobotController {
      * this robot. If -1 is passed, all robots within detection radius are returned.
      * if radiusSquared is larger than the robot's detection radius, the detection
      * radius is used.
-     * @param team filter game objects by the given team. If null is passed,
-     * objects from all teams are returned.
      * @return array of MapLocation objects of all the robots you detected.
      *
      * @battlecode.doc.costlymethod
      */
-    MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared, Team team);
+    MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared);
 
     /**
      * Given a location, returns the passability of that location.
