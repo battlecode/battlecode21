@@ -58,15 +58,17 @@ You can generate javadocs as follows:
 
 This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
 
-## Notes for porting this to battlecode21
+## Notes for porting to a new repo
 
-When Battlecode 2021 comes around, it will probably useful to reuse a fair amount of this codebase. Maintaining git history is nice. Use `git-filter-repo` for this:
+When the next edition of Battlecode comes around, it will probably useful to reuse a fair amount of this codebase. Maintaining git history is nice. Use `git-filter-repo` for this:
 
 ```
 pip3 install git-filter-repo
 ```
 
-Make sure you have a recent git version (run `git --version` and make sure it's compatible with git-filter-repo). The following steps were taken to port from `battlehack20` to this repo:
+Make sure you have a recent git version (run `git --version` and make sure it's compatible with git-filter-repo).
+
+As an example, the following steps were taken to port from `battlehack20` to this repo:
 
 First, create a fresh `battlecode21` repo on GitHub. Clone it. Then, starting in that repo:
 
