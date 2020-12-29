@@ -279,10 +279,8 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return validDetectedRobots.toArray(new MapLocation[validDetectedRobots.size()]);
     }
 
-    //TODO: update this method!
     @Override 
     public double sensePassability(MapLocation loc) {
-        assertNotNull(loc); 
         assertCanSenseLocation(loc);
         return this.gameWorld.getPassability(loc);
     }
@@ -426,18 +424,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
-
-    // General style:
-    // - assertCanDoAction throws GameActionException
-    // - canDoAction (calls assertCanDoAction in try catch)
-    // - doAction (asserts before executing)
-
-    // TODO: for all of doAction methods, assert conditions like not null, can do action
-    // then carry out the action, making sure to update information in the world
-    // also make sure to add cooldown turns (robot.addCooldownTurns())
-    // and to properly update information for replays with gameWorld.getMatchMaker().addAction(...)
-    // check to make sure we're not double updating the matchmaker (from gameWorld, and here)
-
     
     // ***********************************
     // ****** POLITICIAN METHODS ********* 
@@ -465,6 +451,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void empower(int radiusSquared) throws GameActionException {
         assertCanEmpower(radiusSquared);
         this.robot.empower(radiusSquared); // assumes method in InternalRobot void empower(int radiusSquared)
+        // that method also needs to give matchmaker all conviction/influence/team changes
+        // self-destruct? no need to increase cooldown
+        gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
     }
 
 
@@ -503,17 +492,22 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; }  
     }
     
-    @Override //TODO: UPDATE THIS!! FIXME: move details to GameWorld ?
+    @Override
     public void expose(MapLocation loc) throws GameActionException {
-        assertCanExpose(loc); 
-        this.robot.expose(loc); // assumes method in InternalRobot void expose(MapLocation loc)  
+        assertCanExpose(loc);
+
+        this.robot.addCooldownTurns();
+        InternalRobot bot = gameWorld.getRobot(loc);
+        int exposedID = bot.getID();
+        this.robot.expose(bot); // TODO: assumes method in InternalRobot void expose(InternalRobot bot)
+        gameWorld.getMatchMaker().addAction(getID(), Action.EXPOSE, exposedID);
     }
 
     // ***********************************
     // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-    @Override //TODO: updated
+    @Override
     private void assertCanBid(int influence) throws GameActionException {
         assertIsReady();
         if (!getType().canBid()) {
@@ -528,7 +522,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         }
     }
 
-    @Override //TODO: updated
+    @Override
     public boolean canBid(int influence) {
         try {
             assertCanBid(influence);
@@ -536,48 +530,46 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; }  
     }
 
-    @Override //TODO: UPDATE THIS!!
+    @Override
     public void bid(int influence) throws GameActionException {
         assertCanBid(influence);
-        int chili = 0;
+
+        this.robot.bid(influence); // TODO: assumes method in InternalRobot
+        gameWorld.getMatchMaker().addAction(getID(), Action.PLACE_BID, influence);
     }
 
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
 
-    @Override //TODO: UPDATE THIS!!
+    @Override
     public void setFlag(int flag) throws GameActionException {
         this.robot.setFlag(flag);
     }
 
-    private void assertCanGetFlag(MapLocation loc) throws GameActionException {
-        assertIsReady(); 
-        if (!onTheMap(loc))
+    private void assertCanGetFlag(int id) throws GameActionException {
+        InternalRobot bot = getRobotByID(id);
+        if (bot == null)
             throw new GameActionException(CANT_DO_THAT,
-                    "Location is not on the map."); 
-        if (!isLocationOccupied(loc))
-            throw new GameActionException(CANT_DO_THAT,
-                    "Location is not occupied by a robot."); 
-        InternalRobot bot = gameWorld.getRobot(loc);
+                    "Robot of given ID does not exist.");
         if (bot.getType() != ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
             throw new GameActionException(CANT_SENSE_THAT,
                     "Robot at location is out of sensor range and not an Enlightenment Center.");
     }
 
-    @Override //TODO: UPDATE THIS!!
-    public boolean canGetFlag(MapLocation loc) {
+    @Override
+    public boolean canGetFlag(int id) {
         try {
-            assertCanGetFlag(loc);
+            assertCanGetFlag(id);
             return true;
         } catch (GameActionException e) { return false; }
     }
 
-    @Override //TODO: UPDATE THIS!!
-    public int[] getFlag(MapLocation loc) throws GameActionException {
-        assertCanGetFlag(loc);
-        InternalRobot bot = gameWorld.getRobot(loc);
-        return bot.getFlag();
+    @Override
+    public int getFlag(int id) throws GameActionException {
+        assertCanGetFlag(id);
+
+        return getRobotByID(id).getFlag();
     } 
 
     // ***********************************

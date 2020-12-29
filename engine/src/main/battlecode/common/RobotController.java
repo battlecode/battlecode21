@@ -513,30 +513,28 @@ public strictfp interface RobotController {
     void setFlag(int flag) throws GameActionException;
 
     /**
-     * Given a MapLocation, checks if a robot can get the flag of the robot
-     * on that location, if a robot exists there.
+     * Given a robot's ID, checks if a robot can get the flag of that robot.
      *
-     * Checks that a robot is on the MapLocation given, and that either
-     * (a) the robot is an Enlightenment Center or (b) the squared distance
-     * between the target location and the current location is within sensor range.
+     * Checks that a robot exists, and that either (a) the robot is an Enlightenment
+     * Center or (b) the target robot is within sensor range.
      *
-     * @param loc MapLocation being targeted by canGetFlag
-     * @return whether it is possible to set the robot's flag on that round.
+     * @param id the target robot's ID
+     * @return whether it is possible to get the robot's flag
      *
      * @battlecode.doc.costlymethod
      */
-    boolean canGetFlag(MapLocation loc);
+    boolean canGetFlag(int id);
 
     /** 
-     * Given a MapLocation, returns a the flag of the robot at that location.
+     * Given a robot's ID, returns the flag of the robot.
      *
-     * @param loc MapLocation being targeted by getFlag
+     * @param id the target robot's ID
      * @throws GameActionException if conditions for getting the flag are not satisfied
-     * @return the flag of the robot on the location specified
+     * @return the flag of the robot
      *
      * @battlecode.doc.costlymethod
      */
-    int getFlag(MapLocation loc) throws GameActionException;
+    int getFlag(int id) throws GameActionException;
 
 
     // ***********************************
