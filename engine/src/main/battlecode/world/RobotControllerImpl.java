@@ -476,19 +476,23 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertIsReady();
         if (!getType().canExpose())
             throw new GameActionException(CANT_DO_THAT,
-                    "Robot is of type " + getType() + " which cannot expose.");  
-        assertNotNull(loc); 
+                    "Robot is of type " + getType() + " which cannot expose.");
         if (!onTheMap(loc))
             throw new GameActionException(CANT_DO_THAT,
-                    "Location is not on the map."); 
-        if (!this.robot.canIdentifyLocation(loc))
+                    "Location is not on the map.");
+        if (!this.robot.canActLocation(loc))
             throw new GameActionException(CANT_DO_THAT,
-                    "Location can't be exposed because it is out of range or it does not have a bot that can be exposed."); 
+                    "Location can't be exposed because it is out of range.");
         InternalRobot bot = gameWorld.getRobot(loc);
-        if (bot == null || !(bot.getType().canBeExposed()) ) {
+        if (bot == null)
+            throw new GameActionException(CANT_DO_THAT,
+                    "There is no robot at specified location.");
+        if (!(bot.getType().canBeExposed()))
             throw new GameActionException(CANT_DO_THAT, 
-                    "Location can't be exposed because it is out of range or it does not have a bot that can be exposed."); 
-        }
+                    "Robot at target location is not of a type that can be exposed.");
+        if (bot.getTeam() == getTeam())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot at target location is not on the enemy team.");
     }
 
     @Override //TODO: UPDATE THIS!!
@@ -537,7 +541,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBid(influence);
         int chili = 0;
     }
-    
+
     // ***********************************
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
@@ -585,7 +589,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     /**
      * This used to be public, but is not public in 2021 because
-     * slanderers should not self-destruct.
+     * slanderers should not be able to self-destruct.
      */
     private void disintegrate() {
         throw new RobotDeathException();
