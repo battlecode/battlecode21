@@ -331,6 +331,8 @@ public strictfp class GameWorld {
         objectInfo.eachRobot((robot) -> {
             robot.processEndOfRound();
             return true;
+
+            // TODO: process bidding from all enlightenment centers here
         });
 
         // Check for end of match
