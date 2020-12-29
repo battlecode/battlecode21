@@ -560,9 +560,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Location is not occupied by a robot."); 
         InternalRobot bot = gameWorld.getRobot(loc);
-        if (bot.getTeam() != getTeam())  
-            throw new GameActionException(CANT_DO_THAT,
-                    "Location is not occupied by a robot of the same team."); 
         if (bot.getType() != ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
             throw new GameActionException(CANT_SENSE_THAT,
                     "Robot at location is out of sensor range and not an Enlightenment Center.");

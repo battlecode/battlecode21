@@ -513,13 +513,12 @@ public strictfp interface RobotController {
     void setFlag(int flag) throws GameActionException;
 
     /**
-     * Given a MapLocation, checks if a robot can get the flag of the robot on that location,
-     * if a robot exists there.
+     * Given a MapLocation, checks if a robot can get the flag of the robot
+     * on that location, if a robot exists there.
      *
-     * Checks that a robot is on the MapLocation given, that the robot on the
-     * target location is on the same team, and that either (a) the robot is an
-     * Enlightenment Center or (b) the squared distance between the target
-     * location and the current location is within sensor range.
+     * Checks that a robot is on the MapLocation given, and that either
+     * (a) the robot is an Enlightenment Center or (b) the squared distance
+     * between the target location and the current location is within sensor range.
      *
      * @param loc MapLocation being targeted by canGetFlag
      * @return whether it is possible to set the robot's flag on that round.
