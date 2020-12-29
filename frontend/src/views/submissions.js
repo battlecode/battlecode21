@@ -50,7 +50,8 @@ class Submissions extends Component {
     // TODO add explanation
     uploadData = () => {
         // let status_str = "Submitting..."
-        Cookies.set('submitting', 1)
+        // 'submitting' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
+        Cookies.set('submitting', 0)
         // console.log("submitting...")
         this.setState({sub_status: 0})
         this.renderHelperSubmissionForm()
@@ -59,12 +60,18 @@ class Submissions extends Component {
         Api.newSubmission(this.state.selectedFile, null)
 
         this.interval = setInterval(() => {
-            if (Cookies.get('submitting') != 1) {
+            if (Cookies.get('submitting') != 0) {
                 // console.log("out of time loop")
 
-                // refresh the submission button and status
-                this.setState({sub_status: 1})
+                // refresh the submission button
                 this.renderHelperSubmissionForm()
+                // refresh the submission status
+                if (Cookies.get('submitting') == 1) {
+                    this.setState({sub_status: 1})
+                }
+                if (Cookies.get('submitting') == 3) {
+                    this.setState({sub_status: 3})
+                }
                 this.renderHelperSubmissionStatus()
                 
                 // refresh team submission listing
@@ -275,13 +282,10 @@ class Submissions extends Component {
                     status_str = "Currently submitting..."
                     break
                 case 1:
-                    status_str = "Successfully submitted!"
-                    break
-                case 2:
-                    status_str = "Submission failed."
+                    status_str = "Successfully queued for compilation!"
                     break
                 case 3:
-                    status_str = "Internal server error. Try re-submitting your code."
+                    status_str = "Submitting failed. Try re-submitting your code."
                     break
                 default:
                     status_str = ""

@@ -46,18 +46,21 @@ class Api {
         .done((data, status) => {
           console.log("Definitely done!")
           // console.log(data, status)
-          Cookies.set('submitting', 0)
+          Cookies.set('submitting', 1)
         })
         .fail((xhr, status, error) => {
           console.log("Error in compilation update callback: ", xhr, status, error)
+          Cookies.set('submitting', 3)
         })
       })
       .fail((xhr, status, error) => {
         console.log("Error in put request of file to bucket: ", xhr, status, error)
+        Cookies.set('submitting', 3)
       })
     })
     .fail((xhr, status, error) => {
       console.log("Error in post request for upload: ", xhr, status, error)      
+      Cookies.set('submitting', 3)   
     });
 
   }
