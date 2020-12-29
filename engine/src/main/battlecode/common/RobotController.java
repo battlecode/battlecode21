@@ -204,7 +204,9 @@ public strictfp interface RobotController {
      * robot. The objects are returned in no particular order.
      *
      * @param radiusSquared return robots this distance away from the center of
-     * this robot. If -1 is passed, all robots within sense radius are returned.
+     * this robot. If -1 is passed, all robots within sensor radius are returned.
+     * if radiusSquared is larger than the robot's sensor radius, the sensor
+     * radius is used.
      * @return array of RobotInfo objects of all the robots you sensed.
      *
      * @battlecode.doc.costlymethod
@@ -257,8 +259,9 @@ public strictfp interface RobotController {
      * distance of this robot. The objects are returned in no particular order.
      *
      * @param radiusSquared return robots this distance away from the center of
-     * this robot. If -1 is passed, all robots within detection radius are
-     * returned.
+     * this robot. If -1 is passed, all robots within detection radius are returned.
+     * if radiusSquared is larger than the robot's detection radius, the detection
+     * radius is used.
      * @return array of MapLocation objects of all the robots you detected.
      *
      * @battlecode.doc.costlymethod
