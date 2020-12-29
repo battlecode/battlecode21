@@ -837,20 +837,6 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         else:
             return Response({'status': None}, status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=True)
-    def team_compilation_id(self, request, team, league_id, pk=None):
-        if pk != str(team.id):
-            return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
-
-        team_data = self.get_queryset().get(pk=pk)
-        comp_id = team_data.compiling_id
-        if comp_id is not None:
-            return Response({'compilation_id': comp_id}, status.HTTP_200_OK)
-        else:
-            # this is bad, replace with something thats actually None
-            # ^ TODO should address this
-            return Response({'compilation_id': -1}, status.HTTP_200_OK)
-              
 
 class ScrimmageViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,

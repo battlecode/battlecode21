@@ -102,12 +102,6 @@ class Api {
     });
   }
 
-  static getCompilationID(callback) {
-    $.get(`${URL}/api/${LEAGUE}/teamsubmission/${Cookies.get("team_id")}/team_compilation_id/`).done((data, status) => {
-        return data['compilation_id']
-    });
-  }
-
   // note that this is a submission, not a teamsubmission, thing
   static getSubmissionStatus(callback) {
     $.get(`${URL}/api/${LEAGUE}/submission/${Cookies.get("submission_id")}/get_status/`).done((data, status) => {
