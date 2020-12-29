@@ -722,12 +722,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         submission.save()
 
         id = submission.id
-        # call to compile server
-        print('attempting call to compile server')
-        print('id:', id)
+        # Notify compile server through pubsub queue.
         data = str(id)
         data_bytestring = data.encode('utf-8')
-        print(type(data_bytestring))
         pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         # indicate submission being queued
@@ -762,7 +759,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                     # Only if this submission is newer than what's already been processed,
                     # update the submission history. 
                     # (to prevent reverting to older submissions that took longer to process)
-                    if submission.id > team_sub.last_1_id:
+                    if team_sub.last_1_id is None or submission.id > team_sub.last_1_id:
                         team_sub.last_3_id = team_sub.last_2_id
                         team_sub.last_2_id = team_sub.last_1_id
                         team_sub.last_1_id = submission
@@ -837,20 +834,6 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         else:
             return Response({'status': None}, status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=True)
-    def team_compilation_id(self, request, team, league_id, pk=None):
-        if pk != str(team.id):
-            return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
-
-        team_data = self.get_queryset().get(pk=pk)
-        comp_id = team_data.compiling_id
-        if comp_id is not None:
-            return Response({'compilation_id': comp_id}, status.HTTP_200_OK)
-        else:
-            # this is bad, replace with something thats actually None
-            # ^ TODO should address this
-            return Response({'compilation_id': -1}, status.HTTP_200_OK)
-              
 
 class ScrimmageViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
