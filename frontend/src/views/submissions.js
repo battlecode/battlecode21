@@ -341,6 +341,7 @@ class Submissions extends Component {
                     return (
                         <tr key={ submission.id }>
                             <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
+                            <td>Status</td>
                             <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button> </td>                        
                         </tr>
                     ) 
@@ -352,6 +353,8 @@ class Submissions extends Component {
                     <thead>
                     <tr>
                         <th>Submission at</th>
+                        <th>Status</th>
+                        <th>Download Btn</th>
                     </tr>
                     </thead>
                     <tbody>
