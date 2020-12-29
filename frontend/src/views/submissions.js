@@ -46,14 +46,11 @@ class Submissions extends Component {
 
 
     // makes an api call to upload the selected file
-    // TODO clean this method up
     uploadData = () => {
-        // let status_str = "Submitting..."
         // 'submission_upload_status' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
         // A value of 0 indicates that the submission is still in progress.
         // When a submission finishes, api.js changes this value to something else.
         Cookies.set('submission_upload_status', 0)
-        // console.log("submitting...")
         // The sub_status state is used internally by this component, to keep track of the submission upload process.
         // (Currently, it mirrors submission_upload_status, but is part of state.)
         this.setState({sub_status: 0})
@@ -70,7 +67,6 @@ class Submissions extends Component {
             let submission_upload_status = Cookies.get('submission_upload_status');
             if (submission_upload_status != 0) {
                 // Submission process terminated (see api.js).
-                // console.log("out of time loop")
 
                 // refresh the submission status, for use on this component
                 if (submission_upload_status == 1) {
@@ -91,9 +87,6 @@ class Submissions extends Component {
 
                 // Done waiting for changes to submission_upload_status, so stop polling.
                 clearInterval(this.interval)
-            }
-            else {
-                // console.log("in time loop")
             }
         }, 1000); // Poll every second
     }

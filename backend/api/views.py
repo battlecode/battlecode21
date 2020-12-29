@@ -722,12 +722,9 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         submission.save()
 
         id = submission.id
-        # call to compile server
-        print('attempting call to compile server')
-        print('id:', id)
+        # Notify compile server through pubsub queue.
         data = str(id)
         data_bytestring = data.encode('utf-8')
-        print(type(data_bytestring))
         pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         # indicate submission being queued
