@@ -141,21 +141,28 @@ public final strictfp class RobotControllerImpl implements RobotController {
     @Override
     public boolean onTheMap(MapLocation loc) throws GameActionException {
         assertNotNull(loc);
-        assertCanSenseLocation(loc);
+        if (!this.robot.canSenseLocation(loc))
+            throw new GameActionException(CANT_SENSE_THAT,
+                    "Target location not within sensor range");
         return gameWorld.getGameMap().onTheMap(loc);
     }
 
     private void assertCanSenseLocation(MapLocation loc) throws GameActionException {
-        if(!canSenseLocation(loc)){
+        assertNotNull(loc);
+        if (!this.robot.canSenseLocation(loc))
             throw new GameActionException(CANT_SENSE_THAT,
                     "Target location not within sensor range");
-        }
+        if (!gameWorld.getGameMap().onTheMap(loc))
+            throw new GameActionException(CANT_SENSE_THAT,
+                    "Target location is not on the map");
     }
 
     @Override
     public boolean canSenseLocation(MapLocation loc) {
-        assertNotNull(loc);
-        return this.robot.canSenseLocation(loc) && gameWorld.getGameMap().onTheMap(loc);
+        try {
+            assertCanSenseLocation(loc);
+            return true;
+        } catch (GameActionException e) { return false; }
     }
 
     @Override
@@ -164,16 +171,21 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     private void assertCanDetectLocation(MapLocation loc) throws GameActionException {
-        if(!canDetectLocation(loc)){
+        assertNotNull(loc);
+        if (!this.robot.canDetectLocation(loc))
             throw new GameActionException(CANT_SENSE_THAT,
                     "Target location not within detection range");
-        }
+        if (!gameWorld.getGameMap().onTheMap(loc))
+            throw new GameActionException(CANT_SENSE_THAT,
+                    "Target location is not on the map");
     }
 
     @Override
     public boolean canDetectLocation(MapLocation loc) {
-        assertNotNull(loc);
-        return this.robot.canDetectLocation(loc) && gameWorld.getGameMap().onTheMap(loc);
+        try {
+            assertCanDetectLocation(loc);
+            return true;
+        } catch (GameActionException e) { return false; }
     }
 
     @Override
@@ -183,17 +195,15 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public boolean isLocationOccupied(MapLocation loc) throws GameActionException {
-        assertNotNull(loc);
         assertCanDetectLocation(loc);
         return this.gameWorld.getRobot(loc) != null;
     }
 
     @Override
     public RobotInfo senseRobotAtLocation(MapLocation loc) throws GameActionException {
-        assertNotNull(loc);
         assertCanSenseLocation(loc);
         InternalRobot bot = gameWorld.getRobot(loc);
-        if(bot != null)
+        if (bot != null)
             return bot.getRobotInfo(getType().canTrueSense());
         return null;
     }
@@ -206,10 +216,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     @Override
     public RobotInfo senseRobot(int id) throws GameActionException {
-        if(!canSenseRobot(id)){
+        if (!canSenseRobot(id))
             throw new GameActionException(CANT_SENSE_THAT,
                     "Can't sense given robot; It may not exist anymore");
-        }
         return getRobotByID(id).getRobotInfo(getType().canTrueSense());
     }
 
@@ -383,14 +392,17 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
 
     private void assertCanBuildRobot(RobotType type, Direction dir, int influence) throws GameActionException {
-        MapLocation spawnLoc = adjacentLocation(dir);
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
         // TODO: add general resource check
-        if (influence <= 0 && influence <= getInfluence()) {  
-            throw new GameActionException(CANT_DO_THAT, "Not possible to spend nonpositive amount of influence.");
-        } 
+        if (influence <= 0)
+            throw new GameActionException(CANT_DO_THAT,
+                    "Cannot spend nonpositive amount of influence.");
+        if (influence > getInfluence())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Cannot spend more influence than you have.");
+        MapLocation spawnLoc = adjacentLocation(dir);
         if (!onTheMap(spawnLoc))
             throw new GameActionException(OUT_OF_RANGE,
                     "Can only spawn to locations on the map; " + spawnLoc + " is not on the map.");
@@ -483,7 +495,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot expose.");  
         assertNotNull(loc); 
-        if (!gameWorld.getGameMap().onTheMap(loc))
+        if (!onTheMap(loc))
             throw new GameActionException(CANT_DO_THAT,
                     "Location is not on the map."); 
         if (!this.robot.canIdentifyLocation(loc))
@@ -554,7 +566,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
     private void assertCanGetFlag(MapLocation loc) throws GameActionException {
         assertIsReady(); 
-        if (!gameWorld.getGameMap().onTheMap(loc))
+        if (!onTheMap(loc))
             throw new GameActionException(CANT_DO_THAT,
                     "Location is not on the map."); 
         if (!isLocationOccupied(loc))
@@ -566,7 +578,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Location is not occupied with robot of the same team."); 
         if (bot.getType() != ENLIGHTENMENT_CENTER && getLocation().distanceSquaredTo(bot.getLocation()) > 8)  
             throw new GameActionException(CANT_DO_THAT,
-                    "Robot of same team doesn't meet conditions for getting flag.");            
+                    "Robot of same team doesn't meet conditions for getting flag."); // TODO this is wrong
     }
 
     @Override //TODO: UPDATE THIS!!

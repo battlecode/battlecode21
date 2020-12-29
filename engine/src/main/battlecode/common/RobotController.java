@@ -542,7 +542,7 @@ public strictfp interface RobotController {
      * Checks that a robot is on the MapLocation given, that the robot on the
      * target location is on the same team, and that either (a) the robot is an
      * Enlightenment Center or (b) the squared distance between the target
-     * location and the current location is &leq; 8.
+     * location and the current location is within sensor range.
      *
      * @param loc MapLocation being targeted by canGetFlag
      * @return whether it is possible to set the robot's flag on that round.
