@@ -51,7 +51,7 @@ class Submissions extends Component {
     uploadData = () => {
         // let status_str = "Submitting..."
         // 'submitting' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
-        Cookies.set('submitting', 0)
+        Cookies.set('submission_upload_status', 0)
         // console.log("submitting...")
         this.setState({sub_status: 0})
         this.renderHelperSubmissionForm()
@@ -60,16 +60,17 @@ class Submissions extends Component {
         Api.newSubmission(this.state.selectedFile, null)
 
         this.interval = setInterval(() => {
-            if (Cookies.get('submitting') != 0) {
+            let submission_upload_status = Cookies.get('submission_upload_status');
+            if (submission_upload_status != 0) {
                 // console.log("out of time loop")
 
                 // refresh the submission button
                 this.renderHelperSubmissionForm()
                 // refresh the submission status
-                if (Cookies.get('submitting') == 1) {
+                if (submission_upload_status == 1) {
                     this.setState({sub_status: 1})
                 }
-                if (Cookies.get('submitting') == 3) {
+                if (submission_upload_status == 3) {
                     this.setState({sub_status: 3})
                 }
                 this.renderHelperSubmissionStatus()

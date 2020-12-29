@@ -20,10 +20,7 @@ class Api {
 
   // TODO clean up a lot of old comments, print statements
   // TODO provide more explanatory comments
-  // TODO there's a better wayy to work with 'submitting' in cookies
-  // TODO 'submitting' could probably use a better name
   // TODO review code in the submissions js
-  // TODO errors in these callbacks should also display messages in frontend
 
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
@@ -46,21 +43,21 @@ class Api {
         .done((data, status) => {
           console.log("Definitely done!")
           // console.log(data, status)
-          Cookies.set('submitting', 1)
+          Cookies.set('submission_upload_status', 1)
         })
         .fail((xhr, status, error) => {
           console.log("Error in compilation update callback: ", xhr, status, error)
-          Cookies.set('submitting', 3)
+          Cookies.set('submission_upload_status', 3)
         })
       })
       .fail((xhr, status, error) => {
         console.log("Error in put request of file to bucket: ", xhr, status, error)
-        Cookies.set('submitting', 3)
+        Cookies.set('submission_upload_status', 3)
       })
     })
     .fail((xhr, status, error) => {
       console.log("Error in post request for upload: ", xhr, status, error)      
-      Cookies.set('submitting', 3)   
+      Cookies.set('submission_upload_status', 3)   
     });
 
   }
