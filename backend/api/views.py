@@ -140,7 +140,11 @@ class GCloudUploadDownload():
         """
 
         blob = GCloudUploadDownload.get_blob(file_path, bucket)
-        return blob.create_resumable_upload_session()
+        # Origin is necessary to prevent CORS errors later:
+        # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
+        # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
+        # https://googleapis.dev/python/storage/latest/blobs.html
+        return blob.create_resumable_upload_session(origin=settings.THIS_URL)
 
     @staticmethod
     def signed_download_url(file_path, bucket):
@@ -659,6 +663,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+        # Note that IDs are needed to generate the link.
         serializer.save() #save it once, link will be undefined since we don't have any way to know id
         serializer.save() #save again, link automatically set
 
@@ -676,15 +681,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             team.save()
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
-
-        # The submission process is problematic: if the IDs are recorded, before the code is actually uploaded, then code that fails to upload will have dead IDs associated with it, and the team will be sad
-        # Also, if user navigates away before the upload_url is returned,
-        # then no code makes it into the bucket
-        # This is fixed(?) by uploading in the backend,
-        # or by uploading the file and then pressing another button to officialy submit
-        # The best way for now would be to have the upload, when done,
-        # call a function in the backend that adjusts sub IDs
-        # TODO somehow fix this problem
 
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
@@ -707,6 +703,38 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         download_url = GCloudUploadDownload.signed_download_url(SUBMISSION_FILENAME(pk), GCLOUD_SUB_BUCKET)
         return Response({'download_url': download_url}, status.HTTP_200_OK)
 
+
+    @action(methods=['patch', 'post'], detail=True)
+    def compilation_pubsub_call(self, request, team, league_id, pk=None):
+        # It is better if compile server gets requests for compiling submissions that are actually in buckets. 
+        # So, only after an upload is done, the frontend calls this endpoint to give the compile server a request.
+        submission = self.get_queryset().get(pk=pk)
+        if team != submission.team:
+            return Response({'message': 'Not authenticated on the right team'}, status.HTTP_401_UNAUTHORIZED)
+        
+        # If a compilation has already succeeded, keep as so; no need to re-do.
+        # (Might make sense to re-do for other submissions, however.)
+        if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
+            return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+
+        # indicate submission being in a bucket
+        submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
+        submission.save()
+
+        id = submission.id
+        # call to compile server
+        print('attempting call to compile server')
+        print('id:', id)
+        data = str(id)
+        data_bytestring = data.encode('utf-8')
+        print(type(data_bytestring))
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
+
+        # indicate submission being queued
+        submission.compilation_status = settings.COMPILE_STATUS.QUEUED
+        submission.save()
+
+        return Response({'message': 'Status updated'}, status.HTTP_200_OK)
 
     @action(methods=['patch', 'post'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
@@ -820,6 +848,7 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
             return Response({'compilation_id': comp_id}, status.HTTP_200_OK)
         else:
             # this is bad, replace with something thats actually None
+            # ^ TODO should address this
             return Response({'compilation_id': -1}, status.HTTP_200_OK)
               
 

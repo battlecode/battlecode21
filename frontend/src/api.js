@@ -18,13 +18,19 @@ class Api {
 
   //----SUBMISSIONS----
 
+  // TODO clean up a lot of old comments, print statements
+  // TODO provide more explanatory comments
+  // TODO there's a better wayy to work with 'submitting' in cookies
+  // TODO 'submitting' could probably use a better name
+  // TODO review code in the submissions js
+  // TODO errors in these callbacks should also display messages in frontend
+
   //uploads a new submission to the google cloud bucket
   static newSubmission(submissionfile, callback){
     // submissionfile.append('_method', 'PUT');
     // get the url from the real api
-    $.post(`${URL}/api/${LEAGUE}/submission/`, {
-      team: Cookies.get('team_id')
-    }).done((data, status) => {
+    $.post(`${URL}/api/${LEAGUE}/submission/`)
+    .done((data, status) => {
       console.log("got URL")
       Cookies.set('submission_id', data['submission_id']);
       $.ajax({
@@ -36,29 +42,22 @@ class Api {
       })
       .done((data, status) => {
         console.log(data, status)
-      })
-      // Even when upload succeeds, an error is thrown...
-      // We make the dangerous assumption that the upload succeeded,
-      // ie that the submission exists in a bucket
-      // TODO this is a dangerous assumption, find a better solution
-      // (maybe revolving around the upload working error-free, 
-      // and hooking callbacks to done rather than fail)
-      // TODO it's possible that the fail callback occurs
-      // before the upload finishes
-      .fail((xhr, status, error) => {
-        // console.log(data);
-        $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_update/`, {
-          team: Cookies.get('team_id')
-        }).done((data, status) => {
+        $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_pubsub_call/`)
+        .done((data, status) => {
           console.log("Definitely done!")
           // console.log(data, status)
           Cookies.set('submitting', 0)
-          // TODO make this display done on screen
+        })
+        .fail((xhr, status, error) => {
+          console.log("Error in compilation update callback: ", xhr, status, error)
         })
       })
-    }).fail((xhr, status, error) => {
-      console.log("Error in post:", error)
-      
+      .fail((xhr, status, error) => {
+        console.log("Error in put request of file to bucket: ", xhr, status, error)
+      })
+    })
+    .fail((xhr, status, error) => {
+      console.log("Error in post request for upload: ", xhr, status, error)      
     });
 
   }

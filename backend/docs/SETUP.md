@@ -52,7 +52,7 @@ Once the database is finished being created, connect to it with your Postgres ed
 Delete the contents of the following tables. (_Don't delete the tables themselves!_ To easily delete info, you can run a query, such as `DELETE FROM [table_name]`.) The tables are: `api_scrimmage`, `api_scrimmage_hidden`, `api_submission`, `api_team`, `api_team_users`, `api_teamsubmission`, `api_tournament`, `api_tournamentscrimmage`, `api_update`, `api_user`, `django_admin_log`.
 (You may have to delete them in a particular order. Particularly, if you get an error pertaining to a "foreign key constraint", you'll have to delete the table which uses it first. Deleting those tables is probably okay.)
 
-Updating `api_league` is slightly different. Don't delete the entry; just edit it instead. Change `name` to something more suitable (eg `bh20`), change the `start_date` and `end_date` (they don't have to be exact, so feel free to use a longer range than the actual tournament. Set `active` to true. **Set `submissions_enabled` to false and `game_released` to false.** Finally `engine_version` needs to be changed as well; ask the infrastructure team what to change it to.
+Updating `api_league` is slightly different. Don't delete the entry; just edit it instead. Change `name` to something more suitable (eg `bh20`), change the `start_date` and `end_date` (they don't have to be exact, so feel free to use a longer range than the actual tournament. **Set `active` to true. Set `submissions_enabled` to true. Set `game_released` to false.** Finally `engine_version` needs to be changed as well; ask the infrastructure team what to change it to.
 
 Next, we need to register a superuser account (for use by the infra). Run the battlecode website, and simply follow the normal account registration process. Take note of the password!
 Also, have this superuser create and join a team (this is necessary for some permissions).
@@ -62,7 +62,18 @@ Then stop the old database (on its main page, press "stop").
 
 ## Deployment Setup
 
-Deployment is done through the Google Cloud Platform. You'll need access to the Google Cloud project. (If you don't have access already, ask a dev to add you.) With that, you can start here:
+Deployment is done through the Google Cloud Platform. You'll need access to the Google Cloud project. (If you don't have access already, ask a dev to add you.) It's also helpful to install gsutil, a command line application for managing GCP. Link here: https://cloud.google.com/storage/docs/gsutil.
+
+With that, you can start here --
+
+### Configuring Settings
+
+After registering a domain name for the competition, set `THIS_URL` (in `settings.py`) to that domain.
+
+### Storage Buckets
+Go to "Storage" on GCP console. A bucket for submissions should have been created (if not, instructions are in the infrastructure readme.)
+Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year.
+More info is here: https://cloud.google.com/storage/docs/configuring-cors#gsutil
 
 ### Cloud Build Triggers
 Go to "Cloud Build" triggers on GCP console, here: https://console.cloud.google.com/cloud-build/triggers?project=battlecode18
@@ -72,11 +83,15 @@ Change Dockerfile directory to `/backend`, and image name to `gcr.io/battlecode1
 
 With this step done: on pushes to master, Google Cloud will create a Docker container with our latest code. Push a commit to master, to test that the trigger works! Under "Cloud Builds" -> "History" you can see the build in progress.
 
+### Google Application Credentials
+Infrastructure should have made a service account. Get the service account json file from an infra dev. (If they haven't done so yet, you can come back to this section later. Make sure to!)
+Set the contents of this file into dev_settings_sensitive.py, as GOOGLE_APPLICATION_CREDENTIALS. Formatting is a little weird here -- you'll have to wrap the contents of the json file in `r'''` at the beginning, and `'''` at the end. See another version of the file for an example.
+
 ### Instance Template
 From Google Cloud console, "Compute Engine" -> “Instance Templates”. Click on an old backend template, and then click on “Create similar”. Change the name to something descriptive enough and conventional. ("bc21-backend-template", for example, works well. Also I’ve found that including the current date and time in the name can help keep things straight.) For machine type, we've found the `n1-standard-n1` to be cheap and work well, especially providing enough memory.
 
-Check the checkbox of "Deploy a container image to this VM instance", and change the container image to the image name you've just written in the cloud build trigger. 
-Then, click "Advanced container options" to see a place to set environment variables. In the repo's `backend/settings.py`, you can look at the `os.getenv` calls to see which environment variables are needed. Set these here, to the same values that have been used in local testing / in `dev_settings_sensitive.py`. (Other than `DB_HOST`, these probably don't need changing.) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template.
+Check the checkbox of "Deploy a container image to this VM instance", and change the container image to the image name you've just written in the cloud build trigger.
+Then, click "Advanced container options" to see a place to set environment variables. Find the variables set in `dev_settings_sensitive.py`, and set all of those keys/values here, too. (Here, these values should not be enclosed in quotes.) Note that these are un-editable; if you ever change environment variables, you'll have to make a new instance template. ("Create Similar" on the instance template's page is helpful here.)
 
 (For now, keep the boot disk the same; it may be good to change it to a later version down the road. Be sure to test that the VMs still work, though.)
 
@@ -107,6 +122,7 @@ Finally, click update!
 (Note: sometimes, after you try to update changes, they may not go through. This may be due to creating too many backend instances/buckets; we can only have so many up at any given time. You'll see notifications and any errors in the top right corner of the Google Console; you can check if this is the problem. If so, deleting old backend services/buckets is surprisingly hard. You need to first delete any uses of them in the host and path rules, then delete their uses in the "backend services" / "backend buckets" lists on the edit page's backend configuration section; don't forget to save. Then you need to _actually_ delete them, by using the gcloud command line interface. Instructions [here](https://cloud.google.com/sdk/gcloud/reference/compute/backend-services/delete) and [here](https://cloud.google.com/sdk/gcloud/reference/compute/backend-buckets/delete).)
 
 ### Some last steps
+Make sure the CORS policy and Google Application credentials are all set up, as described earlier. In particular make sure that the Google Application credentials have been set up as an environment variable in the instance template, or create a new instance template with this set.
 Delete old instance groups: go to "Compute Engine" -> "Instance groups", check any old instance groups that are no longer in use, and click "delete".
 Delete old instance template: go to "Compute Engine" -> "Instance templates", check any old templates that are no longer in use, and click "delete".
 Delete old, unused backend services and buckets, if you're up to it, instructions in previous section. But this can be a pain and is certainly not necessary.
