@@ -48,10 +48,6 @@ class Submissions extends Component {
     // makes an api call to upload the selected file
     // TODO clean this method up
     // TODO add explanation
-    // TODO update how we display the most recent submission (including its status.)
-    // Also now that we have new statuses, we need to figue out what we should display in the frontend for each of them.
-    // (eg if user navigates away before the upload link is returned / before the upload finishes, or if submission fails to get queued/compiled,
-    // what should the user do? what should we tell them?)
     uploadData = () => {
         // let status_str = "Submitting..."
         Cookies.set('submitting', 1)
@@ -324,10 +320,11 @@ class Submissions extends Component {
                     )
                 } else { 
                     let status_str = ""
+                    let download_button = <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button>
                     switch (submission.compilation_status) {
-                        // TODO don't show the download button in some cases
                         case 0:
                             status_str = "Submission initialized, but not yet uploaded... If this persists, try re-submitting your code."
+                            download_button = ""
                             break
                         case 1:
                             status_str = "Successfully submitted and compiled!"
@@ -352,7 +349,7 @@ class Submissions extends Component {
                         <tr key={ submission.id }>
                             <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
                             <td>{ status_str }</td>
-                            <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button> </td>                        
+                            <td>{ download_button } </td>                        
                         </tr>
                     ) 
                 }
