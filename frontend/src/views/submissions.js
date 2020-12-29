@@ -47,39 +47,49 @@ class Submissions extends Component {
 
     // makes an api call to upload the selected file
     // TODO clean this method up
-    // TODO add explanation
     uploadData = () => {
         // let status_str = "Submitting..."
-        // 'submitting' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
+        // 'submission_upload_status' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
+        // A value of 0 indicates that the submission is still in progress.
+        // When a submission finishes, api.js changes this value to something else.
         Cookies.set('submission_upload_status', 0)
         // console.log("submitting...")
+        // The sub_status state is used internally by this component, to keep track of the submission upload process.
+        // (Currently, it mirrors submission_upload_status, but is part of state.)
         this.setState({sub_status: 0})
+
+        // Disable submission (for now), to prevent concurrent submissions.
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
 
         Api.newSubmission(this.state.selectedFile, null)
 
+        // The method in api.js will change Cookies' submission_upload_status during the process of an upload.
+        // To check changes, we poll every second.
         this.interval = setInterval(() => {
             let submission_upload_status = Cookies.get('submission_upload_status');
             if (submission_upload_status != 0) {
+                // Submission process terminated (see api.js).
                 // console.log("out of time loop")
 
-                // refresh the submission button
-                this.renderHelperSubmissionForm()
-                // refresh the submission status
+                // refresh the submission status, for use on this component
                 if (submission_upload_status == 1) {
                     this.setState({sub_status: 1})
                 }
                 if (submission_upload_status == 3) {
                     this.setState({sub_status: 3})
                 }
+
+                // refresh the submission button, etc, to allow for a new submission
+                this.renderHelperSubmissionForm()
                 this.renderHelperSubmissionStatus()
                 
-                // refresh team submission tables
+                // refresh team submission tables, to display the submission that just occured
                 Api.getTeamSubmissions(this.gotSubmissions);
                 this.renderHelperCurrentTable()
                 this.renderHelperLastTable()
 
+                // Done polling, stop this repeated check
                 clearInterval(this.interval)
             }
             else {
@@ -227,6 +237,7 @@ class Submissions extends Component {
                     button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
                 }
             }
+            // Make sure to disable concurrent submission uploads.
             if (this.state.sub_status != 0) { 
                 file_button_sub = <div className="btn"> Choose File </div>
                 file_button = <label htmlFor="file_upload">
@@ -273,6 +284,8 @@ class Submissions extends Component {
         }
     }
 
+    // Shows the status of a current submission upload in progress.
+    // (see uploadData() for more explanation)
     renderHelperSubmissionStatus() {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
