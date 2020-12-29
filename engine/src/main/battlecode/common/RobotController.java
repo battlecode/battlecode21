@@ -444,15 +444,13 @@ public strictfp interface RobotController {
      * have conviction decreased. Enemy politicians and buildings with negative conviction
      * will join your team.
      *
-     * This also causes the politician unit to self-destruct; on the next round
-     * it will no longer be in the world.
+     * This also causes the politician unit to self-destruct on this turn.
      *
      * @throws GameActionException if conditions for empowering are not all satisfied
      * @battlecode.doc.costlymethod
      */
     void empower(int radiusSquared) throws GameActionException;
-
-
+ 
     // ***********************************
     // ****** MUCKRAKER METHODS ********** 
     // ***********************************
@@ -461,37 +459,24 @@ public strictfp interface RobotController {
      * Tests whether the robot can expose at a given location.
      * Checks that the robot is a muckraker, that the robot is within action
      * radius of the muckraker, that there are no cooldown turns remaining, and
-     * that a slanderer is present on the location.
+     * that an enemy slanderer is present on the location.
      *
-     * @param loc the location being checked
-     * @return whether it is possible to expose on that round at that location.
+     * @param loc the location being exposed
+     * @return whether it is possible to expose on that round at that location
      *
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
 
-<<<<<<< Updated upstream
     /**
      * Tests whether the robot can expose a given robot.
      * Checks that the robot is a muckraker, that the targeted robot is an enemy
      * slanderer, that the robot is within action radius, and that there are no
      * cooldown turns remaining.
      *
-     * @param id the robot being checked
-     * @return whether it is possible to expose that robot on this round.
+     * @param id the id of the robot being exposed
+     * @return whether it is possible to expose that robot on this round
      *
-=======
-    /** 
-     * Given a location, exposes a slanderer on that location, if a slanderer exists on that location.
-     * If a slanderer is exposed then on the next round it will no longer be in the world.
-     * Aside from this, a successful expose temporarily increases the total conviction
-     * of all Politicians on the same team by a factor (GameConstants.EXPOSE_FACTOR)^(influence) for the next
-     * <code> GameConstants.EXPOSE_NUM_TURNS </code> turns
-     *
-     * If the conditions for exposing are all met but loc does not contain a slanderer,
-     * an Exception is thrown, and the bytecode and cooldown costs are still consumed. 
-     * @throws GameActionException if conditions for exposing are not all satisfied 
->>>>>>> Stashed changes
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(int id);
@@ -499,7 +484,7 @@ public strictfp interface RobotController {
     /**
      * Exposes a slanderer at a given location.
      * The slanderer will be destroyed, and all attempts to empower by friendly
-     * Politicians will be temporarily increased by a multiplicative factor.
+     * Politicians will be temporarily buffed by a multiplicative factor.
      *
      * @throws GameActionException if conditions for exposing are not all satisfied 
      *
@@ -509,7 +494,7 @@ public strictfp interface RobotController {
 
 
     // **************************************
-    // *** CENTER OF ENLIGHTENMENT METHODS **
+    // **** ENLIGHTENMENT CENTER METHODS **** 
     // **************************************
 
     /**

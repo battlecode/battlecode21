@@ -53,13 +53,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // *********************************
 
     /**
-     * @return the robot this controller is connected to
-     */
-    private InternalRobot getRobot() {
-        return robot;
-    }
-
-    /**
      * Throw a null pointer exception if an object is null.
      *
      * @param o the object to test
@@ -306,10 +299,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
 
     private void assertIsReady() throws GameActionException {
-        if(!isReady()){
+        if (getCooldownTurns() >= 1)
             throw new GameActionException(IS_NOT_READY,
                     "This robot's action cooldown has not expired.");
-        }
     }
 
     /**
@@ -320,7 +312,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
      */
     @Override
     public boolean isReady() {
-        return getCooldownTurns() < 10;
+        try {
+            assertIsReady();
+            return true;
+        } catch (GameActionException e) { return false; }
     }
 
     /**
@@ -603,14 +598,14 @@ public final strictfp class RobotControllerImpl implements RobotController {
      * This used to be public, but is not public in 2021 because
      * slanderers should not self-destruct.
      */
-    private void disintegrate(){
+    private void disintegrate() {
         throw new RobotDeathException();
     }
 
     @Override
-    public void resign(){
+    public void resign() {
         gameWorld.getObjectInfo().eachRobot((robot) -> {
-            if(robot.getTeam() == getTeam()){
+            if (robot.getTeam() == getTeam()) {
                 gameWorld.destroyRobot(robot.getID());
             }
             return true;
