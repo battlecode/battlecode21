@@ -338,10 +338,33 @@ class Submissions extends Component {
                         <tr><td> <div className="btn btn-xs" style={{visibility: "hidden"}}>Loading...</div></td><td></td></tr>
                     )
                 } else { 
+                    let status_str = ""
+                    switch (submission.status) {
+                        // TODO fill in rest of cases, revise strings
+                        // TODO don't show the download button in some cases
+                        case -1:
+                            status_str = "Waiting to start submission..."
+                            break
+                        case 0:
+                            status_str = "Currently submitting..."
+                            break
+                        case 1:
+                            status_str = "Successfully submitted!"
+                            break
+                        case 2:
+                            status_str = "Submission failed."
+                            break
+                        case 3:
+                            status_str = "Internal server error. Try re-submitting your code."
+                            break
+                        default:
+                            status_str = "A really long other string. TBD, fill in the rest of cases"
+                            break
+                    }
                     return (
                         <tr key={ submission.id }>
                             <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
-                            <td>Status</td>
+                            <td>{ status_str }</td>
                             <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button> </td>                        
                         </tr>
                     ) 
