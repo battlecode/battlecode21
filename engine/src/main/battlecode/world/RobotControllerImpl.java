@@ -536,6 +536,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     @Override
     public void setFlag(int flag) throws GameActionException {
         this.robot.setFlag(flag);
+        gameWorld.getMatchMaker().addAction(getID(), Action.SET_FLAG, flag);
     }
 
     private void assertCanGetFlag(int id) throws GameActionException {
