@@ -48,7 +48,6 @@ public strictfp class InternalRobot {
         this.ID = id;
         this.team = team;
         this.type = type;
-        this.influence = 0;
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
@@ -252,6 +251,20 @@ public strictfp class InternalRobot {
         double passability = this.gameWorld.getPassability(this.location);
         float newCooldownTurns = this.type.actionCooldown / passability;
         setCooldownTurns(this.cooldownTurns + newCooldownTurns);
+    }
+
+    /**
+     * Adds influence given an amount to change this
+     * robot's influence by. Input can be negative to
+     * subtract influence. Conviction changes correspondingly.
+     *
+     * Only Enlightenment Centers should be able to change influence.
+     * 
+     * @param influenceAmount the amount to change influence by (can be negative)
+     */
+    public void addInfluence(int influenceAmount) {
+        this.influence += influenceAmount;
+        this.conviction = this.influence;
     }
     
     /**

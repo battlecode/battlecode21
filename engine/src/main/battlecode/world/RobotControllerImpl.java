@@ -408,7 +408,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
-        this.robot.removeInfluence(influence); // TODO: corresponding method in InternalRobot.java not yet exist
+        this.robot.addInfluence(-influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());

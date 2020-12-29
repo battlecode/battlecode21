@@ -13,7 +13,7 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  0,  2,  2,  40,  40,  20000),
+    ENLIGHTENMENT_CENTER    (null,  1,  2,  2,  40,  40,  20000),
     //                       SS     CR  AC  AR  SR   DR   BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
