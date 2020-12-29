@@ -520,7 +520,16 @@ class Api {
         else if (s[i].status === 'bluewon') s[i].status = on_red ? 'lost' : 'won';
 
         if (s[i].status !== 'lost' && s[i].status !== 'won') {
+
           s[i].replay = undefined;
+        }
+
+        if (s[i].status === 'won'){
+          s[i].score = `${s[i].winscore} - ${s[i].losescore}`;
+        }else if (s[i].status === 'lost'){
+          s[i].score = `${s[i].losescore} - ${s[i].winscore}`;
+        }else{
+          s[i].score = ' - ';
         }
 
         s[i].status = s[i].status.charAt(0).toUpperCase() + s[i].status.slice(1);
@@ -530,7 +539,6 @@ class Api {
 
         s[i].team = on_red ? s[i].blue_team : s[i].red_team;
         s[i].color = on_red ? 'Red' : 'Blue';
-
 
         requests.push(s[i]);
       } callback(requests);
