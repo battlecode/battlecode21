@@ -408,7 +408,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
-        this.robot.addInfluence(-influence);
+        this.robot.addInfluenceAndConviction(-influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
@@ -443,7 +443,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
         this.robot.addCooldownTurns(); // not needed but here for the sake of consistency
         this.robot.empower(radiusSquared); // TODO: assumes method in InternalRobot void empower(int radiusSquared)
-        // that method also needs to give matchmaker all conviction/influence/team changes
         // self-destruct? no need to tell schema that conviction changed
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
     }

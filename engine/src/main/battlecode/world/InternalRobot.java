@@ -17,6 +17,7 @@ public strictfp class InternalRobot {
     private MapLocation location;
     private int influence;
     private int conviction;
+    private int convictionCap;
     private int flag;
 
     private long controlBits;
@@ -51,6 +52,7 @@ public strictfp class InternalRobot {
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
+        this.convictionCap = type == ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
         this.flag = 0;
 
         this.controlBits = 0;
@@ -262,9 +264,11 @@ public strictfp class InternalRobot {
      * 
      * @param influenceAmount the amount to change influence by (can be negative)
      */
-    public void addInfluence(int influenceAmount) {
+    public void addInfluenceAndConviction(int influenceAmount) {
         this.influence += influenceAmount;
         this.conviction = this.influence;
+        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, influenceAmount);
+        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, influenceAmount);
     }
     
     /**
@@ -284,16 +288,12 @@ public strictfp class InternalRobot {
      * @param convictionAmount the amount to change conviction by (can be negative)
      */
     public void addConviction(int convictionAmount) {
-        setConviction(this.conviction + convictionAmount);
-    }
-    
-    /**
-     * Sets the conviction given a conviction amount.
-     * 
-     * @param newConviction the new conviction amount
-     */
-    public void setConviction(int newConviction) {
-        this.conviction = newConviction;
+        int oldConviction = this.conviction;
+        this.conviction += convictionAmount;
+        if (this.conviction > this.convictionCap)
+            this.conviction = this.convictionCap;
+        if (this.conviction != oldConviction)
+            this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, this.conviction - oldConviction);
     }
 
     /**
@@ -303,6 +303,38 @@ public strictfp class InternalRobot {
      */
     public void setFlag(int newFlag) {
         this.flag = newFlag;
+    }
+
+    /**
+     * Adds or removes influence, conviction, or both based on the type of the robot
+     * and the robot's affiliation.
+     * Called when a Politician Empowers.
+     * If conviction becomes negative, the robot switches teams or is destroyed.
+     *
+     * @param amount the amount this robot is empowered by, must be positive
+     * @param newTeam the team of the robot that empowered
+     */
+    public void empowered(int amount, Team newTeam) {
+        if (this.team != newTeam)
+            amount = -amount;
+
+        if (type == ENLIGHTENMENT_CENTER)
+            addInfluenceAndConviction(amount);
+        else
+            addConviction(amount);
+
+        if (conviction < 0) {
+            if (this.type.canBeConverted()) {
+                this.team = newTeam;
+                this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_TEAM, newTeam);
+                if (this.influence < 0)
+                    addInfluenceAndConviction(-2 * this.influence);
+                else
+                    addConviction(-2 * this.conviction);
+            } else {
+                this.gameWorld.destroyRobot(getID());
+            }
+        }
     }
 
     // *********************************
@@ -352,11 +384,6 @@ public strictfp class InternalRobot {
     // *********************************
     // ****** VARIOUS METHODS **********
     // *********************************
-
-    public void suicide(){
-        this.gameWorld.destroyRobot(getID());
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.DIE_SUICIDE, -1);
-    }
 
     // *****************************************
     // ****** MISC. METHODS ********************
