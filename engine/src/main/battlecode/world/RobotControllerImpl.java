@@ -243,6 +243,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
             // check if can sense
             if (!canSenseLocation(sensedRobot.getLocation()))
                 continue; 
+            // check if right team
+            if (team != null && sensedRobot.getTeam() != team)
+                continue;
             validSensedRobots.add(sensedRobot.getRobotInfo(getType().canTrueSense()));
         }
         return validSensedRobots.toArray(new RobotInfo[validSensedRobots.size()]);
@@ -275,7 +278,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
                 continue;
             // check if can detect
             if (!canDetectLocation(detectedRobot.getLocation()))
-                continue; 
+                continue;
+            // check if right team
+            if (team != null && detectedRobot.getTeam() != team)
+                continue;
             validDetectedRobots.add(detectedRobot.getLocation());
         }
         return validDetectedRobots.toArray(new MapLocation[validDetectedRobots.size()]);
