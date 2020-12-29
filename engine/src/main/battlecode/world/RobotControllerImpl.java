@@ -458,6 +458,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
     // ****** POLITICIAN METHODS ********* 
     // ***********************************
+
     private void assertCanEmpower(int radiusSquared) throws GameActionException {
         assertIsReady();
         if (!getType().canEmpower())
@@ -468,7 +469,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot's empower radius is smaller than radius specified");
     }
 
-    @Override //TODO: UPDATE THIS!!
+    @Override
     public boolean canEmpower(int radiusSquared) {
         try {
             assertCanEmpower(radiusSquared);

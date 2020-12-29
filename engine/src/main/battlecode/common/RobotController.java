@@ -218,7 +218,9 @@ public strictfp interface RobotController {
      * distance of this robot. The objects are returned in no particular order.
      *
      * @param radiusSquared return robots this distance away from the center of
-     * this robot. If -1 is passed, all robots within sense radius are returned
+     * this robot. If -1 is passed, all robots within sensor radius are returned.
+     * if radiusSquared is larger than the robot's sensor radius, the sensor
+     * radius is used.
      * @param team filter game objects by the given team. If null is passed,
      * robots from any team are returned
      * @return array of RobotInfo objects of all the robots you sensed.
@@ -233,15 +235,17 @@ public strictfp interface RobotController {
      * increasing distance from the specified center.
      *
      * @param center center of the given search radius
-     * @param radius return robots this distance away from the given center
-     * location. If -1 is passed, all robots within sense radius are returned
+     * @param radiusSquared return robots this distance away from the center of
+     * this robot. If -1 is passed, all robots within sensor radius are returned.
+     * if radiusSquared is larger than the robot's sensor radius, the sensor
+     * radius is used.
      * @param team filter game objects by the given team. If null is passed,
      * objects from all teams are returned
      * @return sorted array of RobotInfo objects of the robots you sensed.
      *
      * @battlecode.doc.costlymethod
      */
-    RobotInfo[] senseNearbyRobots(MapLocation center, int radius, Team team);
+    RobotInfo[] senseNearbyRobots(MapLocation center, int radiusSquared, Team team);
 
     /**
      * Returns locations of all robots within detection radius. The objects are
@@ -274,8 +278,9 @@ public strictfp interface RobotController {
      * particular order.
      *
      * @param radiusSquared return robots this distance away from the center of
-     * this robot. If -1 is passed, all robots within detection radius are
-     * returned.
+     * this robot. If -1 is passed, all robots within detection radius are returned.
+     * if radiusSquared is larger than the robot's detection radius, the detection
+     * radius is used.
      * @param team filter game objects by the given team. If null is passed,
      * robots from any team are returned
      * @return array of MapLocation objects of all the robots you detected.
@@ -290,15 +295,17 @@ public strictfp interface RobotController {
      * increasing distance from the specified center.
      *
      * @param center center of the given search radius
-     * @param radius return robots this distance away from the given center
-     * location. If -1 is passed, all robots within detected radius are returned
+     * @param radiusSquared return robots this distance away from the center of
+     * this robot. If -1 is passed, all robots within detection radius are returned.
+     * if radiusSquared is larger than the robot's detection radius, the detection
+     * radius is used.
      * @param team filter game objects by the given team. If null is passed,
      * objects from all teams are returned.
      * @return array of MapLocation objects of all the robots you detected.
      *
      * @battlecode.doc.costlymethod
      */
-    MapLocation[] detectNearbyRobots(MapLocation center, int radius, Team team);
+    MapLocation[] detectNearbyRobots(MapLocation center, int radiusSquared, Team team);
 
     /**
      * Given a location, returns the passability of that location.
@@ -420,10 +427,11 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can empower.
-     * Checks that the robot is a politician, and if there are no cooldown turns
-     * remaining.
+     * Checks that the robot is a politician, if there are no cooldown turns
+     * remaining, and that the specified radiusSquared is valid.
      * 
-     * @return whether it is possible to empower on that round.
+     * @param radiusSquared the empower range
+     * @return whether the robot can empower with the given range
      *
      * @battlecode.doc.costlymethod
      */
