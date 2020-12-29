@@ -438,7 +438,7 @@ public strictfp interface RobotController {
 
     /**
      * Tests whether the robot can expose at a given location.
-     * Checks that the robot is a muckraker, that the robot is within action
+     * Checks that the robot is a muckraker, that the location is within action
      * radius of the muckraker, that there are no cooldown turns remaining, and
      * that an enemy slanderer is present on the location.
      *
@@ -448,19 +448,6 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     boolean canExpose(MapLocation loc);
-
-    /**
-     * Tests whether the robot can expose a given robot.
-     * Checks that the robot is a muckraker, that the targeted robot is an enemy
-     * slanderer, that the robot is within action radius, and that there are no
-     * cooldown turns remaining.
-     *
-     * @param id the id of the robot being exposed
-     * @return whether it is possible to expose that robot on this round
-     *
-     * @battlecode.doc.costlymethod
-     */
-    boolean canExpose(int id);
 
     /**
      * Exposes a slanderer at a given location.

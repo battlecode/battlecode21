@@ -377,7 +377,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (!getType().canBuild(type))
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot build robots of type" + type + ".");
-        // TODO: add general resource check
         if (influence <= 0)
             throw new GameActionException(CANT_DO_THAT,
                     "Cannot spend nonpositive amount of influence.");
@@ -396,7 +395,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot is still cooling down! You need to wait before you can perform another action.");
     }
 
-    //TODO: update maybe?
     @Override
     public boolean canBuildRobot(RobotType type, Direction dir, int influence) {
         try {
@@ -439,10 +437,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } catch (GameActionException e) { return false; } 
     }
     
-    @Override //TODO: UPDATE THIS!! FIXME: Move details to GameWorld ?
+    @Override
     public void empower(int radiusSquared) throws GameActionException {
         assertCanEmpower(radiusSquared);
-        this.robot.empower(radiusSquared); // assumes method in InternalRobot void empower(int radiusSquared)
+
+        this.robot.empower(radiusSquared); // TODO: assumes method in InternalRobot void empower(int radiusSquared)
         // that method also needs to give matchmaker all conviction/influence/team changes
         // self-destruct? no need to increase cooldown, or tell schema that conviction changed
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
@@ -476,7 +475,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot at target location is not on the enemy team.");
     }
 
-    @Override //TODO: UPDATE THIS!!
+    @Override
     public boolean canExpose(MapLocation loc) {
         try {
             assertCanExpose(loc);
