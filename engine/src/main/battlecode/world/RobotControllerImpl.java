@@ -77,10 +77,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return gameWorld.getCurrentRound();
     }
 
-    // TODO: update this method!
     @Override
     public int getTeamVotes() {
-        return gameWorld.getTeamInfo().getVotes(getTeam()); // corresponding method in TeamInfo.java not implemented yet
+        return gameWorld.getTeamInfo().getVotes(getTeam());
     }
 
     @Override
@@ -420,6 +419,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
         this.robot.addCooldownTurns();
         this.robot.removeInfluence(influence); // TODO: corresponding method in InternalRobot.java not yet exist
+        gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
         int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
@@ -452,7 +452,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanEmpower(radiusSquared);
         this.robot.empower(radiusSquared); // assumes method in InternalRobot void empower(int radiusSquared)
         // that method also needs to give matchmaker all conviction/influence/team changes
-        // self-destruct? no need to increase cooldown
+        // self-destruct? no need to increase cooldown, or tell schema that conviction changed
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
     }
 

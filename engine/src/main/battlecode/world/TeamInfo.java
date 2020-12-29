@@ -11,22 +11,27 @@ import java.util.*;
 public class TeamInfo {
 
     private GameWorld gameWorld;
-    // more instance variables, typically array of length 2
+    private int[] teamVotes;
 
     public TeamInfo(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
+        this.teamVotes = new int[2];
     }
-
-    // All methods should all be with signature
-    // ```public void doSomething(Team t)```
-    // Possibly with more parameters
-    // Use t.ordinal() for indexing, breaks if t.ordinal() > 1 (Team NEUTRAL)
 
     // *********************************
     // ***** GETTER METHODS ************
     // *********************************
 
+    // Breaks if t.ordinal() > 1 (Team NEUTRAL)
+    public int getVotes(Team t) {
+        return teamVotes[t.ordinal()];
+    }
+
     // *********************************
     // ***** UPDATE METHODS ************
     // *********************************
+
+    public void addVote(Team t) {
+        teamVotes[t.ordinal()]++;
+    }
 }
