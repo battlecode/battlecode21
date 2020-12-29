@@ -13,6 +13,7 @@ class Submissions extends Component {
         super(props);
         this.state = {
             selectedFile: null,
+            currentSubmission: null,
             lastSubmissions: null,
             tourSubmissions: null,
             numLastSubmissions: 0,
@@ -100,6 +101,7 @@ class Submissions extends Component {
 
 
     //---GETTING TEAMS SUBMISSION DATA----
+    KEYS_CURRENT = ['compiling'] 
     KEYS_LAST = ['last_1', 'last_2', 'last_3']
     KEYS_TOUR = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint', 'tour_hs', 'tour_intl_qual', 'tour_newbie']
 
@@ -113,6 +115,7 @@ class Submissions extends Component {
     // this will be maps of the label of type of submission to submission id
     // this function then makes calles to get the specific data for each submission
     gotSubmissions = (data) => {
+        this.setState({currentSubmission: new Array(this.submissionHelper(this.KEYS_CURRENT, data)).fill({})})
         this.setState({lastSubmissions: new Array(this.submissionHelper(this.KEYS_LAST, data)).fill({})})
         this.setState({tourSubmissions: new Array(this.submissionHelper(this.KEYS_TOUR, data)).fill([])})
     }
@@ -135,7 +138,13 @@ class Submissions extends Component {
     setSubmissionData = (key, data) => {
 
         let index, add_data
-        if (this.KEYS_LAST.includes(key)) {
+        if (this.KEYS_CURRENT.includes(key)) {
+            index = 0
+            const arr = this.state["currentSubmission"]
+            let newArr = arr.slice(0, index)
+            newArr.push(data)
+            this.setState({["currentSubmission"]: newArr.concat(arr.slice(index + 1))})
+        } else if (this.KEYS_LAST.includes(key)) {
             switch (key) {
                 case 'last_1':
                     index = 0
@@ -303,7 +312,61 @@ class Submissions extends Component {
         }
     }
 
-    //reder helper for table containing the team's latest submissions
+    //reder helper for table containing the team's latest submission
+    renderHelperCurrentTable() {
+        if (this.state.currentSubmission === null) {
+            return (
+                <p className="text-center category">
+                Loading submissions...<br/><br/>
+                </p>
+            )
+        } else if (this.state.currentSubmission.length == 0) {
+            if (this.state.status == 0) {
+                return (
+                    <p>
+                    Your code is being submitted -- you'll see it here if it finishes successfully.
+                    </p>
+                )  
+            } else { 
+                return (
+                    <p>
+                    You haven't submitted any code yet!
+                    </p>
+                )  
+            }
+        } else {
+            const submissionRows = this.state.currentSubmission.map((submission, index) => {
+                if (Object.keys(submission).length === 0) {
+                    return (
+                        <tr><td> <div className="btn btn-xs" style={{visibility: "hidden"}}>Loading...</div></td><td></td></tr>
+                    )
+                } else { 
+                    return (
+                        <tr key={ submission.id }>
+                            <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
+                            <td> <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button> </td>                        
+                        </tr>
+                    ) 
+                }
+            })
+
+            return (
+                <table className="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>Submission at</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    { submissionRows }
+                    </tbody>
+                </table>
+            )
+        }
+        
+    }
+
+    //reder helper for table containing the team's latest successfully compiled submissions
     renderHelperLastTable() {
         if (this.state.lastSubmissions === null) {
             return (
@@ -415,7 +478,14 @@ class Submissions extends Component {
                             { this.renderHelperSubmissionStatus() }
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Latest Submissions</h4>
+                                    <h4 className="title">Latest Submission</h4>
+                                </div>
+                                <div className="content">
+                                    { this.renderHelperCurrentTable() }
+                                </div>
+
+                                <div className="header">
+                                    <h4 className="title">Latest Successfully Compiled Submissions</h4>
                                 </div>
                                 <div className="content">
                                     { this.renderHelperLastTable() }
