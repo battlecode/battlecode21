@@ -65,7 +65,7 @@ class Submissions extends Component {
         Api.newSubmission(this.state.selectedFile, null)
 
         // The method in api.js will change Cookies' submission_upload_status during the process of an upload.
-        // To check changes, we poll every second.
+        // To check changes, we poll periodically.
         this.interval = setInterval(() => {
             let submission_upload_status = Cookies.get('submission_upload_status');
             if (submission_upload_status != 0) {
@@ -89,13 +89,13 @@ class Submissions extends Component {
                 this.renderHelperCurrentTable()
                 this.renderHelperLastTable()
 
-                // Done polling, stop this repeated check
+                // Done waiting for changes to submission_upload_status, so stop polling.
                 clearInterval(this.interval)
             }
             else {
                 // console.log("in time loop")
             }
-        }, 1000);
+        }, 1000); // Poll every second
     }
 
     // change handler called when file is selected
