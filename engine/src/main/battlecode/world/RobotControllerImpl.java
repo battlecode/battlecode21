@@ -532,9 +532,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (!getType().canBid()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot bid.");
-        } else if (influence < 0) {
+        } else if (influence <= 0) {
             throw new GameActionException(CANT_DO_THAT,
-                    "Not possible to bid negative amount of influence.");
+                    "Can only bid non-negative amounts of influence.");
         } else if (influence > getInfluence()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Not possible to bid influence you don't have.");
@@ -571,14 +571,14 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Location is not on the map."); 
         if (!isLocationOccupied(loc))
             throw new GameActionException(CANT_DO_THAT,
-                    "Location is not occupied with robot of the same team."); 
+                    "Location is not occupied by a robot."); 
         InternalRobot bot = gameWorld.getRobot(loc);
         if (bot.getTeam() != getTeam())  
             throw new GameActionException(CANT_DO_THAT,
-                    "Location is not occupied with robot of the same team."); 
-        if (bot.getType() != ENLIGHTENMENT_CENTER && getLocation().distanceSquaredTo(bot.getLocation()) > 8)  
-            throw new GameActionException(CANT_DO_THAT,
-                    "Robot of same team doesn't meet conditions for getting flag."); // TODO this is wrong
+                    "Location is not occupied by a robot of the same team."); 
+        if (bot.getType() != ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
+            throw new GameActionException(CANT_SENSE_THAT,
+                    "Robot at location is out of sensor range and not an Enlightenment Center.");
     }
 
     @Override //TODO: UPDATE THIS!!
