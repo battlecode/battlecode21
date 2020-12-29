@@ -318,19 +318,11 @@ class Submissions extends Component {
                 </p>
             )
         } else if (this.state.currentSubmission.length == 0) {
-            if (this.state.status == 0) {
-                return (
-                    <p>
-                    Your code is being submitted -- you'll see it here if it finishes successfully.
-                    </p>
-                )  
-            } else { 
-                return (
-                    <p>
-                    You haven't submitted any code yet!
-                    </p>
-                )  
-            }
+            return (
+                <p>
+                You haven't submitted any code yet!
+                </p>
+            )  
         } else {
             const submissionRows = this.state.currentSubmission.map((submission, index) => {
                 if (Object.keys(submission).length === 0) {
@@ -400,19 +392,11 @@ class Submissions extends Component {
                 </p>
             )
         } else if (this.state.lastSubmissions.length == 0) {
-            if (this.state.status == 0) {
-                return (
-                    <p>
-                    Your code is being submitted -- you'll see it here if it finishes successfully.
-                    </p>
-                )  
-            } else { 
-                return (
-                    <p>
-                    You haven't submitted any code yet!
-                    </p>
-                )  
-            }
+            return (
+                <p>
+                You haven't had any successful submissions yet! (If you have code being submitted, you'll see it here if it finishes successfully.)
+                </p>
+            )  
         } else {
             const submissionRows = this.state.lastSubmissions.map((submission, index) => {
                 if (Object.keys(submission).length === 0) {
