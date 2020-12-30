@@ -390,6 +390,7 @@ public strictfp class GameWorld {
             this.buffsToAdd[i] = 0; // reset
         }
 
+        // TODO: update end of game conditions
         // Check for end of match
         // occurs when time limit reached
         if (timeLimitReached() && gameStats.getWinner() == null)
