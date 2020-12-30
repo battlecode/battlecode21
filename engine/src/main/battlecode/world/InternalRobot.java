@@ -5,6 +5,9 @@ import battlecode.schema.Action;
 
 /**
  * The representation of a robot used by the server.
+ * Comparable ordering:
+ *  - tiebreak by creation time (priority to later creation)
+ *  - tiebreak by robot ID (priority to lower ID)
  */
 public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private final RobotControllerImpl controller;
