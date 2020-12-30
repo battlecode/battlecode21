@@ -57,6 +57,8 @@ We first need to register the subdomain.
 
 This should create the subdomain `2021.battlecode.org` and point it to our load balancer.
 
+With this new subdomain registered, make sure to update the URLs in `.env.production`to this new URL.
+
 #### Google Cloud
 
 We now need to set up a new bucket, and set up the load balancer to point to the bucket when navigating to the right address.
