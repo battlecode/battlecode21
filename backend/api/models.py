@@ -207,7 +207,7 @@ class Scrimmage(models.Model):
 
     # Match-running (completed by match runner)
     status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='pending')
-    winscore = models.IntegerField(null=True)
+    winscore  = models.IntegerField(null=True)
     losescore = models.IntegerField(null=True)
     replay    = models.TextField(blank=True)
 
