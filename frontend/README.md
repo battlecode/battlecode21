@@ -40,6 +40,12 @@ Our local processes (including our dockerfile) use `npm start` and/or `npm run s
 
 For production, build with `npm run build` for the full thing, and `npm run buildnogame` to build the site without any game specific information. This is handled automatically by calling `./deploy.sh deploy` or `./deploy.sh deploynogame` using Bash, respectively. Note that the former should ONLY be called after the release of the game, since it makes the game specs and the visualizer public.
 
+### access.txt
+
+During deployment, you'll need an up-to-date version of `frontend/public/access.txt`. This file is needed by game runners to run matches. It's is really difficult to deploy; our solution is to have it deployed with the rest of the frontend code and onto our website, but have it never pushed to GitHub. Make sure you have an up-to-date copy! If you don't have one, check with the infra devs.
+
+### Assorted notes
+
 Notably, the servers that serve the deployed frontend never run npm (through Docker or otherwise). Instead, our deploy script runs npm locally to build the frontend, and then sends this compiled version to Google Cloud.
 
 Deployed code automatically builds using `.env.production`, since we call it with `npm run build`. See here for more information: https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used
