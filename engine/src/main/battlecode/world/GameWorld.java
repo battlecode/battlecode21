@@ -35,8 +35,9 @@ public strictfp class GameWorld {
 
     private final RobotControlProvider controlProvider;
     private Random rand;
-
     private final GameMaker.MatchMaker matchMaker;
+
+    private int[] buffsToAdd;
 
     @SuppressWarnings("unchecked")
     public GameWorld(LiveMap gm, RobotControlProvider cp, GameMaker.MatchMaker matchMaker) {
@@ -51,10 +52,10 @@ public strictfp class GameWorld {
         this.teamInfo = new TeamInfo(this);
 
         this.controlProvider = cp;
-
         this.rand = new Random(this.gameMap.getSeed());
-
         this.matchMaker = matchMaker;
+
+        this.buffsToAdd = new int[2];
 
         controlProvider.matchStarted(this);
 
@@ -243,9 +244,14 @@ public strictfp class GameWorld {
     // ****** GAMEPLAY *****************
     // *********************************
 
+    public void addBuffs(Team t, int numBuffs) {
+        this.buffsToAdd[t.ordinal()] += numBuffs;
+    }
+
     public void processBeginningOfRound() {
         // Increment round counter
         currentRound++;
+        this.teamInfo.updateNumBuffs(currentRound);
 
         // Process beginning of each robot's round
         objectInfo.eachRobot((robot) -> {
@@ -349,7 +355,14 @@ public strictfp class GameWorld {
                     if (!setWinnerHighestRobotID())
                         setWinnerArbitrary();
 
-        // TODO: update the round statistics, i.e. add team soup/set global pollution
+        // Add buffs from expose
+        int nextRound = currentRound + 1;
+        for (int i = 0; i < 2; i++) {
+            this.teamInfo.addBuffs(nextRound, i, this.buffsToAdd[i]);
+            this.buffsToAdd[i] = 0; // reset
+        }
+
+        // TODO: update round statistics with matchmaker?
 
         if (gameStats.getWinner() != null)
             running = false;

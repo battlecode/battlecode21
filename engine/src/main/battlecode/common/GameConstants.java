@@ -49,8 +49,14 @@ public class GameConstants {
     // ****** GAME MECHANICS ***********
     // *********************************
 
-    public static final double EXPOSE_FACTOR = 1.1;
+    /** The amount of conviction taxed when a Politician empowers. */
     public static final int EMPOWER_TAX = 10;
+
+    /** The buff factor from exposing Slanderers. */
+    public static final double EXPOSE_BUFF_FACTOR = 1.01;
+    
+    /** The number of rounds a buff is applied. */
+    public static final int EXPOSE_BUFF_NUM_ROUNDS = 50;
 
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******

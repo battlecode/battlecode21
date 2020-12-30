@@ -87,6 +87,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return gameWorld.getObjectInfo().getRobotCount(getTeam());
     }
 
+    @Override
+    double getEmpowerFactor(Team team, int roundsInFuture) {
+        return gameWorld.getTeamInfo().getBuff(team, getRoundNum() + roundsInFuture);
+    }
+
     // *********************************
     // ****** UNIT QUERY METHODS *******
     // *********************************
