@@ -29,21 +29,7 @@ SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
 # Methods for publishing a message to a pubsub.
-# Adapted from (an old version of) https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
-# TODO the example code is much simpler now; we might be able to simplify our code here, too.
-def get_callback(api_future, data, ref):
-    """Wrap message data in the context of the callback function."""
-    def callback(api_future):
-        try:
-            print("Published message {} now has message ID {}".format(
-                data, api_future.result()))
-            ref["num_messages"] += 1
-        except Exception:
-            print("A problem occurred when publishing {}: {}\n".format(
-                data, api_future.exception()))
-            raise
-    return callback
-
+# Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
 def pub(project_id, topic_name, data="", num_retries=5):
     """Publishes a message to a Pub/Sub topic."""
 
@@ -70,18 +56,11 @@ def pub(project_id, topic_name, data="", num_retries=5):
             if data == "":
                 data = b"sample pub/sub message"
 
-            # Keep track of the number of published messages.
-            ref = dict({"num_messages": 0})
-
             # When you publish a message, the client returns a future.
-            api_future = client.publish(topic_path, data=data)
-            api_future.add_done_callback(get_callback(api_future, data, ref))
+            api_future = client.publish(topic_path, data)
+            message_id = api_future.result()
 
-            # Keep the main thread from exiting while the message future
-            # gets resolved in the background.
-            while api_future.running():
-                time.sleep(0.5)
-                # print("Published {} message(s).".format(ref["num_messages"]))
+            print(f"Published {data} to {topic_path}: {message_id}")
         except:
             pass
         else:
