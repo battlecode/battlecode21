@@ -47,13 +47,13 @@ class Submissions extends Component {
 
     // makes an api call to upload the selected file
     uploadData = () => {
-        // 'upload_status_cookie' in Cookies is used to communicate between the functions in api.js and those in submissions.js. It lets us keep track of the upload process for submissions, and all the http requests involved.
+        // 'upload_status_cookie' in Cookies is used to communicate between the functions in api.js and those in submissions.js. It lets us keep track of the upload process for submissions, and all the http requests involved. (Note that this is different than a submission's compile_status in the database.)
         // A value of 0 indicates that the submission is still in progress.
         // When a submission finishes, api.js changes this value to something else.
-        Cookies.set('upload_status_cookie', 0)
+        Cookies.set('upload_status_cookie', 10)
         // The upload_status state is used internally by this component.
         // (Currently, it mirrors upload_status_cookie, but is part of state to make working with React easier.)
-        this.setState({upload_status: 0})
+        this.setState({upload_status: 10})
 
         // Concurrent upload processes can be problematic; we've made the decision to disable concurrency.
         // This is achieved by refreshing the submission upload components, which have buttons disabled while upload_status is 0.
@@ -66,15 +66,15 @@ class Submissions extends Component {
         // To check changes, we poll periodically.
         this.interval = setInterval(() => {
             let upload_status_cookie_value = Cookies.get('upload_status_cookie');
-            if (upload_status_cookie_value != 0) {
+            if (upload_status_cookie_value != 10) {
                 // Submission process terminated (see api.js).
 
                 // refresh the submission status, for use on this component
-                if (upload_status_cookie_value == 1) {
-                    this.setState({upload_status: 1})
+                if (upload_status_cookie_value == 11) {
+                    this.setState({upload_status: 11})
                 }
-                if (upload_status_cookie_value == 3) {
-                    this.setState({upload_status: 3})
+                if (upload_status_cookie_value == 13) {
+                    this.setState({upload_status: 13})
                 }
 
                 // refresh the submission button, etc, to allow for a new submission
@@ -227,12 +227,12 @@ class Submissions extends Component {
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
-                if (this.state.upload_status != 0) { 
+                if (this.state.upload_status != 10) { 
                     button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
                 }
             }
             // Make sure to disable concurrent submission uploads.
-            if (this.state.upload_status != 0) { 
+            if (this.state.upload_status != 10) { 
                 file_button_sub = <div className="btn"> Choose File </div>
                 file_button = <label htmlFor="file_upload">
                 {file_button_sub} <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span> </label>
@@ -287,13 +287,13 @@ class Submissions extends Component {
                 case -1:
                     status_str = "Waiting to start submission..."
                     break
-                case 0:
+                case 10:
                     status_str = "Currently submitting..."
                     break
-                case 1:
+                case 11:
                     status_str = "Successfully queued for compilation!"
                     break
-                case 3:
+                case 13:
                     status_str = "Submitting failed. Try re-submitting your code."
                     break
                 default:
