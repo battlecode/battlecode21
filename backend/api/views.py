@@ -29,8 +29,9 @@ SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
 # Methods for publishing a message to a pubsub.
+# Note that data must be a bytestring.
 # Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
-def pub(project_id, topic_name, data="", num_retries=5):
+def pub(project_id, topic_name, data, num_retries=5):
     """Publishes a message to a Pub/Sub topic."""
 
     # Repeat while this fails, because the data is already in the
@@ -50,11 +51,6 @@ def pub(project_id, topic_name, data="", num_retries=5):
             # Create a fully qualified identifier in the form of
             # `projects/{project_id}/topics/{topic_name}`
             topic_path = client.topic_path(project_id, topic_name)
-
-            # Data sent to Cloud Pub/Sub must be a bytestring.
-            #data = b"examplefuncs"
-            if data == "":
-                data = b"sample pub/sub message"
 
             # When you publish a message, the client returns a future.
             api_future = client.publish(topic_path, data)
