@@ -1082,6 +1082,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.status = sc_status
 
                     scrimmage.save()
+                    # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
                     return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
