@@ -1021,7 +1021,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 scrimmage = Scrimmage.objects.all().get(pk=pk)
             except:
                 return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
-            # return Response(request.data, status.HTTP_200_OK)
+
             if 'status' in request.data:
                 sc_status = request.data['status']
                 if sc_status == "redwon" or sc_status == "bluewon":

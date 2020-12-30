@@ -511,15 +511,14 @@ class Api {
         else if (s[i].status === 'bluewon') s[i].status = on_red ? 'lost' : 'won';
 
         if (s[i].status !== 'lost' && s[i].status !== 'won') {
-
           s[i].replay = undefined;
         }
 
-        if (s[i].status === 'won'){
+        if (s[i].status === 'won') {
           s[i].score = `${s[i].winscore} - ${s[i].losescore}`;
-        }else if (s[i].status === 'lost'){
+        } else if (s[i].status === 'lost') {
           s[i].score = `${s[i].losescore} - ${s[i].winscore}`;
-        }else{
+        } else {
           s[i].score = ' - ';
         }
 
