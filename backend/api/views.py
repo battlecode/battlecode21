@@ -55,8 +55,6 @@ def pub(project_id, topic_name, data, num_retries=5):
             # When you publish a message, the client returns a future.
             api_future = client.publish(topic_path, data)
             message_id = api_future.result()
-
-            print(f"Published {data} to {topic_path}: {message_id}")
         except:
             pass
         else:
