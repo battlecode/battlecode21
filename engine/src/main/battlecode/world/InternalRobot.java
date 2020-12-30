@@ -298,7 +298,7 @@ public strictfp class InternalRobot {
 
     /**
      * Sets the flag given a new flag value.
-     * 
+     *
      * @param newFlag the new flag value
      */
     public void setFlag(int newFlag) {
@@ -327,7 +327,7 @@ public strictfp class InternalRobot {
             if (this.type.canBeConverted()) {
                 this.team = newTeam;
                 this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_TEAM, newTeam);
-                if (this.influence < 0)
+                if (this.type == RobotType.ENLIGHTENMENT_CENTER)
                     addInfluenceAndConviction(-2 * this.influence);
                 else
                     addConviction(-2 * this.conviction);
