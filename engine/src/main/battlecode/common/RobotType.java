@@ -177,6 +177,16 @@ public enum RobotType {
         return this == ENLIGHTENMENT_CENTER;
     }
 
+    /**
+     * Returns the influence cost for building a robot with a particular conviction.
+     */
+    public int getInfluenceCostForConviction(int conviction) {
+        int influence = (int) (conviction / this.convictionRatio);
+        while (Math.ceil(this.convictionRatio * (influence - 1)) >= conviction)
+            influence--;
+        return influence;
+    }
+
     RobotType(RobotType spawnSource, float convictionRatio, float actionCooldown,
               int actionRadiusSquared, int sensorRadiusSquared, int detectionRadiusSquared,
               int bytecodeLimit) {
