@@ -1034,7 +1034,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                         return Response({'message': 'Must include both winscore and losescore in request.'},
                                         status.HTTP_400_BAD_REQUEST)
 
-                    if int(sc_winscore) < (float(sc_winscore) + float(sc_losescore))/2.0:
+                    if sc_winscore <= sc_losescore:
                         return Response({'message': 'Scores invalid. Winscore must be at least half of total games.'}, status.HTTP_400_BAD_REQUEST)
                     scrimmage.status = sc_status
                     scrimmage.winscore = sc_winscore
