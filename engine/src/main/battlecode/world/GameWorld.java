@@ -337,7 +337,6 @@ public strictfp class GameWorld {
         return currentRound >= this.gameMap.getRounds() - 1;
     }
 
-
     public void processEndOfRound() {
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {

@@ -6,7 +6,7 @@ import battlecode.schema.Action;
 /**
  * The representation of a robot used by the server.
  */
-public strictfp class InternalRobot {
+public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private final RobotControllerImpl controller;
     private final GameWorld gameWorld;
 
@@ -306,6 +306,36 @@ public strictfp class InternalRobot {
     }
 
     /**
+     * Empowers given a range. Doesn't self-destruct!!
+     *
+     * @param radiusSquared the empower range
+     */
+    public void empower(int radiusSquared) {
+        // throw error if not politician?
+        InternalRobot[] robots = gameWorld.getAllRobotsWithinRadiusSquared(this.location, radiusSquared);
+        int numBots = robots.length - 1; // excluding self
+        if (numBots == 0)
+            return;
+
+        Arrays.sort(robots);
+        int convictionToGive = (int) (this.conviction * this.gameWorld.getTeamInfo().getBuff(this.team));
+        int convictionPerBot = convictionToGive / numBots;
+        int numBotsWithExtraConviction = convictionToGive % numBots;
+
+        for (InternalRobot bot : robots) {
+            // check if this robot
+            if (bot.equals(this))
+                continue;
+            int conv = convictionPerBot;
+            if (numBotsWithExtraConviction > 0) {
+                conv++;
+                numBotsWithExtraConviction--;
+            }
+            bot.empowered(conv, this.team);
+        }
+    }
+
+    /**
      * Adds or removes influence, conviction, or both based on the type of the robot
      * and the robot's affiliation.
      * Called when a Politician Empowers.
@@ -403,5 +433,12 @@ public strictfp class InternalRobot {
     @Override
     public String toString() {
         return String.format("%s:%s#%d", getTeam(), getType(), getID());
+    }
+
+    @Override
+    public int compareTo(InternalRobot o) {
+        if (this.roundsAlive != o.roundsAlive)
+            return this.roundsAlive - o.roundsAlive;
+        return this.id - o.id;
     }
 }

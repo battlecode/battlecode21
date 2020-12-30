@@ -240,7 +240,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int actualRadiusSquared = radiusSquared == -1 ? getType().sensorRadiusSquared : Math.min(radiusSquared, getType().sensorRadiusSquared)
         InternalRobot[] allSensedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center, actualRadiusSquared);
         List<RobotInfo> validSensedRobots = new ArrayList<>();
-        for(InternalRobot sensedRobot : allSensedRobots){
+        for (InternalRobot sensedRobot : allSensedRobots) {
             // check if this robot
             if (sensedRobot.equals(this.robot))
                 continue;
@@ -271,7 +271,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int actualRadiusSquared = radiusSquared == -1 ? getType().detectionRadiusSquared : Math.min(radiusSquared, getType().detectionRadiusSquared)
         InternalRobot[] allDetectedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center, actualRadiusSquared);
         List<MapLocation> validDetectedRobots = new ArrayList<>();
-        for(InternalRobot detectedRobot : allDetectedRobots){
+        for (InternalRobot detectedRobot : allDetectedRobots) {
             // check if this robot
             if (detectedRobot.equals(this.robot))
                 continue;
@@ -447,9 +447,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanEmpower(radiusSquared);
 
         this.robot.addCooldownTurns(); // not needed but here for the sake of consistency
-        this.robot.empower(radiusSquared); // TODO: assumes method in InternalRobot void empower(int radiusSquared)
-        // self-destruct? no need to tell schema that conviction changed
+        this.robot.empower(radiusSquared);
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
+
+        // self-destruct
+        gameWorld.destroyRobot(this.robot.getID());
     }
 
 
