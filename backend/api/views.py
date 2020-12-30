@@ -28,7 +28,9 @@ GCLOUD_RES_BUCKET = "bc21-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
-# pub sub commands (from pub.py)
+# Methods for publishing a message to a pubsub.
+# Adapted from (an old version of) https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
+# TODO the example code is much simpler now; we might be able to simplify our code here, too.
 def get_callback(api_future, data, ref):
     """Wrap message data in the context of the callback function."""
     def callback(api_future):
