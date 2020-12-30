@@ -30,6 +30,9 @@ RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
 # NOTE: throughout our codebase, we sometimes refer to a pubsub as a "queue", adding a message to a pubsub as "queueing" something, etc. Technically this is not true: the pubsub gives no guarantee at all of a true queue or FIFO order. However, this detail of pubsub order is generally nonconsequential, and when it does matter, we have workarounds for non-FIFO-order cases.
 
+# Some helper methods that don't belong in any one class,
+# and shouldn't be directly callable through the api.
+
 # Methods for publishing a message to a pubsub.
 # Note that data must be a bytestring.
 # Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
@@ -61,6 +64,8 @@ def pub(project_id, topic_name, data, num_retries=5):
             pass
         else:
             break
+
+# TODO a method for scrimmages in general
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
