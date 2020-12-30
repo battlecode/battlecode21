@@ -34,11 +34,15 @@ This automatically reloads the page on changes. To run the same thing without au
 
 When installing a new Node package, always `npm install --save <package>` or `npm install --save-dev <package>`, and commit `package.json` and `package-lock.json`. This should work even if we run it from Docker. If you don't have `npm` installed on your computer, you can `docker exec -it battlecode20_frontend_1 sh` and then run the commands above.
 
+Our local processes (including our dockerfile) use `npm start` and/or `npm run start`. These commands automatically use `.env.development`, and not `.env.production`. See here for more information: https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used
+
 ## Deployment
 
 For production, build with `npm run build` for the full thing, and `npm run buildnogame` to build the site without any game specific information. This is handled automatically by calling `./deploy.sh deploy` or `./deploy.sh deploynogame` using Bash, respectively. Note that the former should ONLY be called after the release of the game, since it makes the game specs and the visualizer public.
 
 Notably, the servers that serve the deployed frontend never run npm (through Docker or otherwise). Instead, our deploy script runs npm locally to build the frontend, and then sends this compiled version to Google Cloud.
+
+Deployed code automatically builds using `.env.production`, since we call it with `npm run build`. See here for more information: https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used
 
 ### One-time setup
 
