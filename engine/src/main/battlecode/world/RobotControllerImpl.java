@@ -497,7 +497,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         this.robot.addCooldownTurns();
         InternalRobot bot = gameWorld.getRobot(loc);
         int exposedID = bot.getID();
-        this.robot.expose(bot); // TODO: assumes method in InternalRobot void expose(InternalRobot bot)
+        this.robot.expose(bot);
         gameWorld.getMatchMaker().addAction(getID(), Action.EXPOSE, exposedID);
     }
 
@@ -516,6 +516,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } else if (influence > getInfluence()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Not possible to bid influence you don't have.");
+        } else if (this.robot.getBid() != 0) {
+            throw new GameActionException(CANT_DO_THAT,
+                    "This robot has already placed a bid this round.");
         }
     }
 
@@ -531,7 +534,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void bid(int influence) throws GameActionException {
         assertCanBid(influence);
 
-        this.robot.bid(influence); // TODO: assumes method in InternalRobot
+        this.robot.setBid(influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.PLACE_BID, influence);
     }
 

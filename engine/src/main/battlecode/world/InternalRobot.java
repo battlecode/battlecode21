@@ -19,6 +19,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private int conviction;
     private int convictionCap;
     private int flag;
+    private int bid;
 
     private long controlBits;
     private int currentBytecodeLimit;
@@ -54,6 +55,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
         this.convictionCap = type == ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
         this.flag = 0;
+        this.bid = 0;
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -108,6 +110,10 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
     public int getFlag() {
         return flag;
+    }
+
+    public int getBid() {
+        return bid;
     }
 
     public long getControlBits() {
@@ -306,12 +312,27 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     }
 
     /**
+     * Sets the bid given a new bid value.
+     * The amount of influence bid is held hostage.
+     *
+     * @param newBid the new flag value
+     */
+    public void setBid(int newBid) {
+        this.bid = newBid;
+        addInfluenceAndConviction(-this.bid);
+    }
+
+    public void resetBid() {
+        addInfluenceAndConviction(this.bid);
+        this.bid = 0;
+    }
+
+    /**
      * Empowers given a range. Doesn't self-destruct!!
      *
      * @param radiusSquared the empower range
      */
     public void empower(int radiusSquared) {
-        // throw error if not politician?
         InternalRobot[] robots = gameWorld.getAllRobotsWithinRadiusSquared(this.location, radiusSquared);
         int numBots = robots.length - 1; // excluding self
         if (numBots == 0)
@@ -365,6 +386,16 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 this.gameWorld.destroyRobot(getID());
             }
         }
+    }
+
+    /**
+     * Empowers given a range. Doesn't self-destruct!!
+     *
+     * @param radiusSquared the empower range
+     */
+    public void expose(InternalRobot bot) {
+        this.gameWorld.addBuffs(this.team, bot.influence);
+        this.gameWorld.destroyRobot(bot.id);
     }
 
     // *********************************

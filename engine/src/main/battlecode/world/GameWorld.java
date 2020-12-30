@@ -338,13 +338,57 @@ public strictfp class GameWorld {
     }
 
     public void processEndOfRound() {
+        int[] highestBids = new int[2];
+        InternalRobot[] highestBidders = new InternalRobot[2];
+
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {
+            int bid = robot.getBid();
+            Team teamIdx = robot.getTeam().ordinal();
+            if (bid > highestBids[teamIdx] ||
+                bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0) {
+                highestBids[teamIdx] = bid;
+                highestBidders[teamIdx] = robot;
+            }
+            robot.resetBid();
             robot.processEndOfRound();
             return true;
-
-            // TODO: process bidding from all enlightenment centers here
         });
+
+        // Process bidding
+        int[] teamVPs = new int[2];
+        int[] teamVoterIDs = new int[2];
+
+        if (highestBids[0] > highestBids[1] && highestBids[0] > 0) {
+            // Team.A wins
+            teamVPs[0] = 1;
+            teamVoterIDs[0] = highestBidders[0].getID();
+            highestBidders[0].addInfluenceAndConviction(-highestBids[0]);
+            this.teamInfo.addVote(Team.A);
+        } else if (highestBids[1] > highestBids[0] && highestBids[1] > 0) {
+            // Team.B wins
+            teamVPs[1] = 1;
+            teamVoterIDs[1] = highestBidders[1].getID();
+            highestBidders[1].addInfluenceAndConviction(-highestBids[1]);
+            this.teamInfo.addVote(Team.B);
+        }
+
+        for (int i = 0; i < 2; i++) {
+            if (teamVPs[i] == 0 && highestBids[i] > 0) {
+                // placed a bid but didn't win
+                int halfBid = (highestBids[i] + 1) / 2;
+                highestBidders[i].addInfluenceAndConviction(-halfBid);
+            }
+        }
+
+        // TODO: send teamVPs and teamVoterIDs to matchmaker
+
+        // Add buffs from expose
+        int nextRound = currentRound + 1;
+        for (int i = 0; i < 2; i++) {
+            this.teamInfo.addBuffs(nextRound, i, this.buffsToAdd[i]);
+            this.buffsToAdd[i] = 0; // reset
+        }
 
         // Check for end of match
         // occurs when time limit reached
@@ -353,13 +397,6 @@ public strictfp class GameWorld {
                 if (!setWinnerIfQuality())
                     if (!setWinnerHighestRobotID())
                         setWinnerArbitrary();
-
-        // Add buffs from expose
-        int nextRound = currentRound + 1;
-        for (int i = 0; i < 2; i++) {
-            this.teamInfo.addBuffs(nextRound, i, this.buffsToAdd[i]);
-            this.buffsToAdd[i] = 0; // reset
-        }
 
         // TODO: update round statistics with matchmaker?
 
