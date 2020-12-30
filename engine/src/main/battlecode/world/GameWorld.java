@@ -346,7 +346,7 @@ public strictfp class GameWorld {
             int bid = robot.getBid();
             Team teamIdx = robot.getTeam().ordinal();
             if (bid > highestBids[teamIdx] ||
-                bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0) {
+                (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
                 highestBids[teamIdx] = bid;
                 highestBidders[teamIdx] = robot;
             }
@@ -374,8 +374,8 @@ public strictfp class GameWorld {
         }
 
         for (int i = 0; i < 2; i++) {
-            if (teamVPs[i] == 0 && highestBids[i] > 0) {
-                // placed a bid but didn't win
+            if (teamVPs[i] == 0) {
+                // Didn't win. If didn't place bid, halfBid == 0
                 int halfBid = (highestBids[i] + 1) / 2;
                 highestBidders[i].addInfluenceAndConviction(-halfBid);
             }

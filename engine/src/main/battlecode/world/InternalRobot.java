@@ -340,12 +340,16 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         int numBots = robots.length - 1; // excluding self
         if (numBots == 0)
             return;
-
-        Arrays.sort(robots);
+        
         int convictionToGive = (int) (this.conviction * this.gameWorld.getTeamInfo().getBuff(this.team));
+        convictionToGive -= GameConstants.EMPOWER_TAX;
+        if (convictionToGive <= 0)
+            return;
+        
         int convictionPerBot = convictionToGive / numBots;
         int numBotsWithExtraConviction = convictionToGive % numBots;
 
+        Arrays.sort(robots);
         for (InternalRobot bot : robots) {
             // check if this robot
             if (bot.equals(this))
