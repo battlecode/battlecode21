@@ -759,6 +759,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
                     # Only if this submission is newer than what's already been processed,
                     # update the submission history. 
                     # (to prevent reverting to older submissions that took longer to process)
+                    # (The compile server should generally be processing submissions in the same order they were uploaded, anyways. But this check is still good in case of async conditions, re-queueing, etc)
                     if team_sub.last_1_id is None or submission.id > team_sub.last_1_id:
                         team_sub.last_3_id = team_sub.last_2_id
                         team_sub.last_2_id = team_sub.last_1_id

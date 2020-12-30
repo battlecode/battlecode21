@@ -55,7 +55,8 @@ class Submissions extends Component {
         // (Currently, it mirrors submission_upload_status, but is part of state.)
         this.setState({sub_status: 0})
 
-        // Disable submission (for now), to prevent concurrent submissions.
+        // Concurrent upload processes can be problematic; we've made the decision to disable concurrency.
+        // This is achieved by refreshing the submission upload components, which have buttons disabled while sub_status is 0.
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
 
