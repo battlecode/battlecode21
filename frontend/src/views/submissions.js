@@ -22,7 +22,7 @@ class Submissions extends Component {
             numTourLoaded: 0,
             user: {},
             league: {},
-            sub_status: -1
+            upload_status: -1
         };
         Api.getUserProfile(function (u) {
             this.setState({ user: u });
@@ -51,12 +51,12 @@ class Submissions extends Component {
         // A value of 0 indicates that the submission is still in progress.
         // When a submission finishes, api.js changes this value to something else.
         Cookies.set('submission_upload_status', 0)
-        // The sub_status state is used internally by this component, to keep track of the submission upload process.
+        // The upload_status state is used internally by this component, to keep track of the submission upload process.
         // (Currently, it mirrors submission_upload_status, but is part of state.)
-        this.setState({sub_status: 0})
+        this.setState({upload_status: 0})
 
         // Concurrent upload processes can be problematic; we've made the decision to disable concurrency.
-        // This is achieved by refreshing the submission upload components, which have buttons disabled while sub_status is 0.
+        // This is achieved by refreshing the submission upload components, which have buttons disabled while upload_status is 0.
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
 
@@ -71,10 +71,10 @@ class Submissions extends Component {
 
                 // refresh the submission status, for use on this component
                 if (submission_upload_status == 1) {
-                    this.setState({sub_status: 1})
+                    this.setState({upload_status: 1})
                 }
                 if (submission_upload_status == 3) {
-                    this.setState({sub_status: 3})
+                    this.setState({upload_status: 3})
                 }
 
                 // refresh the submission button, etc, to allow for a new submission
@@ -98,7 +98,7 @@ class Submissions extends Component {
         this.setState({
             selectedFile: event.target.files[0],
             loaded: 0,
-            sub_status: -1
+            upload_status: -1
         })
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
@@ -227,12 +227,12 @@ class Submissions extends Component {
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
-                if (this.state.sub_status != 0) { 
+                if (this.state.upload_status != 0) { 
                     button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
                 }
             }
             // Make sure to disable concurrent submission uploads.
-            if (this.state.sub_status != 0) { 
+            if (this.state.upload_status != 0) { 
                 file_button_sub = <div className="btn"> Choose File </div>
                 file_button = <label htmlFor="file_upload">
                 {file_button_sub} <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span> </label>
@@ -259,7 +259,7 @@ class Submissions extends Component {
                         {file_button}
                         {file_button_2}
                         {button}
-                        {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
+                        {/* <p id="upload_status" className="text-center category"> {status_str}</p> */}
                     </div>
                 </div>
             )
@@ -283,7 +283,7 @@ class Submissions extends Component {
     renderHelperSubmissionStatus() {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
-            switch (this.state.sub_status) {
+            switch (this.state.upload_status) {
                 case -1:
                     status_str = "Waiting to start submission..."
                     break
@@ -304,7 +304,7 @@ class Submissions extends Component {
             return (
                 <div className="card">
                     <div className="content">
-                        <p id="sub_status" className="text-center category"> {status_str}</p>
+                        <p id="upload_status" className="text-center category"> {status_str}</p>
                     </div>
                 </div>
             )
