@@ -516,9 +516,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
         } else if (influence > getInfluence()) {
             throw new GameActionException(CANT_DO_THAT,
                     "Not possible to bid influence you don't have.");
-        } else if (this.robot.getBid() != 0) {
-            throw new GameActionException(CANT_DO_THAT,
-                    "This robot has already placed a bid this round.");
         }
     }
 

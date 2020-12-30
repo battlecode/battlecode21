@@ -321,6 +321,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param newBid the new flag value
      */
     public void setBid(int newBid) {
+        resetBid();
         this.bid = newBid;
         addInfluenceAndConviction(-this.bid);
     }
