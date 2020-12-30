@@ -47,12 +47,12 @@ class Submissions extends Component {
 
     // makes an api call to upload the selected file
     uploadData = () => {
-        // 'submission_upload_status' in Cookies is used to communicate between the functions in api.js and those in submissions.js.
+        // 'upload_status_cookie' in Cookies is used to communicate between the functions in api.js and those in submissions.js. It lets us keep track of the upload process for submissions, and all the http requests involved.
         // A value of 0 indicates that the submission is still in progress.
         // When a submission finishes, api.js changes this value to something else.
-        Cookies.set('submission_upload_status', 0)
-        // The upload_status state is used internally by this component, to keep track of the submission upload process.
-        // (Currently, it mirrors submission_upload_status, but is part of state.)
+        Cookies.set('upload_status_cookie', 0)
+        // The upload_status state is used internally by this component.
+        // (Currently, it mirrors upload_status_cookie, but is part of state to make working with React easier.)
         this.setState({upload_status: 0})
 
         // Concurrent upload processes can be problematic; we've made the decision to disable concurrency.
@@ -62,18 +62,18 @@ class Submissions extends Component {
 
         Api.newSubmission(this.state.selectedFile, null)
 
-        // The method in api.js will change Cookies' submission_upload_status during the process of an upload.
+        // The method in api.js will change Cookies' upload_status_cookie during the process of an upload.
         // To check changes, we poll periodically.
         this.interval = setInterval(() => {
-            let submission_upload_status = Cookies.get('submission_upload_status');
-            if (submission_upload_status != 0) {
+            let upload_status_cookie_value = Cookies.get('upload_status_cookie');
+            if (upload_status_cookie_value != 0) {
                 // Submission process terminated (see api.js).
 
                 // refresh the submission status, for use on this component
-                if (submission_upload_status == 1) {
+                if (upload_status_cookie_value == 1) {
                     this.setState({upload_status: 1})
                 }
-                if (submission_upload_status == 3) {
+                if (upload_status_cookie_value == 3) {
                     this.setState({upload_status: 3})
                 }
 
@@ -86,7 +86,7 @@ class Submissions extends Component {
                 this.renderHelperCurrentTable()
                 this.renderHelperLastTable()
 
-                // Done waiting for changes to submission_upload_status, so stop polling.
+                // Done waiting for changes to upload_status_cookie, so stop polling.
                 clearInterval(this.interval)
             }
         }, 1000); // Poll every second

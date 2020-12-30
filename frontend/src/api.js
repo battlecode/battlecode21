@@ -40,21 +40,21 @@ class Api {
         console.log(data, status)
         $.post(`${URL}/api/${LEAGUE}/submission/` +Cookies.get('submission_id') + `/compilation_pubsub_call/`)
         .done((data, status) => {
-          Cookies.set('submission_upload_status', 1)
+          Cookies.set('upload_status_cookie', 1)
         })
         .fail((xhr, status, error) => {
           console.log("Error in compilation update callback: ", xhr, status, error)
-          Cookies.set('submission_upload_status', 3)
+          Cookies.set('upload_status_cookie', 3)
         })
       })
       .fail((xhr, status, error) => {
         console.log("Error in put request of file to bucket: ", xhr, status, error)
-        Cookies.set('submission_upload_status', 3)
+        Cookies.set('upload_status_cookie', 3)
       })
     })
     .fail((xhr, status, error) => {
       console.log("Error in post request for upload: ", xhr, status, error)      
-      Cookies.set('submission_upload_status', 3)   
+      Cookies.set('upload_status_cookie', 3)   
     });
 
   }
