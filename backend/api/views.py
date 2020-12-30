@@ -66,6 +66,22 @@ def pub(project_id, topic_name, data, num_retries=5):
             break
 
 # TODO a method for scrimmages in general
+# Elements of a scrimmage. that have to be defined whenever we create one
+# ranked 
+# status
+# replay link
+# blue team id
+# red team id
+# league id
+# requested by
+# blue team rating
+# red team rating
+# tournament_id
+# red_submission_id, maybe
+# blue_submission_id, maybe
+# ^ which of these are provided by the caller, which of these can be automatically created in a generic scrimmage (and thus abstracted into this message), which of these shouldn't even be set here? let's find out
+# Saving a scrimmage, and putting onto pub/sub, should deffo be in this method 
+
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
