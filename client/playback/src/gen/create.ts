@@ -590,9 +590,11 @@ function createVotesGame(turns: number) {
   events.push(createEventWrapper(builder, createMatchHeader(builder, turns, map), schema.Event.MatchHeader));
 
   for (let i = 1; i < turns+1; i++) {
+    const bb_teamIDs = schema.Round.createTeamIDsVector(builder, [1, 2]);
     const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, false]);
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
+    schema.Round.addTeamIDs(builder, bb_teamIDs);
     schema.Round.addTeamVPs(builder, bb_teamVPs);
     events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
   }
