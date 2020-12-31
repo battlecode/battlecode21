@@ -28,10 +28,6 @@ frontend/build
 *.settings
 bin/
 
-### Client
-client/bc20
-client/visualizer/bc20
-
 ### Vim
 # Swap
 [._]*.s[a-v][a-z]

@@ -13,8 +13,8 @@ var conf = {
     profiler: './profiler.ts'
   },
   output: {
-    path: path.resolve(__dirname, 'bc20'),
-    publicPath: '/bc20/',
+    path: path.resolve(__dirname, 'out'),
+    publicPath: '/out/',
     filename: '[name].js'
   },
   resolve: {
@@ -31,7 +31,7 @@ var conf = {
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, 'node_modules/speedscope/dist/release'),
-        to: path.resolve(__dirname, 'bc20/speedscope'),
+        to: path.resolve(__dirname, 'out/speedscope'),
         transform: (content, filePath) => {
           // Make speedscope's localProfilePath hash parameter support relative paths
           if (filePath.endsWith('.js')) {
@@ -88,8 +88,8 @@ module.exports = function(env) {
           'process.env.ELECTRON': true
         })
       ],
-      // electron will find './bc20/thing.ext' but won't find '/bc20/thing.ext'
-      output: { publicPath: './bc20/' }
+      // electron will find './out/thing.ext' but won't find '/out/thing.ext'
+      output: { publicPath: './out/' }
     });
   } else {
     // we're compiling for the browser

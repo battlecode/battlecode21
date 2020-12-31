@@ -704,7 +704,7 @@ function main(){
   const prefix = "../examples/";
 
   games.forEach(pair => {
-    const filename = `${prefix}${pair.name}.bc20`
+    const filename = `${prefix}${pair.name}.bc21`
     const stream = createWriteStream(filename);
     const game = pair.game;
 

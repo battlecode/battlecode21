@@ -36,7 +36,7 @@ To watch using a standalone app (Electron):
 $ npm run electron
 ```
 
-When you `npm run electron`, you can set the default file to run when it is launched, by placing `default.bc20` in `/client` folder. So, it's loading `/client/default.bc20` file when it is launched.
+When you `npm run electron`, you can set the default file to run when it is launched, by placing `default.bc21` in `/client` folder. So, it's loading `/client/default.bc21` file when it is launched.
 
 To run the tests:
 ```sh
@@ -48,7 +48,7 @@ All code and assets go in `src`, which is written in Typescript. Note that we're
 
 If you want to add a dependency, run `npm install --save package-name` and then `npm install --save @types/package-name` (for the typescript declarations). If `@types/package-name` doesn't exist, sacrifice a goat, or possibly a grad student.
 
-Also note that this repo doesn't contain all of the client code. See `../playback`; that's the library that actually reads and replays the `.bc20` match files. This repo has everything else; video, sound, controls, etc.
+Also note that this repo doesn't contain all of the client code. See `../playback`; that's the library that actually reads and replays the `.bc21` match files. This repo has everything else; video, sound, controls, etc.
 
 If you've made a change in `../playback` and want to integrate it here, you need to do `npm install` again. It's a bit of a pain; and should probably be integrated in this folder at some point.
 
@@ -58,10 +58,10 @@ To build a release bundle:
 ```sh
 $ npm run prod
 ```
-This will bundle up all of the assets you want in the `bc20` folder. You can then embed the client in any web page you want:
+This will bundle up all of the assets you want in the `out` folder. You can then embed the client in any web page you want:
 
-- Mount the assets in `bc20` at `/bc20/` on your webserver.
-- `<script src="/bc20/app.js"></script>`
+- Mount the assets in `out` at `/out/` on your webserver.
+- `<script src="/out/app.js"></script>`
 - `<script>window.battlecode.mount(document.getElementById('battlecode-div'))</script>`
 
 You now have a copy of the battlecode client running on your web page. See `src/app.ts` and `src/config.ts` to learn about the client's API.

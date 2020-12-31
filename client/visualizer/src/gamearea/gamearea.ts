@@ -63,7 +63,7 @@ export default class GameArea {
     
     let splashTitle = document.createElement("h1");
     splashTitle.id = "splashTitle";
-    splashTitle.appendChild(document.createTextNode("Battlecode 2020 Client"));
+    splashTitle.appendChild(document.createTextNode("Battlecode 2021 Client"));
     this.splashDiv.appendChild(splashTitle);
     
     let splashSubtitle = document.createElement("h3");
@@ -75,7 +75,7 @@ export default class GameArea {
       (async function (splashDiv, version) {
       
         var options = {
-          host: '2020.battlecode.org',
+          host: '2021.battlecode.org',
           path: '/version.txt'
         };
 

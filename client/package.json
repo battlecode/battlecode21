@@ -1,6 +1,6 @@
 {
-  "name": "bc20-client",
-  "version": "1.0.0",
+  "name": "battlecode-client",
+  "version": "2021.0.0",
   "description": "Client wrapper of visualizer and playback",
   "main": "visualizer/electron-main.js",
   "scripts": {
@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/battlecode/battlecode20.git"
+    "url": "git+https://github.com/battlecode/battlecode21.git"
   },
   "author": "Teh Devs",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/battlecode/battlecode20/issues"
+    "url": "https://github.com/battlecode/battlecode21/issues"
   },
-  "homepage": "https://github.com/battlecode/battlecode20#readme"
+  "homepage": "https://github.com/battlecode/battlecode21#readme"
 }

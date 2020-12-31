@@ -4,7 +4,7 @@ import {schema, flatbuffers} from 'battlecode-schema';
 import Game from '../../game';
 
 const wrapper = schema.GameWrapper.getRootAsGameWrapper(
-  new flatbuffers.ByteBuffer(new Uint8Array(readFileSync('test.bc20')))
+  new flatbuffers.ByteBuffer(new Uint8Array(readFileSync('test.bc21')))
 );
 
 const game = new Game();

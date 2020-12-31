@@ -30,7 +30,7 @@ function createWindow () {
     protocol: 'file:',
     slashes: true,
     options: {
-      title: 'Battlecode 2020'
+      title: 'Battlecode 2021'
     }
   }));
 
