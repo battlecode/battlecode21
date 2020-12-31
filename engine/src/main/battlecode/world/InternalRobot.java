@@ -421,8 +421,6 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.currentBytecodeLimit = getType().bytecodeLimit;
     }
 
-    // TODO: check to update TeamInfo
-    // also just everything else
     public void processEndOfTurn() {
         // bytecode stuff!
         this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);

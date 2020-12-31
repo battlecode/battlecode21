@@ -271,59 +271,82 @@ public strictfp class GameWorld {
     // or return false
 
     /**
-     * Sets the winner if one of the teams has more robots than the other.
+     * Sets the winner if one of the teams has been annihilated.
      *
      * @return whether or not a winner was set
      */
-    public boolean setWinnerIfQuantity() {
+    public boolean setWinnerIfAnnihilated() {
         int robotCountA = objectInfo.getRobotCount(Team.A);
         int robotCountB = objectInfo.getRobotCount(Team.B);
-        if (robotCountA == 0 && robotCountB > 0) {
-            setWinner(Team.B, DominationFactor.QUANTITY_OVER_QUALITY);
+        if (robotCountA == 0) {
+            setWinner(Team.B, DominationFactor.ANNIHILATED);
             return true;
-        } else if (robotCountB == 0 && robotCountA > 0) {
-            setWinner(Team.A, DominationFactor.QUANTITY_OVER_QUALITY);
+        } else if (robotCountB == 0) {
+            setWinner(Team.A, DominationFactor.ANNIHILATED);
             return true;
         }
         return false;
     }
 
     /**
-     * Sets the winner if one of the teams has higher net worth
-     *  (soup + soup cost of robots).
+     * Sets the winner if one of the teams has more votes than the other.
      *
      * @return whether or not a winner was set
      */
-    public boolean setWinnerIfQuality() {
-        int[] netWorths = new int[2];
-        netWorths[0] = 0; // used to be Team.A's soup
-        netWorths[1] = 0; // used to be Team.B's soup
-        for (InternalRobot robot : objectInfo.robotsArray()) {
-            if (robot.getTeam() == Team.NEUTRAL) continue;
-            netWorths[robot.getTeam().ordinal()] += robot.getType().cost;
-        }
-        if (netWorths[0] > netWorths[1]) {
-            setWinner(Team.A, DominationFactor.QUALITY_OVER_QUANTITY);
+    public boolean setWinnerIfMoreVotes() {
+        int numVotesA = teamInfo.getVotes(Team.A);
+        int numVotesB = teamInfo.getVotes(Team.B);
+        if (numVotesA > numVotesB) {
+            setWinner(Team.A, DominationFactor.MORE_VOTES);
             return true;
-        } else if (netWorths[1] > netWorths[0]) {
-            setWinner(Team.B, DominationFactor.QUALITY_OVER_QUANTITY);
+        } else if (numVotesB > numVotesA) {
+            setWinner(Team.B, DominationFactor.MORE_VOTES);
             return true;
         }
         return false;
     }
 
     /**
-     * Sets winner based on highest robot id.
+     * Sets the winner if one of the teams has more Enlightenment Centers than the other.
+     *
+     * @return whether or not a winner was set
      */
-    public boolean setWinnerHighestRobotID() {
-        InternalRobot highestIDRobot = null;
-        for (InternalRobot robot : objectInfo.robotsArray())
-            if ((highestIDRobot == null || robot.getID() > highestIDRobot.getID()) && robot.getTeam() != Team.NEUTRAL)
-                highestIDRobot = robot;
-        if (highestIDRobot == null)
-            return false;
-        setWinner(highestIDRobot.getTeam(), DominationFactor.HIGHBORN);
-        return true;
+    public boolean setWinnerIfMoreEnlightenmentCenters() {
+        int[] numEnlightenmentCenters = new int[2];
+        for (InternalRobot robot : objectInfo.robotsArray()) {
+            if (robot.getType() != RobotType.ENLIGHTENMENT_CENTER) continue;
+            if (robot.getTeam() == Team.NEUTRAL) continue;
+            numEnlightenmentCenters[robot.getTeam().ordinal()]++;
+        }
+        if (numEnlightenmentCenters[0] > numEnlightenmentCenters[1]) {
+            setWinner(Team.A, DominationFactor.MORE_ENLIGHTENMENT_CENTERS);
+            return true;
+        } else if (numEnlightenmentCenters[1] > numEnlightenmentCenters[0]) {
+            setWinner(Team.B, DominationFactor.MORE_ENLIGHTENMENT_CENTERS);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the winner if one of the teams has higher total unit influence.
+     *
+     * @return whether or not a winner was set
+     */
+    public boolean setWinnerIfMoreInfluence() {
+        int[] totalInfluences = new int[2];
+        for (InternalRobot robot : objectInfo.robotsArray()) {
+            if (robot.getTeam() == Team.NEUTRAL) continue;
+            totalInfluences[robot.getTeam().ordinal()] += robot.getInfluence();
+        }
+        if (totalInfluences[0] > totalInfluences[1]) {
+            setWinner(Team.A, DominationFactor.MORE_INFLUENCE);
+            return true;
+        } else if (totalInfluences[1] > totalInfluences[0]) {
+            setWinner(Team.B, DominationFactor.MORE_INFLUENCE);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -390,13 +413,12 @@ public strictfp class GameWorld {
             this.buffsToAdd[i] = 0; // reset
         }
 
-        // TODO: update end of game conditions
         // Check for end of match
-        // occurs when time limit reached
+        setWinnerIfAnnihilated();
         if (timeLimitReached() && gameStats.getWinner() == null)
-            if (!setWinnerIfQuantity())
-                if (!setWinnerIfQuality())
-                    if (!setWinnerHighestRobotID())
+            if (!setWinnerIfMoreVotes())
+                if (!setWinnerIfMoreEnlightenmentCenters())
+                    if (!setWinnerIfMoreInfluence())
                         setWinnerArbitrary();
 
         // TODO: update round statistics with matchmaker?

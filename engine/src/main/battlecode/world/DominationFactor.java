@@ -5,27 +5,23 @@ package battlecode.world;
  */
 public enum DominationFactor {
     /**
-     * Win by coin flip (tiebreak 5).
+     * Win by all enemy robots being destroyed (early end).
      */
-    WON_BY_DUBIOUS_REASONS,
+    ANNIHILATED,
     /**
-     * Win by highest robot ID (tiebreak 4).
+     * Win by more votes.
      */
-    HIGHBORN,
+    MORE_VOTES,
     /**
-     * Win by more successful broadcasts (tiebreak 3).
+     * Win by having more Enlightenment Centers (tiebreak 1).
      */
-    GOSSIP_GIRL,
+    MORE_ENLIGHTENMENT_CENTERS,
     /**
-     * Win by having higher net worth: soup + soup costs of robots (tiebreak 2).
+     * Win by more total influence (tiebreak 2).
      */
-    QUALITY_OVER_QUANTITY,
+    MORE_INFLUENCE,
     /**
-     * Win by having more robots (tiebreak 1).
+     * Win by coinflip (tiebreak 3).
      */
-    QUANTITY_OVER_QUALITY,
-    /**
-     * Win by enemy HQ being destroyed.
-     */
-    HQ_DESTROYED
+    WON_BY_DUBIOUS_REASONS
 }
