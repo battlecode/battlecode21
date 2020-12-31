@@ -339,20 +339,17 @@ public strictfp class Server implements Runnable {
         DominationFactor dom = stats.getDominationFactor();
 
         switch (dom) {
-            case HQ_DESTROYED:
-                sb.append("The winning team won by enemy HQ being destroyed.");
+            case ANNIHILATED:
+                sb.append("The winning team won by destroying the enemy team.");
                 break;
-            case QUANTITY_OVER_QUALITY:
-                sb.append("The winning team won on tiebreakers (more robots).");
+            case MORE_VOTES:
+                sb.append("The winning team won by having more votes.");
                 break;
-            case QUALITY_OVER_QUANTITY:
-                sb.append("The winning team won on tiebreakers (higher net worth: soup + soup cost of robots).");
+            case MORE_ENLIGHTENMENT_CENTERS:
+                sb.append("The winning team won on tiebreakers (more enlightenment centers).");
                 break;
-            case GOSSIP_GIRL:
-                sb.append("The winning team won on tiebreakers (more successful broadcasts).");
-                break;
-            case HIGHBORN:
-                sb.append("The winning team won arbitrarily (highest robot ID).");
+            case MORE_INFLUENCE:
+                sb.append("The winning team won on tiebreakers (more total influence).");
                 break;
             case WON_BY_DUBIOUS_REASONS:
                 sb.append("The winning team won arbitrarily (coin flip).");

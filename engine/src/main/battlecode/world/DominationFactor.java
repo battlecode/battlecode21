@@ -23,5 +23,5 @@ public enum DominationFactor {
     /**
      * Win by coinflip (tiebreak 3).
      */
-    WON_BY_DUBIOUS_REASONS
+    WON_BY_DUBIOUS_REASONS,
 }

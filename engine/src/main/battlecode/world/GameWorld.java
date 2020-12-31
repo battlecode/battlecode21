@@ -61,7 +61,7 @@ public strictfp class GameWorld {
 
         // Add the robots contained in the LiveMap to this world.
         for (RobotInfo robot : this.gameMap.getInitialBodies()) {
-            spawnRobot(-1, robot.ID, robot.type, robot.location, robot.team, robot.influence);
+            spawnRobot(null, robot.ID, robot.type, robot.location, robot.team, robot.influence);
         }
 
         // Write match header at beginning of match
@@ -422,8 +422,8 @@ public strictfp class GameWorld {
     // ****** SPAWNING *****************
     // *********************************
 
-    public int spawnRobot(int parentID, int ID, RobotType type, MapLocation location, Team team, int influence) {
-        InternalRobot robot = new InternalRobot(this, parentID, ID, type, location, team, influence);
+    public int spawnRobot(InternalRobot parent, int ID, RobotType type, MapLocation location, Team team, int influence) {
+        InternalRobot robot = new InternalRobot(this, parent, ID, type, location, team, influence);
         objectInfo.spawnRobot(robot);
         addRobot(location, robot);
 
@@ -432,9 +432,9 @@ public strictfp class GameWorld {
         return ID;
     }
 
-    public int spawnRobot(int parentID, RobotType type, MapLocation location, Team team, int influence) {
+    public int spawnRobot(InternalRobot parent, RobotType type, MapLocation location, Team team, int influence) {
         int ID = idGenerator.nextID();
-        return spawnRobot(parentID, ID, type, location, team, influence);
+        return spawnRobot(parent, ID, type, location, team, influence);
     }
    
     // *********************************

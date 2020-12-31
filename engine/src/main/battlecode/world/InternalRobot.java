@@ -13,7 +13,13 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private final RobotControllerImpl controller;
     private final GameWorld gameWorld;
 
-    private final int parentID;
+    /**
+     * The robot that built this robot.
+     * Equal to null if this is an Enlightenment Center, because they are specified by the map.
+     * This reference does not inhibit garbage collection because Enlightenment Centers never die.
+     */
+    private final InternalRobot parent;
+
     private final int ID;
     private Team team;
     private RobotType type;
@@ -48,8 +54,8 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param influence the influence used to create the robot
      */
     @SuppressWarnings("unchecked")
-    public InternalRobot(GameWorld gw, int parentID, int id, RobotType type, MapLocation loc, Team team, int influence) {
-        this.parentID = parentID;
+    public InternalRobot(GameWorld gw, InternalRobot parent, int id, RobotType type, MapLocation loc, Team team, int influence) {
+        this.parent = parent;
         this.ID = id;
         this.team = team;
         this.type = type;
@@ -83,8 +89,8 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         return gameWorld;
     }
 
-    public int getParentID() {
-        return parentID;
+    public InternalRobot getParent() {
+        return parent;
     }
 
     public int getID() {
@@ -148,7 +154,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 && cachedRobotInfo.team == team
                 && cachedRobotInfo.type == infoType
                 && cachedRobotInfo.influence == influence
-                && cachedRobotInfo.conviction == conviction                
+                && cachedRobotInfo.conviction == conviction
                 && cachedRobotInfo.location.equals(location)) {
             return cachedRobotInfo;
         }
@@ -428,7 +434,12 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     }
 
     public void processEndOfRound() {
-        // empty
+        // generate passive influence
+        InternalRobot target = (parent != null) ? parent : this;
+        if (target.getType() != RobotType.ENLIGHTENMENT_CENTER) {
+            throw new IllegalStateException("The robot's parent is not an Enlightenment Center");
+        }
+        target.addInfluenceAndConviction(type.getPassiveInfluence(this.influence, this.gameWorld.getCurrentRound()));
     }
 
     // *********************************
