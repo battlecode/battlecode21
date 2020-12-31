@@ -58,6 +58,12 @@ public class GameConstants {
     /** The number of rounds a buff is applied. */
     public static final int EXPOSE_BUFF_NUM_ROUNDS = 50;
 
+    /** The number of rounds Slanderers generate influence. */
+    public static final int EMBEZZLE_NUM_ROUNDS = 50;
+
+    /** The number of rounds before Slanderers turns into Politicians. */
+    public static final int CAMOUFLAGE_NUM_ROUNDS = 300;
+
     /** The initial amount of influence for each player-owned Enlightenment Center. */
     public static final int INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE = 150;
 

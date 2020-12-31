@@ -435,11 +435,17 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
     public void processEndOfRound() {
         // generate passive influence
-        InternalRobot target = (parent != null) ? parent : this;
+        InternalRobot target = (parent == null) ? this : parent;
         if (target.getType() != RobotType.ENLIGHTENMENT_CENTER) {
             throw new IllegalStateException("The robot's parent is not an Enlightenment Center");
         }
-        target.addInfluenceAndConviction(type.getPassiveInfluence(this.influence, this.gameWorld.getCurrentRound()));
+        int passiveInfluence = this.type.getPassiveInfluence(this.influence, this.roundsAlive, this.gameWorld.getCurrentRound());
+        target.addInfluenceAndConviction(passiveInfluence);
+
+        // Slanderers turn into Politicians
+        if (this.type == RobotType.SLANDERER && this.roundsAlive == GameConstants.CAMOUFLAGE_NUM_ROUNDS) {
+            this.type = RobotType.POLITICIAN;
+        }
     }
 
     // *********************************

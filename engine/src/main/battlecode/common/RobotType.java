@@ -190,15 +190,18 @@ public enum RobotType {
     /**
      * Returns the amount of passive influence that this robot generates.
      *
-     * @param robotInfluence  the amount of influence that this robot has
-     * @param roundNum  the round number
+     * @param robotInfluence the amount of influence that this robot has
+     * @param roundsAlive the number of rounds the robot has been alive for
+     * @param roundNum the round number
      */
-    public int getPassiveInfluence(int robotInfluence, int roundNum) {
+    public int getPassiveInfluence(int robotInfluence, int roundsAlive, int roundNum) {
         switch (this) {
             case ENLIGHTENMENT_CENTER:
-                return int(Math.ceil(GameConstants.PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER * Math.sqrt(roundNum)));
+                return (int) Math.ceil(GameConstants.PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER * Math.sqrt(roundNum));
             case SLANDERER:
-                return int(GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * influence);
+                if (roundsAlive <= GameConstants.EMBEZZLE_NUM_ROUNDS)
+                    return (int) (GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * influence);
+                return 0;
             default:
                 return 0;
         }
