@@ -15,9 +15,10 @@ import com.google.flatbuffers.*;
  * of-structs.
  */
 public final class Round extends Table {
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
   public static Round getRootAsRound(ByteBuffer _bb) { return getRootAsRound(_bb, new Round()); }
   public static Round getRootAsRound(ByteBuffer _bb, Round obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Round __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
@@ -25,6 +26,8 @@ public final class Round extends Table {
    */
   public int teamIDs(int j) { int o = __offset(4); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int teamIDsLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector teamIDsVector() { return teamIDsVector(new IntVector()); }
+  public IntVector teamIDsVector(IntVector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer teamIDsAsByteBuffer() { return __vector_as_bytebuffer(4, 4); }
   public ByteBuffer teamIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 4); }
   /**
@@ -32,6 +35,8 @@ public final class Round extends Table {
    */
   public boolean teamVPs(int j) { int o = __offset(6); return o != 0 ? 0!=bb.get(__vector(o) + j * 1) : false; }
   public int teamVPsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public BooleanVector teamVPsVector() { return teamVPsVector(new BooleanVector()); }
+  public BooleanVector teamVPsVector(BooleanVector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer teamVPsAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
   public ByteBuffer teamVPsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
   /**
@@ -39,6 +44,8 @@ public final class Round extends Table {
    */
   public int teamVoterID(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int teamVoterIDLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector teamVoterIDVector() { return teamVoterIDVector(new IntVector()); }
+  public IntVector teamVoterIDVector(IntVector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer teamVoterIDAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
   public ByteBuffer teamVoterIDInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
   /**
@@ -46,23 +53,27 @@ public final class Round extends Table {
    */
   public int movedIDs(int j) { int o = __offset(10); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int movedIDsLength() { int o = __offset(10); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector movedIDsVector() { return movedIDsVector(new IntVector()); }
+  public IntVector movedIDsVector(IntVector obj) { int o = __offset(10); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer movedIDsAsByteBuffer() { return __vector_as_bytebuffer(10, 4); }
   public ByteBuffer movedIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 10, 4); }
   /**
    * The new locations of bodies that have moved.
    */
-  public VecTable movedLocs() { return movedLocs(new VecTable()); }
-  public VecTable movedLocs(VecTable obj) { int o = __offset(12); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.VecTable movedLocs() { return movedLocs(new battlecode.schema.VecTable()); }
+  public battlecode.schema.VecTable movedLocs(battlecode.schema.VecTable obj) { int o = __offset(12); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * New bodies.
    */
-  public SpawnedBodyTable spawnedBodies() { return spawnedBodies(new SpawnedBodyTable()); }
-  public SpawnedBodyTable spawnedBodies(SpawnedBodyTable obj) { int o = __offset(14); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.SpawnedBodyTable spawnedBodies() { return spawnedBodies(new battlecode.schema.SpawnedBodyTable()); }
+  public battlecode.schema.SpawnedBodyTable spawnedBodies(battlecode.schema.SpawnedBodyTable obj) { int o = __offset(14); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The IDs of bodies that died.
    */
   public int diedIDs(int j) { int o = __offset(16); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int diedIDsLength() { int o = __offset(16); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector diedIDsVector() { return diedIDsVector(new IntVector()); }
+  public IntVector diedIDsVector(IntVector obj) { int o = __offset(16); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer diedIDsAsByteBuffer() { return __vector_as_bytebuffer(16, 4); }
   public ByteBuffer diedIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 16, 4); }
   /**
@@ -71,6 +82,8 @@ public final class Round extends Table {
    */
   public int actionIDs(int j) { int o = __offset(18); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int actionIDsLength() { int o = __offset(18); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector actionIDsVector() { return actionIDsVector(new IntVector()); }
+  public IntVector actionIDsVector(IntVector obj) { int o = __offset(18); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer actionIDsAsByteBuffer() { return __vector_as_bytebuffer(18, 4); }
   public ByteBuffer actionIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 18, 4); }
   /**
@@ -78,6 +91,8 @@ public final class Round extends Table {
    */
   public byte actions(int j) { int o = __offset(20); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
   public int actionsLength() { int o = __offset(20); return o != 0 ? __vector_len(o) : 0; }
+  public ByteVector actionsVector() { return actionsVector(new ByteVector()); }
+  public ByteVector actionsVector(ByteVector obj) { int o = __offset(20); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer actionsAsByteBuffer() { return __vector_as_bytebuffer(20, 1); }
   public ByteBuffer actionsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 20, 1); }
   /**
@@ -85,6 +100,8 @@ public final class Round extends Table {
    */
   public int actionTargets(int j) { int o = __offset(22); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int actionTargetsLength() { int o = __offset(22); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector actionTargetsVector() { return actionTargetsVector(new IntVector()); }
+  public IntVector actionTargetsVector(IntVector obj) { int o = __offset(22); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer actionTargetsAsByteBuffer() { return __vector_as_bytebuffer(22, 4); }
   public ByteBuffer actionTargetsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 22, 4); }
   /**
@@ -92,40 +109,44 @@ public final class Round extends Table {
    */
   public int indicatorDotIDs(int j) { int o = __offset(24); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int indicatorDotIDsLength() { int o = __offset(24); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector indicatorDotIDsVector() { return indicatorDotIDsVector(new IntVector()); }
+  public IntVector indicatorDotIDsVector(IntVector obj) { int o = __offset(24); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer indicatorDotIDsAsByteBuffer() { return __vector_as_bytebuffer(24, 4); }
   public ByteBuffer indicatorDotIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 24, 4); }
   /**
    * The location of the indicator dots
    */
-  public VecTable indicatorDotLocs() { return indicatorDotLocs(new VecTable()); }
-  public VecTable indicatorDotLocs(VecTable obj) { int o = __offset(26); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.VecTable indicatorDotLocs() { return indicatorDotLocs(new battlecode.schema.VecTable()); }
+  public battlecode.schema.VecTable indicatorDotLocs(battlecode.schema.VecTable obj) { int o = __offset(26); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The RGB values of the indicator dots
    */
-  public RGBTable indicatorDotRGBs() { return indicatorDotRGBs(new RGBTable()); }
-  public RGBTable indicatorDotRGBs(RGBTable obj) { int o = __offset(28); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.RGBTable indicatorDotRGBs() { return indicatorDotRGBs(new battlecode.schema.RGBTable()); }
+  public battlecode.schema.RGBTable indicatorDotRGBs(battlecode.schema.RGBTable obj) { int o = __offset(28); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The IDs of bodies that set indicator lines
    */
   public int indicatorLineIDs(int j) { int o = __offset(30); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int indicatorLineIDsLength() { int o = __offset(30); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector indicatorLineIDsVector() { return indicatorLineIDsVector(new IntVector()); }
+  public IntVector indicatorLineIDsVector(IntVector obj) { int o = __offset(30); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer indicatorLineIDsAsByteBuffer() { return __vector_as_bytebuffer(30, 4); }
   public ByteBuffer indicatorLineIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 30, 4); }
   /**
    * The start location of the indicator lines
    */
-  public VecTable indicatorLineStartLocs() { return indicatorLineStartLocs(new VecTable()); }
-  public VecTable indicatorLineStartLocs(VecTable obj) { int o = __offset(32); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.VecTable indicatorLineStartLocs() { return indicatorLineStartLocs(new battlecode.schema.VecTable()); }
+  public battlecode.schema.VecTable indicatorLineStartLocs(battlecode.schema.VecTable obj) { int o = __offset(32); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The end location of the indicator lines
    */
-  public VecTable indicatorLineEndLocs() { return indicatorLineEndLocs(new VecTable()); }
-  public VecTable indicatorLineEndLocs(VecTable obj) { int o = __offset(34); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.VecTable indicatorLineEndLocs() { return indicatorLineEndLocs(new battlecode.schema.VecTable()); }
+  public battlecode.schema.VecTable indicatorLineEndLocs(battlecode.schema.VecTable obj) { int o = __offset(34); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The RGB values of the indicator lines
    */
-  public RGBTable indicatorLineRGBs() { return indicatorLineRGBs(new RGBTable()); }
-  public RGBTable indicatorLineRGBs(RGBTable obj) { int o = __offset(36); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public battlecode.schema.RGBTable indicatorLineRGBs() { return indicatorLineRGBs(new battlecode.schema.RGBTable()); }
+  public battlecode.schema.RGBTable indicatorLineRGBs(battlecode.schema.RGBTable obj) { int o = __offset(36); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * All logs sent this round.
    * Messages from a particular robot in this round start on a new line, and
@@ -161,6 +182,8 @@ public final class Round extends Table {
    */
   public int bytecodeIDs(int j) { int o = __offset(42); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int bytecodeIDsLength() { int o = __offset(42); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector bytecodeIDsVector() { return bytecodeIDsVector(new IntVector()); }
+  public IntVector bytecodeIDsVector(IntVector obj) { int o = __offset(42); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer bytecodeIDsAsByteBuffer() { return __vector_as_bytebuffer(42, 4); }
   public ByteBuffer bytecodeIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 42, 4); }
   /**
@@ -168,6 +191,8 @@ public final class Round extends Table {
    */
   public int bytecodesUsed(int j) { int o = __offset(44); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int bytecodesUsedLength() { int o = __offset(44); return o != 0 ? __vector_len(o) : 0; }
+  public IntVector bytecodesUsedVector() { return bytecodesUsedVector(new IntVector()); }
+  public IntVector bytecodesUsedVector(IntVector obj) { int o = __offset(44); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
   public ByteBuffer bytecodesUsedAsByteBuffer() { return __vector_as_bytebuffer(44, 4); }
   public ByteBuffer bytecodesUsedInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 44, 4); }
 
@@ -193,7 +218,7 @@ public final class Round extends Table {
       int roundID,
       int bytecodeIDsOffset,
       int bytecodesUsedOffset) {
-    builder.startObject(21);
+    builder.startTable(21);
     Round.addBytecodesUsed(builder, bytecodesUsedOffset);
     Round.addBytecodeIDs(builder, bytecodeIDsOffset);
     Round.addRoundID(builder, roundID);
@@ -218,7 +243,7 @@ public final class Round extends Table {
     return Round.endRound(builder);
   }
 
-  public static void startRound(FlatBufferBuilder builder) { builder.startObject(21); }
+  public static void startRound(FlatBufferBuilder builder) { builder.startTable(21); }
   public static void addTeamIDs(FlatBufferBuilder builder, int teamIDsOffset) { builder.addOffset(0, teamIDsOffset, 0); }
   public static int createTeamIDsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startTeamIDsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
@@ -240,7 +265,8 @@ public final class Round extends Table {
   public static int createActionIDsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startActionIDsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addActions(FlatBufferBuilder builder, int actionsOffset) { builder.addOffset(8, actionsOffset, 0); }
-  public static int createActionsVector(FlatBufferBuilder builder, byte[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addByte(data[i]); return builder.endVector(); }
+  public static int createActionsVector(FlatBufferBuilder builder, byte[] data) { return builder.createByteVector(data); }
+  public static int createActionsVector(FlatBufferBuilder builder, ByteBuffer data) { return builder.createByteVector(data); }
   public static void startActionsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
   public static void addActionTargets(FlatBufferBuilder builder, int actionTargetsOffset) { builder.addOffset(9, actionTargetsOffset, 0); }
   public static int createActionTargetsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
@@ -265,8 +291,15 @@ public final class Round extends Table {
   public static int createBytecodesUsedVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startBytecodesUsedVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endRound(FlatBufferBuilder builder) {
-    int o = builder.endObject();
+    int o = builder.endTable();
     return o;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+
+    public Round get(int j) { return get(new Round(), j); }
+    public Round get(Round obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 
