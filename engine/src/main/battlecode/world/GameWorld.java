@@ -190,10 +190,6 @@ public strictfp class GameWorld {
                                idx / this.gameMap.getWidth() + this.gameMap.getOrigin().y);
     }
 
-    // For general methods, make sure to call
-    // getMatchMaker().someMethod(parameters), e.g. getMatchMaker().addAction(robotID, action, targetID)
-    // to make sure the needed info is updated for replay files
-
     // ***********************************
     // ****** ROBOT METHODS **************
     // ***********************************
@@ -264,11 +260,6 @@ public strictfp class GameWorld {
         gameStats.setWinner(t);
         gameStats.setDominationFactor(d);
     }
-
-    // Here, we want to have a series of setWinnerIfSomeCondition() methods.
-    // As it sounds, we check some condition, then either call
-    // setWinner(Team.A, DominationFactor.SOME_FACTOR) and return true
-    // or return false
 
     /**
      * Sets the winner if one of the teams has been annihilated.
