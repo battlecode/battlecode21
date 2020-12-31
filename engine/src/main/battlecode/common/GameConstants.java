@@ -58,6 +58,15 @@ public class GameConstants {
     /** The number of rounds a buff is applied. */
     public static final int EXPOSE_BUFF_NUM_ROUNDS = 50;
 
+    /** The initial amount of influence for each player-owned Enlightenment Center. */
+    public static final int INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE = 150;
+
+    /** The passive influence ratio for Enlightenment Centers. To multiply by sqrt(roundNum). */
+    public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2;
+
+    /** The passive influence ratio for Slanderers. To multiply by robot influence. */
+    public static final float PASSIVE_INFLUENCE_RATIO_SLANDERER = 0.05;
+
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******
     // *********************************

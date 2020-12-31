@@ -66,7 +66,7 @@ public class MapBuilder {
                 team,
                 RobotType.ENLIGHTENMENT_CENTER,
                 influence,
-                0, // Enlightenment Centers have 0 conviction
+                influence, // Enlightenment Centers conviction == influence
                 loc
         ));
     }
@@ -131,9 +131,9 @@ public class MapBuilder {
      * @param x x position
      * @param y y position
      */
-    public void addSymmetricEnlightenmentCenter(int x, int y, int influence) {
-        addEnlightenmentCenter(x, y, Team.A, influence);
-        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.B, influence);
+    public void addSymmetricEnlightenmentCenter(int x, int y) {
+        addEnlightenmentCenter(x, y, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE);
+        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE);
     }
 
     public void addSymmetricNeutralEnlightenmentCenter(int x, int y, int influence) {
