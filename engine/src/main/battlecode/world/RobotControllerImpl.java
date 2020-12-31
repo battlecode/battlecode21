@@ -87,6 +87,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return gameWorld.getObjectInfo().getRobotCount(getTeam());
     }
 
+    @Override
+    double getEmpowerFactor(Team team, int roundsInFuture) {
+        return gameWorld.getTeamInfo().getBuff(team, getRoundNum() + roundsInFuture);
+    }
+
     // *********************************
     // ****** UNIT QUERY METHODS *******
     // *********************************
@@ -235,7 +240,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int actualRadiusSquared = radiusSquared == -1 ? getType().sensorRadiusSquared : Math.min(radiusSquared, getType().sensorRadiusSquared)
         InternalRobot[] allSensedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center, actualRadiusSquared);
         List<RobotInfo> validSensedRobots = new ArrayList<>();
-        for(InternalRobot sensedRobot : allSensedRobots){
+        for (InternalRobot sensedRobot : allSensedRobots) {
             // check if this robot
             if (sensedRobot.equals(this.robot))
                 continue;
@@ -266,7 +271,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int actualRadiusSquared = radiusSquared == -1 ? getType().detectionRadiusSquared : Math.min(radiusSquared, getType().detectionRadiusSquared)
         InternalRobot[] allDetectedRobots = gameWorld.getAllRobotsWithinRadiusSquared(center, actualRadiusSquared);
         List<MapLocation> validDetectedRobots = new ArrayList<>();
-        for(InternalRobot detectedRobot : allDetectedRobots){
+        for (InternalRobot detectedRobot : allDetectedRobots) {
             // check if this robot
             if (detectedRobot.equals(this.robot))
                 continue;
@@ -408,10 +413,10 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanBuildRobot(type, dir, influence);
 
         this.robot.addCooldownTurns();
-        this.robot.removeInfluence(influence); // TODO: corresponding method in InternalRobot.java not yet exist
+        this.robot.addInfluenceAndConviction(-influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
-        int robotID = gameWorld.spawnRobot(type, adjacentLocation(dir), getTeam());
+        int robotID = gameWorld.spawnRobot(this.robot, type, adjacentLocation(dir), getTeam(), influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
     
@@ -442,10 +447,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         assertCanEmpower(radiusSquared);
 
         this.robot.addCooldownTurns(); // not needed but here for the sake of consistency
-        this.robot.empower(radiusSquared); // TODO: assumes method in InternalRobot void empower(int radiusSquared)
-        // that method also needs to give matchmaker all conviction/influence/team changes
-        // self-destruct? no need to tell schema that conviction changed
+        this.robot.empower(radiusSquared);
         gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
+
+        // self-destruct
+        gameWorld.destroyRobot(this.robot.getID());
     }
 
 
@@ -491,7 +497,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         this.robot.addCooldownTurns();
         InternalRobot bot = gameWorld.getRobot(loc);
         int exposedID = bot.getID();
-        this.robot.expose(bot); // TODO: assumes method in InternalRobot void expose(InternalRobot bot)
+        this.robot.expose(bot);
         gameWorld.getMatchMaker().addAction(getID(), Action.EXPOSE, exposedID);
     }
 
@@ -525,7 +531,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     public void bid(int influence) throws GameActionException {
         assertCanBid(influence);
 
-        this.robot.bid(influence); // TODO: assumes method in InternalRobot
+        this.robot.setBid(influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.PLACE_BID, influence);
     }
 

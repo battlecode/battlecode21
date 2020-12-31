@@ -44,6 +44,17 @@ public strictfp interface RobotController {
      */
     int getRobotCount();
 
+    /**
+     * Returns the factor from buffs due to exposed enemy slanderers.
+     *
+     * @param team the team to query
+     * @param roundsInFuture number of rounds into the future, 0 for current buff
+     * @return the specified team's buff factor.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    double getEmpowerFactor(Team team, int roundsInFuture);
+
     // *********************************
     // ****** UNIT QUERY METHODS *******
     // *********************************

@@ -13,77 +13,53 @@ package battlecode.schema;
 public final class Action {
   private Action() { }
   /**
-   * Mines a unit of soup (miners).
-   * Target: location.
+   * Politicians self-destruct and affect nearby bodies.
+   * Target: none
    */
-  public static final byte MINE_SOUP = 0;
+  public static final byte EMPOWER = 0;
   /**
-   * Deposits a unit of soup (miners).
-   * Target: refinery.
+   * Muckrakers can expose a slanderer.
+   * Target: an enemy body
    */
-  public static final byte DEPOSIT_SOUP = 1;
+  public static final byte EXPOSE = 1;
   /**
-   * Refines a unit of soup (refinery).
-   * Target: none.
+   * Units can change their flag.
+   * Target: new flag value
    */
-  public static final byte REFINE_SOUP = 2;
-  /**
-   * Digs a unit of dirt (landscapers).
-   * Target: location.
-   */
-  public static final byte DIG_DIRT = 3;
-  /**
-   * Deposits a unit of dirt (landscapers).
-   * Target: location.
-   */
-  public static final byte DEPOSIT_DIRT = 4;
-  /**
-   * Picks up a unit (drones).
-   * Target: unit picked up.
-   */
-  public static final byte PICK_UNIT = 5;
-  /**
-   * Drops off a unit (drones).
-   * Target: unit dropped off.
-   */
-  public static final byte DROP_UNIT = 6;
+  public static final byte SET_FLAG = 2;
   /**
    * Builds a unit.
    * Target: spawned unit
    */
-  public static final byte SPAWN_UNIT = 7;
+  public static final byte SPAWN_UNIT = 3;
   /**
-   * Shoots a drone.
-   * Target: drone shot.
+   * Places a bid.
+   * Target: bid value
    */
-  public static final byte SHOOT = 8;
+  public static final byte PLACE_BID = 4;
   /**
-   * Dies from drowning.
-   * Target: none.
+   * A robot can change team after being empowered,
+   * or when a Enlightenment Center is taken over.
+   * Target: teamID
    */
-  public static final byte DIE_DROWN = 9;
+  public static final byte CHANGE_TEAM = 5;
   /**
-   * Dies from being shot (drones).
-   * Target: drone.
+   * A robot's influence changes.
+   * Target: delta value
    */
-  public static final byte DIE_SHOT = 10;
+  public static final byte CHANGE_INFLUENCE = 6;
   /**
-   * Dies due to having too much dirt on top (buildings).
-   * Target: landscaper
+   * A robot's conviction changes.
+   * Target: delta value, i.e. red 5 -> blue 3 is -2
    */
-  public static final byte DIE_TOO_MUCH_DIRT = 11;
+  public static final byte CHANGE_CONVICTION = 7;
   /**
-   * Dies from suicide.
-   * Target: none.
-   */
-  public static final byte DIE_SUICIDE = 12;
-  /**
-   * Dies due to an uncaught exception
+   * Dies due to an uncaught exception.
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 13;
+  public static final byte DIE_EXCEPTION = 8;
 
-  public static final String[] names = { "MINE_SOUP", "DEPOSIT_SOUP", "REFINE_SOUP", "DIG_DIRT", "DEPOSIT_DIRT", "PICK_UNIT", "DROP_UNIT", "SPAWN_UNIT", "SHOOT", "DIE_DROWN", "DIE_SHOT", "DIE_TOO_MUCH_DIRT", "DIE_SUICIDE", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "CHANGE_INFLUENCE", "CHANGE_CONVICTION", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }

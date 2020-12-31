@@ -81,13 +81,13 @@ export enum Action{
   GET_FLAG= 5,
 
   /**
-   * Builds a unit (enlightent center).
+   * Builds a unit.
    * Target: spawned unit
    */
   SPAWN_UNIT= 6,
 
   /**
-   * places a bet (enlightent center).
+   * places a bet.
    * Target: bet placed
    */
   PLACE_BET= 7,

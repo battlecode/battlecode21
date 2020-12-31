@@ -26,95 +26,60 @@ public final class BodyTypeMetadata extends Table {
    */
   public byte spawnSource() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
   /**
-   * the minimum cost to produce a unit of this type
-   */
-  public int minCost() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  /**
    * the convictionRatio of this type
    */
-  public float convictionRatio() { int o = __offset(10); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  public float convictionRatio() { int o = __offset(8); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
    * cooldown of this type
    */
-  public int actionCooldown() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int actionCooldown() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
    * action radius if this type
    */
-  public int actionRadiusSquared() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int actionRadiusSquared() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  /**
+   * sensor radius squared for this type
+   */
+  public int sensorRadiusSquared() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
    * detection radius of this type
    */
   public int detectionRadiusSquared() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * identification radius squared for this type
-   */
-  public int identificationRadiusSquared() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  /**
-   * initial influence of this type
-   */
-  public int initialInfluence() { int o = __offset(20); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  /**
-   * influence per turn for this type
-   */
-  public float influencePerTurn() { int o = __offset(22); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
-  /**
-   * empower buff factor for this type
-   */
-  public float empowerBuffFactor() { int o = __offset(24); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
-  /**
-   * empower buff duration of this type
-   */
-  public int buffDuration() { int o = __offset(26); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  /**
    * bytecode limit for this type
    */
-  public int bytecodeLimit() { int o = __offset(28); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int bytecodeLimit() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createBodyTypeMetadata(FlatBufferBuilder builder,
       byte type,
       byte spawnSource,
-      int minCost,
       float convictionRatio,
       int actionCooldown,
       int actionRadiusSquared,
+      int sensorRadiusSquared,
       int detectionRadiusSquared,
-      int identificationRadiusSquared,
-      int initialInfluence,
-      float influencePerTurn,
-      float empowerBuffFactor,
-      int buffDuration,
       int bytecodeLimit) {
-    builder.startObject(13);
+    builder.startObject(8);
     BodyTypeMetadata.addBytecodeLimit(builder, bytecodeLimit);
-    BodyTypeMetadata.addBuffDuration(builder, buffDuration);
-    BodyTypeMetadata.addEmpowerBuffFactor(builder, empowerBuffFactor);
-    BodyTypeMetadata.addInfluencePerTurn(builder, influencePerTurn);
-    BodyTypeMetadata.addInitialInfluence(builder, initialInfluence);
-    BodyTypeMetadata.addIdentificationRadiusSquared(builder, identificationRadiusSquared);
     BodyTypeMetadata.addDetectionRadiusSquared(builder, detectionRadiusSquared);
+    BodyTypeMetadata.addSensorRadiusSquared(builder, sensorRadiusSquared);
     BodyTypeMetadata.addActionRadiusSquared(builder, actionRadiusSquared);
     BodyTypeMetadata.addActionCooldown(builder, actionCooldown);
     BodyTypeMetadata.addConvictionRatio(builder, convictionRatio);
-    BodyTypeMetadata.addMinCost(builder, minCost);
     BodyTypeMetadata.addSpawnSource(builder, spawnSource);
     BodyTypeMetadata.addType(builder, type);
     return BodyTypeMetadata.endBodyTypeMetadata(builder);
   }
 
-  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startObject(13); }
+  public static void startBodyTypeMetadata(FlatBufferBuilder builder) { builder.startObject(8); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
-  public static void addMinCost(FlatBufferBuilder builder, int minCost) { builder.addInt(2, minCost, 0); }
-  public static void addConvictionRatio(FlatBufferBuilder builder, float convictionRatio) { builder.addFloat(3, convictionRatio, 0.0f); }
-  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(4, actionCooldown, 0); }
-  public static void addActionRadiusSquared(FlatBufferBuilder builder, int actionRadiusSquared) { builder.addInt(5, actionRadiusSquared, 0); }
+  public static void addConvictionRatio(FlatBufferBuilder builder, float convictionRatio) { builder.addFloat(2, convictionRatio, 0.0f); }
+  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(3, actionCooldown, 0); }
+  public static void addActionRadiusSquared(FlatBufferBuilder builder, int actionRadiusSquared) { builder.addInt(4, actionRadiusSquared, 0); }
+  public static void addSensorRadiusSquared(FlatBufferBuilder builder, int sensorRadiusSquared) { builder.addInt(5, sensorRadiusSquared, 0); }
   public static void addDetectionRadiusSquared(FlatBufferBuilder builder, int detectionRadiusSquared) { builder.addInt(6, detectionRadiusSquared, 0); }
-  public static void addIdentificationRadiusSquared(FlatBufferBuilder builder, int identificationRadiusSquared) { builder.addInt(7, identificationRadiusSquared, 0); }
-  public static void addInitialInfluence(FlatBufferBuilder builder, int initialInfluence) { builder.addInt(8, initialInfluence, 0); }
-  public static void addInfluencePerTurn(FlatBufferBuilder builder, float influencePerTurn) { builder.addFloat(9, influencePerTurn, 0.0f); }
-  public static void addEmpowerBuffFactor(FlatBufferBuilder builder, float empowerBuffFactor) { builder.addFloat(10, empowerBuffFactor, 0.0f); }
-  public static void addBuffDuration(FlatBufferBuilder builder, int buffDuration) { builder.addInt(11, buffDuration, 0); }
-  public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(12, bytecodeLimit, 0); }
+  public static void addBytecodeLimit(FlatBufferBuilder builder, int bytecodeLimit) { builder.addInt(7, bytecodeLimit, 0); }
   public static int endBodyTypeMetadata(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

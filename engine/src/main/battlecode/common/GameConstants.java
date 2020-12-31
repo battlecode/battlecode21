@@ -49,8 +49,29 @@ public class GameConstants {
     // ****** GAME MECHANICS ***********
     // *********************************
 
-    public static final double EXPOSE_FACTOR = 1.1;
+    /** The amount of conviction taxed when a Politician empowers. */
     public static final int EMPOWER_TAX = 10;
+
+    /** The buff factor from exposing Slanderers. */
+    public static final double EXPOSE_BUFF_FACTOR = 1.01;
+    
+    /** The number of rounds a buff is applied. */
+    public static final int EXPOSE_BUFF_NUM_ROUNDS = 50;
+
+    /** The number of rounds Slanderers generate influence. */
+    public static final int EMBEZZLE_NUM_ROUNDS = 50;
+
+    /** The number of rounds before Slanderers turns into Politicians. */
+    public static final int CAMOUFLAGE_NUM_ROUNDS = 300;
+
+    /** The initial amount of influence for each player-owned Enlightenment Center. */
+    public static final int INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE = 150;
+
+    /** The passive influence ratio for Enlightenment Centers. To multiply by sqrt(roundNum). */
+    public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2;
+
+    /** The passive influence ratio for Slanderers. To multiply by robot influence. */
+    public static final float PASSIVE_INFLUENCE_RATIO_SLANDERER = 0.05;
 
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******

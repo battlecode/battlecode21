@@ -43,7 +43,7 @@ public final class GameMap extends Table {
    */
   public int randomSeed() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   /**
-   * The factor to scale cooldowns by
+   * The factor to divide cooldowns by
    */
   public double passability(int j) { int o = __offset(14); return o != 0 ? bb.getDouble(__vector(o) + j * 8) : 0; }
   public int passabilityLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }

@@ -13,7 +13,7 @@ package battlecode.schema;
 public final class Action {
   private Action() { }
   /**
-   * Politicians self-destruct and affect nearby bodies
+   * Politicians self-destruct and affect nearby bodies.
    * Target: none
    */
   public static final byte EMPOWER = 0;
@@ -24,36 +24,42 @@ public final class Action {
   public static final byte EXPOSE = 1;
   /**
    * Units can change their flag.
-   * Target: self
+   * Target: new flag value
    */
   public static final byte SET_FLAG = 2;
   /**
-   * Builds a unit (enlightent center).
+   * Builds a unit.
    * Target: spawned unit
    */
   public static final byte SPAWN_UNIT = 3;
   /**
-   * Places a bid (enlightent center).
-   * Target: bid placed
+   * Places a bid.
+   * Target: bid value
    */
   public static final byte PLACE_BID = 4;
   /**
-   * A robot can change team after being empowered
-   * Target: self
+   * A robot can change team after being empowered,
+   * or when a Enlightenment Center is taken over.
+   * Target: teamID
    */
   public static final byte CHANGE_TEAM = 5;
   /**
-   * An enlightenment center can become neutral if lost all its influence
-   * Target: none.
+   * A robot's influence changes.
+   * Target: delta value
    */
-  public static final byte BECOME_NEUTRAL = 6;
+  public static final byte CHANGE_INFLUENCE = 6;
   /**
-   * Dies due to an uncaught exception
+   * A robot's conviction changes.
+   * Target: delta value, i.e. red 5 -> blue 3 is -2
+   */
+  public static final byte CHANGE_CONVICTION = 7;
+  /**
+   * Dies due to an uncaught exception.
    * Target: none
    */
-  public static final byte DIE_EXCEPTION = 7;
+  public static final byte DIE_EXCEPTION = 8;
 
-  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "BECOME_NEUTRAL", "DIE_EXCEPTION", };
+  public static final String[] names = { "EMPOWER", "EXPOSE", "SET_FLAG", "SPAWN_UNIT", "PLACE_BID", "CHANGE_TEAM", "CHANGE_INFLUENCE", "CHANGE_CONVICTION", "DIE_EXCEPTION", };
 
   public static String name(int e) { return names[e]; }
 }
