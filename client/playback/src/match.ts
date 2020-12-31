@@ -197,7 +197,7 @@ export default class Match {
       shortenRobot.set("ENLIGHTENMENT_CENTER", "EC");
       shortenRobot.set("POLITICIAN", "P");
       shortenRobot.set("SLANDERER", "SL");
-      shortenRobot.set("MUCKRAKER", "MR");
+      shortenRobot.set("MUCKRAKER", "MCKR");
 
       // Get the matches
       let team = matches[1];

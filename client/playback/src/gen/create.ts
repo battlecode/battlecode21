@@ -408,7 +408,6 @@ function createStandGame(turns: number) {
 }*/
 
 // Game with spawning and dying random units
-
 function createLifeGame(turns: number) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
@@ -455,8 +454,8 @@ function createLifeGame(turns: number) {
   return builder.asUint8Array();
 }
 
-// Game with every units, moving in random constant speed & direction
-function createWanderGame(turns: number, unitCount: number) {
+// Game with every units, moving in random constant speed & direction, with optional actions
+function createWanderGame(turns: number, unitCount: number, doActions: boolean = false) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
 
@@ -479,25 +478,60 @@ function createWanderGame(turns: number, unitCount: number) {
   const ys = bodies.ys;
 
   for (let i = 1; i < turns+1; i++) {
-    for (let i = 0; i < unitCount; i++) {
-      if(random(0, 32) === 0){
-        velxs[i] = random(-1, 1);
-        velys[i] = random(-1, 1);
-      }
-      xs[i] = trimEdge(xs[i] + velxs[i], 0, SIZE-1);
-      ys[i] = trimEdge(ys[i] + velys[i], 0, SIZE-1);
-      if(xs[i] === 0 || xs[i] == SIZE-1) velxs[i] = -velxs[i];
-      if(ys[i] === 0 || ys[i] == SIZE-1) velys[i] = -velys[i];
-    }
-    const movedLocs = createVecTable(builder, xs, ys);
 
+    // movement
+    for (let j = 0; j < unitCount; j++) {
+      if(random(0, 32) === 0){
+        velxs[j] = random(-1, 1);
+        velys[j] = random(-1, 1);
+      }
+      xs[j] = trimEdge(xs[j] + velxs[j], 0, SIZE-1);
+      ys[j] = trimEdge(ys[j] + velys[j], 0, SIZE-1);
+      if(xs[j] === 0 || xs[j] == SIZE-1) velxs[j] = -velxs[j];
+      if(ys[j] === 0 || ys[j] == SIZE-1) velys[j] = -velys[j];
+    }
+
+    const movedLocs = createVecTable(builder, xs, ys);
     const movedP = schema.Round.createMovedIDsVector(builder, bodies.robotIDs);
+
+    // actions
+    let actionIDs: number[] = [];
+    let actions: number[] = [];
+    let actionTargets: number[] = [];
+
+    if (doActions && i%10 == 0) {
+      for (let j = 0; j < unitCount; j++) {
+        let action: number | null;
+        let actionTarget: number | null;
+        switch (bodies.types[j]) {
+            case schema.BodyType.POLITICIAN:
+              action = schema.Action.EMPOWER;
+              break;
+            case schema.BodyType.MUCKRAKER:
+              action = schema.Action.EXPOSE;
+              break;
+            default:
+              break;
+        }
+        if (action) {
+          actionIDs.push(bodies.robotIDs[j]);
+          actions.push(action);
+          actionTargets.push(actionTarget);
+        }
+      }
+    }
+
+    const bb_actionIDs = schema.Round.createActionIDsVector(builder, actionIDs);
+    const bb_actions = schema.Round.createActionsVector(builder, actions);
+    const bb_actionTargets = schema.Round.createActionTargetsVector(builder, actionTargets);
 
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
-
     schema.Round.addMovedLocs(builder, movedLocs);
     schema.Round.addMovedIDs(builder, movedP);
+    schema.Round.addActionIDs(builder, bb_actionIDs);
+    schema.Round.addActions(builder, bb_actions);
+    schema.Round.addActionTargets(builder, bb_actionTargets);
 
     events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
   }
@@ -510,9 +544,8 @@ function createWanderGame(turns: number, unitCount: number) {
   return builder.asUint8Array();
 }
 
-/*
- Map with random passability values, no units.
-*/
+
+// Game with random map, no units.
 function createPassabilityGame(turns: number) {
 
   let builder = new flatbuffers.Builder();
@@ -525,7 +558,7 @@ function createPassabilityGame(turns: number) {
   };
   for(let i=0; i<SIZE; i++) for(let j=0; j<SIZE; j++){
     const idxVal = i*SIZE + j;
-    map.passability[idxVal] = Math.random();
+    map.passability[idxVal] = random(0.1, 1);
   }
 
   const bb_map = createMap(builder, null, 'Water Demo', map);
@@ -535,6 +568,32 @@ function createPassabilityGame(turns: number) {
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
 
+    events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
+  }
+
+  events.push(createEventWrapper(builder, createMatchFooter(builder, turns, 1), schema.Event.MatchFooter));
+  events.push(createEventWrapper(builder, createGameFooter(builder, 1), schema.Event.GameFooter));
+
+  const wrapper = createGameWrapper(builder, events, turns);
+  builder.finish(wrapper);
+  return builder.asUint8Array();
+}
+
+// Game with voting
+function createVotesGame(turns: number) {
+  let builder = new flatbuffers.Builder();
+  let events: flatbuffers.Offset[] = [];
+
+  events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
+
+  const map = createMap(builder, null, 'Blank Demo');
+  events.push(createEventWrapper(builder, createMatchHeader(builder, turns, map), schema.Event.MatchHeader));
+
+  for (let i = 1; i < turns+1; i++) {
+    const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, false]);
+    schema.Round.startRound(builder);
+    schema.Round.addRoundID(builder, i);
+    schema.Round.addTeamVPs(builder, bb_teamVPs);
     events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
   }
 
@@ -629,8 +688,10 @@ function main(){
     { name: "stand", game: createStandGame(1024) },
     //{ name: "pick", game: createPickGame(1024) },
     { name: "wander", game: createWanderGame(2048, 32) },
+    { name: "wander-actions", game: createWanderGame(2048, 32, true) },
     { name: "life", game: createLifeGame(512) },
-    { name: "passability", game: createPassabilityGame(512) }, 
+    { name: "passability", game: createPassabilityGame(512) },
+    { name: "votes", game: createVotesGame(512) } 
     //{ name: "soup", game: createSoupGame(512) }, 
     //{ name: "viewOptions", game: createViewOptionGame(512) }
   ];
