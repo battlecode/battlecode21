@@ -51,7 +51,7 @@ public class TeamInfo {
         TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);
         for (int round : map.keySet()) {
             if (round <= roundNumber) {
-                buffs -= map.remove(round);
+                buffs -= map.get(round);
             } else {
                 break; // treemaps are in increasing order
             }
