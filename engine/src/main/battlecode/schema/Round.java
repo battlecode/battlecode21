@@ -132,8 +132,7 @@ public final class Round extends Table {
    * have a header:
    * '[' $TEAM ':' $ROBOTTYPE '#' $ID '@' $ROUND '] '
    * $TEAM = 'A' | 'B'
-   * $ROBOTTYPE = 'HQ' | 'VAPORATOR' | 'LANDSCAPER' 
-   *            | 'DELIVERY_DRONE' | 'REFINERY' | 'MINER' | other names...
+   * $ROBOTTYPE = 'ENLIGHTENMENT_CENTER' | 'POLITICIAN' | 'SLANDERER' | 'MUCKRAKER'
    * $ID = a number
    * $ROUND = a number
    * The header is not necessarily followed by a newline.
