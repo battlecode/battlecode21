@@ -346,7 +346,7 @@ public strictfp interface RobotController {
      *
      * @battlecode.doc.costlymethod
      */
-    float getCooldownTurns();
+    double getCooldownTurns();
 
     // ***********************************
     // ****** MOVEMENT METHODS ***********

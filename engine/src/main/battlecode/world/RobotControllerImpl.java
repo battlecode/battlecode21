@@ -327,7 +327,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
      * @return the number of cooldown turns as a float
      */
     @Override
-    public float getCooldownTurns() {
+    public double getCooldownTurns() {
         return this.robot.getCooldownTurns();
     }
 

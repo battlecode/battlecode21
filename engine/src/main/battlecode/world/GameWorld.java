@@ -358,7 +358,7 @@ public strictfp class GameWorld {
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {
             int bid = robot.getBid();
-            Team teamIdx = robot.getTeam().ordinal();
+            int teamIdx = robot.getTeam().ordinal();
             if (bid > highestBids[teamIdx] ||
                 (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
                 highestBids[teamIdx] = bid;
@@ -400,7 +400,7 @@ public strictfp class GameWorld {
         // Add buffs from expose
         int nextRound = currentRound + 1;
         for (int i = 0; i < 2; i++) {
-            this.teamInfo.addBuffs(nextRound, i, this.buffsToAdd[i]);
+            this.teamInfo.addBuffs(nextRound, Team.values()[i], this.buffsToAdd[i]);
             this.buffsToAdd[i] = 0; // reset
         }
 
