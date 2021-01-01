@@ -732,8 +732,7 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # Notify compile server through pubsub queue.
         data = str(id)
         data_bytestring = data.encode('utf-8')
-        # For now (ie testing), don't pub to pubsub, to save some grief later.
-        # pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         # indicate submission being queued
         submission.compilation_status = settings.COMPILE_STATUS.QUEUED
