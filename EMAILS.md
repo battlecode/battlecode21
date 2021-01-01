@@ -4,7 +4,21 @@
 
 We're using mailman -- in particular, it handles unsubscribing for us.
 
+### Lists we maintain
+
+<!-- TODO should we list the lists here (Jerry what r they)? seems good to have in one place -->
+
 ### Creating a list
+
+<!-- TODO Jerry could you write this? -->
+
+Turn off the `send_welcome_msg` setting. Also configure such that only mods can send; there's some configurations for this on privacy -> sender (TODO whats the actual setting?)
+Also here are more settings
+https://mailman.mit.edu:444/mailman/admin/battlecode-interest-mm/privacy turn off viewing subscription list by public
+https://mailman.mit.edu:444/mailman/admin/battlecode-interest-mm/privacy/recipient ceiling to zero or else our mail will also get blocked
+i’ve done some messing around with the Reply-To header settings on the general page and also the “hide the sender’ optoin
+
+**Don't make battlecode@mit.edu admin!** Admins should be real people's real kerbs; otherwise, you may be locked out.
 
 ### Adding to a list
 
