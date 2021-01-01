@@ -96,21 +96,16 @@ export default class Stats {
       let tdRobot: HTMLTableCellElement = document.createElement("td");
       tdRobot.className = "robotSpriteStats";
 
-      if(robotName === "drone"){
-        // tdRobot.appendChild(this.images.robot[robotName]['carry'][inGameID]);
-        tdRobot.appendChild(this.images.robot[robotName]['empty'][inGameID]);
-      }
-      else{
-        //tdRobot.appendChild(this.images.robot[robotName][inGameID]);
-      }
+      // TODO: do not count enlightenment center
+      tdRobot.appendChild(this.images.robots[robotName][inGameID]);
 
-      if(robotName === 'vaporator'){
+      // if(robotName === 'vaporator'){
         // Wrap around
         // table.appendChild(robotImages);
         // robotImages = document.createElement("tr");
         // table.appendChild(robotCounts);
         // robotCounts = document.createElement("tr");
-      }
+      // }
       robotImages.appendChild(tdRobot);
 
       let tdCount: HTMLTableCellElement = this.robotTds[teamID][robot];
@@ -294,9 +289,10 @@ export default class Stats {
     const maxSoup = 1000;
     statBar.bar.style.height = `${Math.min(100 * count / maxSoup, 100)}%`;
 
-    if (this.images.star.parentNode === statBar.bar) {
-      this.images.star.remove();
-    }
+    // TODO winner gets star?
+    // if (this.images.star.parentNode === statBar.bar) {
+    //   this.images.star.remove();
+    // }
   }
 
   /**

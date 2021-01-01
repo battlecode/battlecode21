@@ -56,7 +56,7 @@ export default class MapRenderer {
       this.ctx = ctx;
     }
 
-    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.background, 'repeat');
+    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles.dirt, 'repeat');
   }
 
   /**
@@ -119,7 +119,7 @@ export default class MapRenderer {
 
       this.drawCircleBot(x, y, radius);
       const teamID = body.teamID || 1;
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][teamID];
+      img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
@@ -131,7 +131,7 @@ export default class MapRenderer {
       let img: HTMLImageElement;
 
       this.drawCircleBot(x, y, radius);
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][2];
+      img = this.imgs.robots[cst.bodyTypeToString(body.type)][2];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });

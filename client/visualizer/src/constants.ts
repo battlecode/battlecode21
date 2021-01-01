@@ -5,10 +5,10 @@ import { net } from 'electron';
 // Body types
 export const ENLIGHTENMENT_CENTER = schema.BodyType.ENLIGHTENMENT_CENTER;
 export const POLITICIAN = schema.BodyType.POLITICIAN;
-export const SCANDAL = schema.BodyType.SLANDERER;
+export const SLANDERER = schema.BodyType.SLANDERER;
 export const MUCKRAKER = schema.BodyType.MUCKRAKER;
 
-export const bodyTypeList = [ENLIGHTENMENT_CENTER, POLITICIAN, SCANDAL, MUCKRAKER];
+export const bodyTypeList = [ENLIGHTENMENT_CENTER, POLITICIAN, SLANDERER, MUCKRAKER];
 
 // old colors for reference
 
@@ -115,10 +115,14 @@ export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
 
 export function bodyTypeToString(bodyType: schema.BodyType) {
   switch(bodyType) {
-    case ENLIGHTENMENT_CENTER:             return "enlightenmentCenter";
-    case POLITICIAN:        return "politician";
-    case SCANDAL:             return "scandal";
-    case MUCKRAKER:           return "muckraker";
+    case ENLIGHTENMENT_CENTER:
+      return "enlightenmentCenter";
+    case POLITICIAN:
+      return "politician";
+    case SLANDERER:
+      return "slanderer";
+    case MUCKRAKER:
+      return "muckraker";
     default:                throw new Error("invalid body type");
   }
 }

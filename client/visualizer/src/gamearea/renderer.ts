@@ -216,7 +216,7 @@ export default class Renderer {
 
       //TODO*: fetch bot image here.
 
-      let img = this.imgs.cow;
+      // let img = this.imgs.cow;
 
       // if (type !== cst.COW) {
       //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)];
@@ -230,7 +230,7 @@ export default class Renderer {
       // }
       // this.drawCircleBot(x, y, radius);
       // this.drawImage(img, x, y, radius);
-      this.drawBot(img, x, y);
+      // this.drawBot(img, x, y);
       
       // Draw the sight radius if the robot is selected
       if (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID) {

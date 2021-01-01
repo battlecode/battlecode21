@@ -2,12 +2,13 @@ import {Config} from './config';
 type Image = HTMLImageElement;
 
 export type AllImages = {
+  star: Image,
   tiles: {
     dirt: Image,
     swamp: Image
   },
   robots: {
-    enlightmentCenter: Array<Image>,
+    enlightenmentCenter: Array<Image>,
     politician: Array<Image>,
     muckraker: Array<Image>,
     slanderer: Array<Image>
@@ -35,31 +36,33 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   const BLU: number = 2;
 
   function loadImage(obj, slot, path) : void {
-    this.expected++;
+    const f = loadImage;
+    f.expected++;
     const image = new Image();
 
     function onFinish(){
-      if(this.requestedAll && this.expected == this.success + this.failure){
-        console.log(`Image loaded: ${this.success} successful, ${this.failure} failed. Total ${this.expected}.`);
+      if(f.requestedAll && f.expected == f.success + f.failure){
+        console.log(`Total ${f.expected} images loaded: ${f.success} successful, ${f.failure} failed.`);
         callback((Object.freeze(result) as unknown) as AllImages);
       }
     }
 
     image.onload = () => {
       obj[slot] = image;
-      this.success++;
+      f.success++;
       onFinish();
     };
 
     image.onerror = () => {
       obj[slot] = image;
-      this.failure++;
+      f.failure++;
       console.error(`CANNOT LOAD IMAGE: ${slot}, ${path}, ${image}`);
       onFinish();
     }
 
     // might want to use path library
-    image.src = require(dirname + path).default;
+    // webpack url loader triggers on require("<path>.png"), so .png should be explicit
+    image.src = require(dirname + path + '.png').default;
   }
   loadImage.expected = 0;
   loadImage.success = 0;
@@ -72,7 +75,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       swamp: null
     },
     robots: {
-      enlightmentCenter: [],
+      enlightenmentCenter: [],
       politician: [],
       muckraker: [],
       slanderer: [],
@@ -93,36 +96,38 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
     }
   };
 
+  loadImage(result, 'star', 'star');
+
   // terrain tiles
-  loadImage(result.tiles, 'dirt', 'tiles/DirtTerrain.png');
-  loadImage(result.tiles, 'swamp', 'tiles/SwampTerrain.png');
+  loadImage(result.tiles, 'dirt', 'tiles/DirtTerrain');
+  loadImage(result.tiles, 'swamp', 'tiles/SwampTerrain');
 
   // robot sprites
-  loadImage(result.robots.enlightmentCenter, RED, 'sprites/center_red.png');
-  loadImage(result.robots.muckraker, RED, 'sprites/muck_red.png');
-  loadImage(result.robots.politician, RED, 'sprites/polit_red.png');
-  loadImage(result.robots.slanderer, RED, 'sprites/slanderer_red.png');
+  loadImage(result.robots.enlightenmentCenter, RED, 'robots/center_red');
+  loadImage(result.robots.muckraker, RED, 'robots/muck_red');
+  loadImage(result.robots.politician, RED, 'robots/polit_red');
+  loadImage(result.robots.slanderer, RED, 'robots/slanderer_red');
 
-  loadImage(result.robots.enlightmentCenter, BLU, 'sprites/center_blue.png');
-  loadImage(result.robots.muckraker, BLU, 'sprites/muck_blue.png');
-  loadImage(result.robots.politician, BLU, 'sprites/polit_blue.png');
-  loadImage(result.robots.slanderer, BLU, 'sprites/slanderer_blue.png');
+  loadImage(result.robots.enlightenmentCenter, BLU, 'robots/center_blue');
+  loadImage(result.robots.muckraker, BLU, 'robots/muck_blue');
+  loadImage(result.robots.politician, BLU, 'robots/polit_blue');
+  loadImage(result.robots.slanderer, BLU, 'robots/slanderer_blue');
 
   // TODO: effects
 
   // buttons are from https://material.io/resources/icons
-  loadImage(result.controls, 'goNext', 'controls/go-next.png');
-  loadImage(result.controls, 'goPrevious', 'controls/go-previous.png');
-  loadImage(result.controls, 'playbackPause', 'controls/playback-pause.png');
-  loadImage(result.controls, 'playbackStart', 'controls/playback-start.png');
-  loadImage(result.controls, 'playbackStop', 'controls/playback-stop.png');
-  loadImage(result.controls, 'reverseUPS', 'controls/reverse.png');
-  loadImage(result.controls, 'doubleUPS', 'controls/skip-forward.png');
-  loadImage(result.controls, 'halveUPS', 'controls/skip-backward.png');
-  loadImage(result.controls, 'goEnd', 'controls/go-end.png');
+  loadImage(result.controls, 'goNext', 'controls/go-next');
+  loadImage(result.controls, 'goPrevious', 'controls/go-previous');
+  loadImage(result.controls, 'playbackPause', 'controls/playback-pause');
+  loadImage(result.controls, 'playbackStart', 'controls/playback-start');
+  loadImage(result.controls, 'playbackStop', 'controls/playback-stop');
+  loadImage(result.controls, 'reverseUPS', 'controls/reverse');
+  loadImage(result.controls, 'doubleUPS', 'controls/skip-forward');
+  loadImage(result.controls, 'halveUPS', 'controls/skip-backward');
+  loadImage(result.controls, 'goEnd', 'controls/go-end');
 
-  loadImage(result.controls, 'matchBackward', 'controls/green-previous.png');
-  loadImage(result.controls, 'matchForward', 'controls/green-next.png');
+  loadImage(result.controls, 'matchBackward', 'controls/green-previous');
+  loadImage(result.controls, 'matchForward', 'controls/green-next');
   
   // mark as finished
   loadImage.requestedAll = true;
