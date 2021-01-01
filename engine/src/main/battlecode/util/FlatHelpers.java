@@ -38,13 +38,13 @@ public class FlatHelpers {
 
     public static byte getBodyTypeFromRobotType(RobotType type) {
         switch (type) {
-            case RobotType.ENLIGHTENMENT_CENTER:
+            case ENLIGHTENMENT_CENTER:
                 return BodyType.ENLIGHTENMENT_CENTER;
-            case RobotType.POLITICIAN:
+            case POLITICIAN:
                 return BodyType.POLITICIAN;
-            case RobotType.SLANDERER:
+            case SLANDERER:
                 return BodyType.SLANDERER;
-            case RobotType.MUCKRAKER:
+            case MUCKRAKER:
                 return BodyType.MUCKRAKER;
             default:
                 throw new RuntimeException("No body type for: " + type);
