@@ -42,7 +42,7 @@ For production, build with `npm run build` for the full thing, and `npm run buil
 
 ### access.txt
 
-During deployment, you'll need an up-to-date version of `frontend/public/access.txt`. This file is needed by game runners to run matches. It's is really difficult to deploy; our solution is to have it deployed with the rest of the frontend code and onto our website, but have it never pushed to GitHub. Make sure you have an up-to-date copy! If you don't have one, check with the infra devs.
+During deployment, you'll need an up-to-date version of `frontend/public/access.txt`. This file is needed by game runners to run matches, and by competitors because it grants them access to downloading the GitHub package containing the engine. It's is really difficult to deploy; our solution is to have it deployed with the rest of the frontend code and onto our website, but have it never pushed to GitHub. Make sure you have an up-to-date copy! If you don't have one, check with the infra devs.
 
 ### Assorted notes
 
