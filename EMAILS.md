@@ -6,25 +6,33 @@ We're using mailman -- in particular, it handles unsubscribing for us.
 
 ### Lists we maintain
 
-<!-- TODO should we list the lists here (Jerry what r they)? seems good to have in one place -->
+We currently maintain the following lists on Mailman:
+- `battlecode-interest-mm` is the general interest mailing list, linked to by the website homepage. This should be used for announcing new Battlecode contests.
+- `battlecode-competitors-2020-mm` is an empty mailing list created by accident. It can be used for testing.
+- `battlecode-competitors-2021-mm` contains all registered competitors of Battlecode 2021.
 
 ### Creating a list
 
-<!-- TODO Jerry could you write this? -->
-
-Turn off the `send_welcome_msg` setting. Also configure such that only mods can send; there's some configurations for this on privacy -> sender (TODO whats the actual setting?)
-Also here are more settings
-https://mailman.mit.edu:444/mailman/admin/battlecode-interest-mm/privacy turn off viewing subscription list by public
-https://mailman.mit.edu:444/mailman/admin/battlecode-interest-mm/privacy/recipient ceiling to zero or else our mail will also get blocked
-i’ve done some messing around with the Reply-To header settings on the general page and also the “hide the sender’ optoin
-
-**Don't make battlecode@mit.edu admin!** Admins should be real people's real kerbs; otherwise, you may be locked out.
+1. Create a list at https://listmaker.mit.edu/lc/ and navigate to the admin page. You will receive an email containing the admin password.
+1. Update the administrator to the Battlecode contact email (this is the publicly viewable list owner), and set yourself and others to be moderators.
+   After doing this, you will need to re-authenticate (you're no longer the admin), using the password that was emailed to you.
+1. Set list parameters. Below are some examples.
+    - Description: MIT Battlecode 2021
+    - Subject prefix: [battlecode-21]
+    - Hide sender = Yes. All sent emails will appear to come from the list, not you.
+    - Strip Reply-To header = Yes, explicit Reply-To = the battlecode address. This configures replies to not go back to the list.
+    - In the privacy menu:
+        - Only list admin should view subscription list.
+        - In sender submenu, new members should be moderated. This prevents random subscribers from sending unmoderated mail.
+        - In recipient submenu, ceiling should be zero. This allows us to send mail even if the subscription list is huge.
 
 ### Adding to a list
 
+Before doing this, turn off welcome messages in the general menu (`send_welcome_msg`). This ensures we don't spam people when they're added.
+
 We use mmblanche for this. It's easiest to use it installed on Athena. SSH in, then run:
 ```
-bash
+bash  # if your default shell is not bash
 add consult
 mmblanche
 ```
@@ -42,7 +50,10 @@ You'll be prompted for the list admin password; find this somehow. You may wanna
 
 If the set of emails you're trying to reach is continually growing (e.g. if you're messaging a large interest list through a  gsheet that a keeps growing), then you'll probably want to update the lists first. Follow the instructions in the above section.
 
-BCC EVERYTHING
+Send mail to the list as you would normally.
+- Ensure that you (yes, you specifically, not the Battlecode address) are a member of the list. Mark yourself as not-moderated in the Members list, or make sure you have a mod ready to release your email.
+- Do not use Bcc. Bcc'd mail will be blocked by the list.
+- Include trailing newlines. Mail without trailing newlines may show the message footer in the same line as your email signature.
 
 ## Sendgrid
 
