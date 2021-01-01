@@ -1,8 +1,8 @@
 # Mass Emails
 
-# Athena
+## Athena
 
-## Adding to a list
+### Adding to a list
 
 We use blanche for this. Documentation here: https://debathena.mit.edu/manpages/www/manpages/lucid/man1/blanche.1.html. The easiest way to use blanche is to use it pre-installed on Athena; you can try to install it yourself locally but it's pretty difficult.
 
@@ -12,10 +12,10 @@ Move this file to your Athena locker; you can use `scp` for this (example [here]
 
 Finally run blanche! For example, `blanche [webmoira-list-name] -addlist [path/to/file]`. Likely you'll want to use `-addlist`, as it simply adds any emails in the file to the list, skips over duplicates for you, and doesn't delete anything otherwise.
 
-## Sending to a list
+### Sending to a list
 
 BCC EVERYTHING
 
-# Sendgrid
+## Sendgrid
 
 (TODO dump some convos that I had w nate in Slack, as well as some messages that he sent in some channel.)
