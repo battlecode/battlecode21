@@ -17,13 +17,7 @@ public class BuildMaps {
      * @param args unused
      */
     public static void main(String[] args) {
-        ALandDivided.main(args);
-        CentralLake.main(args);
-        CentralSoup.main(args);
-        FourLakeLand.main(args);
-        SoupOnTheSide.main(args);
-        TwoForOneAndTwoForAll.main(args);
-        WaterBot.main(args);
+        MapTestSmall.main(args);
     }
 
 }

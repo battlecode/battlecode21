@@ -1,0 +1,26 @@
+# Configuring editor styles - https://editorconfig.org/
+
+# Basically keeping the legacy settings
+
+# this is top-most .editorconfig file
+root = true
+
+# Default config
+#  2 space indent
+#  Unix style endline
+#  UTF-8 encoding
+#  final newline
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+insert_final_newline = true
+
+# For .js or .ts files
+[*.{js,ts}]
+trim_trailing_whitespace = true
+
+# For *.json files (packages.json, tsconfig.json, webpack.json, ...)
+[*.json]
+trim_trailing_whitespace = false

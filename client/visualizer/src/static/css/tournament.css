@@ -1,0 +1,63 @@
+.blackout {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    background-color: black;
+    color: white;
+    font-size: 50px;
+    text-align: center;
+    z-index: 5;
+}
+
+.blackout-container {
+    margin-top: 10vh;
+    margin-left: 16vw;
+    margin-right: 16vw;
+}
+
+.tournament-header {
+    font-size: 72px;
+}
+.tournament-subheader {
+    font-size: 18px;
+}
+.tournament-extra {
+    color: gray;
+}
+
+.column-left {
+    float: left;
+    width: 47%;
+}
+
+.column-center {
+    display: inline-block;
+    width: 6%;
+    line-height: 20vw;
+}
+
+.column-right {
+    float: right;
+    width: 47%;
+}
+
+.avatar {
+    width: 20vw;
+    height: 20vw;
+    margin-bottom: 32px;
+}
+
+.big-avatar {
+    width: 25vw;
+    height: 25vw;
+    margin-bottom: 32px;
+}
+
+.scorecard {
+    margin-top: 3px;
+    font-size: 40px;
+    margin-bottom: 32px;
+}

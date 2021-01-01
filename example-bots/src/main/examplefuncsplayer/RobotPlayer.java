@@ -59,19 +59,11 @@ public strictfp class RobotPlayer {
     }
 
     static void runMiner() throws GameActionException {
-        tryBlockchain();
         tryMove(randomDirection());
         if (tryMove(randomDirection()))
             System.out.println("I moved!");
-        // tryBuild(randomSpawnedByMiner(), randomDirection());
         for (Direction dir : directions)
             tryBuild(RobotType.FULFILLMENT_CENTER, dir);
-        for (Direction dir : directions)
-            if (tryDepositSoup(dir))
-                System.out.println("I deposited soup! " + rc.getTeamSoup());
-        for (Direction dir : directions)
-            if (tryMine(dir))
-                System.out.println("I mined soup! " + rc.getSoupCarrying());
     }
 
     static void runRefinery() throws GameActionException {
@@ -96,20 +88,7 @@ public strictfp class RobotPlayer {
     }
 
     static void runDeliveryDrone() throws GameActionException {
-        Team enemy = rc.getTeam().opponent();
-        if (!rc.isCurrentlyHoldingUnit()) {
-            // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-            RobotInfo[] robots = rc.senseNearbyRobots(GameConstants.DELIVERY_DRONE_PICKUP_RADIUS_SQUARED, enemy);
-
-            if (robots.length > 0) {
-                // Pick up a first robot within range
-                rc.pickUpUnit(robots[0].getID());
-                System.out.println("I picked up " + robots[0].getID() + "!");
-            }
-        } else {
-            // No close robots, so search for robots within sight radius
-            tryMove(randomDirection());
-        }
+        
     }
 
     static void runNetGun() throws GameActionException {
@@ -139,15 +118,6 @@ public strictfp class RobotPlayer {
             if (tryMove(dir))
                 return true;
         return false;
-        // MapLocation loc = rc.getLocation();
-        // if (loc.x < 10 && loc.x < loc.y)
-        //     return tryMove(Direction.EAST);
-        // else if (loc.x < 10)
-        //     return tryMove(Direction.SOUTH);
-        // else if (loc.x > loc.y)
-        //     return tryMove(Direction.WEST);
-        // else
-        //     return tryMove(Direction.NORTH);
     }
 
     /**
@@ -178,46 +148,5 @@ public strictfp class RobotPlayer {
             rc.buildRobot(type, dir);
             return true;
         } else return false;
-    }
-
-    /**
-     * Attempts to mine soup in a given direction.
-     *
-     * @param dir The intended direction of mining
-     * @return true if a move was performed
-     * @throws GameActionException
-     */
-    static boolean tryMine(Direction dir) throws GameActionException {
-        if (rc.isReady() && rc.canMineSoup(dir)) {
-            rc.mineSoup(dir);
-            return true;
-        } else return false;
-    }
-
-    /**
-     * Attempts to refine soup in a given direction.
-     *
-     * @param dir The intended direction of refining
-     * @return true if a move was performed
-     * @throws GameActionException
-     */
-    static boolean tryDepositSoup(Direction dir) throws GameActionException {
-        if (rc.isReady() && rc.canDepositSoup(dir)) {
-            rc.depositSoup(dir, rc.getSoupCarrying());
-            return true;
-        } else return false;
-    }
-
-
-    static void tryBlockchain() throws GameActionException {
-        if (turnCount < 3) {
-            int[] message = new int[10];
-            for (int i = 0; i < 10; i++) {
-                message[i] = 123;
-            }
-            if (rc.canSubmitTransaction(message, 10))
-                rc.submitTransaction(message, 10);
-        }
-        // System.out.println(rc.getRoundMessages(turnCount-1));
     }
 }

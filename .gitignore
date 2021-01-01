@@ -17,7 +17,7 @@ access.txt
 frontend/build
 
 ### Gradle ###
-.gradle
+.gradle/
 /build/
 
 ### Matches should be ignored
@@ -28,10 +28,6 @@ frontend/build
 *.project
 *.settings
 bin/
-
-### Client
-client/bc20
-client/visualizer/bc20
 
 ### Vim
 # Swap
@@ -62,6 +58,4 @@ battlecode-javadoc-*
 battlecode20-internal-test-bots
 
 test.sh
-backend/dev_settings_sensitive.py
-
-infrastructure/worker/app/gcloud-key.json
+backend/dev_settings_real.py
