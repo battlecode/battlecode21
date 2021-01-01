@@ -244,10 +244,10 @@ publish.dependsOn(updateVersion)
 publishing {
   repositories {
     maven {
-      url = uri("https://maven.pkg.github.com/battlecode/battlecode20")
+      url = uri("https://maven.pkg.github.com/battlecode/battlecode21")
       credentials {
-        username = project.findProperty("gpr.user") ?: System.getenv("BC20_GITUSERNAME")
-        password = project.findProperty("gpr.key") ?: System.getenv("BC20_GITKEY")
+        username = project.findProperty("gpr.user") ?: System.getenv("BC21_GITUSERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("BC21_GITKEY")
       }
     }
   }
