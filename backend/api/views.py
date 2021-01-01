@@ -717,9 +717,12 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             return Response({'message': 'Not authenticated on the right team, nor is admin'}, status.HTTP_401_UNAUTHORIZED)
         
         # If a compilation has already succeeded, keep as so; no need to re-do.
-        # (Might make sense to re-do for other submissions, however.)
+        # (Might make sense to re-do for other submissions though, for example if messages are accidentally taken off the compilation pubsub queue.)
         if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
             return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+        # Only allow the admin to re-queue submissions, to prevent submission spam.
+        if (submission.compilation_status != settings.COMPILE_STATUS.PROGRESS) and (not is_admin):
+            return Response({'message': 'Only admin can attempt to re-queue submissions'}, status.HTTP_400_BAD_REQUEST)
 
         # indicate submission being in a bucket
         submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
@@ -729,7 +732,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         # Notify compile server through pubsub queue.
         data = str(id)
         data_bytestring = data.encode('utf-8')
-        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
+        # For now (ie testing), don't pub to pubsub, to save some grief later.
+        # pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
         # indicate submission being queued
         submission.compilation_status = settings.COMPILE_STATUS.QUEUED
