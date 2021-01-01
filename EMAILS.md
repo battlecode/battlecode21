@@ -20,11 +20,13 @@ Get a list of emails, and convert it to the format as specified by mmblanche's `
 
 Move this file to your Athena locker; you can use `scp` for this (example [here](https://unix.stackexchange.com/questions/106480/how-to-copy-files-from-one-machine-to-another-using-ssh)).
 
-Finally run mmblanche! For example, `mmblanche [mailman-list-name] -al [path/to/file]`. Likely you'll want to use `-addlist`, as it simply adds any emails in the file to the list, skips over duplicates for you, and doesn't delete anything otherwise.
+Finally run mmblanche! For example, `mmblanche [mailman-list-name] -al [path/to/file]`. Likely you'll want to use `-al`, as it simply adds any emails in the file to the list, skips over duplicates for you, and doesn't delete anything otherwise.
+
+You'll be prompted for the list admin password; find this somehow. You may wanna use the `-S` setting too, which will save admin passwords so you don't have to keep typing them.
 
 ### Sending to a list
 
-If the set of emails you're trying to reach is continually growing (e.g. if you're messaging )
+If the set of emails you're trying to reach is continually growing (e.g. if you're messaging a large interest list through a  gsheet that a keeps growing), then you'll probably want to update the lists first. Follow the instructions in the above section.
 
 BCC EVERYTHING
 
