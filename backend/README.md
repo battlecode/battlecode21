@@ -65,13 +65,11 @@ Also, note that the deployed version uses `uWSGI` to run (as specified in the Do
 
 ### First-Time Deployment Setup
 
-A database should be created.
-
-Also, a backend should be created.
+A backend must be created (in addition to the database). See the "Deployment Setup" section in `docs/SETUP.md` file for more.
 
 We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
 
-The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
+The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group (instructions below).
 
 Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
 

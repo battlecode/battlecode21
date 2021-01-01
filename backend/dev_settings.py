@@ -15,6 +15,7 @@ from datetime import timedelta
 from settings import *
 
 # Import sensitive settings.
+# The settings that should be specified in dev_settings_sensitive.py are listed in the except block below.
 try:
     from dev_settings_sensitive import *
 except ImportError:
@@ -23,6 +24,9 @@ except ImportError:
     # Set some default values, in case the sensitive settings hadn't been defined.
     DB_PASS = 'redacted'
     DB_HOST = 'redacted'
+    ADMIN_PASS='redacted'
+    SENDGRID_API_KEY='redacted'
+    GOOGLE_APPLICATION_CREDENTIALS='redacted'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -55,8 +59,3 @@ DATABASES = {
         'PORT': 5432,
     }
 }
-
-# GOOGLE_APPLICATION_CREDENTIALS = r"""redacted"""
-
-# SENDGRID_API_KEY = "redacted"
-

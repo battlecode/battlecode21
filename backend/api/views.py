@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from api.serializers import *
 from api.permissions import *
 
+
 from google.cloud import storage
 from google.cloud import pubsub_v1
 from google.oauth2 import service_account
@@ -237,6 +238,7 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
 
 class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
+    serializer_class = serializers.Serializer
 
     @action(detail=False, methods=['get'])
     def scrimmage_list(self, request):
@@ -614,7 +616,6 @@ class TeamViewSet(viewsets.GenericViewSet,
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-
 class SubmissionViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin):
@@ -663,6 +664,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
         submission = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub = TeamSubmission.objects.all().get(team=team)
+        # compiling_id holds id of last submission created for this team
+        # (regardless of compilation status)
         team_sub.compiling_id = submission
         team_sub.save()
 
@@ -707,22 +710,43 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
     @action(methods=['patch', 'post'], detail=True)
     def compilation_update(self, request, team, league_id, pk=None):
-        submission = self.get_queryset().get(pk=pk)
-        if team != submission.team:
-            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        # Also make sure that the admin is on a team! Otherwise you may get a 403.
+        if is_admin:
+            submission = self.get_queryset().get(pk=pk)
+            if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
+                # If a compilation has already succeeded, keep as so.
+                # (Would make sense for failed / errored compiles to flip to successes upon retry, so allow for this)
+                return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+            try: 
+                new_comp_status = int(request.data.get('compilation_status'))
+            except:
+                return Response({'message': 'No status provided. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
 
-        team_sub = TeamSubmission.objects.all().get(team=team)
+            if new_comp_status is None:
+                return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+            elif new_comp_status in (settings.COMPILE_STATUS.SUCCESS, settings.COMPILE_STATUS.FAIL, settings.COMPILE_STATUS.ERROR): #status provided in correct form
+                submission.compilation_status = new_comp_status
+                submission.save()
 
-        team_sub.compiling_id = None
-        team_sub.last_3_id = team_sub.last_2_id
-        team_sub.last_2_id = team_sub.last_1_id
-        team_sub.last_1_id = submission
-        submission.compilation_status = 2
+                if new_comp_status == settings.COMPILE_STATUS.SUCCESS: #compilation succeeded
+                    team_sub = TeamSubmission.objects.all().get(team=submission.team)
+                    # Only if this submission is newer than what's already been processed,
+                    # update the submission history. 
+                    # (to prevent reverting to older submissions that took longer to process)
+                    if submission.id > team_sub.last_1_id:
+                        team_sub.last_3_id = team_sub.last_2_id
+                        team_sub.last_2_id = team_sub.last_1_id
+                        team_sub.last_1_id = submission
+                        team_sub.save()
 
-        team_sub.save()
-        submission.save()
-
-        return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+                return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+            elif new_comp_status == settings.COMPILE_STATUS.PROGRESS: # Trying to set to compilation in progress, which shouldn't be a valid result
+                return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Only superuser can update compilation status'}, status.HTTP_401_UNAUTHORIZED)
 
     
     @action(methods=['get'], detail=True)
@@ -777,20 +801,12 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         if pk != str(team.id):
             return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
 
-        try:
-            team_data = self.get_queryset().get(pk=pk)
-            comp_id = team_data.compiling_id
-            if comp_id is not None:
-                comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
-                return Response({'status': comp_status}, status.HTTP_200_OK)
-            else:
-                if team_data.last_1_id is not None:
-                    # case where submission has been moved out of compilation cell
-                    return Response({'status': '2'}, status.HTTP_200_OK)
-                else:
-                    return Response({'status': None}, status.HTTP_200_OK)
-        except:
-            # case where this team has no submission data stored
+        team_data = self.get_queryset().get(pk=pk)
+        comp_id = team_data.compiling_id
+        if comp_id is not None:
+            comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
+            return Response({'status': comp_status}, status.HTTP_200_OK)
+        else:
             return Response({'status': None}, status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
