@@ -286,16 +286,10 @@ public strictfp class GameMaker {
     }
 
     private byte robotTypeToBodyType(RobotType type){
-        if (type == RobotType.HQ) return BodyType.HQ;
-        if (type == RobotType.MINER) return BodyType.MINER;
-        if (type == RobotType.REFINERY) return BodyType.REFINERY;
-        if (type == RobotType.VAPORATOR) return BodyType.VAPORATOR;
-        if (type == RobotType.DESIGN_SCHOOL) return BodyType.DESIGN_SCHOOL;
-        if (type == RobotType.FULFILLMENT_CENTER) return BodyType.FULFILLMENT_CENTER;
-        if (type == RobotType.LANDSCAPER) return BodyType.LANDSCAPER;
-        if (type == RobotType.DELIVERY_DRONE) return BodyType.DELIVERY_DRONE;
-        if (type == RobotType.NET_GUN) return BodyType.NET_GUN;
-        if (type == RobotType.COW) return BodyType.COW;
+        if (type == RobotType.ENLIGHTENMENT_CENTER) return BodyType.ENLIGHTENMENT_CENTER;
+        if (type == RobotType.POLITICIAN) return BodyType.POLITICIAN;
+        if (type == RobotType.SLANDERER) return BodyType.SLANDERER;
+        if (type == RobotType.MUCKRAKER) return BodyType.MUCKRAKER;
         return Byte.MIN_VALUE;
     }
 
