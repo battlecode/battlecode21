@@ -1,27 +1,18 @@
 import {Config} from './config';
-import { type } from 'os';
-
 type Image = HTMLImageElement;
 
-
 export type AllImages = {
-  background: Image, 
-  star: Image,
-  soup: Image,
-  cow: Image,
-  robot: {
-    netGun: Array<Image>,
-    landscaper: Array<Image>,
-    miner: Array<Image>,
-    fulfillmentCenter: Array<Image>,
-    drone: {
-      empty: Array<Image>,
-      carry: Array<Image>
-    }
-    designSchool: Array<Image>,
-    refinery: Array<Image>,
-    HQ: Array<Image>,
-    vaporator: Array<Image>
+  tiles: {
+    dirt: Image,
+    swamp: Image
+  },
+  robots: {
+    enlightmentCenter: Array<Image>,
+    politician: Array<Image>,
+    muckraker: Array<Image>,
+    slanderer: Array<Image>
+  },
+  effects: { // TODO
   },
   controls: {
     goNext: Image,
@@ -38,106 +29,103 @@ export type AllImages = {
   }
 };
 
-export function loadAll(config: Config, finished: (AllImages) => void) {
-  let expected = 0, loaded = 0;
-  let result: any = {
-    robot: {
-      netGun: [],
-      landscaper: [],
-      miner: [],
-      fulfillmentCenter: [],
-      drone: {empty: [], carry: []},
-      designSchool: [],
-      refinery: [],
-      vaporator: [],
-      HQ: []
-    },
-    controls: {}
-  };
-
-  // write loaded image to obj[slot]
-  function img(obj, slot, url) {
-    // we expect another one
-    expected++;
-    let image = new Image();
-    image.onload = () => {
-      obj[slot] = image;
-      // hey, we found it
-      loaded++;
-      if (loaded === expected) {
-        console.log('All images loaded.');
-        finished(Object.freeze(result) as AllImages);
-      }
-    };
-    image.onerror = () => {
-      loaded++;
-      console.log(`CANNOT LOAD IMAGE: ${slot}, ${url}, ${image}`);
-      if (loaded === expected) {
-        console.log('All images loaded.');
-        finished(Object.freeze(result) as AllImages);
-      }
-    }
-    image.src = url.default;
-  }
-
+export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   const dirname = "./static/img/";
   const RED: number = 1;
   const BLU: number = 2;
 
-  img(result, 'background', require(dirname + 'map/tiled_1.jpg'));
-  img(result, 'unknown', require(dirname + 'sprites/unknown.png'));
-  img(result, 'star', require(dirname + 'yellow_star.png'));
-  img(result, 'soup', require(dirname + 'soup.png'));
-  img(result, 'cow', require(dirname + 'sprites/Cow.png'));
+  function loadImage(obj, slot, path) : void {
+    this.expected++;
+    const image = new Image();
 
+    function onFinish(){
+      if(this.requestedAll && this.expected == this.success + this.failure){
+        console.log(`Image loaded: ${this.success} successful, ${this.failure} failed. Total ${this.expected}.`);
+        callback((Object.freeze(result) as unknown) as AllImages);
+      }
+    }
 
-  // these are the teams we expect robots to be in according to current
-  // battlecode-server
-  // TODO(jhgilles):
-  // we'll need to update them if team configuration becomes more dynamic
-  img(result.robot.drone.empty, RED, require(dirname + 'sprites/Drone_red.png'));
-  img(result.robot.drone.empty, BLU, require(dirname + 'sprites/Drone_blue.png'));
-  img(result.robot.drone.carry, RED, require(dirname + 'sprites/Drone_red_carry.png'));
-  img(result.robot.drone.carry, BLU, require(dirname + 'sprites/Drone_blue_carry.png'));
+    image.onload = () => {
+      obj[slot] = image;
+      this.success++;
+      onFinish();
+    };
 
-  img(result.robot.netGun, RED, require(dirname + 'sprites/Net_gun_red.png'));
-  img(result.robot.netGun, BLU, require(dirname + 'sprites/Net_gun_blue.png'));
-  
-  img(result.robot.landscaper, RED, require(dirname + 'sprites/Landscaper_red.png'));
-  img(result.robot.landscaper, BLU, require(dirname + 'sprites/Landscaper_blue.png'));
-  
-  img(result.robot.miner, RED, require(dirname + 'sprites/Miner_red.png'));
-  img(result.robot.miner, BLU, require(dirname + 'sprites/Miner_blue.png'));
-  
-  img(result.robot.fulfillmentCenter, RED, require(dirname + 'sprites/Fulfillment_red.png'));
-  img(result.robot.fulfillmentCenter, BLU, require(dirname + 'sprites/Fulfillment_blue.png'));
-  
-  img(result.robot.designSchool, RED, require(dirname + 'sprites/SOUPER_red.png'));
-  img(result.robot.designSchool, BLU, require(dirname + 'sprites/SOUPER_blue.png'));
-  
-  img(result.robot.refinery, RED, require(dirname + 'sprites/Refinery_red.png'));
-  img(result.robot.refinery, BLU, require(dirname + 'sprites/Refinery_blue.png'));
-  
-  img(result.robot.vaporator, RED, require(dirname + 'sprites/Vaporator_red.png'));
-  img(result.robot.vaporator, BLU, require(dirname + 'sprites/Vaporator_blue.png'));
-  
-  img(result.robot.HQ, RED, require(dirname + 'sprites/HQ_red.png'));
-  img(result.robot.HQ, BLU, require(dirname + 'sprites/HQ_blue.png'));
-  
+    image.onerror = () => {
+      obj[slot] = image;
+      this.failure++;
+      console.error(`CANNOT LOAD IMAGE: ${slot}, ${path}, ${image}`);
+      onFinish();
+    }
 
-  // Buttons are from https://material.io/resources/icons
-  img(result.controls, 'goNext', require(dirname + 'controls/go-next.png'));
-  img(result.controls, 'goPrevious', require(dirname + 'controls/go-previous.png'));
-  img(result.controls, 'playbackPause', require(dirname + 'controls/playback-pause.png'));
-  img(result.controls, 'playbackStart', require(dirname + 'controls/playback-start.png'));
-  img(result.controls, 'playbackStop', require(dirname + 'controls/playback-stop.png'));
-  img(result.controls, 'reverseUPS', require(dirname + 'controls/reverse.png'));
-  img(result.controls, 'doubleUPS', require(dirname + 'controls/skip-forward.png'));
-  img(result.controls, 'halveUPS', require(dirname + 'controls/skip-backward.png'));
-  img(result.controls, 'goEnd', require(dirname + 'controls/go-end.png'));
+    // might want to use path library
+    image.src = require(dirname + path).default;
+  }
+  loadImage.expected = 0;
+  loadImage.success = 0;
+  loadImage.failure = 0;
+  loadImage.requestedAll = false;
 
-  img(result.controls, 'matchBackward', require(dirname + 'controls/green-previous.png'));
-  img(result.controls, 'matchForward', require(dirname + 'controls/green-next.png'));
+  const result = {
+    tiles: {
+      dirt: null,
+      swamp: null
+    },
+    robots: {
+      enlightmentCenter: [],
+      politician: [],
+      muckraker: [],
+      slanderer: [],
+    },
+    effects: {},
+    controls: {
+      goNext: null,
+      goPrevious: null,
+      playbackPause: null,
+      playbackStart: null,
+      playbackStop: null,
+      matchForward: null,
+      matchBackward: null,
+      reverseUPS: null,
+      doubleUPS: null,
+      halveUPS: null,
+      goEnd: null
+    }
+  };
+
+  // terrain tiles
+  loadImage(result.tiles, 'dirt', 'tiles/DirtTerrain.png');
+  loadImage(result.tiles, 'swamp', 'tiles/SwampTerrain.png');
+
+  // robot sprites
+  loadImage(result.robots.enlightmentCenter, RED, 'sprites/center_red.png');
+  loadImage(result.robots.muckraker, RED, 'sprites/muck_red.png');
+  loadImage(result.robots.politician, RED, 'sprites/polit_red.png');
+  loadImage(result.robots.slanderer, RED, 'sprites/slanderer_red.png');
+
+  loadImage(result.robots.enlightmentCenter, BLU, 'sprites/center_blue.png');
+  loadImage(result.robots.muckraker, BLU, 'sprites/muck_blue.png');
+  loadImage(result.robots.politician, BLU, 'sprites/polit_blue.png');
+  loadImage(result.robots.slanderer, BLU, 'sprites/slanderer_blue.png');
+
+  // TODO: effects
+
+  // buttons are from https://material.io/resources/icons
+  loadImage(result.controls, 'goNext', 'controls/go-next.png');
+  loadImage(result.controls, 'goPrevious', 'controls/go-previous.png');
+  loadImage(result.controls, 'playbackPause', 'controls/playback-pause.png');
+  loadImage(result.controls, 'playbackStart', 'controls/playback-start.png');
+  loadImage(result.controls, 'playbackStop', 'controls/playback-stop.png');
+  loadImage(result.controls, 'reverseUPS', 'controls/reverse.png');
+  loadImage(result.controls, 'doubleUPS', 'controls/skip-forward.png');
+  loadImage(result.controls, 'halveUPS', 'controls/skip-backward.png');
+  loadImage(result.controls, 'goEnd', 'controls/go-end.png');
+
+  loadImage(result.controls, 'matchBackward', 'controls/green-previous.png');
+  loadImage(result.controls, 'matchForward', 'controls/green-next.png');
+  
+  // mark as finished
+  loadImage.requestedAll = true;
 }
 
 
