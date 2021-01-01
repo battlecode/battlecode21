@@ -23,55 +23,31 @@ import java.util.function.ObjIntConsumer;
 public class FlatHelpers {
     public static RobotType getRobotTypeFromBodyType(byte bodyType) {
         switch (bodyType) {
-            case BodyType.HQ:
-                return RobotType.HQ;
-            case BodyType.MINER:
-                return RobotType.MINER;
-            case BodyType.REFINERY:
-                return RobotType.REFINERY;
-            case BodyType.VAPORATOR:
-                return RobotType.VAPORATOR;
-            case BodyType.DESIGN_SCHOOL:
-                return RobotType.DESIGN_SCHOOL;
-            case BodyType.FULFILLMENT_CENTER:
-                return RobotType.FULFILLMENT_CENTER;
-            case BodyType.LANDSCAPER:
-                return RobotType.LANDSCAPER;
-            case BodyType.DELIVERY_DRONE:
-                return RobotType.DELIVERY_DRONE;
-            case BodyType.NET_GUN:
-                return RobotType.NET_GUN;
-            case BodyType.COW:
-                return RobotType.COW;
+            case BodyType.ENLIGHTENMENT_CENTER:
+                return RobotType.ENLIGHTENMENT_CENTER;
+            case BodyType.POLITICIAN:
+                return RobotType.POLITICIAN;
+            case BodyType.SLANDERER:
+                return RobotType.SLANDERER;
+            case BodyType.MUCKRAKER:
+                return RobotType.MUCKRAKER;
             default:
-                throw new RuntimeException("No robot type for: "+bodyType);
+                throw new RuntimeException("No robot type for: " + bodyType);
         }
     }
 
     public static byte getBodyTypeFromRobotType(RobotType type) {
         switch (type) {
-            case HQ:
-                return BodyType.HQ;
-            case MINER:
-                return BodyType.MINER;
-            case REFINERY:
-                return BodyType.REFINERY;
-            case VAPORATOR:
-                return BodyType.VAPORATOR;
-            case DESIGN_SCHOOL:
-                return BodyType.DESIGN_SCHOOL;
-            case FULFILLMENT_CENTER:
-                return BodyType.FULFILLMENT_CENTER;
-            case LANDSCAPER:
-                return BodyType.LANDSCAPER;
-            case DELIVERY_DRONE:
-                return BodyType.DELIVERY_DRONE;
-            case NET_GUN:
-                return BodyType.NET_GUN;
-            case COW:
-                return BodyType.COW;
+            case RobotType.ENLIGHTENMENT_CENTER:
+                return BodyType.ENLIGHTENMENT_CENTER;
+            case RobotType.POLITICIAN:
+                return BodyType.POLITICIAN;
+            case RobotType.SLANDERER:
+                return BodyType.SLANDERER;
+            case RobotType.MUCKRAKER:
+                return BodyType.MUCKRAKER;
             default:
-                throw new RuntimeException("No body type for: "+type);
+                throw new RuntimeException("No body type for: " + type);
         }
     }
 
