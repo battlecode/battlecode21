@@ -708,9 +708,13 @@ class SubmissionViewSet(viewsets.GenericViewSet,
     def compilation_pubsub_call(self, request, team, league_id, pk=None):
         # It is better if compile server gets requests for compiling submissions that are actually in buckets. 
         # So, only after an upload is done, the frontend calls this endpoint to give the compile server a request.
+
+        # Only allow if superuser, or on the team of the submission
+        # Also make sure that the admin is on a team! Otherwise you may get a 403.
         submission = self.get_queryset().get(pk=pk)
-        if team != submission.team:
-            return Response({'message': 'Not authenticated on the right team'}, status.HTTP_401_UNAUTHORIZED)
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if not ((team == submission.team) or is_admin):
+            return Response({'message': 'Not authenticated on the right team, nor is admin'}, status.HTTP_401_UNAUTHORIZED)
         
         # If a compilation has already succeeded, keep as so; no need to re-do.
         # (Might make sense to re-do for other submissions, however.)
