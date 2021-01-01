@@ -15,7 +15,7 @@ export type StatBar = {
 };
 
 /**
-* Loads game stats: team name, soups, robot count
+* Loads game stats: team name, votes, robot count
 * We make the distinction between:
 *    1) Team names - a global string identifier i.e. "Teh Devs"
 *    2) Team IDs - each Battlecode team has a unique numeric team ID i.e. 0
@@ -31,7 +31,7 @@ export default class Stats {
 
   // Key is the team ID
   private robotTds: Object = {}; // Secondary key is robot type
-  private statBars: Map<number, { soups: StatBar }>;
+  private statBars: Map<number, { votes: StatBar }>;
   private statsTableElement: HTMLTableElement;
 
   private robotConsole: HTMLDivElement;
@@ -146,27 +146,26 @@ export default class Stats {
       bar.height = "150";
       bar.vAlign = "bottom";
       // TODO: figure out if statbars.get(id) can actually be null??
-      bar.appendChild(this.statBars.get(id)!.soups.bar);
+      bar.appendChild(this.statBars.get(id)!.votes.bar);
       bars.appendChild(bar);
 
       const count = document.createElement("td");
       // TODO: figure out if statbars.get(id) can actually be null??
-      count.appendChild(this.statBars.get(id)!.soups.label);
+      count.appendChild(this.statBars.get(id)!.votes.label);
       counts.appendChild(count);
     });
 
-    // Label for soup
-    const labelSoups = document.createElement("td");
-    labelSoups.colSpan = 2;
+    // Label for votes
+    const labelPoints = document.createElement("td");
+    labelPoints.colSpan = 2;
     let ll = document.createElement('h4');
-    ll.innerText = 'Soup';
-    labelSoups.appendChild(ll);
-    // labelSoups.innerText = "Soup";
+    ll.innerText = 'Votes';
+    labelPoints.appendChild(ll);
 
     table.appendChild(bars);
     table.appendChild(counts);
     table.appendChild(labels);
-    labels.appendChild(labelSoups);
+    labels.appendChild(labelPoints);
     return table;
   }
 
@@ -179,7 +178,7 @@ export default class Stats {
       this.div.removeChild(this.div.firstChild);
     }
     this.robotTds = {};
-    this.statBars = new Map<number, { soups: StatBar }>();
+    this.statBars = new Map<number, { votes: StatBar }>();
 
     if(this.conf.tournamentMode){
       // FOR TOURNAMENT
@@ -218,18 +217,18 @@ export default class Stats {
       }
       this.robotTds[teamID] = initialRobotCount;
       
-      // Create the stat bar for Soups
-      let soups = document.createElement("div");
-      soups.className = "stat-bar";
-      soups.style.backgroundColor = hex[inGameID];
-      let soupsSpan = document.createElement("span");
-      soupsSpan.innerHTML = "0";
+      // Create the stat bar for votes
+      let votes = document.createElement("div");
+      votes.className = "stat-bar";
+      votes.style.backgroundColor = hex[inGameID];
+      let votesSpan = document.createElement("span");
+      votesSpan.innerHTML = "0";
 
       // Store the stat bars
       this.statBars.set(teamID, {
-        soups: {
-          bar: soups,
-          label: soupsSpan
+        votes: {
+          bar: votes,
+          label: votesSpan
         }
       });
 
@@ -280,14 +279,14 @@ export default class Stats {
   }
 
   /**
-   * Change the soups of the given team
+   * Change the votes of the given team
    */
-  setSoups(teamID: number, count: number) {
+  setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
-    const statBar: StatBar = this.statBars.get(teamID)!.soups;
+    const statBar: StatBar = this.statBars.get(teamID)!.votes;
     statBar.label.innerText = String(count);
-    const maxSoup = 1000;
-    statBar.bar.style.height = `${Math.min(100 * count / maxSoup, 100)}%`;
+    const maxVotes = 1000;
+    statBar.bar.style.height = `${Math.min(100 * count / maxVotes, 100)}%`;
 
     // TODO winner gets star?
     // if (this.images.star.parentNode === statBar.bar) {

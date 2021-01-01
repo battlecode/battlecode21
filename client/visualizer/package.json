@@ -1,10 +1,10 @@
 {
   "name": "battlecode-visualizer",
-  "version": "1.1.7",
+  "version": "2021.0.0",
   "description": "Visualizing the game using playback",
   "private": true,
   "scripts": {
-    "clean": "rm -rf bc20",
+    "clean": "rm -rf out",
     "lint": "tslint \"src/**/*.ts\"",
     "build": "webpack --mode=development",
     "prod": "webpack --mode=production",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/battlecode/battlecode20.git"
+    "url": "git+https://github.com/battlecode/battlecode21.git"
   },
   "author": "Teh Devs",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/battlecode/battlecode20/issues"
+    "url": "https://github.com/battlecode/battlecode21/issues"
   },
-  "homepage": "https://github.com/battlecode/battlecode20#battlecode-2020",
+  "homepage": "https://github.com/battlecode/battlecode21#readme",
   "dependencies": {
     "battlecode-playback": "file:../playback",
     "speedscope": "^1.5.2",
@@ -58,7 +58,7 @@
     "productName": "Battlecode Client",
     "compression": "maximum",
     "files": [
-      "bc20/**/*",
+      "out/**/*",
       "index.html",
       "electron-main.js",
       "node_modules/electron"
@@ -68,9 +68,9 @@
     },
     "fileAssociations": [
       {
-        "ext": "bc20",
-        "name": "BC20",
-        "description": "Battlecode Match 2020",
+        "ext": "bc21",
+        "name": "BC21",
+        "description": "Battlecode Match 2021",
         "role": "Viewer"
       }
     ],

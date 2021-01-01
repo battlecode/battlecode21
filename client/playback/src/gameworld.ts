@@ -44,7 +44,8 @@ export type MapStats = {
 export type TeamStats = {
   // An array of numbers corresponding to team stats, which map to RobotTypes
   // Corresponds to robot type (including NONE. length 5)
-  robots: [number, number, number, number, number]
+  robots: [number, number, number, number, number],
+  votes: number
 };
 
 export type IndicatorDotsSchema = {
@@ -171,7 +172,9 @@ export default class GameWorld {
             0, // SLANDERER
             0, // MUCKRAKER
             0, // NONE
-        ]});
+          ],
+          votes: 0
+        });
     }
 
     // Instantiate mapStats
@@ -291,6 +294,17 @@ export default class GameWorld {
     if (delta.roundID() != this.turn + 1) {
       throw new Error(`Bad Round: this.turn = ${this.turn}, round.roundID() = ${delta.roundID()}`);
     }
+
+    // Process votes gained
+    for (var i = 0; i < delta.teamIDsLength(); i++) {
+      var teamID = delta.teamIDs(i);
+      var statObj = this.teamStats.get(teamID);
+
+      statObj.votes += delta.teamVPs(i) ? 1 : 0;
+      console.log("abc", statObj.votes);
+
+      this.teamStats.set(teamID, statObj);
+  }
 
     // Location changes on bodies
     const movedLocs = delta.movedLocs(this._vecTableSlot1);

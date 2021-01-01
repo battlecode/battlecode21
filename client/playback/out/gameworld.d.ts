@@ -30,6 +30,7 @@ export declare type MapStats = {
 };
 export declare type TeamStats = {
     robots: [number, number, number, number, number];
+    votes: number;
 };
 export declare type IndicatorDotsSchema = {
     id: Int32Array;

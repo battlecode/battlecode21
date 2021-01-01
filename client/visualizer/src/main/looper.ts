@@ -276,17 +276,15 @@ export default class Looper {
     private updateStats(world: GameWorld, meta: Metadata) {
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
-            let teamStats = world.teamStats.get(teamID);
-
-            // TODO: maybe this check isn't needed???
-            if (teamStats == undefined) {
-                throw new Error("teamStats is undefined??? figure this out NOW")
-            }
+            let teamStats = world.teamStats.get(teamID) as TeamStats;
 
             // Update each robot count
             this.stats.robots.forEach((type: schema.BodyType) => {
-                this.stats.setRobotCount(teamID, type, (teamStats as TeamStats).robots[type]);
+                this.stats.setRobotCount(teamID, type, teamStats.robots[type]);
             });
+
+            // Set votes
+            this.stats.setVotes(teamID, teamStats.votes);
         }
     }
 

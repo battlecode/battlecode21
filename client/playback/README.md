@@ -24,7 +24,7 @@ Remember to run `npm install` without any serious errors in this directory.
 
  * `npm run check`: Compile typescript files (`src/*.ts`) without creating any output files, and pipe output to less. Use this command when you need to update playback for new schema.
  * `npm run build`: Compile typescript files (`src/*.ts`) into javascript & typescript declaration files. (`out/*.js`, `out/*.d.ts`)
- * `npm run gen`: Generate dummy bc20 files. It runs typescript without transcripting into javascript, by using `ts-node`. (`../examples`)
+ * `npm run gen`: Generate dummy `.bc21` files. It runs typescript without transcripting into javascript, by using `ts-node`. (`../examples`)
  * `npm run clean`: Simply remove itself and everything in `out` directory.
  * `npm run watch`: Watch for chanages on `src/*.ts` files, and build again whenever change is detected.
 
@@ -34,11 +34,11 @@ The other scripts are under maintenance.
 ### Structure
   * `src/*.ts` : main source files. `index.ts` is the starting point
   * `src/tsconfig.json` : TypeScript compile option configuration file
-  * `src/gen/create.ts` : code for generating dummy bc20 files.
+  * `src/gen/create.ts` : code for generating dummy `.bc21` files.
   * `src/legacy/**/*.ts` : Legacy codes, including test for soa.ts and simulating
   * `out/*.js` : compiled javascript output of typescript files
   * `out/*.d.ts` : compiled typescript declaration files of typescript files
-  * `out/files/*.bc20` : generated `bc20` files from `src/gen/*`
+  * `../examples` : generated `.bc21` files from `src/gen/*`
 
   
 ### Note
@@ -68,7 +68,7 @@ const bc = require('battlecode-playback');
 let aliveRobots = {};
 let lifetimes = [];
 
-bc.stream('match.bc20').on('spawn', spawnEvent => {
+bc.stream('match.bc21').on('spawn', spawnEvent => {
   aliveRobots[spawnEvent.bodyId] = {
     born: spawnEvent.round
   };

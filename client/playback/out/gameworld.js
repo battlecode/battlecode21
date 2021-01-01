@@ -41,7 +41,8 @@ class GameWorld {
                     0,
                     0,
                     0,
-                ]
+                ],
+                votes: 0
             });
         }
         // Instantiate mapStats
@@ -139,6 +140,14 @@ class GameWorld {
     processDelta(delta) {
         if (delta.roundID() != this.turn + 1) {
             throw new Error(`Bad Round: this.turn = ${this.turn}, round.roundID() = ${delta.roundID()}`);
+        }
+        // Process votes gained
+        for (var i = 0; i < delta.teamIDsLength(); i++) {
+            var teamID = delta.teamIDs(i);
+            var statObj = this.teamStats.get(teamID);
+            statObj.votes += delta.teamVPs(i) ? 1 : 0;
+            console.log("abc", statObj.votes);
+            this.teamStats.set(teamID, statObj);
         }
         // Location changes on bodies
         const movedLocs = delta.movedLocs(this._vecTableSlot1);
@@ -410,22 +419,13 @@ class GameWorld {
             y: locs.ysArray()
         });
         const arrays = this.bodies.arrays;
-        // TODO: defaults for new bodies
-        // const initList = [
-        //   arrays.onDirt,
-        //   arrays.carryDirt,
-        //   arrays.cargo,
-        //   arrays.isCarried,
-        //   arrays.bytecodesUsed,
-        // ];
-        // initList.forEach((arr) => {
-        //   StructOfArrays.fill(
-        //     arr,
-        //     0,
-        //     startIndex,
-        //     this.bodies.length
-        //   );
-        // });
+        const initList = [
+            arrays.flag,
+            arrays.bytecodesUsed
+        ];
+        initList.forEach((arr) => {
+            soa_1.default.fill(arr, 0, startIndex, this.bodies.length);
+        });
     }
 }
 exports.default = GameWorld;

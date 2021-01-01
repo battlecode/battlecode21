@@ -121,9 +121,9 @@ export default class Runner {
     }
     // not loading default match file
     // else {
-    //   console.log('Starting with a default match file (/client/default.bc20)');
+    //   console.log('Starting with a default match file (/client/default.bc21)');
     //   if(_fs.readFile){
-    //     _fs.readFile('../default.bc20', (err, data: ArrayBuffer) => {
+    //     _fs.readFile('../default.bc21', (err, data: ArrayBuffer) => {
     //       if(err){
     //         console.log('Error while loading default local file!');
     //         console.log(err);
@@ -273,9 +273,9 @@ export default class Runner {
     let uploadLabel = document.createElement("label");
     uploadLabel.setAttribute("for", "file-upload");
     uploadLabel.setAttribute("class", "custom-button");
-    uploadLabel.innerText = 'Upload a .bc20 replay file';
+    uploadLabel.innerText = 'Upload a .bc21 replay file';
     if (this.conf.tournamentMode) {
-      uploadLabel.innerText = "Upload a .bc20 or .json file";
+      uploadLabel.innerText = "Upload a .bc21 or .json file";
     }
 
     // create the functional button
@@ -283,9 +283,9 @@ export default class Runner {
     upload.textContent = 'upload';
     upload.id = "file-upload";
     upload.setAttribute('type', 'file');
-    upload.accept = '.bc20';
+    upload.accept = '.bc21';
     if (this.conf.tournamentMode) {
-      upload.accept = '.bc20,.json';
+      upload.accept = '.bc21,.json';
     }
     upload.onchange = () => this.loadMatch(upload.files as FileList);
     upload.onclick = () => upload.value = "";

@@ -151,7 +151,7 @@ export default class Sidebar {
     instructions in the sidebar. Note that it may take a few seconds for
     matches to be displayed.<br>
     <i>From the web client:</i> If you are not running the client as a
-    stand-alone application, you can always upload a <b>.bc20</b> file by
+    stand-alone application, you can always upload a <b>.bc21</b> file by
     clicking upload button in the <b>'Queue'</b> section.<br>
     <br>
     Use the control buttons in <b>'Queue'</b> and the top of the screen to
@@ -232,7 +232,7 @@ export default class Sidebar {
       (async function (splashDiv, version) {
 
         var options = {
-          host: '2020.battlecode.org',
+          host: '2021.battlecode.org',
           path: '/version.txt'
         };
 
@@ -268,7 +268,7 @@ export default class Sidebar {
     logo.id = "logo";
 
     let boldText = document.createElement("b");
-    boldText.innerHTML = "Battlecode 2020";
+    boldText.innerHTML = "Battlecode 2021";
     logo.appendChild(boldText);
     return logo;
   }

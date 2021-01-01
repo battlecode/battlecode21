@@ -5,15 +5,16 @@
 */node_modules/
 
 # bundled visualizer
-visualizer/bc20/
+visualizer/out/
+
 # built client
 dist/
 
-# Generated test bc20 files
+# Generated test bc21 files
 examples/
 
 # any battlecode files
-*.bc20
+*.bc21
 
 # for mac users?
 **/.DS_Store
