@@ -429,15 +429,13 @@ export default class Controls {
    * Bytecodes Used: bytecodes"
    */
   // TODO fix this (different stats)
-  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes?: number): void {
+  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes: number, flag: number): void {
     // console.log(carryDirt);
     let infoString = `Robot ID ${id} (${bodyType})<br>
       Location: (${x}, ${y})<br>
-      Influence: ${influence}, Conviction: ${conviction}`;
+      Influence: ${influence}, Conviction: ${conviction} <br>
+      Bytecodes Used: ${bytecodes}, Flag ${flag}`;
 
-      if (bytecodes !== undefined) {
-        infoString += `<br>Bytecodes Used: ${bytecodes}`;
-      }
       this.infoString.innerHTML = infoString;
   }
 }

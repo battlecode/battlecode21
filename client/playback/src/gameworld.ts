@@ -13,8 +13,6 @@ export type DeadBodiesSchema = {
   y: Int32Array,
 }
 
-const NEUTRAL_TEAM = 0;
-
 export type BodiesSchema = {
   id: Int32Array,
   team: Int8Array,
@@ -25,6 +23,7 @@ export type BodiesSchema = {
   conviction: Int32Array;
   flag: Int8Array;
   bytecodesUsed: Int32Array, // TODO: is this needed?
+  ability: Int8Array
 };
 
 // NOTE: consider changing MapStats to schema to use SOA for better performance, if it has large data
@@ -139,6 +138,12 @@ export default class GameWorld {
   private _vecTableSlot2: schema.VecTable;
   private _rgbTableSlot: schema.RGBTable;
 
+  /**
+   * IDs of robots who performed a temporary ability in the previous round,
+   * which should be removed in the current round.
+   */
+  private abilityRobots: number[] = [];
+
   constructor(meta: Metadata) {
     this.meta = meta;
 
@@ -158,6 +163,7 @@ export default class GameWorld {
       conviction: new Int32Array(0),
       flag: new Int8Array(0),
       bytecodesUsed: new Int32Array(0),
+      ability: new Int8Array(0)
     }, 'id');
 
 
@@ -322,7 +328,11 @@ export default class GameWorld {
       this.insertBodies(bodies);
     }
 
-    // Action
+    // Remove abilities from previous round
+    this.abilityRobots.forEach((id) => this.bodies.alter({id: id, ability: 0}));
+    this.abilityRobots = [];
+
+    // Actions
     if(delta.actionsLength() > 0){
       const arrays = this.bodies.arrays;
       
@@ -408,15 +418,19 @@ export default class GameWorld {
           /// Politicians self-destruct and affect nearby bodies
           /// Target: none
           case schema.Action.EMPOWER:
+            this.bodies.alter({ id: robotID, ability: 1});
+            this.abilityRobots.push(robotID);
             break;
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
+            this.bodies.alter({ id: robotID, ability: 2});
+            this.abilityRobots.push(robotID);
             break;
           /// Units can change their flag.
           /// Target: a new flag value.
           case schema.Action.SET_FLAG:
-            this.bodies.alter({ id: target, flag: target});
+            this.bodies.alter({ id: robotID, flag: target});
             break;
           /// Builds a unit (enlightent center).
           /// Target: spawned unit
@@ -456,7 +470,6 @@ export default class GameWorld {
     }
 
     // TODO Passive Changes, need game constants.
-
     
     // Died bodies
     if (delta.diedIDsLength() > 0) {
@@ -570,7 +583,6 @@ export default class GameWorld {
     var teams = bodies.teamIDsArray();
     var types = bodies.typesArray();
     var influences = bodies.influencesArray();
-    console.log("test:", teams, types, influences);
 
     // Update spawn stats
     for(let i = 0; i < bodies.robotIDsLength(); i++) {
@@ -588,37 +600,24 @@ export default class GameWorld {
     // You can't reuse TypedArrays easily, so I'm inclined to
     // let this slide for now.
     
-    // Prepare new bodies
+    // Initialize convictions
+    var convictions: Int32Array = influences.map((influence, i) => influence * this.meta.types[types[i]].convictionRatio);
 
-    var convictions = new Int32Array(bodies.robotIDsLength());
-    for (let i = 0; i < bodies.robotIDsLength(); i++) {
-      convictions[i] = influences[i] * this.meta.types[types[i]].convictionRatio;
-    }
+    // Initialize abilities
+    var abilities: Int8Array = types.map((type) => (type === schema.BodyType.SLANDERER ? 3 : 0));
 
-    const startIndex = this.bodies.insertBulk({
+    // Insert bodies
+    this.bodies.insertBulk({
       id: bodies.robotIDsArray(),
       team: teams,
       type: types,
       influence: influences,
       conviction: convictions,
       x: locs.xsArray(),
-      y: locs.ysArray()
-    });
-
-    const arrays = this.bodies.arrays;
-    
-    const initList = [
-      arrays.flag,
-      arrays.bytecodesUsed
-    ];
-
-    initList.forEach((arr) => {
-      StructOfArrays.fill(
-        arr,
-        0,
-        startIndex,
-        this.bodies.length
-      );
+      y: locs.ysArray(),
+      flag: new Int8Array(bodies.robotIDsLength()),
+      bytecodesUsed: new Int32Array(bodies.robotIDsLength()),
+      ability: abilities
     });
   }
 

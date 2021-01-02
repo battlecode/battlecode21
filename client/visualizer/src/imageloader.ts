@@ -32,6 +32,8 @@ export type AllImages = {
 
 export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   const dirname = "./static/img/";
+
+  const NEUTRAL: number = 0;
   const RED: number = 1;
   const BLU: number = 2;
 
@@ -80,7 +82,12 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       muckraker: [],
       slanderer: [],
     },
-    effects: {},
+    effects: {
+      death: [],
+      embezzle: [],
+      empower: [],
+      expose: []
+    },
     controls: {
       goNext: null,
       goPrevious: null,
@@ -113,7 +120,19 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result.robots.politician, BLU, 'robots/polit_blue');
   loadImage(result.robots.slanderer, BLU, 'robots/slanderer_blue');
 
-  // TODO: effects
+  loadImage(result.robots.enlightenmentCenter, NEUTRAL, 'robots/center');
+
+  // effects
+
+  loadImage(result.effects.death, 1, 'effects/death/death_empty');
+
+  loadImage(result.effects.embezzle, 1, 'effects/embezzle/slanderer_embezzle_empty_1');
+  loadImage(result.effects.embezzle, 2, 'effects/embezzle/slanderer_embezzle_empty_2');
+
+  loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_1');
+  loadImage(result.effects.empower, 2, 'effects/empower/polit_empower_empty_2');
+
+  loadImage(result.effects.expose, 1, 'effects/expose/expose_empty');
 
   // buttons are from https://material.io/resources/icons
   loadImage(result.controls, 'goNext', 'controls/go-next');

@@ -1,6 +1,5 @@
 import {schema} from 'battlecode-playback';
 import {Symmetry} from './mapeditor/index';
-import { net } from 'electron';
 
 // Body types
 export const ENLIGHTENMENT_CENTER = schema.BodyType.ENLIGHTENMENT_CENTER;
@@ -26,6 +25,9 @@ export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<nu
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
 export const SENSOR_RADIUS_COLOR = "#0000ff";
+
+// Expected bot image size
+export const IMAGE_SIZE = 128;
 
 // Game canvas rendering sizes
 export const INDICATOR_DOT_SIZE = .3;
@@ -135,6 +137,19 @@ export function symmetryToString(symmetry: Symmetry) {
     case Symmetry.HORIZONTAL: return "Horizontal";
     case Symmetry.VERTICAL:   return "Vertical";
     default:         throw new Error("invalid symmetry");
+  }
+}
+
+export function abilityToEffectString(effect: number): string | null {
+  switch(effect) {
+    case 1:
+      return "empower";
+    case 2:
+      return "expose";
+    case 3:
+      return "embezzle";
+    default:
+      return null;
   }
 }
 

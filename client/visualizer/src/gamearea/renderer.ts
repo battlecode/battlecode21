@@ -98,7 +98,7 @@ export default class Renderer {
 
       //return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
       // iterate and find the two colors
-      x *= 100;
+      x *= 10;
       let lo: number[] = [0,0,0];
       let hi: number[] = [0,0,0];
       let mx: number = -1000;
@@ -173,20 +173,15 @@ export default class Renderer {
     const ids = bodies.arrays.id;
     const xs = bodies.arrays.x;
     const ys = bodies.arrays.y;
+    const abilities = bodies.arrays.ability;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y -1;
 
     let nextXs: Int32Array, nextYs: Int32Array, realXs: Float32Array, realYs: Float32Array;
     if (nextStep && lerpAmount) {
-      // Interpolated (not going to happen in 2019)
       nextXs = nextStep.bodies.arrays.x;
       nextYs = nextStep.bodies.arrays.y;
       lerpAmount = lerpAmount || 0;
-    }
-    else{
-      // supposed to be error?
-      // console.log("Error in renderer.ts");
-      // return;
     }
 
     // Calculate the real xs and ys
@@ -206,31 +201,44 @@ export default class Renderer {
       }
     }
 
+    // Render continued actions
+
     // Render the robots
     // render images with priority last to have them be on top of other units.
-    let priorityImages: HTMLImageElement[] = [];
+
+    const renderBot = (i: number) => {
+      const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
+      this.drawBot(img, realXs[i], realYs[i]);
+      this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
+
+      // draw action
+      let effect: string | null = cst.abilityToEffectString(abilities[i]);
+      if (effect !== null) {
+        const effectImg: HTMLImageElement = this.imgs.effects[effect][1];
+        this.drawBot(effectImg, realXs[i], realYs[i]);
+      }
+    }
+
+    let priorityIndices: number[] = [];
 
     for (let i = 0; i < length; i++) {
-      const team = teams[i];
-      const type = types[i];
-      const x = realXs[i];
-      const y = realYs[i];
-
-      // Fetch bot image.
-      const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(type)][team];
-
-      if(cst.bodyTypePriority.includes(type)){
-        priorityImages.push(img);
+      if(cst.bodyTypePriority.includes(types[i])){
+        priorityIndices.push(i);
         continue;
       }
-
-      // Draw bot
-      //this.drawImage(img, x, y, radius);
-      this.drawBot(img, x, y);
-      
-      // Draw the sight radius
-      this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
+      renderBot(i);
     }
+
+    priorityIndices.forEach((i) => renderBot(i));
+
+    // Render died bodies
+
+    const died = world.diedBodies;
+    const diedImg: HTMLImageElement = this.imgs.effects["death"][1];
+    for (let i = 0; i < died.length; i++) {
+      this.drawBot(diedImg, died.arrays.x[i], died.arrays.y[i]);
+    }
+
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -283,10 +291,12 @@ export default class Renderer {
   }
 
   /**
-   * Draws a bot at (x, y)
+   * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
   private drawBot(img: HTMLImageElement, x: number, y: number) {
-    this.ctx.drawImage(img, x, y, 1, 1);
+    let realWidth = img.width/cst.IMAGE_SIZE;
+    let realHeight = img.height/cst.IMAGE_SIZE;
+    this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
   }
 
   private setInfoStringEvent(world: GameWorld,

@@ -17,6 +17,7 @@ export declare type BodiesSchema = {
     conviction: Int32Array;
     flag: Int8Array;
     bytecodesUsed: Int32Array;
+    ability: Int8Array;
 };
 export declare type MapStats = {
     name: string;
@@ -98,6 +99,11 @@ export default class GameWorld {
     private _vecTableSlot1;
     private _vecTableSlot2;
     private _rgbTableSlot;
+    /**
+     * IDs of robots who performed a temporary ability in the previous round,
+     * which should be removed in the current round.
+     */
+    private abilityRobots;
     constructor(meta: Metadata);
     loadFromMatchHeader(header: schema.MatchHeader): void;
     /**

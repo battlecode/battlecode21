@@ -513,10 +513,10 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
     let actions: number[] = [];
     let actionTargets: number[] = [];
 
-    if (doActions && i%10 == 0) {
+    if (doActions && i%3 == 0) {
       for (let j = 0; j < unitCount; j++) {
-        let action: number | null;
-        let actionTarget: number | null;
+        let action: number | null = null;
+        let actionTarget: number | null = null;
         switch (bodies.types[j]) {
             case schema.BodyType.POLITICIAN:
               action = schema.Action.EMPOWER;
@@ -527,7 +527,7 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
             default:
               break;
         }
-        if (action) {
+        if (action !== null) {
           actionIDs.push(bodies.robotIDs[j]);
           actions.push(action);
           actionTargets.push(actionTarget);

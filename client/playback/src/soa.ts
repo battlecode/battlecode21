@@ -37,10 +37,7 @@ import * as Map from 'core-js/es/map';
  *
  * let entities = new StructOfArrays<EntitySchema>({
  *   id: new Uint16Array([0, 1, ...]),
- *   x: new Float64Array([100, 300, ...]),
- *   y: new Float64Array([35, 24, ...]),
- *   size: new Float64Array([56, 73, ...]),
- * }, 'id');
+ *   x: new Float64Array([100, 300, ...]),BodiesSchema
  *
  * Note that one field is treated as the 'primary key' (although there aren't
  * actually secondary keys), and is used to uniquely identify objects.
@@ -544,12 +541,6 @@ export type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int
  * Amazingly, this works.
  */
 export type ValidSchema = {[id: string]: TypedArray};
-
-/**
- * The default capacity of our arrays.
- * TODO(jhgilles): tune.
- */
-const DEFAULT_CAPACITY = 8;
 
 /**
  * In case the object has deleted hasOwnProperty.
