@@ -28,21 +28,10 @@ GCLOUD_RES_BUCKET = "bc21-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
-# pub sub commands (from pub.py)
-def get_callback(api_future, data, ref):
-    """Wrap message data in the context of the callback function."""
-    def callback(api_future):
-        try:
-            print("Published message {} now has message ID {}".format(
-                data, api_future.result()))
-            ref["num_messages"] += 1
-        except Exception:
-            print("A problem occurred when publishing {}: {}\n".format(
-                data, api_future.exception()))
-            raise
-    return callback
-
-def pub(project_id, topic_name, data="", num_retries=5):
+# Methods for publishing a message to a pubsub.
+# Note that data must be a bytestring.
+# Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
+def pub(project_id, topic_name, data, num_retries=5):
     """Publishes a message to a Pub/Sub topic."""
 
     # Repeat while this fails, because the data is already in the
@@ -63,23 +52,9 @@ def pub(project_id, topic_name, data="", num_retries=5):
             # `projects/{project_id}/topics/{topic_name}`
             topic_path = client.topic_path(project_id, topic_name)
 
-            # Data sent to Cloud Pub/Sub must be a bytestring.
-            #data = b"examplefuncs"
-            if data == "":
-                data = b"sample pub/sub message"
-
-            # Keep track of the number of published messages.
-            ref = dict({"num_messages": 0})
-
             # When you publish a message, the client returns a future.
-            api_future = client.publish(topic_path, data=data)
-            api_future.add_done_callback(get_callback(api_future, data, ref))
-
-            # Keep the main thread from exiting while the message future
-            # gets resolved in the background.
-            while api_future.running():
-                time.sleep(0.5)
-                # print("Published {} message(s).".format(ref["num_messages"]))
+            api_future = client.publish(topic_path, data)
+            message_id = api_future.result()
         except:
             pass
         else:
