@@ -278,11 +278,9 @@ export default class Controls {
   updatePlayPauseButton(isPaused) {
     // toggle the play/pause button
     if (isPaused) {
-      console.log("should be paused");
       this.buttons["playbackStart"].img.style.display = "unset";
       this.buttons["playbackPause"].img.style.display = "none";
     } else {
-      console.log("should be playing");
       this.buttons["playbackStart"].img.style.display = "none";
       this.buttons["playbackPause"].img.style.display = "unset";
     }

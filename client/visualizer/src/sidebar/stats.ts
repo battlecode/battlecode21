@@ -202,7 +202,6 @@ export default class Stats {
       let teamID = teamIDs[index];
       let teamName = teamNames[index];
       let inGameID = index + 1; // teams start at index 1
-      console.log("Team: " + inGameID);
 
       // A div element containing all stats information about this team
       let teamDiv = document.createElement("div");
@@ -244,23 +243,6 @@ export default class Stats {
     this.statsTableElement.remove();
     this.statsTableElement = this.statsTable(teamIDs);
     this.div.appendChild(this.statsTableElement);
-    
-
-    const bl = document.createElement("h4");
-    bl.innerText = "Blockchain";
-    this.div.appendChild(bl);
-    this.div.appendChild(this.blockchainViewer());
-  }
-
-  blockchainViewer(): HTMLDivElement {
-    // create a blockchain
-    this.blockchain = document.createElement('div');
-
-    // make it a console
-    this.blockchain.id = "blockchain";
-    this.blockchain.className = "console";
-
-    return this.blockchain;
   }
 
   tourIndexJumpFun(e) {
@@ -293,14 +275,4 @@ export default class Stats {
     //   this.images.star.remove();
     // }
   }
-
-  /**
-   * Change the bullets of the given team
-   */
-  // setBullets(teamID: number, count: number) {
-  //   // TODO: figure out if statbars.get(id) can actually be null??
-  //   const statBar: StatBar = this.statBars.get(teamID)!.bullets;
-  //   statBar.label.innerText = String(count.toPrecision(5));
-  //   statBar.bar.style.height = `${100 * count / cst.BULLET_THRESH}%`;
-  // }
 }

@@ -136,7 +136,7 @@ export default class GameArea {
           break;
         default:
           this.wrapper.appendChild(this.canvas); // TODO: Only append if a game is available in client.games
-          console.log("Now a game");
+          console.log("Running a game");
       }
     }
     

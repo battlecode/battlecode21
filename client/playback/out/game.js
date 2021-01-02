@@ -46,7 +46,7 @@ class Game {
         const gameStarted = this._meta !== null;
         const matchCount = this._matches.length;
         const lastMatchFinished = matchCount > 0 ? this._matches[this._matches.length - 1].finished : true;
-        console.log("event!: " + (event.eType()));
+        // console.log("event!: " + (event.eType()));
         switch (event.eType()) {
             case battlecode_schema_1.schema.Event.GameHeader:
                 const gameHeader = event.e(new battlecode_schema_1.schema.GameHeader());

@@ -307,7 +307,6 @@ export default class GameWorld {
       var statObj = this.teamStats.get(teamID);
 
       statObj.votes += delta.teamVPs(i) ? 1 : 0;
-      console.log("abc", statObj.votes);
 
       this.teamStats.set(teamID, statObj);
   }

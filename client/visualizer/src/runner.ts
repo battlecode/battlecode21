@@ -153,8 +153,9 @@ export default class Runner {
       let input = document.activeElement.nodeName == "INPUT";
       if (!input) {
         // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-        console.log(event.keyCode);
-        switch (event.keyCode) {
+        const keyCode = event.keyCode;
+        console.log(`Key pressed: ${keyCode} (${String.fromCharCode(keyCode)})`);
+        switch (keyCode) {
           case 80: // "p" - Pause/Unpause
             this.controls.pause();
             break;
