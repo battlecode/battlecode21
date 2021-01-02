@@ -294,8 +294,8 @@ export default class Renderer {
    * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
   private drawBot(img: HTMLImageElement, x: number, y: number) {
-    let realWidth = img.width/cst.IMAGE_SIZE;
-    let realHeight = img.height/cst.IMAGE_SIZE;
+    let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
+    let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
     this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
   }
 
