@@ -151,7 +151,6 @@ class GameWorld {
             var teamID = delta.teamIDs(i);
             var statObj = this.teamStats.get(teamID);
             statObj.votes += delta.teamVPs(i) ? 1 : 0;
-            console.log("abc", statObj.votes);
             this.teamStats.set(teamID, statObj);
         }
         // Location changes on bodies

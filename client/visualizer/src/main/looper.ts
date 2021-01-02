@@ -82,7 +82,6 @@ export default class Looper {
         // (radii, etc. may change between matches)
         this.renderer = new Renderer(this.gamearea.canvas, this.imgs,
             this.conf, meta as Metadata, onRobotSelected, onMouseover);
-        console.log("r", this.renderer);
 
         // How fast the simulation should progress
         this.goalUPS = this.controls.getUPS();
