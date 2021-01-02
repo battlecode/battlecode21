@@ -177,37 +177,21 @@ public class RobotTypeTaglet implements Taglet {
 
         StringBuilder builder = new StringBuilder();
         try {
-            // TODO: edit this. i honestly don't know what this should be but it should be something else
-            appendField(builder, rt, "sensorRadiusSquared");
+            appendField(builder, rt, "convictionRatio");
+            builder.append("<br />");
             appendField(builder, rt, "actionCooldown");
-
-            if (rt.dirtLimit > 0) {
-                builder.append("<br />");
-                appendField(builder, rt, "dirtLimit");
-            }
-            if (rt.soupLimit > 0) {
-                builder.append("<br />");
-                appendField(builder, rt, "soupLimit");
-            }
-
-             if (rt.pollutionRadiusSquared > 0) {
-                 builder.append("<br />");
-                 appendField(builder, rt, "pollutionRadiusSquared");
-                 if (rt.localPollutionMultiplicativeEffect != 1)
-                     appendField(builder, rt, "localPollutionMultiplicativeEffect");
-                 if (rt.localPollutionAdditiveEffect != 0)
-                     appendField(builder, rt, "localPollutionAdditiveEffect");
-                 appendField(builder, rt, "globalPollutionAmount");
-                 appendField(builder, rt, "maxSoupProduced");
-             }
+            builder.append("<br />");
+            appendField(builder, rt, "actionRadiusSquared");
+            builder.append("<br />");
+            appendField(builder, rt, "sensorRadiusSquared");
+            builder.append("<br />");
+            appendField(builder, rt, "detectionRadiusSquared");
 
              if (rt.spawnSource != null) {
                  builder.append("<br />");
                  appendField(builder, rt, "spawnSource");
                  appendField(builder, rt, "cost");
              }
-
-            // appendField(builder, rt, "sensorRadius");
 
             if (rt.bytecodeLimit != 0) {
                 builder.append("<br />");
