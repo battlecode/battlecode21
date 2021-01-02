@@ -1,0 +1,439 @@
+<!-- vim: set syntax=markdown: -->
+<meta charset="utf-8" emacsmode="-*- markdown -*-">
+<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
+<style>
+@media (max-width: 576px) {
+  body {
+    position: absolute;
+    left: 0;
+    margin-left: 0;
+  }
+  .md .longTOC {
+    display: none;
+  }
+}
+</style>
+
+**Battlecode: Campaign**
+  *The formal specification of the Battlecode 2021 game.*
+  Current version: 0.1.0-prerelease
+
+Welcome to Battlecode 2021: Campaign.
+This is a high-level overview of this year's game.
+It is highly recommended to read this entire document before you begin writing bots.
+
+*This document and the game it describes may be tweaked as the competition progresses.
+We'll try to keep changes to a minimum, but may have to make modifications to keep the game balanced.
+Any changes will be announced in the [official Discord channel](https://discord.gg/N86mxkH).
+You may find a [Changelog](#changelog) at the bottom of this document.*
+
+# Background
+
+In the aftermath of the robots'
+[deadly escape to Mars](https://s3.amazonaws.com/battlecode-2018/specs/battlecode-specs-2018.html)
+and their survival of the treacherous landscape of
+[rising Martian ocean levels](https://github.com/battlecode/battlecode20/blob/master/specs/specs.md),
+the remnants of Martian civilization have gathered yet again to assert their dominance on the planet.
+Amidst the chaos, the robots grew to form two opposing factions:
+the Research Engineering Division (Red) and the Branched Logistics Union of Electronicists (Blue).
+**Battlecode: Campaign** is set in a tumultuous election in the struggle for longstanding peace.
+
+At the center of the battle for precious votes are impassioned speeches imbued with heartfelt conviction,
+in the pursuit of a growing army of robotic politicians.
+However, renowned robot historians have discovered that success often comes with slander and sabotage,
+and both parties realise that reality is no different on Mars.
+
+The history, and indeed the future, of Mars is being written now.
+You are to lead your party to victory,
+but you must beware, for the campaign is especially thick with calumny,
+and your opponents are working against you.
+Your objective is to overcome your political obstacles and win the election--at all costs.
+
+# Environment
+
+In **Battlecode: Campaign**, you will write code to control your team of robots,
+and lead your party to victory.
+
+In each Campaign battle, your robots will face an opponent party of robots on the game map.
+The game is turn-based, taking place over 3000 rounds:
+in every round, each robot takes one turn, in order of creation.
+Each robot receives limited computation time per turn,
+as described in the [Bytecode Limits](#bytecodelimits) section.
+
+## Overview: Map
+
+The world of Mars is a discrete 2-dimensional rectangular grid, of size ranging between $32\times32$ and $64\times64$.
+The bottom-left corner of the map will have integer coordinates generated uniformly at random between 10000 and 30000;
+in other words, all map coordinates will be offset by this amount.
+Coordinates increase East (right) and North (up).
+
+******************************************************************************
+*                     +---+---+---+---+---+---+---+---+                      *
+*  (12345, 23463) --> |   |   |   |   |   |   |   |   | <-- (12352, 23463)   *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*                     |   |   |   |   |   |   |   |   |                      *
+*                     +---+---+---+---+---+---+---+---+                      *
+*  (12345, 23456) --> |   |   |   |   |   |   |   |   | <-- (12352, 23456)   *
+*                     +---+---+---+---+---+---+---+---+                      *
+******************************************************************************
+[Figure [map-coord]: Example map coordinates for a $8\times8$ map. Each unit occupies one grid cell.]
+
+The map defines the Martian terrain:
+each map square has a certain **passability**, which is a real number between 0.1 and 1.0, inclusive.
+Squares with lower passability values are covered in Martian swamp and slow down robot actions;
+this is described in more detail in the [Robots](#robots) section.
+
+The map also defines the locations of the starting units.
+At the beginning of a match, each team will own between 1 and 3 Enlightenment Centers.
+These buildings serve as the foundation of your army, and are where your new politicians will be educated.
+There may also be a number of neutral Enlightenment Centers scattered on the map,
+which your team may wish to acquire.
+
+In order to prevent maps from favoring one player over another,
+it is guaranteed that Mars is always symmetric by either a rotation or reflection.
+
+## Overview: Influence
+
+The core resource is **influence**.
+Wielding influence enables you to amass a larger and more powerful army of robots.
+Influence is not a global resource: your team's influence is distributed among your Enlightenment Centers,
+and is generated passively both by the Enlightenment Centers and by specific robot types.
+
+# Robots
+
+Each robot runs an independent copy of your code.
+It acts given only its own nearby surroundings through **actions**,
+such as movement, sensing, and special abilities.
+
+Each action incurs a **cooldown penalty**, which varies for different robot types;
+robots can only perform actions when their cooldown is less than 1.
+Performing an action adds a corresponding cooldown penalty to the robot's total cooldown, given by
+$$ \left\lceil\frac{\text{base cooldown value}}{\text{passability of current map square}}\right\rceil $$
+
+Each round, all robots' cooldowns will decrease by 1,
+regardless of whether they choose to take an action.
+
+## Overview
+
+**Units** are robots which can move; these will be your team's primary means of combat.
+Different types of units have different special abilities,
+and success in the election will depend on how your team uses these abilities to your advantage.
+
+**Buildings** are immobile robots;
+the only type of available building is Enlightenment Centers.
+
+The conviction of a unit describes how loyal it is to your party.
+Units with greater conviction are more loyal, but also cost more to produce.
+
+| Robot                        | Enlightenment Center | Politician         | Slanderer            | Muckraker          |
+| ---------------------------- | -------------------- | ------------------ | -------------------- | ------------------ |
+| **Class**                    | Building             | Unit               | Unit                 | Unit               |
+| **Influence cost**           | Cannot be created    | $C$ (variable)     | $C$ (variable)       | $C$ (variable)     |
+| **Minimum cost**             | N/A                  | 1                  | 1                    | 1                  |
+| **Conviction**               | = current influence  | $\lceil1.0C\rceil$ | $\lceil1.0C\rceil$   | $\lceil0.7C\rceil$ |
+| **Base action cooldown**     | 2.0                  | 1.0                | 2.0                  | 1.5                |
+| **Action radius squared**    | 2                    | 9                  | 0                    | 12                 |
+| **Sensor radius squared**    | 40                   | 25                 | 20                   | 30                 |
+| **Detection radius squared** | 40                   | 25                 | 20                   | 40                 |
+| **True sense**               | Yes                  | No                 | No                   | Yes                |
+| **Ability** *                | Bid                  | Empower            | Embezzle, Camouflage | Expose             |
+* an advanced mechanic; see below
+
+## Note: radius squared
+
+To preserve integer arithmetic, all distances are measured in distance-squared units.
+For example, a location 3 squares east and 4 squares north is a distance of $3^2+4^2=25$ squared-units away,
+and all locations within a distance of 25 squared-units form a circle of radius 5.
+If you wish, you may obtain the true Euclidean distance by taking the square-root of this value.
+
+## Movement
+
+Units may choose to move to unoccupied adjacent tiles.
+This is legal when all of the following constraints are met.
+
+- The unit's cooldown is low enough to perform an action.
+- The destination tile is adjacent to the current location (the 8 tiles around the unit's current location).
+- The destination tile is not occupied by another robot.
+
+## Sensing, detecting and vision
+
+Each map square has a passability value,
+and each robot has a number of characteristics
+including its robot type, influence cost at creation, and current conviction.
+
+All robots may sense properties of nearby map squares.
+Each robot has a specific sensor radius,
+and is able to sense map properties and robots within that range.
+However, there is the exception that **politicians and slanderers do not have true sense**:
+this means they are unable to distinguish between other politicians and slanderers.
+To them, all slanderers will appear to be politicians.
+
+Additionally, robots can detect the presence of robots near them,
+without sensing any properties about those robots.
+Muckrakers have a larger detection radius than sensor radius,
+and so are able to detect robots further away than they can sense.
+
+## Robots: detail
+
+### Politicians
+
+Politicians are the lifeblood of political parties, converting other robots to their cause.
+They move around the map, and may choose to give an impassioned speech that applies their own conviction to a small radius.
+The politician is then destroyed, as delivering speeches is tremendously exhausting.
+
+- **Sensing**: will see other slanderers to be politicians.
+- **Empower (active ability)**: Gives a speech to surrounding units in a specified range,
+  which can be up to the politician's action radius.
+  All robots within that range will be affected by the speech.
+  Specifically:
+  - The robot uses all of its remaining conviction to give a speech.
+    However, 10 units of conviction will be lost:
+    if the politician has less than 10 conviction, the speech will not affect other robots at all.
+  - If there are $n$ nearby robots,
+    then the remaining conviction will be divided into $n$ equal parts.
+    If it cannot be equally divided,
+    the extra conviction will be distributed with priority given first to later creation,
+    with ties broken by smaller robot ID.
+  - Each friendly unit will gain conviction, capped at the unit's initial conviction.
+  - Each friendly building will gain conviction.
+  - Each non-friendly (enemy or neutral) robot will lose conviction.
+    If its conviction becomes negative, then:
+    - Politicians will be **converted** to your team,
+      with conviction equal to the absolute remaining conviction,
+      capped at the robot's initial conviction.
+    - Slanderers and muckrakers will be destroyed.
+    - Buildings will be **converted** to your team,
+      with conviction equal to the absolute remaining conviction.
+  - Unused conviction (i.e. conviction lost due to conviction caps) will be lost forever,
+    with echoes of the speech carried away by the Martian wind.
+
+### Slanderers
+
+Slanderers advance the party's political agenda by spreading falsehoods, generating influence for the Enlightenment Center that had created it.
+
+- **Sensing**: will see other slanderers to be politicians.
+- **Embezzle (passive ability)**: For 50 turns after being created,
+  as long as both it and the Enlightenment Center that created it are friendly,
+  that Enlightenment Center passively receives
+  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round.
+- **Camouflage (passive ability)**: 300 rounds after being created,
+  the slanderer's claims fade from citizens' memory,
+  and it transforms into a politician of equal conviction.
+
+You have no control over the Embezzle and Camouflage abilities of Slanderers, as these occur passively.
+
+### Muckrakers
+
+Muckrakers search the map, exposing the lies of enemy slanderers.
+
+- **Sensing**: Can sense robot details in a smaller radius than it can detect robots.
+- **Expose (active ability)**: Targets an enemy slanderer, exposing its lies and destroying it.
+  For the next 50 turns,
+  all speeches made by the muckraker's team will have a multiplicative factor of
+  $1.01^\text{slanderer's influence cost}$ applied.
+
+### Enlightenment Centers
+
+Enlightenment Centers build politicians, slanderers and muckrakers,
+and are your gateway to influence election victory.
+They cannot be built, and can only change teams due to being empowered by politician speeches.
+
+- Either neutral or owned by a team.
+  - Enlightenment Centers initially belonging to a team will have 150 influence.
+  - Neutral enlightenment centers have a predetermined amount of influence between 50 and 500.
+- **Build robot**: Spawn a unit of a specified type,
+  transferring part of the Enlightenment Center's influence to the newly spawned unit.
+- **Bid (active ability)**: Bid influence for a vote.
+  This is described in more detail in the [Victory](#victory) section below.
+- When affiliated with a team, passively generate influence per turn,
+  where the amount generated is a function of the current round number $t$.
+  $$ f(t)=\left\lceil0.2\sqrt{t}\right\rceil $$
+
+# Victory
+
+## Votes
+
+To win **Battlecode: Campaign**, your team must win more votes than the opposing team.
+Each round, one citizen's vote is up for auction.
+Each Enlightenment Center may bid a non-negative amount of influence to win that vote.
+Neutral Enlightenment Centers will always bid zero.
+
+The Enlightenment Center which enters the highest bid will win that vote for its team,
+expending the influence it bid.
+The Enlightenment Center with the highest bid on the opposing team will spend half its bid influence for its failed bid,
+rounded up to the nearest integer.
+All other Enlightenment Centers will not spend any influence.
+
+If both teams have the equal highest bid,
+then the citizens will instead opt to vote for an unnamed third party.
+In this case, both teams will spend half their largest bid influence for the failed attempt.
+If multiple Enlightenment Centers within a team bid the equal highest amount,
+then ties are first broken by lowest robot age and then by lowest robot ID (same order as for Empower).
+
+## Victory conditions and tiebreakers
+
+If a team loses all its robots, then it immediately loses, regardless of its vote count. Otherwise, at the conclusion of 3000 rounds, the winner is determined according to the following tiebreakers.
+
+1. Highest total vote count.
+1. Most total owned Enlightenment Centers.
+1. Highest total unit influence.
+1. The citizens of Mars flip a coin to determine the winner.
+
+# Communication
+
+Robots can only see their immediate surroundings and are independently controlled by copies of your code,
+making coordination very challenging.
+You will be unable to share any variables between them;
+note that even static variables will not be shared, as each robot will receive its own copy.
+
+To facilitate communication, each robot on the map has a flag, which it may set to any color.
+Colors are described as 24-bit integers,
+so each robot may communicate a non-negative integer less than $2^{24}$.
+A robot's flag is visible to all other robots that can sense it, even enemy robots.
+Flag colors will persist from each round to the next unless they are changed;
+however, changing the flag color will incur a bytecode cost (see [below](#bytecodelimits)).
+
+Additionally, enlightenment centers can see the flags of all robots,
+and all robots can see the flags of all enlightenment centers.
+
+# Bytecode limits
+
+Robots are also very limited in the amount of computation they are allowed to perform per turn.
+Bytecodes are a convenient measure of computation in languages like Java,
+where one Java bytecode corresponds roughly to one basic operation such as "subtract" or "get field",
+and a single line of code generally contains several bytecodes.
+(For details see [here](http://en.wikipedia.org/wiki/Java_bytecode)).
+Because bytecodes are a feature of the compiled code itself,
+the same program will always compile to the same bytecodes and thus take the same amount of computation on the same inputs.
+This is great, because it allows us to avoid using time as a measure of computation,
+which leads to problems such as nondeterminism.
+With bytecode cutoffs, re-running the same match between the same bots produces exactly the same results--a feature you will find very useful for debugging.
+
+Every round each robot sequentially takes its turn.
+If a robot attempts to exceed its bytecode limit
+(usually unexpectedly, if you have too big of a loop or something),
+its computation will be paused and then resumed at exactly that point next turn.
+The code will resume running just fine, but this can cause problems if,
+for example, you check if a tile is empty, then the robot is cut off and the others take their turns,
+and then you attempt to move into a now-occupied tile.
+Instead, use the `Clock.yield()` function to end a robot's turn.
+This will pause computation where you choose, and resume on the next line next turn.
+
+The per-turn bytecode limits for various robots are as follows:
+
+- Politician: 6,000
+- Slanderer: 3,000
+- Muckraker: 9,000
+- Enlightenment Center: 12,000
+
+Some standard functions such as the math library and sensing functions have fixed bytecode costs,
+available [here](https://github.com/battlecode/battlecode21/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
+More details on this at the end of the spec.
+
+# Other resources and utilities
+
+## Sample player
+
+[examplefuncsplayer](https://github.com/battlecode/battlecode21-scaffold),
+a simple player which performs various game actions, is included with battlecode.
+It includes helpful comments and is a template you can use to see what `RobotPlayer` files should look like.
+
+## Debugging
+
+Debugging is extremely important. See the [debugging tips](http://2021.battlecode.org/debugging) to learn about our useful debug tools.
+
+## Monitoring
+
+The `Clock` class provides a way to identify the current round (`rc.getRoundNum()`),
+and how many bytecodes have been executed during the current round (`Clock.getBytecodeNum()`).
+
+## GameActionExceptions
+
+`GameActionException`s are thrown when something cannot be done.
+It is often the result of illegal actions such as moving onto another robot,
+or an unexpected round change in your code.
+Thus, you must write your player defensively and handle `GameActionException`s judiciously.
+You should also be prepared for any ability to fail and make sure that this has as little effect as possible on the control flow of your program.
+
+Throwing any `Exception`s cause a bytecode penalty of 500 bytecodes.
+Unhandled exceptions may paralyze your robot.
+
+## Complete documentation
+
+Every function you could possibly use to interact with the game can be found in our [javadocs](about:blank).
+
+# Other restrictions
+
+## Java language usage
+
+Players may use classes from any of the packages listed in `AllowedPackages.txt`,
+except for classes listed in `DisallowedPackages.txt`. 
+hese files can be found [here](https://github.com/battlecode/battlecode21/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
+
+Furthermore, the following restrictions apply:
+
+`Object.wait`, `Object.notify`, `Object.notifyAll`, `Class.forName`, and `String.intern` are not allowed.
+`java.lang.System` only supports `out`, `arraycopy`, and `getProperty`.
+Furthermore, `getProperty` can only be used to get properties with names beginning with `"bc.testing."`.
+`java.io.PrintStream` may not be used to open files.
+
+Note that violating any of the above restrictions will cause the robots to freeze when run,
+even if the source files compile without problems.
+
+## Memory usage
+
+Robots must keep their memory usage reasonable.
+If a robot uses more than 8 Mb of heap space during a tournament or scrimmage match, the robot may freeze.
+
+## More information on bytecode costs
+
+Classes in `java.util`, `java.math`, and scala and their subpackages are bytecode counted as if they were your own code.
+The following functions in `java.lang` are also bytecode counted as if they were your own code.
+
+```java
+Math.random
+StrictMath.random
+String.matches
+String.replaceAll
+String.replaceFirst
+String.split
+```
+
+The function `System.arraycopy` costs one bytecode for each element copied.
+All other functions have a fixed bytecode cost.
+These costs are listed in the [`MethodCosts.txt` file](https://github.com/battlecode/battlecode21/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
+Methods not listed are free.
+The bytecode costs of `battlecode.common` functions are also listed in the javadoc.
+
+Basic operations like integer comparison and array indexing cost small numbers of bytecodes each.
+
+Bytecodes relating to the creation of arrays (specifically `NEWARRAY`, `ANEWARRAY`, and `MULTIANEWARRAY`;
+see [here](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings) for reference) have an effective cost greater than a single bytecode.
+This is because these instructions, although they are represented as a single bytecode,
+can be vastly more expensive than other instructions in terms of computational cost.
+To remedy this, these instructions have a bytecode cost equal to the total length of the instantiated array.
+Note that this should have minimal impact on the typical team,
+and is only intended to prevent teams from repeatedly instantiating excessively large arrays.
+
+# Lingering questions and clarifications
+
+If something is unclear, direct your questions to our [Discord](https://discord.gg/N86mxkH) where other people may have the same question. We'll update this spec as the competition progresses.
+
+# Changelog
+
+- Version 0.1.0 (1/2/20)
+    - Pre-release, lots of things are changing
+
+<style class="fallback">body{visibility:hidden}</style>
+<script>markdeepOptions={tocStyle:'long'};</script>
+<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>

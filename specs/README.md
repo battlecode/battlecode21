@@ -2,10 +2,11 @@
 
 Game specs are in `specs.md`, which is the source of truth.
 
-We're using `pandoc` to generate a pretty HTML version of the specs:
+We're using `Markdeep` to generate a pretty HTML version of the specs. Write the specs in Markdown, and ensure that the Markdeep header/footer tags are present. See samples on the Markdeep website for detailed usage.
 
-```
-pandoc specs.md --self-contained --template template.html --toc -o specs.html --metadata pagetitle="Battlehack SP20 Specs"
-```
+The following files are legacy from when we used Pandoc, and are not used in the current build.
 
-You can install `pandoc` using your favorite package manager.
+- css/
+- fonts/
+- js/
+- template.html
