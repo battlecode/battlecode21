@@ -237,10 +237,10 @@ table MatchFooter {
 table Round {
     /// The IDs of teams in the Game.
     teamIDs: [int];
-    /// whether a team gets a vp
-    teamVPs: [bool];
-    /// the id of the enlightenment center got the bid
-    teamVoterIDs: [int];
+    /// The number of votes the teams get, 0 or 1.
+    teamVotes: [int];
+    /// The ID of the Enlightenment Center got the bid.
+    teamBidderIDs: [int];
 
     /// The IDs of bodies that moved.
     movedIDs: [int];
