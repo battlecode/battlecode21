@@ -120,7 +120,7 @@ table BodyTypeMetadata {
     /// the convictionRatio of this type
     convictionRatio: float;
     /// cooldown of this type
-    actionCooldown: int;
+    actionCooldown: float;
     /// action radius if this type
     actionRadiusSquared: int;
     /// sensor radius squared for this type
