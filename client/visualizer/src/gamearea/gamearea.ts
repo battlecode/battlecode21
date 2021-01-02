@@ -49,7 +49,7 @@ export default class GameArea {
    * Sets canvas size to maximum dimensions while maintaining the aspect ratio
    */
   setCanvasDimensions(world: GameWorld): void {
-    const scale: number = 30; // arbitrary scaling factor
+    const scale: number = this.conf.upscale; // scaling factor
 
     this.canvas.width = world.minCorner.absDistanceX(world.maxCorner) * scale;
     this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) * scale;

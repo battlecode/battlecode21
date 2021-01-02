@@ -24,8 +24,6 @@ import Looper from './main/looper';
  * (Not related to the runner for the scaffold.)
  */
 export default class Runner {
-  readonly ctx: CanvasRenderingContext2D;
-
   private matchqueue: MatchQueue;
   private controls: Controls;
   private stats: Stats;
@@ -180,9 +178,6 @@ export default class Runner {
             break;
           case 82: // "r" - reverse UPS
             this.controls.reverseUPS();
-            break;
-          case 67: // "c" - Toggle Circle Bots
-            this.conf.circleBots = !this.conf.circleBots;
             break;
           case 86: // "v" - Toggle Indicator Dots and Lines
             this.conf.indicators = !this.conf.indicators;

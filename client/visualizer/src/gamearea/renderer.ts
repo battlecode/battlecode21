@@ -96,8 +96,9 @@ export default class Renderer {
       // should be using image for now
       // TODO change swamp color depending on the parameter
 
-      return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
+      //return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
       // iterate and find the two colors
+      x *= 100;
       let lo: number[] = [0,0,0];
       let hi: number[] = [0,0,0];
       let mx: number = -1000;
@@ -206,36 +207,29 @@ export default class Renderer {
     }
 
     // Render the robots
-    // render drones last to have them be on top of other units.
-    let droneIndices = new Array<number>();
+    // render images with priority last to have them be on top of other units.
+    let priorityImages: HTMLImageElement[] = [];
+
     for (let i = 0; i < length; i++) {
       const team = teams[i];
       const type = types[i];
       const x = realXs[i];
       const y = realYs[i];
 
-      //TODO*: fetch bot image here.
+      // Fetch bot image.
+      const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(type)][team];
 
-      // let img = this.imgs.cow;
-
-      // if (type !== cst.COW) {
-      //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)];
-      //   // TODO how to change drone?
-      //   if(type == cst.DRONE){
-      //     // tmp = (cargo[i]!=0 ? tmp.carry : tmp.empty);
-      //     droneIndices.push(i);
-      //     continue;
-      //   }
-      //   img = tmp[team];
-      // }
-      // this.drawCircleBot(x, y, radius);
-      // this.drawImage(img, x, y, radius);
-      // this.drawBot(img, x, y);
-      
-      // Draw the sight radius if the robot is selected
-      if (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID) {
-        this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
+      if(cst.bodyTypePriority.includes(type)){
+        priorityImages.push(img);
+        continue;
       }
+
+      // Draw bot
+      //this.drawImage(img, x, y, radius);
+      this.drawBot(img, x, y);
+      
+      // Draw the sight radius
+      this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
     }
 
     this.setInfoStringEvent(world, xs, ys);
@@ -253,17 +247,8 @@ export default class Renderer {
   }
 
   /**
-   * Draws a circle centered at (x, y) with the given radius
+   * Draws a cirlce centered at (x,y) with given squared radius and color.
    */
-  private drawCircleBot(x: number, y: number, radius: number) {
-    if (!this.conf.circleBots) return; // skip if the option is turned off
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "#ddd";
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    this.ctx.fill();
-  }
-
   private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
     this.ctx.beginPath();
     this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
@@ -273,8 +258,7 @@ export default class Renderer {
   }
 
   /**
-   * Draws a circular outline representing the sight radius or bullet sight
-   * radius of the given robot type, centered at (x, y)
+   * Draws the sight radii of the robot.
    */
   private drawSightRadii(x: number, y: number, type: schema.BodyType, single?: Boolean) {
     // handle bots with no radius here, if necessary
@@ -325,13 +309,12 @@ export default class Renderer {
       for (let i in ids) {
         if (xs[i] == x && ys[i] == y) {
           selectedRobotID = ids[i];
-          // if any robot should get selection priority, handle logic below
-          //if(world.bodies.arrays.type[i] == cst.DRONE)
-            //possiblePriorityID = ids[i];
+          if(cst.bodyTypePriority.includes(types[i]))
+            possiblePriorityID = ids[i];
         }
       }
 
-      // if there are two robots in same cell, choose the one with selection priority
+      // if there are two robots in same cell, choose the one with priority
       if(possiblePriorityID != undefined) selectedRobotID = possiblePriorityID;
       // Set the info string even if the robot is undefined
       this.lastSelectedID = selectedRobotID;
@@ -394,7 +377,7 @@ export default class Renderer {
     const maxY = world.maxCorner.y - 1;
 
     for (let i = 0; i < dots.length; i++) {
-      if (this.lastSelectedID === undefined || dotsID[i] === this.lastSelectedID) {
+      if (dotsID[i] === this.lastSelectedID) {
         const red = dotsRed[i];
         const green = dotsGreen[i];
         const blue = dotsBlue[i];
@@ -420,7 +403,7 @@ export default class Renderer {
     this.ctx.lineWidth = cst.INDICATOR_LINE_WIDTH;
 
     for (let i = 0; i < lines.length; i++) {
-      if (this.lastSelectedID === undefined || linesID[i] === this.lastSelectedID) {
+      if (linesID[i] === this.lastSelectedID) {
         const red = linesRed[i];
         const green = linesGreen[i];
         const blue = linesBlue[i];
