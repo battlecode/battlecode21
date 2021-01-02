@@ -70,12 +70,7 @@ class Submissions extends Component {
                 // Submission process terminated (see api.js).
 
                 // refresh the submission status, for use on this component
-                if (upload_status_cookie_value == 11) {
-                    this.setState({upload_status: 11})
-                }
-                if (upload_status_cookie_value == 13) {
-                    this.setState({upload_status: 13})
-                }
+                this.setState({upload_status: upload_status_cookie_value})
 
                 // refresh the submission button, etc, to allow for a new submission
                 this.renderHelperSubmissionForm()
