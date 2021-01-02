@@ -370,32 +370,34 @@ public strictfp class GameWorld {
         });
 
         // Process bidding
-        int[] teamVPs = new int[2];
-        int[] teamVoterIDs = new int[2];
+        int[] teamVotes = new int[2];
+        int[] teamBidderIDs = new int[2];
 
         if (highestBids[0] > highestBids[1] && highestBids[0] > 0) {
             // Team.A wins
-            teamVPs[0] = 1;
-            teamVoterIDs[0] = highestBidders[0].getID();
+            teamVotes[0] = 1;
+            teamBidderIDs[0] = highestBidders[0].getID();
             highestBidders[0].addInfluenceAndConviction(-highestBids[0]);
             this.teamInfo.addVote(Team.A);
         } else if (highestBids[1] > highestBids[0] && highestBids[1] > 0) {
             // Team.B wins
-            teamVPs[1] = 1;
-            teamVoterIDs[1] = highestBidders[1].getID();
+            teamVotes[1] = 1;
+            teamBidderIDs[1] = highestBidders[1].getID();
             highestBidders[1].addInfluenceAndConviction(-highestBids[1]);
             this.teamInfo.addVote(Team.B);
         }
 
         for (int i = 0; i < 2; i++) {
-            if (teamVPs[i] == 0) {
+            if (teamVotes[i] == 0) {
                 // Didn't win. If didn't place bid, halfBid == 0
                 int halfBid = (highestBids[i] + 1) / 2;
                 highestBidders[i].addInfluenceAndConviction(-halfBid);
             }
         }
 
-        // TODO: send teamVPs and teamVoterIDs to matchmaker
+        // Send teamVotes and teamBidderIDs to matchmaker
+        for (int i = 0; i < 2; i++)
+            this.matchMaker.addTeamVote(Team.values()[i], teamVotes[i], teamBidderIDs[i]);
 
         // Add buffs from expose
         int nextRound = currentRound + 1;
@@ -411,8 +413,6 @@ public strictfp class GameWorld {
                 if (!setWinnerIfMoreEnlightenmentCenters())
                     if (!setWinnerIfMoreInfluence())
                         setWinnerArbitrary();
-
-        // TODO: update round statistics with matchmaker?
 
         if (gameStats.getWinner() != null)
             running = false;
