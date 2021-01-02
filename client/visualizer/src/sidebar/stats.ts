@@ -126,21 +126,6 @@ export default class Stats {
     bars.id = "stats-bars";
     table.setAttribute("align", "center");
 
-    // Duplicate of the following, but left just in case
-    // teamIDs.forEach((id: number) => {
-    //   const bar = document.createElement("td");
-    //   bar.height = "150";
-    //   bar.vAlign = "bottom";
-    //   // TODO: figure out if statbars.get(id) can actually be null??
-    //   // bar.appendChild(this.statBars.get(id)!.bullets.bar);
-    //   bars.appendChild(bar);
-
-    //   const count = document.createElement("td");
-    //   // TODO: figure out if statbars.get(id) can actually be null??
-    //   // count.appendChild(this.statBars.get(id)!.bullets.label);
-    //   counts.appendChild(count);
-    // });
-
     teamIDs.forEach((id: number) => {
       const bar = document.createElement("td");
       bar.height = "150";
@@ -244,23 +229,6 @@ export default class Stats {
     this.statsTableElement.remove();
     this.statsTableElement = this.statsTable(teamIDs);
     this.div.appendChild(this.statsTableElement);
-    
-
-    const bl = document.createElement("h4");
-    bl.innerText = "Blockchain";
-    this.div.appendChild(bl);
-    this.div.appendChild(this.blockchainViewer());
-  }
-
-  blockchainViewer(): HTMLDivElement {
-    // create a blockchain
-    this.blockchain = document.createElement('div');
-
-    // make it a console
-    this.blockchain.id = "blockchain";
-    this.blockchain.className = "console";
-
-    return this.blockchain;
   }
 
   tourIndexJumpFun(e) {
@@ -286,7 +254,7 @@ export default class Stats {
     const statBar: StatBar = this.statBars.get(teamID)!.votes;
     statBar.label.innerText = String(count);
     const maxVotes = 1000;
-    statBar.bar.style.height = `${Math.min(100 * count / maxVotes, 100)}%`;
+    statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
 
     // TODO winner gets star?
     // if (this.images.star.parentNode === statBar.bar) {
