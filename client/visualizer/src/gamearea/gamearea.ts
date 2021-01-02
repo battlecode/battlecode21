@@ -51,9 +51,11 @@ export default class GameArea {
   setCanvasDimensions(world: GameWorld): void {
     const scale: number = this.conf.upscale; // scaling factor
 
-    this.canvas.width = world.minCorner.absDistanceX(world.maxCorner) * scale;
-    this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) * scale;
-
+    this.canvas.width = scale;
+    this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) / world.minCorner.absDistanceX(world.maxCorner) * scale;
+    // TODO: transfer below to CSS
+    this.canvas.style.width = (this.div.clientWidth*0.8).toString() + 'px';
+    this.canvas.style.width = (this.div.clientHeight*0.8).toString() + 'px';
   }
   
   /**

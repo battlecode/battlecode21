@@ -129,7 +129,7 @@ export function defaults(supplied?: any): Config {
     fullscreen: false,
     width: 600,
     height: 600,
-    upscale: 100,
+    upscale: 1500,
     defaultTPS: 20,
     websocketURL: null,
     matchFileURL: null,
