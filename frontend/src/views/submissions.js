@@ -13,6 +13,7 @@ class Submissions extends Component {
         super(props);
         this.state = {
             selectedFile: null,
+            currentSubmission: null,
             lastSubmissions: null,
             tourSubmissions: null,
             numLastSubmissions: 0,
@@ -21,7 +22,7 @@ class Submissions extends Component {
             numTourLoaded: 0,
             user: {},
             league: {},
-            sub_status: -1
+            upload_status: -1
         };
         Api.getUserProfile(function (u) {
             this.setState({ user: u });
@@ -30,7 +31,6 @@ class Submissions extends Component {
     }
 
     componentDidMount() {
-        Api.getCompilationStatus(this.gotStatus);
         Api.getTeamSubmissions(this.gotSubmissions);
         Api.getLeague(function (l) {
             this.setState({ league: l});
@@ -47,34 +47,44 @@ class Submissions extends Component {
 
     // makes an api call to upload the selected file
     uploadData = () => {
-        // let status_str = "Submitting..."
-        Cookies.set('submitting', 1)
-        // console.log("submitting...")
-        this.setState({sub_status: 0})
+        // 'upload_status_cookie' in Cookies is used to communicate between the functions in api.js and those in submissions.js. It lets us keep track of the upload process for submissions, and all the http requests involved. (Note that this is different than a submission's compile_status in the database.)
+        // A value of 0 indicates that the submission is still in progress.
+        // When a submission finishes, api.js changes this value to something else.
+        Cookies.set('upload_status_cookie', 10)
+        // The upload_status state is used internally by this component.
+        // (Currently, it mirrors upload_status_cookie, but is part of state to make working with React easier.)
+        this.setState({upload_status: 10})
+
+        // Concurrent upload processes can be problematic; we've made the decision to disable concurrency.
+        // This is achieved by refreshing the submission upload components, which have buttons disabled while upload_status is 0.
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
 
         Api.newSubmission(this.state.selectedFile, null)
 
+        // The method in api.js will change Cookies' upload_status_cookie during the process of an upload.
+        // To check changes, we poll periodically.
         this.interval = setInterval(() => {
-            if (Cookies.get('submitting') != 1) {
-                // console.log("out of time loop")
+            let upload_status_cookie_value = Cookies.get('upload_status_cookie');
+            if (upload_status_cookie_value != 10) {
+                // Submission process terminated (see api.js).
 
-                // refresh the submission button and status
-                this.setState({sub_status: 1})
+                // refresh the submission status, for use on this component
+                this.setState({upload_status: upload_status_cookie_value})
+
+                // refresh the submission button, etc, to allow for a new submission
                 this.renderHelperSubmissionForm()
                 this.renderHelperSubmissionStatus()
                 
-                // refresh team submission listing
+                // refresh team submission tables, to display the submission that just occured
                 Api.getTeamSubmissions(this.gotSubmissions);
+                this.renderHelperCurrentTable()
                 this.renderHelperLastTable()
 
+                // Done waiting for changes to upload_status_cookie, so stop polling.
                 clearInterval(this.interval)
             }
-            else {
-                // console.log("in time loop")
-            }
-        }, 1000);
+        }, 1000); // Poll every second
     }
 
     // change handler called when file is selected
@@ -83,7 +93,7 @@ class Submissions extends Component {
         this.setState({
             selectedFile: event.target.files[0],
             loaded: 0,
-            sub_status: -1
+            upload_status: -1
         })
         this.renderHelperSubmissionForm()
         this.renderHelperSubmissionStatus()
@@ -91,19 +101,15 @@ class Submissions extends Component {
 
 
     //---GETTING TEAMS SUBMISSION DATA----
+    KEYS_CURRENT = ['compiling'] 
     KEYS_LAST = ['last_1', 'last_2', 'last_3']
     KEYS_TOUR = ['tour_final', 'tour_qual', 'tour_seed', 'tour_sprint', 'tour_hs', 'tour_intl_qual', 'tour_newbie']
-
-    // called when status of teams compilation request is received 
-    // 0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
-    gotStatus = (data) => {
-        this.setState(data)
-    }
 
     // called when submission data is initially received
     // this will be maps of the label of type of submission to submission id
     // this function then makes calles to get the specific data for each submission
     gotSubmissions = (data) => {
+        this.setState({currentSubmission: new Array(this.submissionHelper(this.KEYS_CURRENT, data)).fill({})})
         this.setState({lastSubmissions: new Array(this.submissionHelper(this.KEYS_LAST, data)).fill({})})
         this.setState({tourSubmissions: new Array(this.submissionHelper(this.KEYS_TOUR, data)).fill([])})
     }
@@ -126,7 +132,13 @@ class Submissions extends Component {
     setSubmissionData = (key, data) => {
 
         let index, add_data
-        if (this.KEYS_LAST.includes(key)) {
+        if (this.KEYS_CURRENT.includes(key)) {
+            index = 0
+            const arr = this.state["currentSubmission"]
+            let newArr = arr.slice(0, index)
+            newArr.push(data)
+            this.setState({["currentSubmission"]: newArr.concat(arr.slice(index + 1))})
+        } else if (this.KEYS_LAST.includes(key)) {
             switch (key) {
                 case 'last_1':
                     index = 0
@@ -210,11 +222,12 @@ class Submissions extends Component {
             if (this.state.selectedFile !== null) {
                 btn_class += " btn-info btn-fill" 
                 file_label = this.state.selectedFile["name"]
-                if (this.state.sub_status != 0) { 
+                if (this.state.upload_status != 10) { 
                     button = <button style={{float: "right"}} onClick={this.uploadData} className={ btn_class }> Submit </button>
                 }
             }
-            if (this.state.sub_status != 0) { 
+            // Make sure to disable concurrent submission uploads.
+            if (this.state.upload_status != 10) { 
                 file_button_sub = <div className="btn"> Choose File </div>
                 file_button = <label htmlFor="file_upload">
                 {file_button_sub} <span style={ { textTransform: 'none', marginLeft: '10px', fontSize: '14px'} }> {file_label} </span> </label>
@@ -241,7 +254,7 @@ class Submissions extends Component {
                         {file_button}
                         {file_button_2}
                         {button}
-                        {/* <p id="sub_status" className="text-center category"> {status_str}</p> */}
+                        {/* <p id="upload_status" className="text-center category"> {status_str}</p> */}
                     </div>
                 </div>
             )
@@ -260,24 +273,23 @@ class Submissions extends Component {
         }
     }
 
+    // Shows the status of a current submission upload in progress.
+    // (see uploadData() for more explanation)
     renderHelperSubmissionStatus() {
         if (this.isSubmissionEnabled()) {
             let status_str = ""
-            switch (this.state.sub_status) {
+            switch (this.state.upload_status) {
                 case -1:
                     status_str = "Waiting to start submission..."
                     break
-                case 0:
+                case 10:
                     status_str = "Currently submitting..."
                     break
-                case 1:
-                    status_str = "Successfully submitted!"
+                case 11:
+                    status_str = "Successfully queued for compilation!"
                     break
-                case 2:
-                    status_str = "Submission failed."
-                    break
-                case 3:
-                    status_str = "Internal server error. Try re-submitting your code."
+                case 13:
+                    status_str = "Submitting failed. Try re-submitting your code."
                     break
                 default:
                     status_str = ""
@@ -287,14 +299,89 @@ class Submissions extends Component {
             return (
                 <div className="card">
                     <div className="content">
-                        <p id="sub_status" className="text-center category"> {status_str}</p>
+                        <p id="upload_status" className="text-center category"> {status_str}</p>
                     </div>
                 </div>
             )
         }
     }
 
-    //reder helper for table containing the team's latest submissions
+    //reder helper for table containing the team's latest submission
+    renderHelperCurrentTable() {
+        if (this.state.currentSubmission === null) {
+            return (
+                <p className="text-center category">
+                Loading submissions...<br/><br/>
+                </p>
+            )
+        } else if (this.state.currentSubmission.length == 0) {
+            return (
+                <p>
+                You haven't submitted any code yet!
+                </p>
+            )  
+        } else {
+            const submissionRows = this.state.currentSubmission.map((submission, index) => {
+                if (Object.keys(submission).length === 0) {
+                    return (
+                        <tr><td> <div className="btn btn-xs" style={{visibility: "hidden"}}>Loading...</div></td><td></td></tr>
+                    )
+                } else { 
+                    let status_str = ""
+                    let download_button = <button className="btn btn-xs" onClick={() => this.onSubFileRequest(submission.id, index + 1)}>Download</button>
+                    switch (submission.compilation_status) {
+                        case 0:
+                            status_str = "Submission initialized, but not yet uploaded... If this persists, try re-submitting your code. Also, make sure to stay on this page."
+                            download_button = ""
+                            break
+                        case 1:
+                            status_str = "Successfully submitted and compiled!"
+                            break
+                        case 2:
+                            status_str = "Submitted, but compiler threw a compile error. Fix and re-submit your code."
+                            break
+                        case 3:
+                            status_str = "Internal server error. Try re-submitting your code."
+                            break
+                        case 4:
+                            status_str = "Code uploaded, but not yet queued for compilation... If this persists, try re-submitting your code."
+                            break
+                        case 5:
+                            // TODO a dedicated refresh button, that refreshes only these tables, would be cool
+                            status_str = "Code queued for compilation -- check back and refresh for updates."
+                            break    
+                        default:
+                            status_str = ""
+                            break
+                    }
+                    return (
+                        <tr key={ submission.id }>
+                            <td>{ (new Date(submission.submitted_at)).toLocaleString() }</td>
+                            <td>{ status_str }</td>
+                            <td>{ download_button } </td>                        
+                        </tr>
+                    ) 
+                }
+            })
+
+            return (
+                <table className="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>Submission at</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    { submissionRows }
+                    </tbody>
+                </table>
+            )
+        }
+        
+    }
+
+    //reder helper for table containing the team's latest successfully compiled submissions
     renderHelperLastTable() {
         if (this.state.lastSubmissions === null) {
             return (
@@ -303,19 +390,11 @@ class Submissions extends Component {
                 </p>
             )
         } else if (this.state.lastSubmissions.length == 0) {
-            if (this.state.status == 0) {
-                return (
-                    <p>
-                    Your code is being submitted -- you'll see it here if it finishes successfully.
-                    </p>
-                )  
-            } else { 
-                return (
-                    <p>
-                    You haven't submitted any code yet!
-                    </p>
-                )  
-            }
+            return (
+                <p>
+                You haven't had any successful submissions yet! (If you have code being submitted, you'll see it here if it finishes successfully.)
+                </p>
+            )  
         } else {
             const submissionRows = this.state.lastSubmissions.map((submission, index) => {
                 if (Object.keys(submission).length === 0) {
@@ -406,7 +485,14 @@ class Submissions extends Component {
                             { this.renderHelperSubmissionStatus() }
                             <div className="card">
                                 <div className="header">
-                                    <h4 className="title">Latest Submissions</h4>
+                                    <h4 className="title">Latest Submission</h4>
+                                </div>
+                                <div className="content">
+                                    { this.renderHelperCurrentTable() }
+                                </div>
+
+                                <div className="header">
+                                    <h4 className="title">Latest Successfully Compiled Submissions</h4>
                                 </div>
                                 <div className="content">
                                     { this.renderHelperLastTable() }
