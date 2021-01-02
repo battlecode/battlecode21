@@ -70,8 +70,6 @@ export default class Renderer {
   }
 
   private renderBackground(world: GameWorld) {
-    let swampLayer = this.conf.viewSwamp;
-
     this.ctx.save();
     this.ctx.fillStyle = "white";
     this.ctx.globalAlpha = 1;
@@ -90,47 +88,13 @@ export default class Renderer {
 
     const map = world.mapStats;
 
-    // TODO use color pacakge for nicer manipulation?
-    // TODO don't just reuse dirt function
-    const getTileColor = (x: number): string => {
-      // should be using image for now
-      // TODO change swamp color depending on the parameter
+    // dirt - swamp threshold
+    const T = 0.5;
 
-      //return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
-      // iterate and find the two colors
-      x *= 10;
-      let lo: number[] = [0,0,0];
-      let hi: number[] = [0,0,0];
-      let mx: number = -1000;
-      let mn: number = -1000;
-      for (let entry of Array.from(cst.SWAMP_COLORS)) {
-        lo = hi;
-        hi = entry[1];
-        mn = mx;
-        mx = entry[0];
-        if (x <= entry[0]) {
-          break;
-        }
-      }
-      if (mn === -1000) {
-        lo = hi;
-        mn = mx;
-        mx += 1;
-      }
-
-      // convert into range and truncate
-      let t = (x - mn) / (mx - mn);
-      if (x <= mn) {
-        t = 0;
-      }
-      if (x >= mx) {
-        t = 1;
-      }
-
-      let now = [0,0,0];
-      for(let i=0; i<3; i++) now[i] = (hi[i]-lo[i]) * t + lo[i];
-
-      return `rgb(${now[0]},${now[1]},${now[2]})`;
+    function getOverlayColor(x: number): string {
+      const val = [85,90,70];
+      const a = x > T ? x/2 : Math.min(0.1/x, 0.7);
+      return `rgba(${val[0]},${val[1]},${val[2]},${a})`;
     }
 
     for (let i = 0; i < width; i++) for (let j = 0; j < height; j++){
@@ -141,9 +105,11 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      if (swampLayer) this.ctx.fillStyle = getTileColor(map.passability[idxVal]);
-      else this.ctx.fillStyle = getTileColor(1); 
+      const useDirt = map.passability[idxVal] > T;
+      const tileImg = useDirt ? this.imgs.tiles.dirt : this.imgs.tiles.swamp;
+      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
+      this.ctx.fillStyle = getOverlayColor(map.passability[idxVal]);
       this.ctx.fillRect(cx, cy, scale, scale);
 
       if (this.conf.showGrid) {
