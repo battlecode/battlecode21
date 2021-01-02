@@ -274,7 +274,7 @@ export default class Stats {
     const statBar: StatBar = this.statBars.get(teamID)!.votes;
     statBar.label.innerText = String(count);
     const maxVotes = 1000;
-    statBar.bar.style.height = `${Math.min(100 * count / maxVotes, 100)}%`;
+    statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
 
     // TODO add reactions to relative bars
     // TODO get total votes to get ratio

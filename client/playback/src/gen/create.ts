@@ -295,24 +295,31 @@ function createStandGame(turns: number) {
 
   events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
 
-  const unitCount = bodyVariety * 2;
-  let robotIDs = new Array(unitCount);
-  let teamIDs = new Array(unitCount);
-  let types = new Array(unitCount);
-  let xs = new Array(unitCount);
-  let ys = new Array(unitCount);
-  let influences = new Array(unitCount);
-  for (let i = 0; i < unitCount; i++) {
-    robotIDs[i] = i;
-    teamIDs[i] = i%2+1; // 1 2 1 2 1 2 ...
+  let robotIDs = [];
+  let teamIDs = [];
+  let types = [];
+  let xs = [];
+  let ys = [];
+  let influences = [];
+
+  var i = 0;
+  for (i = 0; i < bodyVariety * 2; i++) {
+    robotIDs.push(i);
+    teamIDs.push(i%2+1); // 1 2 1 2 1 2 ...
 
     let type = Math.floor(i/2);
-    types[i] = bodyTypeList[type];
+    types.push(bodyTypeList[type]);
 
     // assume map is large enough
     xs[i] = Math.floor(i/2) * 2 + 5;
     ys[i] = 5*(i%2)+5;
   }
+  // add neutral enlightenment center
+  robotIDs.push(i);
+  teamIDs.push(0);
+  types.push(schema.BodyType.ENLIGHTENMENT_CENTER);
+  xs[i] = Math.floor(i/2) * 2 + 5;
+  ys[i] = 5*(i%2)+5;  
 
   const bb_locs = createVecTable(builder, xs, ys);
   const bb_robotIDs = schema.SpawnedBodyTable.createRobotIDsVector(builder, robotIDs);
@@ -570,7 +577,7 @@ function createVotesGame(turns: number) {
 
   for (let i = 1; i < turns+1; i++) {
     const bb_teamIDs = schema.Round.createTeamIDsVector(builder, [1, 2]);
-    const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, false]);
+    const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, (Math.random() > 0.5)]);
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
     schema.Round.addTeamIDs(builder, bb_teamIDs);
