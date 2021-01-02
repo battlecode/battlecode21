@@ -7,6 +7,9 @@
 # bundled visualizer
 visualizer/out/
 
+# bundled playback
+playback/out/
+
 # built client
 dist/
 
