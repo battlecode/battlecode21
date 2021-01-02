@@ -256,12 +256,12 @@ export default class Looper {
             let lerp = Math.min(this.interpGameTime - this.match.current.turn, 1);
 
             // @ts-ignore
-            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, this.nextStep, lerp);
+            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime, this.nextStep, lerp);
         } else {
             //console.log('not interpolating!!');
             // interpGameTime might be incorrect if we haven't computed fast enough
             // @ts-ignore
-            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner);
+            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime);
         }
 
         this.updateStats(this.match.current, this.meta);

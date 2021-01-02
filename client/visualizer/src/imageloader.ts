@@ -83,7 +83,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       slanderer: [],
     },
     effects: {
-      death: [],
+      death: null,
       embezzle: [],
       empower: [],
       expose: []
@@ -124,15 +124,15 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
 
   // effects
 
-  loadImage(result.effects.death, 1, 'effects/death/death_empty');
+  loadImage(result.effects, 'death', 'effects/death/death_empty');
 
-  loadImage(result.effects.embezzle, 1, 'effects/embezzle/slanderer_embezzle_empty_1');
-  loadImage(result.effects.embezzle, 2, 'effects/embezzle/slanderer_embezzle_empty_2');
+  loadImage(result.effects.embezzle, 0, 'effects/embezzle/slanderer_embezzle_empty_1');
+  loadImage(result.effects.embezzle, 1, 'effects/embezzle/slanderer_embezzle_empty_2');
 
-  loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_1');
-  loadImage(result.effects.empower, 2, 'effects/empower/polit_empower_empty_2');
+  loadImage(result.effects.empower, 0, 'effects/empower/polit_empower_empty_1');
+  loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_2');
 
-  loadImage(result.effects.expose, 1, 'effects/expose/expose_empty');
+  loadImage(result.effects.expose, 0, 'effects/expose/expose_empty');
 
   // buttons are from https://material.io/resources/icons
   loadImage(result.controls, 'goNext', 'controls/go-next');

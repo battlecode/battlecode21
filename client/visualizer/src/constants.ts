@@ -35,8 +35,7 @@ export const INDICATOR_LINE_WIDTH = .3;
 export const SIGHT_RADIUS_LINE_WIDTH = .15
 
 // Game canvas rendering parameters
-export const HIGH_SPEED_THRESH = (4*4) - .00001;
-export const MED_SPEED_THRESH = (2*2) - .00001;
+export const EFFECT_STEP = 200; //time change between effect animations
 
 // Map editor canvas parameters
 export const DELTA = .0001;

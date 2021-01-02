@@ -37,11 +37,13 @@ export default class Renderer {
 
   /**
    * world: world to render
-   * time: time in turns
    * viewMin: min corner of view (in world units)
    * viewMax: max corner of view (in world units)
+   * timeDelta: real time passed since last call to render
+   * nextStep: contains positions of bodies after the next turn
+   * lerpAmount: fractional progress between this turn and the next
    */
-  render(world: GameWorld, viewMin: Victor, viewMax: Victor, nextStep?: NextStep, lerpAmount?: number) {
+  render(world: GameWorld, viewMin: Victor, viewMax: Victor, curTime: number, nextStep?: NextStep, lerpAmount?: number) {
     // setup correct rendering
     const viewWidth = viewMax.x - viewMin.x
     const viewHeight = viewMax.y - viewMin.y
@@ -53,7 +55,7 @@ export default class Renderer {
 
     this.renderBackground(world);
 
-    this.renderBodies(world, nextStep, lerpAmount);
+    this.renderBodies(world, curTime, nextStep, lerpAmount);
 
     this.renderIndicatorDotsLines(world);
     this.setMouseoverEvent(world);
@@ -131,7 +133,7 @@ export default class Renderer {
     this.ctx.restore();
   }
 
-  private renderBodies(world: GameWorld, nextStep?: NextStep, lerpAmount?: number) {
+  private renderBodies(world: GameWorld, curTime: number, nextStep?: NextStep, lerpAmount?: number) {
     const bodies = world.bodies;
     const length = bodies.length;
     const types = bodies.arrays.type;
@@ -167,8 +169,6 @@ export default class Renderer {
       }
     }
 
-    // Render continued actions
-
     // Render the robots
     // render images with priority last to have them be on top of other units.
 
@@ -177,10 +177,12 @@ export default class Renderer {
       this.drawBot(img, realXs[i], realYs[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
-      // draw action
+      // draw effec
       let effect: string | null = cst.abilityToEffectString(abilities[i]);
       if (effect !== null) {
-        const effectImg: HTMLImageElement = this.imgs.effects[effect][1];
+        const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
+        const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
+        const effectImg = effectImgs[whichImg];
         this.drawBot(effectImg, realXs[i], realYs[i]);
       }
     }
@@ -200,7 +202,7 @@ export default class Renderer {
     // Render died bodies
 
     const died = world.diedBodies;
-    const diedImg: HTMLImageElement = this.imgs.effects["death"][1];
+    const diedImg: HTMLImageElement = this.imgs.effects["death"];
     for (let i = 0; i < died.length; i++) {
       this.drawBot(diedImg, died.arrays.x[i], died.arrays.y[i]);
     }
