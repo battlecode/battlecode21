@@ -240,7 +240,7 @@ table Round {
     /// whether a team gets a vp
     teamVPs: [bool];
     /// the id of the enlightenment center got the bid
-    teamVoterID: [int];
+    teamVoterIDs: [int];
 
     /// The IDs of bodies that moved.
     movedIDs: [int];

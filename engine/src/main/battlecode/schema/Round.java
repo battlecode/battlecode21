@@ -37,10 +37,10 @@ public final class Round extends Table {
   /**
    * the id of the enlightenment center got the bid
    */
-  public int teamVoterID(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
-  public int teamVoterIDLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
-  public ByteBuffer teamVoterIDAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
-  public ByteBuffer teamVoterIDInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
+  public int teamVoterIDs(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
+  public int teamVoterIDsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public ByteBuffer teamVoterIDsAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
+  public ByteBuffer teamVoterIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
   /**
    * The IDs of bodies that moved.
    */
@@ -173,7 +173,7 @@ public final class Round extends Table {
   public static int createRound(FlatBufferBuilder builder,
       int teamIDsOffset,
       int teamVPsOffset,
-      int teamVoterIDOffset,
+      int teamVoterIDsOffset,
       int movedIDsOffset,
       int movedLocsOffset,
       int spawnedBodiesOffset,
@@ -211,7 +211,7 @@ public final class Round extends Table {
     Round.addSpawnedBodies(builder, spawnedBodiesOffset);
     Round.addMovedLocs(builder, movedLocsOffset);
     Round.addMovedIDs(builder, movedIDsOffset);
-    Round.addTeamVoterID(builder, teamVoterIDOffset);
+    Round.addTeamVoterIDs(builder, teamVoterIDsOffset);
     Round.addTeamVPs(builder, teamVPsOffset);
     Round.addTeamIDs(builder, teamIDsOffset);
     return Round.endRound(builder);
@@ -224,9 +224,9 @@ public final class Round extends Table {
   public static void addTeamVPs(FlatBufferBuilder builder, int teamVPsOffset) { builder.addOffset(1, teamVPsOffset, 0); }
   public static int createTeamVPsVector(FlatBufferBuilder builder, boolean[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addBoolean(data[i]); return builder.endVector(); }
   public static void startTeamVPsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
-  public static void addTeamVoterID(FlatBufferBuilder builder, int teamVoterIDOffset) { builder.addOffset(2, teamVoterIDOffset, 0); }
-  public static int createTeamVoterIDVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
-  public static void startTeamVoterIDVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addTeamVoterIDs(FlatBufferBuilder builder, int teamVoterIDsOffset) { builder.addOffset(2, teamVoterIDsOffset, 0); }
+  public static int createTeamVoterIDsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
+  public static void startTeamVoterIDsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addMovedIDs(FlatBufferBuilder builder, int movedIDsOffset) { builder.addOffset(3, movedIDsOffset, 0); }
   public static int createMovedIDsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startMovedIDsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
