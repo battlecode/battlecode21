@@ -66,6 +66,9 @@ def pub(project_id, topic_name, data, num_retries=5):
             break
 
 # TODO a method for scrimmages in general
+# TODO should this not be an external method? should this be moved into the scrim class? 
+# it's not callable via an endpoint; however, this might not matter (it might be ok to call via an endpoint, anyways).
+# moving into scrim class would make more sense.
 def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by=None):
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
@@ -78,6 +81,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by=None):
 
     # TODO set blue rating, red rating for ranked matches
 
+    # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
     # TODO save the scrimmage
 
     # TODO put onto pubsub
