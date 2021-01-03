@@ -46,18 +46,17 @@ public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos)
 public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
 ```
 
-3. For array fields, the generated file will contain something like this:
+3. For Object array fields, the generated file will contain something like this:
 ```java
 public BodyTypeMetadata bodyTypeMetadata(int j) { return bodyTypeMetadata(new BodyTypeMetadata(), j); }
 public BodyTypeMetadata bodyTypeMetadata(BodyTypeMetadata obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-public int bodyTypeMetadataLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
 ```
 Replace every case of `__assign` with `__init`. This will result in something like this:
 ```java
 public BodyTypeMetadata bodyTypeMetadata(int j) { return bodyTypeMetadata(new BodyTypeMetadata(), j); }
 public BodyTypeMetadata bodyTypeMetadata(BodyTypeMetadata obj, int j) { int o = __offset(8); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
-public int bodyTypeMetadataLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
 ```
+Note that this includes tables, e.g. `VecTable`.
 
 #### OLD, 2017, WAY BELOW:
 
