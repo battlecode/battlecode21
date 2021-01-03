@@ -46,7 +46,7 @@ public final class SpawnedBodyTable extends Table {
    * The locations of the bodies.
    */
   public VecTable locs() { return locs(new VecTable()); }
-  public VecTable locs(VecTable obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public VecTable locs(VecTable obj) { int o = __offset(10); return o != 0 ? obj.__init(__indirect(o + bb_pos), bb) : null; }
   /**
    * the amount of influence paid to create these bodies
    * for initial Enlightenment Centers, this is the amount of influence
@@ -55,7 +55,6 @@ public final class SpawnedBodyTable extends Table {
   public int influences(int j) { int o = __offset(12); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int influencesLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer influencesAsByteBuffer() { return __vector_as_bytebuffer(12, 4); }
-  public ByteBuffer influencesInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 12, 4); }
 
   public static int createSpawnedBodyTable(FlatBufferBuilder builder,
       int robotIDsOffset,

@@ -48,7 +48,6 @@ public final class GameMap extends Table {
   public double passability(int j) { int o = __offset(14); return o != 0 ? bb.getDouble(__vector(o) + j * 8) : 0; }
   public int passabilityLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer passabilityAsByteBuffer() { return __vector_as_bytebuffer(14, 8); }
-  public ByteBuffer passabilityInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 8); }
 
   public static void startGameMap(FlatBufferBuilder builder) { builder.startObject(6); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }

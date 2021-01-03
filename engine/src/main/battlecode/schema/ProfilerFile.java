@@ -14,9 +14,8 @@ import com.google.flatbuffers.*;
  */
 public final class ProfilerFile extends Table {
   public static ProfilerFile getRootAsProfilerFile(ByteBuffer _bb) { return getRootAsProfilerFile(_bb, new ProfilerFile()); }
-  public static ProfilerFile getRootAsProfilerFile(ByteBuffer _bb, ProfilerFile obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
-  public ProfilerFile __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static ProfilerFile getRootAsProfilerFile(ByteBuffer _bb, ProfilerFile obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public ProfilerFile __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
 
   /**
    * The method names that are referred to in the events.
@@ -27,7 +26,7 @@ public final class ProfilerFile extends Table {
    * The recorded profiles, one per robot.
    */
   public ProfilerProfile profiles(int j) { return profiles(new ProfilerProfile(), j); }
-  public ProfilerProfile profiles(ProfilerProfile obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public ProfilerProfile profiles(ProfilerProfile obj, int j) { int o = __offset(6); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
   public int profilesLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
 
   public static int createProfilerFile(FlatBufferBuilder builder,

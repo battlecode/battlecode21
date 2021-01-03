@@ -182,7 +182,7 @@ public class SandboxedRobotPlayer {
                 System.out.println(robotController.getTeam().toString() + "'s "
                         + robotController.getType().toString() + " " +
                         robotController.getID() + " at location " + robotController.getLocation().toString()
-                        + " died in round " +robotController.getRoundNum() +
+                        + " froze in round " +robotController.getRoundNum() +
                         " because it returned from its run() method!");
             } catch (final IllegalAccessException e) {
                 ErrorReporter.report(e, true);
@@ -278,7 +278,9 @@ public class SandboxedRobotPlayer {
     public void step() {
         // Is the RobotPlayer terminated?
         if (terminated) {
-            throw new RuntimeException("Step called after robot killed");
+            return; // the player screwed up but they're not gonna lose the robot hehehe
+            // TODO: restore this for future games
+            //throw new RuntimeException("Step called after robot killed");
         }
         // Update the robot's information
         updateOut();

@@ -228,7 +228,7 @@ public final strictfp class GameMapIO {
             final int seed = raw.randomSeed();
             final int rounds = GameConstants.GAME_MAX_NUMBER_OF_ROUNDS;
             final String mapName = raw.name();
-            double[] passabilityArray = new int[width * height];
+            double[] passabilityArray = new double[width * height];
             for (int i = 0; i < width * height; i++) {
                 passabilityArray[i] = raw.passability(i);
             }
@@ -254,7 +254,7 @@ public final strictfp class GameMapIO {
         public static int serialize(FlatBufferBuilder builder, LiveMap gameMap) {
             int name = builder.createString(gameMap.getMapName());
             int randomSeed = gameMap.getSeed();
-            int[] passabilityArray = gameMap.getPassabilityArray();
+            double[] passabilityArray = gameMap.getPassabilityArray();
             // Make body tables
             ArrayList<Integer> bodyIDs = new ArrayList<>();
             ArrayList<Byte> bodyTeamIDs = new ArrayList<>();
@@ -313,9 +313,9 @@ public final strictfp class GameMapIO {
                 int bodyX = locs.xs(i);
                 int bodyY = locs.ys(i);
                 Team bodyTeam = TeamMapping.team(bodyTable.teamIDs(i));
-                double bodyInfluence = bodyTable.costs(i);
+                int bodyInfluence = bodyTable.influences(i);
                 if (bodyType == RobotType.ENLIGHTENMENT_CENTER)
-                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
+                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyType, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
                 // ignore robots that are not enlightenment centers, TODO throw error?
             }
         }

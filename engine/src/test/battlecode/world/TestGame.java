@@ -67,9 +67,10 @@ public class TestGame {
      * @param y y coordinate for the spawn
      * @param type type of the robot to spawn
      * @param team team of the robot to spawn
+     * @param influence influence of the robot to spawn
      */
-    public int spawn(int x, int y, RobotType type, Team team) {
-        return world.spawnRobot(type, new MapLocation(x, y), team);
+    public int spawn(int x, int y, RobotType type, Team team, int influence) {
+        return world.spawnRobot(null, type, new MapLocation(x, y), team, influence);
     }
 
     /**
