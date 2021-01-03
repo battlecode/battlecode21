@@ -32,7 +32,7 @@ public final class BodyTypeMetadata extends Table {
   /**
    * cooldown of this type
    */
-  public int actionCooldown() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public float actionCooldown() { int o = __offset(10); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
    * action radius if this type
    */
@@ -54,7 +54,7 @@ public final class BodyTypeMetadata extends Table {
       byte type,
       byte spawnSource,
       float convictionRatio,
-      int actionCooldown,
+      float actionCooldown,
       int actionRadiusSquared,
       int sensorRadiusSquared,
       int detectionRadiusSquared,
@@ -75,7 +75,7 @@ public final class BodyTypeMetadata extends Table {
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addSpawnSource(FlatBufferBuilder builder, byte spawnSource) { builder.addByte(1, spawnSource, 0); }
   public static void addConvictionRatio(FlatBufferBuilder builder, float convictionRatio) { builder.addFloat(2, convictionRatio, 0.0f); }
-  public static void addActionCooldown(FlatBufferBuilder builder, int actionCooldown) { builder.addInt(3, actionCooldown, 0); }
+  public static void addActionCooldown(FlatBufferBuilder builder, float actionCooldown) { builder.addFloat(3, actionCooldown, 0.0f); }
   public static void addActionRadiusSquared(FlatBufferBuilder builder, int actionRadiusSquared) { builder.addInt(4, actionRadiusSquared, 0); }
   public static void addSensorRadiusSquared(FlatBufferBuilder builder, int sensorRadiusSquared) { builder.addInt(5, sensorRadiusSquared, 0); }
   public static void addDetectionRadiusSquared(FlatBufferBuilder builder, int detectionRadiusSquared) { builder.addInt(6, detectionRadiusSquared, 0); }

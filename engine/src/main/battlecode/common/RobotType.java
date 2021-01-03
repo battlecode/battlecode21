@@ -39,8 +39,8 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5,  12,  30,  40,  10000),
-    //                       SS                     CR     AC    AR   SR   DR   BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  12,  30,  40,  10000),
+    //                       SS                     CR     AC     AR   SR   DR   BL
     ;
     
     /**
@@ -200,7 +200,7 @@ public enum RobotType {
                 return (int) Math.ceil(GameConstants.PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER * Math.sqrt(roundNum));
             case SLANDERER:
                 if (roundsAlive <= GameConstants.EMBEZZLE_NUM_ROUNDS)
-                    return (int) (GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * influence);
+                    return (int) (GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * robotInfluence);
                 return 0;
             default:
                 return 0;

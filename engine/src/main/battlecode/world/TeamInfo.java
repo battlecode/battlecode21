@@ -45,7 +45,7 @@ public class TeamInfo {
     }
 
     // returns the number of buffs at specified round
-    private double getNumBuffs(Team t, int roundNumber) {
+    private int getNumBuffs(Team t, int roundNumber) {
         int teamIdx = t.ordinal();
         int buffs = numBuffs[teamIdx];
         TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);

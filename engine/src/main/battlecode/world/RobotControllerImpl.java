@@ -64,7 +64,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     @Override
-    private int hashCode() {
+    public int hashCode() {
         return robot.getID();
     }
 
@@ -88,7 +88,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     @Override
-    double getEmpowerFactor(Team team, int roundsInFuture) {
+    public double getEmpowerFactor(Team team, int roundsInFuture) {
         return gameWorld.getTeamInfo().getBuff(team, getRoundNum() + roundsInFuture);
     }
 
@@ -327,7 +327,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
      * @return the number of cooldown turns as a float
      */
     @Override
-    public float getCooldownTurns() {
+    public double getCooldownTurns() {
         return this.robot.getCooldownTurns();
     }
 
@@ -505,7 +505,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // *** ENLIGHTENMENT CENTER METHODS **
     // ***********************************
 
-    @Override
     private void assertCanBid(int influence) throws GameActionException {
         if (!getType().canBid()) {
             throw new GameActionException(CANT_DO_THAT,
@@ -550,7 +549,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (bot == null)
             throw new GameActionException(CANT_DO_THAT,
                     "Robot of given ID does not exist.");
-        if (bot.getType() != ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
+        if (bot.getType() != RobotType.ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
             throw new GameActionException(CANT_SENSE_THAT,
                     "Robot at location is out of sensor range and not an Enlightenment Center.");
     }

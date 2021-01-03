@@ -120,7 +120,7 @@ table BodyTypeMetadata {
     /// the convictionRatio of this type
     convictionRatio: float;
     /// cooldown of this type
-    actionCooldown: int;
+    actionCooldown: float;
     /// action radius if this type
     actionRadiusSquared: int;
     /// sensor radius squared for this type
@@ -237,10 +237,10 @@ table MatchFooter {
 table Round {
     /// The IDs of teams in the Game.
     teamIDs: [int];
-    /// whether a team gets a vp
-    teamVPs: [bool];
-    /// the id of the enlightenment center got the bid
-    teamVoterID: [int];
+    /// The number of votes the teams get, 0 or 1.
+    teamVotes: [int];
+    /// The ID of the Enlightenment Center got the bid.
+    teamBidderIDs: [int];
 
     /// The IDs of bodies that moved.
     movedIDs: [int];
@@ -282,8 +282,7 @@ table Round {
     /// have a header:
     /// '[' $TEAM ':' $ROBOTTYPE '#' $ID '@' $ROUND '] '
     /// $TEAM = 'A' | 'B'
-    /// $ROBOTTYPE = 'HQ' | 'VAPORATOR' | 'LANDSCAPER' 
-    ///            | 'DELIVERY_DRONE' | 'REFINERY' | 'MINER' | other names...
+    /// $ROBOTTYPE = 'ENLIGHTENMENT_CENTER' | 'POLITICIAN' | 'SLANDERER' | 'MUCKRAKER'
     /// $ID = a number
     /// $ROUND = a number
     /// The header is not necessarily followed by a newline.

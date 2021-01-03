@@ -121,7 +121,7 @@ public class RobotInfo {
         int result;
         result = ID;
         result = 31 * result + team.hashCode();
-        result = 31 * result + type;
+        result = 31 * result + type.ordinal();
         result = 31 * result + influence;
         result = 31 * result + conviction;
         result = 31 * result + location.hashCode();

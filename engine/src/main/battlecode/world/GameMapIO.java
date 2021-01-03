@@ -228,7 +228,7 @@ public final strictfp class GameMapIO {
             final int seed = raw.randomSeed();
             final int rounds = GameConstants.GAME_MAX_NUMBER_OF_ROUNDS;
             final String mapName = raw.name();
-            double[] passabilityArray = new int[width * height];
+            double[] passabilityArray = new double[width * height];
             for (int i = 0; i < width * height; i++) {
                 passabilityArray[i] = raw.passability(i);
             }

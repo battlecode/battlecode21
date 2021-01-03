@@ -268,15 +268,11 @@ public strictfp class GameMaker {
             BodyTypeMetadata.startBodyTypeMetadata(builder);
             BodyTypeMetadata.addType(builder, robotTypeToBodyType(type));
             BodyTypeMetadata.addSpawnSource(builder, robotTypeToBodyType(type.spawnSource));
-            BodyTypeMetadata.addCost(builder, type.cost);
-            BodyTypeMetadata.addDirtLimit(builder, type.dirtLimit);
-            BodyTypeMetadata.addSoupLimit(builder, type.soupLimit);
+            BodyTypeMetadata.addConvictionRatio(builder, type.convictionRatio);
             BodyTypeMetadata.addActionCooldown(builder, type.actionCooldown);
+            BodyTypeMetadata.addActionRadiusSquared(builder, type.actionRadiusSquared);
             BodyTypeMetadata.addSensorRadiusSquared(builder, type.sensorRadiusSquared);
-            BodyTypeMetadata.addPollutionRadiusSquared(builder, type.pollutionRadiusSquared);
-            BodyTypeMetadata.addLocalPollutionAdditiveEffect(builder, type.localPollutionAdditiveEffect);
-            BodyTypeMetadata.addLocalPollutionMultiplicativeEffect(builder, type.localPollutionMultiplicativeEffect);
-            BodyTypeMetadata.addMaxSoupProduced(builder, type.maxSoupProduced);
+            BodyTypeMetadata.addDetectionRadiusSquared(builder, type.detectionRadiusSquared);
             BodyTypeMetadata.addBytecodeLimit(builder, type.bytecodeLimit);
             bodyTypeMetadataOffsets.add(BodyTypeMetadata.endBodyTypeMetadata(builder));
         }
@@ -286,16 +282,10 @@ public strictfp class GameMaker {
     }
 
     private byte robotTypeToBodyType(RobotType type){
-        if (type == RobotType.HQ) return BodyType.HQ;
-        if (type == RobotType.MINER) return BodyType.MINER;
-        if (type == RobotType.REFINERY) return BodyType.REFINERY;
-        if (type == RobotType.VAPORATOR) return BodyType.VAPORATOR;
-        if (type == RobotType.DESIGN_SCHOOL) return BodyType.DESIGN_SCHOOL;
-        if (type == RobotType.FULFILLMENT_CENTER) return BodyType.FULFILLMENT_CENTER;
-        if (type == RobotType.LANDSCAPER) return BodyType.LANDSCAPER;
-        if (type == RobotType.DELIVERY_DRONE) return BodyType.DELIVERY_DRONE;
-        if (type == RobotType.NET_GUN) return BodyType.NET_GUN;
-        if (type == RobotType.COW) return BodyType.COW;
+        if (type == RobotType.ENLIGHTENMENT_CENTER) return BodyType.ENLIGHTENMENT_CENTER;
+        if (type == RobotType.POLITICIAN) return BodyType.POLITICIAN;
+        if (type == RobotType.SLANDERER) return BodyType.SLANDERER;
+        if (type == RobotType.MUCKRAKER) return BodyType.MUCKRAKER;
         return Byte.MIN_VALUE;
     }
 
@@ -326,6 +316,7 @@ public strictfp class GameMaker {
         private TByteArrayList spawnedBodiesTypes;
         private TIntArrayList spawnedBodiesLocsXs; //For locs
         private TIntArrayList spawnedBodiesLocsYs; //For locs
+        private TIntArrayList spawnedBodiesInfluences;
 
         private TIntArrayList diedIDs; // ints
 
@@ -333,34 +324,10 @@ public strictfp class GameMaker {
         private TByteArrayList actions; // Actions
         private TIntArrayList actionTargets; // ints (IDs)
 
-        private TIntArrayList dirtChangedLocsXs; //For locs
-        private TIntArrayList dirtChangedLocsYs; //For locs
-        private TIntArrayList dirtChanges; // ints
-
-        private TIntArrayList waterChangedLocsXs; //For locs
-        private TIntArrayList waterChangedLocsYs; //For locs
-
-        private int globalPollution;
-
-        private TIntArrayList pollutionLocsXs; //For locs
-        private TIntArrayList pollutionLocsYs; //For locs
-        private TIntArrayList pollutionRadiiSquared;
-        private TIntArrayList pollutionAdditiveEffects;
-        private TFloatArrayList pollutionMultiplicativeEffects;
-
-        private TIntArrayList soupChangedLocsXs; //For locs
-        private TIntArrayList soupChangedLocsYs; //For locs
-        private TIntArrayList soupChanges; // ints
-
-        private TIntArrayList newMessagesCosts;
-        private TCharArrayList newMessages;
-
-        private TIntArrayList broadcastedMessagesCosts;
-        private TCharArrayList broadcastedMessages;
-
         // Round statistics
         private TIntArrayList teamIDs;
-        private TIntArrayList teamSoups;
+        private TIntArrayList teamVotes;
+        private TIntArrayList teamBidderIDs;
 
         // Indicator dots with locations and RGB values
         private TIntArrayList indicatorDotIDs;
@@ -396,30 +363,14 @@ public strictfp class GameMaker {
             this.spawnedBodiesTypes = new TByteArrayList();
             this.spawnedBodiesLocsXs = new TIntArrayList();
             this.spawnedBodiesLocsYs = new TIntArrayList();
+            this.spawnedBodiesInfluences = new TIntArrayList();
             this.diedIDs = new TIntArrayList();
             this.actionIDs = new TIntArrayList();
             this.actions = new TByteArrayList();
             this.actionTargets = new TIntArrayList();
-            this.dirtChangedLocsXs = new TIntArrayList();
-            this.dirtChangedLocsYs = new TIntArrayList();
-            this.dirtChanges = new TIntArrayList();
-            this.waterChangedLocsXs = new TIntArrayList();
-            this.waterChangedLocsYs = new TIntArrayList();
-            this.globalPollution = 0;
-            this.pollutionLocsXs = new TIntArrayList();
-            this.pollutionLocsYs = new TIntArrayList();
-            this.pollutionRadiiSquared = new TIntArrayList();
-            this.pollutionAdditiveEffects = new TIntArrayList();
-            this.pollutionMultiplicativeEffects = new TFloatArrayList();
-            this.soupChangedLocsXs = new TIntArrayList();
-            this.soupChangedLocsYs = new TIntArrayList();
-            this.soupChanges = new TIntArrayList();
-            this.newMessagesCosts = new TIntArrayList();
-            this.newMessages = new TCharArrayList();
-            this.broadcastedMessagesCosts = new TIntArrayList();
-            this.broadcastedMessages = new TCharArrayList();
             this.teamIDs = new TIntArrayList();
-            this.teamSoups = new TIntArrayList();
+            this.teamVotes = new TIntArrayList();
+            this.teamBidderIDs = new TIntArrayList();
             this.indicatorDotIDs = new TIntArrayList();
             this.indicatorDotLocsX = new TIntArrayList();
             this.indicatorDotLocsY = new TIntArrayList();
@@ -480,16 +431,19 @@ public strictfp class GameMaker {
                 int spawnedBodiesRobotIDsP = intVector(builder, spawnedBodiesRobotIDs, SpawnedBodyTable::startRobotIDsVector);
                 int spawnedBodiesTeamIDsP = byteVector(builder, spawnedBodiesTeamIDs, SpawnedBodyTable::startTeamIDsVector);
                 int spawnedBodiesTypesP = byteVector(builder, spawnedBodiesTypes, SpawnedBodyTable::startTypesVector);
+                int spawnedBodiesInfluencesP = intVector(builder, spawnedBodiesInfluences, SpawnedBodyTable::startInfluencesVector);
                 SpawnedBodyTable.startSpawnedBodyTable(builder);
                 SpawnedBodyTable.addLocs(builder, spawnedBodiesLocsP);
                 SpawnedBodyTable.addRobotIDs(builder, spawnedBodiesRobotIDsP);
                 SpawnedBodyTable.addTeamIDs(builder, spawnedBodiesTeamIDsP);
                 SpawnedBodyTable.addTypes(builder, spawnedBodiesTypesP);
+                SpawnedBodyTable.addInfluences(builder, spawnedBodiesInfluencesP);
                 int spawnedBodiesP = SpawnedBodyTable.endSpawnedBodyTable(builder);
 
                 // Round statistics
                 int teamIDsP = intVector(builder, teamIDs, Round::startTeamIDsVector);
-                int teamSoupsP = intVector(builder, teamSoups, Round::startTeamSoupsVector);
+                int teamVotesP = intVector(builder, teamVotes, Round::startTeamVotesVector);
+                int teamBidderIDsP = intVector(builder, teamBidderIDs, Round::startTeamBidderIDsVector);
 
                 // The bodies that moved
                 int movedIDsP = intVector(builder, movedIDs, Round::startMovedIDsVector);
@@ -502,37 +456,6 @@ public strictfp class GameMaker {
                 int actionIDsP = intVector(builder, actionIDs, Round::startActionIDsVector);
                 int actionsP = byteVector(builder, actions, Round::startActionsVector);
                 int actionTargetsP = intVector(builder, actionTargets, Round::startActionTargetsVector);
-
-                // The dirt changes on locations
-                int dirtChangedLocsP = createVecTable(builder, dirtChangedLocsXs, dirtChangedLocsYs);
-                int dirtChangesP = intVector(builder, dirtChanges, Round::startDirtChangesVector);
-
-                // The water changes on locations
-                int waterChangedLocsP = createVecTable(builder, waterChangedLocsXs, waterChangedLocsYs);
-
-                // The local pollution
-                int pollutionLocationsP = createVecTable(builder, pollutionLocsXs, pollutionLocsYs);
-                int pollutionRadiiSquaredP = intVector(builder, pollutionRadiiSquared, LocalPollutionTable::startRadiiSquaredVector);
-                int pollutionAdditiveEffectsP = intVector(builder, pollutionAdditiveEffects, LocalPollutionTable::startAdditiveEffectsVector);
-                int pollutionMultiplicativeEffectsP = floatVector(builder, pollutionMultiplicativeEffects, LocalPollutionTable::startMultiplicativeEffectsVector);
-                LocalPollutionTable.startLocalPollutionTable(builder);
-                LocalPollutionTable.addLocations(builder, pollutionLocationsP);
-                LocalPollutionTable.addRadiiSquared(builder, pollutionRadiiSquaredP);
-                LocalPollutionTable.addAdditiveEffects(builder, pollutionAdditiveEffectsP);
-                LocalPollutionTable.addMultiplicativeEffects(builder, pollutionMultiplicativeEffectsP);
-                int localPollutionsP = LocalPollutionTable.endLocalPollutionTable(builder);
-
-                // The soup changes on locations
-                int soupChangedLocsP = createVecTable(builder, soupChangedLocsXs, soupChangedLocsYs);
-                int soupChangesP = intVector(builder, soupChanges, Round::startSoupChangesVector);
-
-                // New message requests
-                int newMessagesCostsP = intVector(builder, newMessagesCosts, Round::startNewMessagesCostsVector);
-                int newMessagesP = charVector(builder, newMessages, Round::startNewMessagesVector);
-                
-                // Broadcasted messages
-                int broadcastedMessagesCostsP = intVector(builder, broadcastedMessagesCosts, Round::startBroadcastedMessagesCostsVector);
-                int broadcastedMessagesP = charVector(builder, broadcastedMessages, Round::startBroadcastedMessagesVector);
 
                 // The indicator dots that were set
                 int indicatorDotIDsP = intVector(builder, indicatorDotIDs, Round::startIndicatorDotIDsVector);
@@ -553,7 +476,8 @@ public strictfp class GameMaker {
 
                 Round.startRound(builder);
                 Round.addTeamIDs(builder, teamIDsP);
-                Round.addTeamSoups(builder, teamSoupsP);
+                Round.addTeamVotes(builder, teamVotesP);
+                Round.addTeamBidderIDs(builder, teamBidderIDsP);
                 Round.addMovedIDs(builder, movedIDsP);
                 Round.addMovedLocs(builder, movedLocsP);
                 Round.addSpawnedBodies(builder, spawnedBodiesP);
@@ -561,17 +485,6 @@ public strictfp class GameMaker {
                 Round.addActionIDs(builder, actionIDsP);
                 Round.addActions(builder, actionsP);
                 Round.addActionTargets(builder, actionTargetsP);
-                Round.addDirtChangedLocs(builder, dirtChangedLocsP);
-                Round.addDirtChanges(builder, dirtChangesP);
-                Round.addWaterChangedLocs(builder, waterChangedLocsP);
-                Round.addGlobalPollution(builder, globalPollution);
-                Round.addLocalPollutions(builder, localPollutionsP);
-                Round.addSoupChangedLocs(builder, soupChangedLocsP);
-                Round.addSoupChanges(builder, soupChangesP);
-                Round.addNewMessagesCosts(builder, newMessagesCostsP);
-                Round.addNewMessages(builder, newMessagesP);
-                Round.addBroadcastedMessagesCosts(builder, broadcastedMessagesCostsP);
-                Round.addBroadcastedMessages(builder, broadcastedMessagesP);
                 Round.addIndicatorDotIDs(builder, indicatorDotIDsP);
                 Round.addIndicatorDotLocs(builder, indicatorDotLocsP);
                 Round.addIndicatorDotRGBs(builder, indicatorDotRGBsP);
@@ -613,52 +526,10 @@ public strictfp class GameMaker {
             actionTargets.add(targetID);
         }
 
-        public void addDirtChanged(MapLocation loc, int change) {
-            dirtChangedLocsXs.add(loc.x);
-            dirtChangedLocsYs.add(loc.y);
-            dirtChanges.add(change);
-        }
-
-        public void addWaterChanged(MapLocation loc) {
-            waterChangedLocsXs.add(loc.x);
-            waterChangedLocsYs.add(loc.y);
-        }
-
-        public void setGlobalPollution(int globalPollution) {
-            this.globalPollution = globalPollution;
-        }
-
-        public void addLocalPollution(MapLocation loc, int radiusSquared, int additive, float multiplicative) {
-            pollutionLocsXs.add(loc.x);
-            pollutionLocsYs.add(loc.y);
-            pollutionRadiiSquared.add(radiusSquared);
-            pollutionAdditiveEffects.add(additive);
-            pollutionMultiplicativeEffects.add(multiplicative);
-        }
-
-        public void addSoupChanged(MapLocation loc, int change) {
-            soupChangedLocsXs.add(loc.x);
-            soupChangedLocsYs.add(loc.y);
-            soupChanges.add(change);
-        }
-
-        public void addNewMessage(int cost, String message) {
-            newMessagesCosts.add(cost);
-            for (char c : message.toCharArray())
-                newMessages.add(c);
-            newMessages.add(' ');
-        }
-
-        public void addBroadcastedMessage(int cost, String message) {
-            broadcastedMessagesCosts.add(cost);
-            for (char c : message.toCharArray())
-                broadcastedMessages.add(c);
-            broadcastedMessages.add(' ');
-        }
-
-        public void addTeamSoup(Team team, int soup) {
+        public void addTeamVote(Team team, int vote, int bidderID) {
             teamIDs.add(TeamMapping.id(team));
-            teamSoups.add(soup);
+            teamVotes.add(vote);
+            teamBidderIDs.add(bidderID);
         }
 
         public void addIndicatorDot(int id, MapLocation loc, int red, int green, int blue) {
@@ -692,6 +563,7 @@ public strictfp class GameMaker {
             spawnedBodiesLocsYs.add(robot.getLocation().y);
             spawnedBodiesTeamIDs.add(TeamMapping.id(robot.getTeam()));
             spawnedBodiesTypes.add(FlatHelpers.getBodyTypeFromRobotType(robot.getType()));
+            spawnedBodiesInfluences.add(robot.getInfluence());
         }
 
         private void clearData() {
@@ -703,30 +575,14 @@ public strictfp class GameMaker {
             spawnedBodiesTypes.clear();
             spawnedBodiesLocsXs.clear();
             spawnedBodiesLocsYs.clear();
+            spawnedBodiesInfluences.clear();
             diedIDs.clear();
             actionIDs.clear();
             actions.clear();
             actionTargets.clear();
-            dirtChangedLocsXs.clear();
-            dirtChangedLocsYs.clear();
-            dirtChanges.clear();
-            waterChangedLocsXs.clear();
-            waterChangedLocsYs.clear();
-            globalPollution = 0;
-            pollutionLocsXs.clear();
-            pollutionLocsYs.clear();
-            pollutionRadiiSquared.clear();
-            pollutionAdditiveEffects.clear();
-            pollutionMultiplicativeEffects.clear();
-            soupChangedLocsXs.clear();
-            soupChangedLocsYs.clear();
-            soupChanges.clear();
-            newMessagesCosts.clear();
-            newMessages.clear();
-            broadcastedMessagesCosts.clear();
-            broadcastedMessages.clear();
             teamIDs.clear();
-            teamSoups.clear();
+            teamVotes.clear();
+            teamBidderIDs.clear();
             indicatorDotIDs.clear();
             indicatorDotLocsX.clear();
             indicatorDotLocsY.clear();

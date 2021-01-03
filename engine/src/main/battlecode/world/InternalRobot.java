@@ -1,5 +1,6 @@
 package battlecode.world;
 
+import java.util.Arrays;
 import battlecode.common.*;
 import battlecode.schema.Action;
 
@@ -36,7 +37,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
     private int roundsAlive;
 
-    private float cooldownTurns;
+    private double cooldownTurns;
 
     /**
      * Used to avoid recreating the same RobotInfo object over and over.
@@ -62,7 +63,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
-        this.convictionCap = type == ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
+        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
         this.flag = 0;
         this.bid = 0;
 
@@ -137,7 +138,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         return roundsAlive;
     }
 
-    public float getCooldownTurns() {
+    public double getCooldownTurns() {
         return cooldownTurns;
     }
 
@@ -266,7 +267,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      */
     public void addCooldownTurns() {
         double passability = this.gameWorld.getPassability(this.location);
-        float newCooldownTurns = this.type.actionCooldown / passability;
+        double newCooldownTurns = this.type.actionCooldown / passability;
         setCooldownTurns(this.cooldownTurns + newCooldownTurns);
     }
 
@@ -291,7 +292,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * 
      * @param newTurns the number of cooldown turns
      */
-    public void setCooldownTurns(float newTurns) {
+    public void setCooldownTurns(double newTurns) {
         this.cooldownTurns = newTurns;
     }
 
@@ -383,7 +384,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         if (this.team != newTeam)
             amount = -amount;
 
-        if (type == ENLIGHTENMENT_CENTER)
+        if (type == RobotType.ENLIGHTENMENT_CENTER)
             addInfluenceAndConviction(amount);
         else
             addConviction(amount);
@@ -391,7 +392,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         if (conviction < 0) {
             if (this.type.canBeConverted()) {
                 this.team = newTeam;
-                this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_TEAM, newTeam);
+                this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_TEAM, newTeam.ordinal());
                 if (this.type == RobotType.ENLIGHTENMENT_CENTER)
                     addInfluenceAndConviction(-2 * this.influence);
                 else
@@ -409,7 +410,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      */
     public void expose(InternalRobot bot) {
         this.gameWorld.addBuffs(this.team, bot.influence);
-        this.gameWorld.destroyRobot(bot.id);
+        this.gameWorld.destroyRobot(bot.ID);
     }
 
     // *********************************
@@ -493,6 +494,6 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     public int compareTo(InternalRobot o) {
         if (this.roundsAlive != o.roundsAlive)
             return this.roundsAlive - o.roundsAlive;
-        return this.id - o.id;
+        return this.ID - o.ID;
     }
 }
