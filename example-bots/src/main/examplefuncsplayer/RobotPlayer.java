@@ -83,13 +83,11 @@ public strictfp class RobotPlayer {
             System.out.println("empowered");
             return;
         }
-        tryMove(randomDirection());
         if (tryMove(randomDirection()))
             System.out.println("I moved!");
     }
 
     static void runSlanderer() throws GameActionException {
-        tryMove(randomDirection());
         if (tryMove(randomDirection()))
             System.out.println("I moved!");
     }
@@ -107,7 +105,6 @@ public strictfp class RobotPlayer {
                 }
             }
         }
-        tryMove(randomDirection());
         if (tryMove(randomDirection()))
             System.out.println("I moved!");
     }
