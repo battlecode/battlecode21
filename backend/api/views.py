@@ -295,6 +295,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
     # TODO extract lots of this to the generic scrimmage creation method
+    # TODO test this method, once done
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
@@ -876,6 +877,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         return Response(scrimmage_serializer.data)
 
     # TODO extract lots of this to the generic scrimmage creation method
+    # TODO test this method, once done
     def create(self, request, league_id, team):
         try:
             red_team_id = int(request.data['red_team'])
@@ -929,6 +931,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             return Response(error, status.HTTP_400_BAD_REQUEST)
 
     # TODO extract lots of this to the generic scrimmage creation method
+    # TODO test this method, once done
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
         try:
