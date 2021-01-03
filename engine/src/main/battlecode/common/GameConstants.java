@@ -68,10 +68,10 @@ public class GameConstants {
     public static final int INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE = 150;
 
     /** The passive influence ratio for Enlightenment Centers. To multiply by sqrt(roundNum). */
-    public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2;
+    public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2f;
 
     /** The passive influence ratio for Slanderers. To multiply by robot influence. */
-    public static final float PASSIVE_INFLUENCE_RATIO_SLANDERER = 0.05;
+    public static final float PASSIVE_INFLUENCE_RATIO_SLANDERER = 0.05f;
 
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******
