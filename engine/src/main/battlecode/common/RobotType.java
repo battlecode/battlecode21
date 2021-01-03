@@ -13,7 +13,7 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  1,  2,  2,  40,  40,  20000),
+    ENLIGHTENMENT_CENTER    (null,  1,  2,  2,  40,  40,  12000),
     //                       SS     CR  AC  AR  SR   DR   BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
@@ -22,7 +22,7 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  9,  25,  25,  10000),
+    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  9,  25,  25,  6000),
     //                       SS                     CR  AC  AR  SR   DR   BL
     /**
      * Slanderers passively generate influence for their parent Enlightenment
@@ -31,7 +31,7 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  2,  0,  20,  20,  10000),
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  2,  0,  20,  20,  3000),
     //                       SS                     CR  AC  AR  SR   DR   BL
     /**
      * Muckrakers search the map for enemy Slanderers to Expose, which destroys
@@ -39,7 +39,7 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  12,  30,  40,  10000),
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  12,  30,  40,  9000),
     //                       SS                     CR     AC     AR   SR   DR   BL
     ;
     

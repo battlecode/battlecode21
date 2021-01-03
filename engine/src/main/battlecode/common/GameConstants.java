@@ -73,6 +73,12 @@ public class GameConstants {
     /** The passive influence ratio for Slanderers. To multiply by robot influence. */
     public static final float PASSIVE_INFLUENCE_RATIO_SLANDERER = 0.05f;
 
+    /** The minimum allowable flag value. */
+    public static final int MIN_FLAG_VALUE = 0;
+
+    /** The maximum allowable flag value. */
+    public static final int MAX_FLAG_VALUE = 16777215;
+
     // *********************************
     // ****** GAMEPLAY PROPERTIES ******
     // *********************************

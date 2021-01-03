@@ -501,10 +501,18 @@ public strictfp interface RobotController {
     // ****** COMMUNICATION METHODS ****** 
     // ***********************************
 
+    /**
+     * Checks whether the robot can set the flag to a specified integer.
+     *
+     * @return whether the robot can set the flag to the specified integer.
+     */
+    boolean canSetFlag(int flag);
+
     /** 
      * Sets a robot's flag to an integer.
      *
      * @param flag the flag value.
+     * @throws GameActionException if the specified integer is not a valid flag
      *
      * @battlecode.doc.costlymethod
      */

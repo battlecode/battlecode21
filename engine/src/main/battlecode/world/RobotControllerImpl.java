@@ -539,7 +539,22 @@ public final strictfp class RobotControllerImpl implements RobotController {
     // ***********************************
 
     @Override
+    public boolean canSetFlag(int flag) {
+        try {
+            assertCanSetFlag(flag);
+            return true;
+        } catch (GameActionException e) { return false; }
+    }
+
+    private void assertCanSetFlag(int flag) throws GameActionException {
+        if (flag < GameConstants.MIN_FLAG_VALUE || flag > GameConstants.MAX_FLAG_VALUE) {
+            throw new GameActionException(CANT_DO_THAT, "Flag value out of range");
+        }
+    }
+
+    @Override
     public void setFlag(int flag) throws GameActionException {
+        assertCanGetFlag(flag);
         this.robot.setFlag(flag);
         gameWorld.getMatchMaker().addAction(getID(), Action.SET_FLAG, flag);
     }
