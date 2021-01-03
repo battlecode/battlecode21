@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from api.serializers import *
 from api.permissions import *
 
+
 from google.cloud import storage
 from google.cloud import pubsub_v1
 from google.oauth2 import service_account
@@ -20,28 +21,19 @@ from google.oauth2 import service_account
 import os, tempfile, datetime, argparse, time, json, random, binascii, threading, math
 
 GCLOUD_PROJECT = "battlecode18"
-GCLOUD_SUB_BUCKET = "bh20-submissions"
-GCLOUD_SUB_COMPILE_NAME  = 'bh20-compile'
-GCLOUD_SUB_SCRIMMAGE_NAME = 'bh20-game'
-GCLOUD_RES_BUCKET = "bh20-resumes"
+GCLOUD_SUB_BUCKET = "bc21-submissions"
+GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile'
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bc21-game'
+GCLOUD_RES_BUCKET = "bc21-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
-# pub sub commands (from pub.py)
-def get_callback(api_future, data, ref):
-    """Wrap message data in the context of the callback function."""
-    def callback(api_future):
-        try:
-            print("Published message {} now has message ID {}".format(
-                data, api_future.result()))
-            ref["num_messages"] += 1
-        except Exception:
-            print("A problem occurred when publishing {}: {}\n".format(
-                data, api_future.exception()))
-            raise
-    return callback
+# NOTE: throughout our codebase, we sometimes refer to a pubsub as a "queue", adding a message to a pubsub as "queueing" something, etc. Technically this is not true: the pubsub gives no guarantee at all of a true queue or FIFO order. However, this detail of pubsub order is generally nonconsequential, and when it does matter, we have workarounds for non-FIFO-order cases.
 
-def pub(project_id, topic_name, data="", num_retries=5):
+# Methods for publishing a message to a pubsub.
+# Note that data must be a bytestring.
+# Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
+def pub(project_id, topic_name, data, num_retries=5):
     """Publishes a message to a Pub/Sub topic."""
 
     # Repeat while this fails, because the data is already in the
@@ -62,23 +54,9 @@ def pub(project_id, topic_name, data="", num_retries=5):
             # `projects/{project_id}/topics/{topic_name}`
             topic_path = client.topic_path(project_id, topic_name)
 
-            # Data sent to Cloud Pub/Sub must be a bytestring.
-            #data = b"examplefuncs"
-            if data == "":
-                data = b"sample pub/sub message"
-
-            # Keep track of the number of published messages.
-            ref = dict({"num_messages": 0})
-
             # When you publish a message, the client returns a future.
-            api_future = client.publish(topic_path, data=data)
-            api_future.add_done_callback(get_callback(api_future, data, ref))
-
-            # Keep the main thread from exiting while the message future
-            # gets resolved in the background.
-            while api_future.running():
-                time.sleep(0.5)
-                # print("Published {} message(s).".format(ref["num_messages"]))
+            api_future = client.publish(topic_path, data)
+            message_id = api_future.result()
         except:
             pass
         else:
@@ -139,7 +117,11 @@ class GCloudUploadDownload():
         """
 
         blob = GCloudUploadDownload.get_blob(file_path, bucket)
-        return blob.create_resumable_upload_session()
+        # Origin is necessary to prevent CORS errors later:
+        # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
+        # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
+        # https://googleapis.dev/python/storage/latest/blobs.html
+        return blob.create_resumable_upload_session(origin=settings.THIS_URL)
 
     @staticmethod
     def signed_download_url(file_path, bucket):
@@ -237,6 +219,7 @@ class VerifyUserViewSet(viewsets.GenericViewSet):
 
 class MatchmakingViewSet(viewsets.GenericViewSet):
     permission_classes = ()
+    serializer_class = serializers.Serializer
 
     @action(detail=False, methods=['get'])
     def scrimmage_list(self, request):
@@ -445,6 +428,7 @@ class TeamViewSet(viewsets.GenericViewSet,
     search_fields = ('name','users__username')
     ordering_fields = ('score','name')
     ordering = ('score','name')
+    TEAM_SIZE = 4
 
     def get_queryset(self):
         """
@@ -571,7 +555,8 @@ class TeamViewSet(viewsets.GenericViewSet,
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-                return_data.append({'won': won_as_red or won_as_blue, 'date': scrimmage.updated_at, 'mu': team_mu})
+                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status != 'error') else None,
+                                    'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
 
@@ -586,7 +571,7 @@ class TeamViewSet(viewsets.GenericViewSet,
             return Response({'message': 'Already on a team in this league'}, status.HTTP_400_BAD_REQUEST)
         if team.team_key != request.data.get('team_key', None):
             return Response({'message': 'Invalid team key'}, status.HTTP_400_BAD_REQUEST)
-        if team.users.count() == 2:
+        if team.users.count() == self.TEAM_SIZE:
             return Response({'message': 'Team has max number of users'}, status.HTTP_400_BAD_REQUEST)
         team.users.add(request.user.id)
         team.save()
@@ -610,7 +595,6 @@ class TeamViewSet(viewsets.GenericViewSet,
 
         serializer = self.get_serializer(team)
         return Response(serializer.data, status.HTTP_200_OK)
-
 
 
 class SubmissionViewSet(viewsets.GenericViewSet,
@@ -656,11 +640,14 @@ class SubmissionViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+        # Note that IDs are needed to generate the link.
         serializer.save() #save it once, link will be undefined since we don't have any way to know id
         serializer.save() #save again, link automatically set
 
         submission = Submission.objects.all().get(pk=serializer.data['id'])
         team_sub = TeamSubmission.objects.all().get(team=team)
+        # compiling_id holds id of last submission created for this team
+        # (regardless of compilation status)
         team_sub.compiling_id = submission
         team_sub.save()
 
@@ -671,15 +658,6 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             team.save()
 
         upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
-
-        # The submission process is problematic: if the IDs are recorded, before the code is actually uploaded, then code that fails to upload will have dead IDs associated with it, and the team will be sad
-        # Also, if user navigates away before the upload_url is returned,
-        # then no code makes it into the bucket
-        # This is fixed(?) by uploading in the backend,
-        # or by uploading the file and then pressing another button to officialy submit
-        # The best way for now would be to have the upload, when done,
-        # call a function in the backend that adjusts sub IDs
-        # TODO somehow fix this problem
 
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
@@ -704,23 +682,81 @@ class SubmissionViewSet(viewsets.GenericViewSet,
 
 
     @action(methods=['patch', 'post'], detail=True)
-    def compilation_update(self, request, team, league_id, pk=None):
+    def compilation_pubsub_call(self, request, team, league_id, pk=None):
+        # It is better if compile server gets requests for compiling submissions that are actually in buckets. 
+        # So, only after an upload is done, the frontend calls this endpoint to give the compile server a request.
+
+        # Only allow if superuser, or on the team of the submission
+        # Also make sure that the admin is on a team! Otherwise you may get a 403.
         submission = self.get_queryset().get(pk=pk)
-        if team != submission.team:
-            return Response({'message': 'Not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if not ((team == submission.team) or is_admin):
+            return Response({'message': 'Not authenticated on the right team, nor is admin'}, status.HTTP_401_UNAUTHORIZED)
+        
+        # If a compilation has already succeeded, keep as so; no need to re-do.
+        # (Might make sense to re-do for other submissions though, for example if messages are accidentally taken off the compilation pubsub queue.)
+        if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
+            return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+        # Only allow the admin to re-queue submissions, to prevent submission spam.
+        if (submission.compilation_status != settings.COMPILE_STATUS.PROGRESS) and (not is_admin):
+            return Response({'message': 'Only admin can attempt to re-queue submissions'}, status.HTTP_400_BAD_REQUEST)
 
-        team_sub = TeamSubmission.objects.all().get(team=team)
+        # indicate submission being in a bucket
+        submission.compilation_status = settings.COMPILE_STATUS.UPLOADED
+        submission.save()
 
-        team_sub.compiling_id = None
-        team_sub.last_3_id = team_sub.last_2_id
-        team_sub.last_2_id = team_sub.last_1_id
-        team_sub.last_1_id = submission
-        submission.compilation_status = 2
+        id = submission.id
+        # Notify compile server through pubsub queue.
+        data = str(id)
+        data_bytestring = data.encode('utf-8')
+        pub(GCLOUD_PROJECT, GCLOUD_SUB_COMPILE_NAME, data_bytestring)
 
-        team_sub.save()
+        # indicate submission being queued
+        submission.compilation_status = settings.COMPILE_STATUS.QUEUED
         submission.save()
 
         return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+
+    @action(methods=['patch', 'post'], detail=True)
+    def compilation_update(self, request, team, league_id, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        # Also make sure that the admin is on a team! Otherwise you may get a 403.
+        if is_admin:
+            submission = self.get_queryset().get(pk=pk)
+            if submission.compilation_status == settings.COMPILE_STATUS.SUCCESS:
+                # If a compilation has already succeeded, keep as so.
+                # (Would make sense for failed / errored compiles to flip to successes upon retry, so allow for this)
+                return Response({'message': 'Success response already received for this submission'}, status.HTTP_400_BAD_REQUEST)
+            try: 
+                new_comp_status = int(request.data.get('compilation_status'))
+            except:
+                return Response({'message': 'No status provided. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+
+            if new_comp_status is None:
+                return Response({'message': 'Requires compilation status'}, status.HTTP_400_BAD_REQUEST)
+            elif new_comp_status in (settings.COMPILE_STATUS.SUCCESS, settings.COMPILE_STATUS.FAIL, settings.COMPILE_STATUS.ERROR): #status provided in correct form
+                submission.compilation_status = new_comp_status
+                submission.save()
+
+                if new_comp_status == settings.COMPILE_STATUS.SUCCESS: #compilation succeeded
+                    team_sub = TeamSubmission.objects.all().get(team=submission.team)
+                    # Only if this submission is newer than what's already been processed,
+                    # update the submission history. 
+                    # (to prevent reverting to older submissions that took longer to process)
+                    # (The compile server should generally be processing submissions in the same order they were uploaded, anyways. But this check is still good in case of async conditions, re-queueing, etc)
+                    if team_sub.last_1_id is None or submission.id > team_sub.last_1_id:
+                        team_sub.last_3_id = team_sub.last_2_id
+                        team_sub.last_2_id = team_sub.last_1_id
+                        team_sub.last_1_id = submission
+                        team_sub.save()
+
+                return Response({'message': 'Status updated'}, status.HTTP_200_OK)
+            elif new_comp_status == settings.COMPILE_STATUS.PROGRESS: # Trying to set to compilation in progress, which shouldn't be a valid result
+                return Response({'message': 'Cannot set status to compiling'}, status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Unknown status. 0 = compiling, 1 = succeeded, 2 = failed'}, status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Only superuser can update compilation status'}, status.HTTP_401_UNAUTHORIZED)
 
     
     @action(methods=['get'], detail=True)
@@ -775,35 +811,14 @@ class TeamSubmissionViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         if pk != str(team.id):
             return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
 
-        try:
-            team_data = self.get_queryset().get(pk=pk)
-            comp_id = team_data.compiling_id
-            if comp_id is not None:
-                comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
-                return Response({'status': comp_status}, status.HTTP_200_OK)
-            else:
-                if team_data.last_1_id is not None:
-                    # case where submission has been moved out of compilation cell
-                    return Response({'status': '2'}, status.HTTP_200_OK)
-                else:
-                    return Response({'status': None}, status.HTTP_200_OK)
-        except:
-            # case where this team has no submission data stored
-            return Response({'status': None}, status.HTTP_200_OK)
-
-    @action(methods=['get'], detail=True)
-    def team_compilation_id(self, request, team, league_id, pk=None):
-        if pk != str(team.id):
-            return Response({'message': "Not authenticated"}, status.HTTP_401_UNAUTHORIZED)
-
         team_data = self.get_queryset().get(pk=pk)
         comp_id = team_data.compiling_id
         if comp_id is not None:
-            return Response({'compilation_id': comp_id}, status.HTTP_200_OK)
+            comp_status = self.get_submissions(pk).get(pk=comp_id).compilation_status
+            return Response({'status': comp_status}, status.HTTP_200_OK)
         else:
-            # this is bad, replace with something thats actually None
-            return Response({'compilation_id': -1}, status.HTTP_200_OK)
-              
+            return Response({'status': None}, status.HTTP_200_OK)
+
 
 class ScrimmageViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
@@ -993,14 +1008,26 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
             if 'status' in request.data:
-                sc_status = request.data['status'] 
+                sc_status = request.data['status']
                 if sc_status == "redwon" or sc_status == "bluewon":
+
+                    if 'winscore' in request.data and 'losescore' in request.data:
+                        sc_winscore = request.data['winscore']
+                        sc_losescore = request.data['losescore']
+                    else:
+                        return Response({'message': 'Must include both winscore and losescore in request.'},
+                                        status.HTTP_400_BAD_REQUEST)
+
+                    if sc_winscore <= sc_losescore:
+                        return Response({'message': 'Scores invalid. Winscore must be at least half of total games.'}, status.HTTP_400_BAD_REQUEST)
                     scrimmage.status = sc_status
+                    scrimmage.winscore = sc_winscore
+                    scrimmage.losescore = sc_losescore
 
                     # if tournament, then return here
                     if scrimmage.tournament_id is not None:
                         scrimmage.save()
-                        return Response({'status': sc_status}, status.HTTP_200_OK)
+                        return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
 
                     # update rankings using elo
                     # get team info
@@ -1034,12 +1061,13 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     lost.save()
 
                     scrimmage.save()
-                    return Response({'status': sc_status}, status.HTTP_200_OK)
+                    return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 elif sc_status == "error":
                     scrimmage.status = sc_status
 
                     scrimmage.save()
-                    return Response({'status': sc_status}, status.HTTP_200_OK)
+                    # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
+                    return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:

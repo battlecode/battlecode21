@@ -14,11 +14,19 @@ import os
 from datetime import timedelta
 from settings import *
 
+# Import sensitive settings.
+# The settings that should be specified in dev_settings_sensitive.py are listed in the except block below.
 try:
-    from dev_settings_real import *
+    from dev_settings_sensitive import *
 except ImportError:
-    print("couldnt import")
-    pass
+    print("Error: dev_settings_sensitive.py not found.")
+    print("Some variables in this file will not be defined properly.")
+    # Set some default values, in case the sensitive settings hadn't been defined.
+    DB_PASS = 'redacted'
+    DB_HOST = 'redacted'
+    ADMIN_PASS='redacted'
+    SENDGRID_API_KEY='redacted'
+    GOOGLE_APPLICATION_CREDENTIALS='redacted'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +40,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+THIS_URL = 'http://localhost:3000'
 
 # Application definition
 INSTALLED_APPS += ['debug_toolbar']
@@ -41,18 +50,13 @@ MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'battlecode',
-#         'USER': 'battlecode',
-#         'PASSWORD': 'redacted',
-#         'HOST': 'redacted',
-#         'PORT': 5432,
-#     }
-# }
-
-# GOOGLE_APPLICATION_CREDENTIALS = r"""redacted"""
-
-# SENDGRID_API_KEY = "redacted"
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'battlecode',
+        'USER': 'battlecode',
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': 5432,
+    }
+}

@@ -52,12 +52,14 @@ class SideBar extends Component {
 
     render() {
         return (
-            <div className="sidebar" data-color="chess"> {/* data-color is defined in light-bootstrap-dashboard.css */}
+            <div className="sidebar" data-color="dust"> {/* data-color is defined in light-bootstrap-dashboard.css */}
                 <div className="sidebar-wrapper">
                     <div className="logo">
-                        <img src="../assets/img/logo.png" />
+                        <a href="/home"><img src="../assets/img/logo.png" /></a>
+                        <p>Battlecode 2021</p>
                     </div>
                     <ul className="nav nav-pills nav-stacked">
+                        <NLink to={`#`} style={{visibility: "hidden"}}></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/home`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-home pe-fw" />Home</p></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/getting-started`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-sun pe-fw" />Getting Started</p></NLink>
                         <NLink to={`${process.env.PUBLIC_URL}/resources`}><p style={{fontWeight: "inherit", textTransform: "none", fontSize: "inherit"}}><i className="pe-7s-note2 pe-fw" />Resources</p></NLink>

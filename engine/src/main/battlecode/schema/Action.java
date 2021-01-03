@@ -39,7 +39,7 @@ public final class Action {
    */
   public static final byte SET_FLAG = 4;
   /**
-   * Builds a unit.
+   * Builds a unit (enlightent center).
    * Target: spawned unit
    */
   public static final byte SPAWN_UNIT = 5;

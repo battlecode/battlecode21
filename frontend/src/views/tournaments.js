@@ -40,86 +40,53 @@ class Tournaments extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-12">
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">2021 Tournament Schedule</h4>
+                                </div>
+                                <div className="content">
+                                    <p>
+                                        Battlecode 2021 will consist of seven tournaments throughout the month! We stream and commentate all tournaments online. 
+                                    </p>
+                                    <p>
+                                        <ul>
+                                            <li>
+                                                <b>Sprint Tournament: 1/12.</b> One week after spec release, you're given a chance to win small prizes in this tournament. The goal is to get an idea of the meta-game, and a chance to test your bot prototypes.
+                                            </li>
+                                            <li>
+                                                <b>Seeding Tournament: 1/19.</b> One week after the Sprint Tournament, this tournament determines your positioning in the Qualifying Tournament.
+                                            </li>
+                                            <li>
+                                                <b>International Qualifying Tournament: 1/26.</b>                                           This tournament determines the <i>4 international teams</i> that will qualify for the Final Tournament.
+                                                 </li>
+                                            <li>
+                                                <b>US Qualifying Tournament: 1/26.</b>
+                                                This tournament determines the <i>12 US-based teams</i> that will qualify for the Final Tournament.
+                                                 </li>
+                                            <li>
+                                                <b>Newbie Tournament: 1/28.</b> The top newbie teams compete for a smaller prize pool. The final match between the top 2 teams will be run at the Final Tournament.
+                                            </li>
+                                            <li>
+                                                <b>High School Tournament: 1/28.</b> The top high school teams compete for a smaller prize pool. Like the Newbie Tournament, the final match will be run at the Final Tournament.
+                                            </li>
+                                            <li>
+                                                <b>Final Tournament: 1/30.</b> The top 16 teams, as determined by the qualifying tournaments, compete for glory, fame and a big prize pool. The tournament will take place live, and will be streamed online for 2021. There will not be a component on MIT campus this year.
+                                            </li>
+                                        </ul>
+                                        The deadline to submit code for each non-final tournament is 7 pm EST <i>the day before</i> the tournament. 
+                                       </p> 
+
+
+                                </div>
+                            </div>
 
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Tournament Results</h4>
                                 </div>
                                 <div className="content">
-                                    <p>
-                                        Thank you to everyone for participating!
-                                    </p>
-                                    <p>
-                                        <b>The winner of Battlehack 2020 is <NavLink to='rankings/1643'>Team Snakes and ladders</NavLink></b>, 
-                                        awarded a cash prize of $500. Congrats!
-                                        </p>
-                                    <p>
-                                        The full results of the round robin of the top 16 teams, with replays, <a href='https://bh2020.battlecode.org/finalresults.json'>are available here</a>.
-                                    </p>
-                                    <p>The results of the 4 divisions for determining the top 16 are available here: <a href='https://docs.google.com/spreadsheets/d/1n0aUFyXv_IEvvYum5QvjxIsbYUZPwADfcdee04dej84/edit?usp=sharing'>here</a></p>
-                                    <p>
-                                        <b>Engine breaker winners:</b>
-                                        <ul>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/133'>Issue 133</a>: $125
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/121'>Issue 121</a>: $125
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/108'>Issue 108</a>: $100
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/106'>Issue 106</a>: $100
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/104'>Issue 104</a>: $100
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/97'>Issue 97</a>: $100
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/71'>Issue 71</a>: $100
-                                            </li>
-                                        </ul>
-                                    </p>
-                                    <p>
-                                        <b>L33t h4ck3r winners:</b>
-                                        <ul>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/136'>Issue 136</a>: $350
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/69'>Issue 69</a>: $200
-                                            </li>
-                                            <li>
-                                            <a href='https://github.com/battlecode/battlehack20/issues/135'>Issue 135</a>: $200
-                                            </li>
-                                        </ul>
-                                    </p>
                                 </div>
                             </div>
-
-                            <div className="card">
-                                <div className="header">
-                                    <h4 className="title">Tournament Schedule</h4>
-                                </div>
-                                <div className="content">
-
-                                    <p>
-                                        Battlehack 2020 will start on <b>Thursday, April 16th at 8pm MIT time (EDT +5mins)</b> and consist of one tournament at the end of the week-long event.
-                                    </p>
-
-                                    <p>
-                                        The deadline to submit code for this final tournament is <b>Wednesday, April 22nd at 8pm EDT</b>.
-                                    </p>
-
-                                    <p>
-                                        We will stream and commentate this tournament on <b>Friday, April 24th at 8pm EDT</b>.
-                                    </p>
-                                </div>
-                            </div>
-
 
                             <div className="card">
                                 <div className="header">
@@ -135,16 +102,6 @@ class Tournaments extends Component {
                                 </div>
                             </div>
 
-                            <div className='card'>
-                                <div className='header'>
-                                    <h4 className='title'>Results</h4>
-                                </div>
-                                <div className='content'>
-                                    <p>Division Results are out!</p>
-                                </div>
-
-                            </div>
-
 
                             <div className="card">
                                 <div className="header">
@@ -152,21 +109,15 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Thanks to our sponsor HRT!
-                                        
+                                        Thanks to our gold sponsor, Five Rings!
                                         <ul>
-                                            <li><b>$500 1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed)</li>
-                                            
-                                            <li><b>$750 Engine Breaker prize:</b> for finding major bugs (e.g. getting illegal game state, crashing opponents, giving yourself unlimited bytecode, etc). A list of bugs known before launch can be found <a href="https://docs.google.com/document/d/10Id1pa7txfkrFgaM7WrK90VQKdbCXlNDOUuMRx7x9ls/edit?usp=sharing">here</a>; duplicating these bugs will not result in any prizes awarded. This prize will be split across all teams who submit a novel reproducible example as a GitHub issue <a href="https://github.com/battlecode/battlehack20/issues">here</a>.</li>
-                                            
-                                            <li><b>$750 L33t H4ck3r prize:</b> escape the sandbox into our servers. 
-                                            Split across all teams who contact us and demonstrate a unique exploit, that can either read the value
-                                            of an environment variable (e.g. <code>echo $SECRET_KEY</code>) or read the contents of an arbitrary
-                                            file (e.g. <code>open("api_key.json","r")</code>).
-                                            Please do NOT submit them publicly (i.e. no GitHub issue). Email us or DM us on Discord.
+                                            <li><b>1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed). Smaller prizes for subsequent placers.</li>
+                                            <li>Smaller prizes for top placers in other non-final (newbie, high school, sprint) tournaments.</li>                                           
+                                            <li><b>More prizes???</b> TBA, maybe 👀
+                                                <ul>
+                                                    <li>Historically, we have given out prizes for creative strategies, major bugs found, and other game-specific topics. Have fun with your strategies, write-ups, and overall participation in Battlecode!</li>
+                                                </ul>
                                             </li>
-                                            
-                                            <li><b>More prizes???</b> TBA, maybe</li>
                                         </ul>
                                     </p>
                                 </div>
@@ -180,7 +131,7 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. 
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. More eligibility details can be found <a href="https://battlecode.org#about">here</a>.
                                     </p>
                                     
                                     <p>

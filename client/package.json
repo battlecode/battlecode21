@@ -1,0 +1,28 @@
+{
+  "name": "battlecode-client",
+  "version": "2021.0.0",
+  "description": "Client wrapper of visualizer and playback",
+  "main": "visualizer/electron-main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-all": "(cd playback && npm install) & (cd visualizer && npm install)",
+    "clean": "rm -rf dist/",
+    "build": "(cd playback && npm run build) & (cd visualizer && npm run build)",
+    "build-playback": "(cd playback && npm run build)",
+    "electron": "npm run build-playback & (cd visualizer && npm run electron)",
+    "watch": "npm run build-playback & (cd visualizer && npm run watch)",
+    "prod-electron": "npm run build-playback & (cd visualizer && npm run prod-electron)",
+    "prod-electron-no-sign": "npm run build-playback & (cd visualizer && npm run prod-electron-no-sign)",
+    "prod-test": "npm run build-playback & (cd visualizer && npm run prod-test)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/battlecode/battlecode21.git"
+  },
+  "author": "Teh Devs",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/battlecode/battlecode21/issues"
+  },
+  "homepage": "https://github.com/battlecode/battlecode21#readme"
+}
