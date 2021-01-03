@@ -4,7 +4,7 @@ This repository contains the [Flatbuffers](https://google.github.io/flatbuffers/
 ### Spec
 
 ##### Match Files
-A match file has the extension `.bc20`. It consists of a single flatbuffer with a GameWrapper at its root, containing a valid stream of Events (as described in `battlecode.fbs`). The buffer will be compressed with GZIP.
+A match file has the extension `.bc21`. It consists of a single flatbuffer with a GameWrapper at its root, containing a valid stream of Events (as described in `battlecode.fbs`). The buffer will be compressed with GZIP.
 
 ##### Network Protocol
 The battlecode server hosts an unsecured websocket server on port 6175. When you connect to that port, you will receive each Event that has occurred in the current match as a separate websocket message, in order. There are no messages that can be sent from the client to the server. The server may disconnect at any time, and might not resend its messages when it does; any client has to be able to deal with a game being only half-finished over the network. Messages over the network are unsecured.
