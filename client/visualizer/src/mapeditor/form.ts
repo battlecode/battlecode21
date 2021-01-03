@@ -5,7 +5,7 @@ import {AllImages} from '../imageloader';
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
-import {MapRenderer, Symmetry, MapUnit, HeaderForm, SymmetryForm, RobotForm, UnitForm} from './index';
+import {MapRenderer, Symmetry, MapUnit, HeaderForm, SymmetryForm, RobotForm} from './index';
 
 export type GameMap = {
   name: string,
@@ -31,8 +31,6 @@ export default class MapEditorForm {
   // Forms
   private readonly header: HeaderForm;
   private readonly symmetry: SymmetryForm;
-  // private readonly tree: TreeForm;
-  // private readonly archon: ArchonForm;
   private readonly robots: RobotForm;
 
   private robotsRadio: HTMLInputElement;
@@ -75,9 +73,9 @@ export default class MapEditorForm {
     this.header = new HeaderForm(() => {this.render()});
     this.div.appendChild(this.header.div);
 
-    // symmetry
+    // TODO symmetry
     this.symmetry = new SymmetryForm(() => {this.render()});
-    this.div.appendChild(this.symmetry.div);
+    // this.div.appendChild(this.symmetry.div);
 
     // radio buttons
     this.tilesRadio = document.createElement("input");
@@ -127,7 +125,7 @@ export default class MapEditorForm {
     this.tilesRadio.name = "edit-option"; // radio buttons with same name are mutually exclusive
     this.tilesRadio.onchange = () => {
       while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
-    }
+    };
     const tilesLabel = document.createElement("label");
     tilesLabel.setAttribute("for", this.tilesRadio.id);
     tilesLabel.textContent = "Change Tiles";
@@ -144,7 +142,7 @@ export default class MapEditorForm {
       if (this.robotsRadio.checked) {
         this.forms.appendChild(this.robots.div);
       }
-    };    
+    };
     const robotsLabel = document.createElement("label");
     robotsLabel.setAttribute("for", this.robotsRadio.id);
     robotsLabel.textContent = "Place Robots";
@@ -179,9 +177,9 @@ export default class MapEditorForm {
 
   private loadCallbacks() {
     this.buttonAdd.onclick = () => {
-      const form: UnitForm = this.getActiveForm()
+      const form: RobotForm = this.getActiveForm()
       const id: number = form.getID() || this.lastID;
-      const unit: MapUnit | undefined = form.getUnit();
+      const unit: MapUnit | undefined = form.getUnit(id);
 
       if (unit) {
         // Create a new unit or update an existing unit
@@ -194,6 +192,7 @@ export default class MapEditorForm {
       const id: number | undefined = this.getActiveForm().getID();
       if (id && !isNaN(id)) {
         this.deleteUnit(id);
+        this.getActiveForm().resetForm();
       }
     }
   }
@@ -255,9 +254,7 @@ export default class MapEditorForm {
   /**
    * @return the active form based on which radio button is selected
    */
-  private getActiveForm(): UnitForm {
-    // if (this.inputTree.checked) return this.tree;
-    // if (this.inputArchon.checked) return this.archon;
+  private getActiveForm(): RobotForm {
     return this.robots;
   }
 

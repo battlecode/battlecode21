@@ -8,6 +8,7 @@ export const SLANDERER = schema.BodyType.SLANDERER;
 export const MUCKRAKER = schema.BodyType.MUCKRAKER;
 
 export const bodyTypeList: number[] = [ENLIGHTENMENT_CENTER, POLITICIAN, SLANDERER, MUCKRAKER];
+export const initialBodyTypeList: number[] = [ENLIGHTENMENT_CENTER];
 
 export const bodyTypePriority: number[] = []; // for guns, drones, etc. that should be drawn over other robots
 
