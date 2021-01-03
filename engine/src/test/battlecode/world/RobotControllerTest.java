@@ -28,13 +28,9 @@ public class RobotControllerTest {
         // origin = [0,0], width = 10, height = 10, num rounds = 100
         // random seed = 1337
         // The map doesn't have to meet specs.
-        LiveMap map = new TestMapBuilder("test", new MapLocation(0,0), 10, 10, 1337, 100, 5)
-            .addRobot(0, Team.A, RobotType.HQ, new MapLocation(0, 0))
-            .addRobot(1, Team.B, RobotType.HQ, new MapLocation(9, 9))
-            .setSoup()
-            .setWater()
-            .setPollution()
-            .setDirt()
+        LiveMap map = new TestMapBuilder("test", new MapLocation(0,0), 10, 10, 1337, 100)
+            .addEnlightenmentCenter(0, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(0, 0))
+            .addEnlightenmentCenter(1, Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(9, 9))
             .build();
 
         // This creates the actual game.
@@ -43,19 +39,18 @@ public class RobotControllerTest {
         // Let's spawn a robot for each team. The integers represent IDs.
         int oX = game.getOriginX();
         int oY = game.getOriginY();
-        final int minerA = game.spawn(oX + 3, oY + 3, RobotType.MINER, Team.A);
-        final int minerB = game.spawn(oX + 1, oY + 1, RobotType.MINER, Team
-                .B);
-        InternalRobot minerABot = game.getBot(minerA);
+        final int politicianA = game.spawn(oX + 3, oY + 3, RobotType.POLITICIAN, Team.A, 30);
+        final int politicianB = game.spawn(oX + 1, oY + 1, RobotType.POLITICIAN, Team.B, 30);
+        InternalRobot politicianABot = game.getBot(politicianA);
 
-        assertEquals(new MapLocation(oX + 3, oY + 3), minerABot.getLocation());
+        assertEquals(new MapLocation(oX + 3, oY + 3), politicianABot.getLocation());
 
         // The following specifies the code to be executed in the next round.
         // Bytecodes are not counted, and yields are automatic at the end.
         game.round((id, rc) -> {
-            if (id == minerA) {
+            if (id == politicianA) {
                 rc.move(Direction.EAST);
-            } else if (id == minerB) {
+            } else if (id == politicianB) {
                 // do nothing
             }
         });
@@ -64,7 +59,7 @@ public class RobotControllerTest {
         assertEquals(new MapLocation(
                 oX + 4,
                 oY + 3
-        ), minerABot.getLocation());
+        ), politicianABot.getLocation());
 
         // Lets wait for 10 rounds go by.
         game.waitRounds(10);
@@ -74,15 +69,11 @@ public class RobotControllerTest {
 
     @Test
     public void testImmediateActions() throws GameActionException {
-        LiveMap map = new TestMapBuilder("test", 0, 0, 100, 100, 1337, 1000, 50)
-            .setSoup()
-            .setWater()
-            .setPollution()
-            .setDirt()
+        LiveMap map = new TestMapBuilder("test", 0, 0, 100, 100, 1337, 1000)
             .build();
         TestGame game = new TestGame(map);
 
-        final int a = game.spawn(1, 1, RobotType.MINER, Team.A);
+        final int a = game.spawn(1, 1, RobotType.POLITICIAN, Team.A, 50);
 
         game.round((id, rc) -> {
             if (id != a) return;
@@ -102,31 +93,26 @@ public class RobotControllerTest {
 
     @Test
     public void testSpawns() throws GameActionException {
-        LiveMap map = new TestMapBuilder("test", new MapLocation(0,0), 10, 10, 1337, 100, 5)
-            .setSoup()
-            .setWater()
-            .setPollution()
-            .setDirt()
+        LiveMap map = new TestMapBuilder("test", new MapLocation(0,0), 10, 10, 1337, 100)
             .build();
 
         // This creates the actual game.
         TestGame game = new TestGame(map);
 
         // Let's spawn a robot for each team. The integers represent IDs.
-        final int refineryA = game.spawn(3, 3, RobotType.HQ, Team.A);
+        final int enlightenmentCenterA = game.spawn(3, 3, RobotType.ENLIGHTENMENT_CENTER, Team.A, 400);
 
         // The following specifies the code to be executed in the next round.
         // Bytecodes are not counted, and yields are automatic at the end.
         // TODO? fix test?
-        // game.getWorld().getTeamInfo().adjustSoup(Team.A, 500000);
         game.round((id, rc) -> {
-            assertTrue("Can't build robot", rc.canBuildRobot(RobotType.MINER, Direction.EAST));
-            rc.buildRobot(RobotType.MINER, Direction.EAST);
+            assertTrue("Can't build robot", rc.canBuildRobot(RobotType.MUCKRAKER, Direction.EAST, 40));
+            rc.buildRobot(RobotType.MUCKRAKER, Direction.EAST, 40);
         });
 
         for (InternalRobot robot : game.getWorld().getObjectInfo().robots()) {
-            if (robot.getID() != refineryA) {
-                assertEquals(RobotType.MINER, robot.getType());
+            if (robot.getID() != enlightenmentCenterA) {
+                assertEquals(RobotType.MUCKRAKER, robot.getType());
             }
         }
 
