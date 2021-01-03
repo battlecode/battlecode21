@@ -6,7 +6,7 @@ We're using `Markdeep` to generate a pretty HTML version of the specs. Write the
 
 The following files are legacy from when we used Pandoc, and are not used in the current build.
 
-- css/
-- fonts/
-- js/
-- template.html
+- `css/*` except for `css/journal.css`
+- `fonts/`
+- `js/*` except for `js/markdeep.min.js`
+- `template.html`
