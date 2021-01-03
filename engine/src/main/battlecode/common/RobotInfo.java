@@ -88,7 +88,7 @@ public class RobotInfo {
      *
      * @return the conviction of this robot
      */
-    public int conviction() {
+    public int getConviction() {
         return conviction;
     }
 
