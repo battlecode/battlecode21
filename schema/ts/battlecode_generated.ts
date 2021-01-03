@@ -51,53 +51,66 @@ export enum Action{
   EMPOWER= 0,
 
   /**
+   * Slanderers passively generate influence for the
+   * Enlightenment Center that created them.
+   * Target: parent ID
+   */
+  EMBEZZLE= 1,
+
+  /**
+   * Slanderers turn into Politicians.
+   * Target: none
+   */
+  CAMOUFLAGE= 2,
+
+  /**
    * Muckrakers can expose a slanderer.
    * Target: an enemy body
    */
-  EXPOSE= 1,
+  EXPOSE= 3,
 
   /**
    * Units can change their flag.
    * Target: new flag value
    */
-  SET_FLAG= 2,
+  SET_FLAG= 4,
 
   /**
-   * Builds a unit (enlightent center).
+   * Builds a unit.
    * Target: spawned unit
    */
-  SPAWN_UNIT= 3,
+  SPAWN_UNIT= 5,
 
   /**
-   * Places a bid (enlightent center).
+   * Places a bid.
    * Target: bid value
    */
-  PLACE_BID= 4,
+  PLACE_BID= 6,
 
   /**
    * A robot can change team after being empowered,
    * or when a Enlightenment Center is taken over.
-   * Target: teamID
+   * Target: new robotID
    */
-  CHANGE_TEAM= 5,
+  CHANGE_TEAM= 7,
 
   /**
    * A robot's influence changes.
    * Target: delta value
    */
-  CHANGE_INFLUENCE= 6,
+  CHANGE_INFLUENCE= 8,
 
   /**
    * A robot's conviction changes.
    * Target: delta value, i.e. red 5 -> blue 3 is -2
    */
-  CHANGE_CONVICTION= 7,
+  CHANGE_CONVICTION= 9,
 
   /**
    * Dies due to an uncaught exception.
    * Target: none
    */
-  DIE_EXCEPTION= 8
+  DIE_EXCEPTION= 10
 }};
 
 /**
@@ -221,17 +234,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):VecTable {
  * @returns VecTable
  */
 static getRootAsVecTable(bb:flatbuffers.ByteBuffer, obj?:VecTable):VecTable {
-  return (obj || new VecTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param VecTable= obj
- * @returns VecTable
- */
-static getSizePrefixedRootAsVecTable(bb:flatbuffers.ByteBuffer, obj?:VecTable):VecTable {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new VecTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new VecTable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -393,17 +396,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):RGBTable {
  * @returns RGBTable
  */
 static getRootAsRGBTable(bb:flatbuffers.ByteBuffer, obj?:RGBTable):RGBTable {
-  return (obj || new RGBTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param RGBTable= obj
- * @returns RGBTable
- */
-static getSizePrefixedRootAsRGBTable(bb:flatbuffers.ByteBuffer, obj?:RGBTable):RGBTable {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new RGBTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new RGBTable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -620,17 +613,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):SpawnedBodyTable {
  * @returns SpawnedBodyTable
  */
 static getRootAsSpawnedBodyTable(bb:flatbuffers.ByteBuffer, obj?:SpawnedBodyTable):SpawnedBodyTable {
-  return (obj || new SpawnedBodyTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param SpawnedBodyTable= obj
- * @returns SpawnedBodyTable
- */
-static getSizePrefixedRootAsSpawnedBodyTable(bb:flatbuffers.ByteBuffer, obj?:SpawnedBodyTable):SpawnedBodyTable {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new SpawnedBodyTable()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new SpawnedBodyTable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -726,7 +709,7 @@ typesArray():Int8Array|null {
  */
 locs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? (obj || new battlecode.schema.VecTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.VecTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -936,17 +919,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):GameMap {
  * @returns GameMap
  */
 static getRootAsGameMap(bb:flatbuffers.ByteBuffer, obj?:GameMap):GameMap {
-  return (obj || new GameMap()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param GameMap= obj
- * @returns GameMap
- */
-static getSizePrefixedRootAsGameMap(bb:flatbuffers.ByteBuffer, obj?:GameMap):GameMap {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new GameMap()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new GameMap).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -970,7 +943,7 @@ name(optionalEncoding?:any):string|Uint8Array|null {
  */
 minCorner(obj?:battlecode.schema.Vec):battlecode.schema.Vec|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new battlecode.schema.Vec()).__init(this.bb_pos + offset, this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.Vec).__init(this.bb_pos + offset, this.bb!) : null;
 };
 
 /**
@@ -981,7 +954,7 @@ minCorner(obj?:battlecode.schema.Vec):battlecode.schema.Vec|null {
  */
 maxCorner(obj?:battlecode.schema.Vec):battlecode.schema.Vec|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? (obj || new battlecode.schema.Vec()).__init(this.bb_pos + offset, this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.Vec).__init(this.bb_pos + offset, this.bb!) : null;
 };
 
 /**
@@ -992,7 +965,7 @@ maxCorner(obj?:battlecode.schema.Vec):battlecode.schema.Vec|null {
  */
 bodies(obj?:battlecode.schema.SpawnedBodyTable):battlecode.schema.SpawnedBodyTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? (obj || new battlecode.schema.SpawnedBodyTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.SpawnedBodyTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -1156,17 +1129,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):BodyTypeMetadata {
  * @returns BodyTypeMetadata
  */
 static getRootAsBodyTypeMetadata(bb:flatbuffers.ByteBuffer, obj?:BodyTypeMetadata):BodyTypeMetadata {
-  return (obj || new BodyTypeMetadata()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param BodyTypeMetadata= obj
- * @returns BodyTypeMetadata
- */
-static getSizePrefixedRootAsBodyTypeMetadata(bb:flatbuffers.ByteBuffer, obj?:BodyTypeMetadata):BodyTypeMetadata {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new BodyTypeMetadata()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new BodyTypeMetadata).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1206,7 +1169,7 @@ convictionRatio():number {
  */
 actionCooldown():number {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
 };
 
 /**
@@ -1285,7 +1248,7 @@ static addConvictionRatio(builder:flatbuffers.Builder, convictionRatio:number) {
  * @param number actionCooldown
  */
 static addActionCooldown(builder:flatbuffers.Builder, actionCooldown:number) {
-  builder.addFieldInt32(3, actionCooldown, 0);
+  builder.addFieldFloat32(3, actionCooldown, 0.0);
 };
 
 /**
@@ -1370,17 +1333,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):TeamData {
  * @returns TeamData
  */
 static getRootAsTeamData(bb:flatbuffers.ByteBuffer, obj?:TeamData):TeamData {
-  return (obj || new TeamData()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param TeamData= obj
- * @returns TeamData
- */
-static getSizePrefixedRootAsTeamData(bb:flatbuffers.ByteBuffer, obj?:TeamData):TeamData {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new TeamData()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new TeamData).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1500,17 +1453,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):ProfilerEvent {
  * @returns ProfilerEvent
  */
 static getRootAsProfilerEvent(bb:flatbuffers.ByteBuffer, obj?:ProfilerEvent):ProfilerEvent {
-  return (obj || new ProfilerEvent()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param ProfilerEvent= obj
- * @returns ProfilerEvent
- */
-static getSizePrefixedRootAsProfilerEvent(bb:flatbuffers.ByteBuffer, obj?:ProfilerEvent):ProfilerEvent {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new ProfilerEvent()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new ProfilerEvent).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1619,17 +1562,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):ProfilerProfile {
  * @returns ProfilerProfile
  */
 static getRootAsProfilerProfile(bb:flatbuffers.ByteBuffer, obj?:ProfilerProfile):ProfilerProfile {
-  return (obj || new ProfilerProfile()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param ProfilerProfile= obj
- * @returns ProfilerProfile
- */
-static getSizePrefixedRootAsProfilerProfile(bb:flatbuffers.ByteBuffer, obj?:ProfilerProfile):ProfilerProfile {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new ProfilerProfile()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new ProfilerProfile).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1654,7 +1587,7 @@ name(optionalEncoding?:any):string|Uint8Array|null {
  */
 events(index: number, obj?:battlecode.schema.ProfilerEvent):battlecode.schema.ProfilerEvent|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new battlecode.schema.ProfilerEvent()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.ProfilerEvent).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -1754,17 +1687,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):ProfilerFile {
  * @returns ProfilerFile
  */
 static getRootAsProfilerFile(bb:flatbuffers.ByteBuffer, obj?:ProfilerFile):ProfilerFile {
-  return (obj || new ProfilerFile()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param ProfilerFile= obj
- * @returns ProfilerFile
- */
-static getSizePrefixedRootAsProfilerFile(bb:flatbuffers.ByteBuffer, obj?:ProfilerFile):ProfilerFile {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new ProfilerFile()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new ProfilerFile).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1798,7 +1721,7 @@ framesLength():number {
  */
 profiles(index: number, obj?:battlecode.schema.ProfilerProfile):battlecode.schema.ProfilerProfile|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new battlecode.schema.ProfilerProfile()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.ProfilerProfile).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -1918,17 +1841,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):GameHeader {
  * @returns GameHeader
  */
 static getRootAsGameHeader(bb:flatbuffers.ByteBuffer, obj?:GameHeader):GameHeader {
-  return (obj || new GameHeader()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param GameHeader= obj
- * @returns GameHeader
- */
-static getSizePrefixedRootAsGameHeader(bb:flatbuffers.ByteBuffer, obj?:GameHeader):GameHeader {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new GameHeader()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new GameHeader).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -1953,7 +1866,7 @@ specVersion(optionalEncoding?:any):string|Uint8Array|null {
  */
 teams(index: number, obj?:battlecode.schema.TeamData):battlecode.schema.TeamData|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new battlecode.schema.TeamData()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.TeamData).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -1973,7 +1886,7 @@ teamsLength():number {
  */
 bodyTypeMetadata(index: number, obj?:battlecode.schema.BodyTypeMetadata):battlecode.schema.BodyTypeMetadata|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? (obj || new battlecode.schema.BodyTypeMetadata()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.BodyTypeMetadata).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -2102,17 +2015,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):GameFooter {
  * @returns GameFooter
  */
 static getRootAsGameFooter(bb:flatbuffers.ByteBuffer, obj?:GameFooter):GameFooter {
-  return (obj || new GameFooter()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param GameFooter= obj
- * @returns GameFooter
- */
-static getSizePrefixedRootAsGameFooter(bb:flatbuffers.ByteBuffer, obj?:GameFooter):GameFooter {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new GameFooter()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new GameFooter).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -2183,17 +2086,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):MatchHeader {
  * @returns MatchHeader
  */
 static getRootAsMatchHeader(bb:flatbuffers.ByteBuffer, obj?:MatchHeader):MatchHeader {
-  return (obj || new MatchHeader()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param MatchHeader= obj
- * @returns MatchHeader
- */
-static getSizePrefixedRootAsMatchHeader(bb:flatbuffers.ByteBuffer, obj?:MatchHeader):MatchHeader {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new MatchHeader()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new MatchHeader).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -2204,7 +2097,7 @@ static getSizePrefixedRootAsMatchHeader(bb:flatbuffers.ByteBuffer, obj?:MatchHea
  */
 map(obj?:battlecode.schema.GameMap):battlecode.schema.GameMap|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new battlecode.schema.GameMap()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.GameMap).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2284,17 +2177,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):MatchFooter {
  * @returns MatchFooter
  */
 static getRootAsMatchFooter(bb:flatbuffers.ByteBuffer, obj?:MatchFooter):MatchFooter {
-  return (obj || new MatchFooter()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param MatchFooter= obj
- * @returns MatchFooter
- */
-static getSizePrefixedRootAsMatchFooter(bb:flatbuffers.ByteBuffer, obj?:MatchFooter):MatchFooter {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new MatchFooter()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new MatchFooter).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -2387,17 +2270,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):Round {
  * @returns Round
  */
 static getRootAsRound(bb:flatbuffers.ByteBuffer, obj?:Round):Round {
-  return (obj || new Round()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param Round= obj
- * @returns Round
- */
-static getSizePrefixedRootAsRound(bb:flatbuffers.ByteBuffer, obj?:Round):Round {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new Round()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new Round).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -2428,39 +2301,39 @@ teamIDsArray():Int32Array|null {
 };
 
 /**
- * whether a team gets a vp
+ * The number of votes the teams get, 0 or 1.
  *
  * @param number index
- * @returns boolean
+ * @returns number
  */
-teamVPs(index: number):boolean|null {
+teamVotes(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? !!this.bb!.readInt8(this.bb!.__vector(this.bb_pos + offset) + index) : false;
+  return offset ? this.bb!.readInt32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
  * @returns number
  */
-teamVPsLength():number {
+teamVotesLength():number {
   var offset = this.bb!.__offset(this.bb_pos, 6);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 };
 
 /**
- * @returns Int8Array
+ * @returns Int32Array
  */
-teamVPsArray():Int8Array|null {
+teamVotesArray():Int32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? new Int8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Int32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
- * the id of the enlightenment center got the bid
+ * The ID of the Enlightenment Center got the bid.
  *
  * @param number index
  * @returns number
  */
-teamVoterID(index: number):number|null {
+teamBidderIDs(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? this.bb!.readInt32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
@@ -2468,7 +2341,7 @@ teamVoterID(index: number):number|null {
 /**
  * @returns number
  */
-teamVoterIDLength():number {
+teamBidderIDsLength():number {
   var offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -2476,7 +2349,7 @@ teamVoterIDLength():number {
 /**
  * @returns Int32Array
  */
-teamVoterIDArray():Int32Array|null {
+teamBidderIDsArray():Int32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? new Int32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -2516,7 +2389,7 @@ movedIDsArray():Int32Array|null {
  */
 movedLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
-  return offset ? (obj || new battlecode.schema.VecTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.VecTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2527,7 +2400,7 @@ movedLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
  */
 spawnedBodies(obj?:battlecode.schema.SpawnedBodyTable):battlecode.schema.SpawnedBodyTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 14);
-  return offset ? (obj || new battlecode.schema.SpawnedBodyTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.SpawnedBodyTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2674,7 +2547,7 @@ indicatorDotIDsArray():Int32Array|null {
  */
 indicatorDotLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 26);
-  return offset ? (obj || new battlecode.schema.VecTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.VecTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2685,7 +2558,7 @@ indicatorDotLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|nul
  */
 indicatorDotRGBs(obj?:battlecode.schema.RGBTable):battlecode.schema.RGBTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 28);
-  return offset ? (obj || new battlecode.schema.RGBTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.RGBTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2723,7 +2596,7 @@ indicatorLineIDsArray():Int32Array|null {
  */
 indicatorLineStartLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 32);
-  return offset ? (obj || new battlecode.schema.VecTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.VecTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2734,7 +2607,7 @@ indicatorLineStartLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTab
  */
 indicatorLineEndLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 34);
-  return offset ? (obj || new battlecode.schema.VecTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.VecTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2745,7 +2618,7 @@ indicatorLineEndLocs(obj?:battlecode.schema.VecTable):battlecode.schema.VecTable
  */
 indicatorLineRGBs(obj?:battlecode.schema.RGBTable):battlecode.schema.RGBTable|null {
   var offset = this.bb!.__offset(this.bb_pos, 36);
-  return offset ? (obj || new battlecode.schema.RGBTable()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.RGBTable).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -2754,8 +2627,7 @@ indicatorLineRGBs(obj?:battlecode.schema.RGBTable):battlecode.schema.RGBTable|nu
  * have a header:
  * '[' $TEAM ':' $ROBOTTYPE '#' $ID '@' $ROUND '] '
  * $TEAM = 'A' | 'B'
- * $ROBOTTYPE = 'HQ' | 'VAPORATOR' | 'LANDSCAPER' 
- *            | 'DELIVERY_DRONE' | 'REFINERY' | 'MINER' | other names...
+ * $ROBOTTYPE = 'ENLIGHTENMENT_CENTER' | 'POLITICIAN' | 'SLANDERER' | 'MUCKRAKER'
  * $ID = a number
  * $ROUND = a number
  * The header is not necessarily followed by a newline.
@@ -2883,39 +2755,10 @@ static startTeamIDsVector(builder:flatbuffers.Builder, numElems:number) {
 
 /**
  * @param flatbuffers.Builder builder
- * @param flatbuffers.Offset teamVPsOffset
+ * @param flatbuffers.Offset teamVotesOffset
  */
-static addTeamVPs(builder:flatbuffers.Builder, teamVPsOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(1, teamVPsOffset, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param Array.<boolean> data
- * @returns flatbuffers.Offset
- */
-static createTeamVPsVector(builder:flatbuffers.Builder, data:boolean[]):flatbuffers.Offset {
-  builder.startVector(1, data.length, 1);
-  for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt8(+data[i]);
-  }
-  return builder.endVector();
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number numElems
- */
-static startTeamVPsVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(1, numElems, 1);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param flatbuffers.Offset teamVoterIDOffset
- */
-static addTeamVoterID(builder:flatbuffers.Builder, teamVoterIDOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(2, teamVoterIDOffset, 0);
+static addTeamVotes(builder:flatbuffers.Builder, teamVotesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, teamVotesOffset, 0);
 };
 
 /**
@@ -2923,7 +2766,7 @@ static addTeamVoterID(builder:flatbuffers.Builder, teamVoterIDOffset:flatbuffers
  * @param Array.<number> data
  * @returns flatbuffers.Offset
  */
-static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+static createTeamVotesVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -2935,7 +2778,36 @@ static createTeamVoterIDVector(builder:flatbuffers.Builder, data:number[] | Uint
  * @param flatbuffers.Builder builder
  * @param number numElems
  */
-static startTeamVoterIDVector(builder:flatbuffers.Builder, numElems:number) {
+static startTeamVotesVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset teamBidderIDsOffset
+ */
+static addTeamBidderIDs(builder:flatbuffers.Builder, teamBidderIDsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(2, teamBidderIDsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<number> data
+ * @returns flatbuffers.Offset
+ */
+static createTeamBidderIDsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addInt32(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startTeamBidderIDsVector(builder:flatbuffers.Builder, numElems:number) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -3281,11 +3153,11 @@ static endRound(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset, teamVPsOffset:flatbuffers.Offset, teamVoterIDOffset:flatbuffers.Offset, movedIDsOffset:flatbuffers.Offset, movedLocsOffset:flatbuffers.Offset, spawnedBodiesOffset:flatbuffers.Offset, diedIDsOffset:flatbuffers.Offset, actionIDsOffset:flatbuffers.Offset, actionsOffset:flatbuffers.Offset, actionTargetsOffset:flatbuffers.Offset, indicatorDotIDsOffset:flatbuffers.Offset, indicatorDotLocsOffset:flatbuffers.Offset, indicatorDotRGBsOffset:flatbuffers.Offset, indicatorLineIDsOffset:flatbuffers.Offset, indicatorLineStartLocsOffset:flatbuffers.Offset, indicatorLineEndLocsOffset:flatbuffers.Offset, indicatorLineRGBsOffset:flatbuffers.Offset, logsOffset:flatbuffers.Offset, roundID:number, bytecodeIDsOffset:flatbuffers.Offset, bytecodesUsedOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset, teamVotesOffset:flatbuffers.Offset, teamBidderIDsOffset:flatbuffers.Offset, movedIDsOffset:flatbuffers.Offset, movedLocsOffset:flatbuffers.Offset, spawnedBodiesOffset:flatbuffers.Offset, diedIDsOffset:flatbuffers.Offset, actionIDsOffset:flatbuffers.Offset, actionsOffset:flatbuffers.Offset, actionTargetsOffset:flatbuffers.Offset, indicatorDotIDsOffset:flatbuffers.Offset, indicatorDotLocsOffset:flatbuffers.Offset, indicatorDotRGBsOffset:flatbuffers.Offset, indicatorLineIDsOffset:flatbuffers.Offset, indicatorLineStartLocsOffset:flatbuffers.Offset, indicatorLineEndLocsOffset:flatbuffers.Offset, indicatorLineRGBsOffset:flatbuffers.Offset, logsOffset:flatbuffers.Offset, roundID:number, bytecodeIDsOffset:flatbuffers.Offset, bytecodesUsedOffset:flatbuffers.Offset):flatbuffers.Offset {
   Round.startRound(builder);
   Round.addTeamIDs(builder, teamIDsOffset);
-  Round.addTeamVPs(builder, teamVPsOffset);
-  Round.addTeamVoterID(builder, teamVoterIDOffset);
+  Round.addTeamVotes(builder, teamVotesOffset);
+  Round.addTeamBidderIDs(builder, teamBidderIDsOffset);
   Round.addMovedIDs(builder, movedIDsOffset);
   Round.addMovedLocs(builder, movedLocsOffset);
   Round.addSpawnedBodies(builder, spawnedBodiesOffset);
@@ -3335,17 +3207,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):EventWrapper {
  * @returns EventWrapper
  */
 static getRootAsEventWrapper(bb:flatbuffers.ByteBuffer, obj?:EventWrapper):EventWrapper {
-  return (obj || new EventWrapper()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param EventWrapper= obj
- * @returns EventWrapper
- */
-static getSizePrefixedRootAsEventWrapper(bb:flatbuffers.ByteBuffer, obj?:EventWrapper):EventWrapper {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new EventWrapper()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new EventWrapper).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -3437,17 +3299,7 @@ __init(i:number, bb:flatbuffers.ByteBuffer):GameWrapper {
  * @returns GameWrapper
  */
 static getRootAsGameWrapper(bb:flatbuffers.ByteBuffer, obj?:GameWrapper):GameWrapper {
-  return (obj || new GameWrapper()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param GameWrapper= obj
- * @returns GameWrapper
- */
-static getSizePrefixedRootAsGameWrapper(bb:flatbuffers.ByteBuffer, obj?:GameWrapper):GameWrapper {
-  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-  return (obj || new GameWrapper()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+  return (obj || new GameWrapper).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
@@ -3459,7 +3311,7 @@ static getSizePrefixedRootAsGameWrapper(bb:flatbuffers.ByteBuffer, obj?:GameWrap
  */
 events(index: number, obj?:battlecode.schema.EventWrapper):battlecode.schema.EventWrapper|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new battlecode.schema.EventWrapper()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new battlecode.schema.EventWrapper).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**

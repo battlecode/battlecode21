@@ -27,6 +27,7 @@ public strictfp class GameWorld {
     protected final IDGenerator idGenerator;
     protected final GameStats gameStats;
     
+    private double[] passability;
     private InternalRobot[][] robots;
     private final LiveMap gameMap;
     private final TeamInfo teamInfo;
@@ -34,11 +35,13 @@ public strictfp class GameWorld {
 
     private final RobotControlProvider controlProvider;
     private Random rand;
-
     private final GameMaker.MatchMaker matchMaker;
+
+    private int[] buffsToAdd;
 
     @SuppressWarnings("unchecked")
     public GameWorld(LiveMap gm, RobotControlProvider cp, GameMaker.MatchMaker matchMaker) {
+        this.passability = gm.getPassabilityArray();
         this.robots = new InternalRobot[gm.getWidth()][gm.getHeight()]; // if represented in cartesian, should be height-width, but this should allow us to index x-y
         this.currentRound = 0;
         this.idGenerator = new IDGenerator(gm.getSeed());
@@ -49,16 +52,16 @@ public strictfp class GameWorld {
         this.teamInfo = new TeamInfo(this);
 
         this.controlProvider = cp;
-
         this.rand = new Random(this.gameMap.getSeed());
-
         this.matchMaker = matchMaker;
+
+        this.buffsToAdd = new int[2];
 
         controlProvider.matchStarted(this);
 
         // Add the robots contained in the LiveMap to this world.
-        for(RobotInfo robot : this.gameMap.getInitialBodies()){
-            spawnRobot(robot.ID, robot.type, robot.location, robot.team);
+        for (RobotInfo robot : this.gameMap.getInitialBodies()) {
+            spawnRobot(null, robot.ID, robot.type, robot.location, robot.team, robot.influence);
         }
 
         // Write match header at beginning of match
@@ -164,6 +167,10 @@ public strictfp class GameWorld {
         return this.currentRound;
     }
 
+    public double getPassability(MapLocation loc) {
+        return this.passability[locationToIndex(loc)];
+    }
+
     /**
      * Helper method that converts a location into an index.
      * 
@@ -182,10 +189,6 @@ public strictfp class GameWorld {
         return new MapLocation(idx % this.gameMap.getWidth() + this.gameMap.getOrigin().x,
                                idx / this.gameMap.getWidth() + this.gameMap.getOrigin().y);
     }
-
-    // For general methods, make sure to call
-    // getMatchMaker().someMethod(parameters), e.g. getMatchMaker().addAction(robotID, action, targetID)
-    // to make sure the needed info is updated for replay files
 
     // ***********************************
     // ****** ROBOT METHODS **************
@@ -237,9 +240,14 @@ public strictfp class GameWorld {
     // ****** GAMEPLAY *****************
     // *********************************
 
+    public void addBuffs(Team t, int numBuffs) {
+        this.buffsToAdd[t.ordinal()] += numBuffs;
+    }
+
     public void processBeginningOfRound() {
         // Increment round counter
         currentRound++;
+        this.teamInfo.updateNumBuffs(currentRound);
 
         // Process beginning of each robot's round
         objectInfo.eachRobot((robot) -> {
@@ -253,65 +261,83 @@ public strictfp class GameWorld {
         gameStats.setDominationFactor(d);
     }
 
-    // Here, we want to have a series of setWinnerIfSomeCondition() methods.
-    // As it sounds, we check some condition, then either call
-    // setWinner(Team.A, DominationFactor.SOME_FACTOR) and return true
-    // or return false
-
     /**
-     * Sets the winner if one of the teams has more robots than the other.
+     * Sets the winner if one of the teams has been annihilated.
      *
      * @return whether or not a winner was set
      */
-    public boolean setWinnerIfQuantity() {
+    public boolean setWinnerIfAnnihilated() {
         int robotCountA = objectInfo.getRobotCount(Team.A);
         int robotCountB = objectInfo.getRobotCount(Team.B);
-        if (robotCountA == 0 && robotCountB > 0) {
-            setWinner(Team.B, DominationFactor.QUANTITY_OVER_QUALITY);
+        if (robotCountA == 0) {
+            setWinner(Team.B, DominationFactor.ANNIHILATED);
             return true;
-        } else if (robotCountB == 0 && robotCountA > 0) {
-            setWinner(Team.A, DominationFactor.QUANTITY_OVER_QUALITY);
+        } else if (robotCountB == 0) {
+            setWinner(Team.A, DominationFactor.ANNIHILATED);
             return true;
         }
         return false;
     }
 
     /**
-     * Sets the winner if one of the teams has higher net worth
-     *  (soup + soup cost of robots).
+     * Sets the winner if one of the teams has more votes than the other.
      *
      * @return whether or not a winner was set
      */
-    public boolean setWinnerIfQuality() {
-        int[] netWorths = new int[2];
-        netWorths[0] = 0; // used to be Team.A's soup
-        netWorths[1] = 0; // used to be Team.B's soup
-        for (InternalRobot robot : objectInfo.robotsArray()) {
-            if (robot.getTeam() == Team.NEUTRAL) continue;
-            netWorths[robot.getTeam().ordinal()] += robot.getType().cost;
-        }
-        if (netWorths[0] > netWorths[1]) {
-            setWinner(Team.A, DominationFactor.QUALITY_OVER_QUANTITY);
+    public boolean setWinnerIfMoreVotes() {
+        int numVotesA = teamInfo.getVotes(Team.A);
+        int numVotesB = teamInfo.getVotes(Team.B);
+        if (numVotesA > numVotesB) {
+            setWinner(Team.A, DominationFactor.MORE_VOTES);
             return true;
-        } else if (netWorths[1] > netWorths[0]) {
-            setWinner(Team.B, DominationFactor.QUALITY_OVER_QUANTITY);
+        } else if (numVotesB > numVotesA) {
+            setWinner(Team.B, DominationFactor.MORE_VOTES);
             return true;
         }
         return false;
     }
 
     /**
-     * Sets winner based on highest robot id.
+     * Sets the winner if one of the teams has more Enlightenment Centers than the other.
+     *
+     * @return whether or not a winner was set
      */
-    public boolean setWinnerHighestRobotID() {
-        InternalRobot highestIDRobot = null;
-        for (InternalRobot robot : objectInfo.robotsArray())
-            if ((highestIDRobot == null || robot.getID() > highestIDRobot.getID()) && robot.getTeam() != Team.NEUTRAL)
-                highestIDRobot = robot;
-        if (highestIDRobot == null)
-            return false;
-        setWinner(highestIDRobot.getTeam(), DominationFactor.HIGHBORN);
-        return true;
+    public boolean setWinnerIfMoreEnlightenmentCenters() {
+        int[] numEnlightenmentCenters = new int[2];
+        for (InternalRobot robot : objectInfo.robotsArray()) {
+            if (robot.getType() != RobotType.ENLIGHTENMENT_CENTER) continue;
+            if (robot.getTeam() == Team.NEUTRAL) continue;
+            numEnlightenmentCenters[robot.getTeam().ordinal()]++;
+        }
+        if (numEnlightenmentCenters[0] > numEnlightenmentCenters[1]) {
+            setWinner(Team.A, DominationFactor.MORE_ENLIGHTENMENT_CENTERS);
+            return true;
+        } else if (numEnlightenmentCenters[1] > numEnlightenmentCenters[0]) {
+            setWinner(Team.B, DominationFactor.MORE_ENLIGHTENMENT_CENTERS);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the winner if one of the teams has higher total unit influence.
+     *
+     * @return whether or not a winner was set
+     */
+    public boolean setWinnerIfMoreInfluence() {
+        int[] totalInfluences = new int[2];
+        for (InternalRobot robot : objectInfo.robotsArray()) {
+            if (robot.getTeam() == Team.NEUTRAL) continue;
+            totalInfluences[robot.getTeam().ordinal()] += robot.getInfluence();
+        }
+        if (totalInfluences[0] > totalInfluences[1]) {
+            setWinner(Team.A, DominationFactor.MORE_INFLUENCE);
+            return true;
+        } else if (totalInfluences[1] > totalInfluences[0]) {
+            setWinner(Team.B, DominationFactor.MORE_INFLUENCE);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -325,23 +351,68 @@ public strictfp class GameWorld {
         return currentRound >= this.gameMap.getRounds() - 1;
     }
 
-
     public void processEndOfRound() {
+        int[] highestBids = new int[2];
+        InternalRobot[] highestBidders = new InternalRobot[2];
+
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {
+            int bid = robot.getBid();
+            int teamIdx = robot.getTeam().ordinal();
+            if (bid > highestBids[teamIdx] ||
+                (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
+                highestBids[teamIdx] = bid;
+                highestBidders[teamIdx] = robot;
+            }
+            robot.resetBid();
             robot.processEndOfRound();
             return true;
         });
 
-        // Check for end of match
-        // occurs when time limit reached
-        if (timeLimitReached() && gameStats.getWinner() == null)
-            if (!setWinnerIfQuantity())
-                if (!setWinnerIfQuality())
-                    if (!setWinnerHighestRobotID())
-                        setWinnerArbitrary();
+        // Process bidding
+        int[] teamVotes = new int[2];
+        int[] teamBidderIDs = new int[2];
 
-        // TODO: update the round statistics, i.e. add team soup/set global pollution
+        if (highestBids[0] > highestBids[1] && highestBids[0] > 0) {
+            // Team.A wins
+            teamVotes[0] = 1;
+            teamBidderIDs[0] = highestBidders[0].getID();
+            highestBidders[0].addInfluenceAndConviction(-highestBids[0]);
+            this.teamInfo.addVote(Team.A);
+        } else if (highestBids[1] > highestBids[0] && highestBids[1] > 0) {
+            // Team.B wins
+            teamVotes[1] = 1;
+            teamBidderIDs[1] = highestBidders[1].getID();
+            highestBidders[1].addInfluenceAndConviction(-highestBids[1]);
+            this.teamInfo.addVote(Team.B);
+        }
+
+        for (int i = 0; i < 2; i++) {
+            if (teamVotes[i] == 0) {
+                // Didn't win. If didn't place bid, halfBid == 0
+                int halfBid = (highestBids[i] + 1) / 2;
+                highestBidders[i].addInfluenceAndConviction(-halfBid);
+            }
+        }
+
+        // Send teamVotes and teamBidderIDs to matchmaker
+        for (int i = 0; i < 2; i++)
+            this.matchMaker.addTeamVote(Team.values()[i], teamVotes[i], teamBidderIDs[i]);
+
+        // Add buffs from expose
+        int nextRound = currentRound + 1;
+        for (int i = 0; i < 2; i++) {
+            this.teamInfo.addBuffs(nextRound, Team.values()[i], this.buffsToAdd[i]);
+            this.buffsToAdd[i] = 0; // reset
+        }
+
+        // Check for end of match
+        setWinnerIfAnnihilated();
+        if (timeLimitReached() && gameStats.getWinner() == null)
+            if (!setWinnerIfMoreVotes())
+                if (!setWinnerIfMoreEnlightenmentCenters())
+                    if (!setWinnerIfMoreInfluence())
+                        setWinnerArbitrary();
 
         if (gameStats.getWinner() != null)
             running = false;
@@ -351,8 +422,8 @@ public strictfp class GameWorld {
     // ****** SPAWNING *****************
     // *********************************
 
-    public int spawnRobot(int ID, RobotType type, MapLocation location, Team team){
-        InternalRobot robot = new InternalRobot(this, ID, type, location, team);
+    public int spawnRobot(InternalRobot parent, int ID, RobotType type, MapLocation location, Team team, int influence) {
+        InternalRobot robot = new InternalRobot(this, parent, ID, type, location, team, influence);
         objectInfo.spawnRobot(robot);
         addRobot(location, robot);
 
@@ -361,9 +432,9 @@ public strictfp class GameWorld {
         return ID;
     }
 
-    public int spawnRobot(RobotType type, MapLocation location, Team team){
+    public int spawnRobot(InternalRobot parent, RobotType type, MapLocation location, Team team, int influence) {
         int ID = idGenerator.nextID();
-        return spawnRobot(ID, type, location, team);
+        return spawnRobot(parent, ID, type, location, team, influence);
     }
    
     // *********************************
