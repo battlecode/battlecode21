@@ -123,7 +123,8 @@ public strictfp class GameWorld {
         // If the robot terminates but the death signal has not yet
         // been visited:
         if (this.controlProvider.getTerminated(robot) && objectInfo.getRobotByID(robot.getID()) != null)
-            destroyRobot(robot.getID());
+            //destroyRobot(robot.getID());
+            ; // Freeze robot instead of destroying it
         return true;
     }
 
@@ -359,7 +360,7 @@ public strictfp class GameWorld {
         objectInfo.eachRobot((robot) -> {
             int bid = robot.getBid();
             int teamIdx = robot.getTeam().ordinal();
-            if (bid > highestBids[teamIdx] ||
+            if (bid > highestBids[teamIdx] || highestBidders[teamIdx] == null ||
                 (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
                 highestBids[teamIdx] = bid;
                 highestBidders[teamIdx] = robot;
@@ -388,7 +389,7 @@ public strictfp class GameWorld {
         }
 
         for (int i = 0; i < 2; i++) {
-            if (teamVotes[i] == 0) {
+            if (teamVotes[i] == 0 && highestBidders[i] != null) {
                 // Didn't win. If didn't place bid, halfBid == 0
                 int halfBid = (highestBids[i] + 1) / 2;
                 highestBidders[i].addInfluenceAndConviction(-halfBid);
