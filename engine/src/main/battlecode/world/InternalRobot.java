@@ -430,7 +430,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
     public void processEndOfTurn() {
         // bytecode stuff!
-        this.gameWorld.getMatchMaker().addBytecodes(ID, this.bytecodesUsed);
+        this.gameWorld.getMatchMaker().addBytecodes(this.ID, this.bytecodesUsed);
         this.roundsAlive++;
     }
 
@@ -441,11 +441,17 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
             throw new IllegalStateException("The robot's parent is not an Enlightenment Center");
         }
         int passiveInfluence = this.type.getPassiveInfluence(this.influence, this.roundsAlive, this.gameWorld.getCurrentRound());
-        target.addInfluenceAndConviction(passiveInfluence);
+        if (passiveInfluence > 0) {
+            target.addInfluenceAndConviction(passiveInfluence);
+            if (this.type == RobotType.SLANDERER) {
+                this.gameWorld.getMatchMaker().addAction(this.ID, Action.EMBEZZLE, target.ID);
+            }
+        }
 
         // Slanderers turn into Politicians
         if (this.type == RobotType.SLANDERER && this.roundsAlive == GameConstants.CAMOUFLAGE_NUM_ROUNDS) {
             this.type = RobotType.POLITICIAN;
+            this.gameWorld.getMatchMaker().addAction(this.ID, Action.CAMOUFLAGE, -1);
         }
     }
 
