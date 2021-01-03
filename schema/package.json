@@ -1,6 +1,6 @@
 {
   "name": "battlecode-schema",
-  "version": "2017.0.0",
+  "version": "2021.0.0",
   "private": "true",
   "description": "flatbuffers parser for battlecode match files",
   "main": "ts/index.ts",
@@ -22,9 +22,7 @@
   },
   "homepage": "https://github.com/battlecode/battlecode-schema#readme",
   "dependencies": {
-    "flatbuffers": "^1.11.0"
-  },
-  "devDependencies": {
+    "flatbuffers": "^1.11.0",
     "@types/flatbuffers": "^1.9.1"
   }
 }
