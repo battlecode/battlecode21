@@ -90,7 +90,7 @@ export enum Action{
   /**
    * A robot can change team after being empowered,
    * or when a Enlightenment Center is taken over.
-   * Target: teamID
+   * Target: new robotID
    */
   CHANGE_TEAM= 7,
 

@@ -31,12 +31,14 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private int flag;
     private int bid;
 
+    private ArrayList<RobotInfo> toCreate;
+    private ArrayList<InternalRobot> toCreateParents;
+
     private long controlBits;
     private int currentBytecodeLimit;
     private int bytecodesUsed;
 
     private int roundsAlive;
-
     private double cooldownTurns;
 
     /**
@@ -66,6 +68,9 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
         this.flag = 0;
         this.bid = 0;
+
+        this.toCreate = new ArrayList<>();
+        this.toCreateParents = new ArrayList<>();
 
         this.controlBits = 0;
         this.currentBytecodeLimit = type.bytecodeLimit;
@@ -338,6 +343,11 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.bid = 0;
     }
 
+    public void addToCreate(InternalRobot parent, int ID, RobotType type, int influence, int conviction, MapLocation location) {
+        this.toCreateParents.add(parent);
+        this.toCreate.add(new RobotInfo(ID, this.team, type, influence, conviction, location));
+    }
+
     /**
      * Empowers given a range. Doesn't self-destruct!!
      *
@@ -367,7 +377,16 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 conv++;
                 numBotsWithExtraConviction--;
             }
-            bot.empowered(conv, this.team);
+            bot.empowered(this, conv, this.team);
+        }
+
+        // create new bots
+        for (int i = 0; i < toCreate.size(); i++) {
+            RobotInfo info = toCreate.get(i);
+            int id = this.gameWorld.spawnRobot(toCreateParents.get(i), info.getType(), info.getLocation(), this.team, info.getInfluence());
+            InternalRobot newBot = this.gameWorld.getRobotByID(id);
+            newBot.addConviction(info.getConviction() - newBot.getConviction());
+            this.gameWorld.getMatchMaker().addAction(info.getID(), Action.CHANGE_TEAM, id);
         }
     }
 
@@ -380,7 +399,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param amount the amount this robot is empowered by, must be positive
      * @param newTeam the team of the robot that empowered
      */
-    public void empowered(int amount, Team newTeam) {
+    public void empowered(InternalRobot caller, int amount, Team newTeam) {
         if (this.team != newTeam)
             amount = -amount;
 
@@ -391,15 +410,11 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
         if (conviction < 0) {
             if (this.type.canBeConverted()) {
-                this.team = newTeam;
-                this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_TEAM, newTeam.ordinal());
-                if (this.type == RobotType.ENLIGHTENMENT_CENTER)
-                    addInfluenceAndConviction(-2 * this.influence);
-                else
-                    addConviction(-2 * this.conviction);
-            } else {
-                this.gameWorld.destroyRobot(getID());
+                int influence = this.type == RobotType.ENLIGHTENMENT_CENTER ? -this.influence : this.influence;
+                int conviction = -this.conviction;
+                caller.addToCreate(this.parent, this.ID, this.type, influence, conviction, this.location);
             }
+            this.gameWorld.destroyRobot(getID());
         }
     }
 
@@ -477,8 +492,8 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     // *********************************
 
     public void die_exception() {
-        this.gameWorld.destroyRobot(getID());
         this.gameWorld.getMatchMaker().addAction(getID(), Action.DIE_EXCEPTION, -1);
+        this.gameWorld.destroyRobot(getID());
     }
 
     // *****************************************
