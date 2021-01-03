@@ -35,9 +35,9 @@ export default class MapEditorForm {
   // private readonly archon: ArchonForm;
   private readonly robots: RobotForm;
 
-  private inputArchon: HTMLInputElement;
-  private inputTree: HTMLInputElement;
-  private inputRobots: HTMLInputElement;
+  private robotsRadio: HTMLInputElement;
+  private tilesRadio: HTMLInputElement;
+
   private forms: HTMLDivElement;
 
   readonly buttonAdd: HTMLButtonElement;
@@ -57,42 +57,60 @@ export default class MapEditorForm {
     this.images = imgs;
     this.canvas = canvas;
 
-    // Load HTML elements
-    this.div = document.createElement("div");
-    this.inputArchon = document.createElement("input");
-    this.inputTree = document.createElement("input");
-    this.inputRobots = document.createElement("input");
-    this.forms = document.createElement("div");
-    this.buttonDelete = document.createElement("button");
-    this.buttonAdd = document.createElement("button");
-
-    // Create the forms
-    const cbWidth = () => {return this.header.getWidth()};
-    const cbHeight = () => {return this.header.getHeight()};
-    const cbMaxRadius = (x, y, id) => {return this.maxRadius(x, y, id)};
-    this.header = new HeaderForm(() => {this.render()});
-    this.symmetry = new SymmetryForm(() => {this.render()});
-    // this.tree = new TreeForm(cbWidth, cbHeight, cbMaxRadius);
-    // this.archon = new ArchonForm(cbWidth, cbHeight, cbMaxRadius);
-    this.robots = new RobotForm(cbWidth, cbHeight, cbMaxRadius);
-
-    // Initialize the other fields
+    // fields for placing bodies
     this.lastID = 1;
     this.originalBodies = new Map<number, MapUnit>();
     this.symmetricBodies = new Map<number, MapUnit>();
-    this.loadBaseDiv();
 
+
+    // Load HTML elements
+    this.div = document.createElement("div");
+
+    // callback functions for getting constants
+    const cbWidth = () => {return this.header.getWidth()};
+    const cbHeight = () => {return this.header.getHeight()};
+    const cbMaxRadius = (x, y, id) => {return this.maxRadius(x, y, id)};
+
+    // header (name, width, height)
+    this.header = new HeaderForm(() => {this.render()});
+    this.div.appendChild(this.header.div);
+
+    // symmetry
+    this.symmetry = new SymmetryForm(() => {this.render()});
+    this.div.appendChild(this.symmetry.div);
+
+    // radio buttons
+    this.tilesRadio = document.createElement("input");
+    this.robotsRadio = document.createElement("input");
+    this.div.appendChild(this.createUnitOption());
+
+
+    // robot delete + add/update buttons
+    this.forms = document.createElement("div");
+    this.robots = new RobotForm(cbWidth, cbHeight, cbMaxRadius); // robot info (type, x, y, ...)
+    this.buttonDelete = document.createElement("button");
+    this.buttonAdd = document.createElement("button");
+    this.div.appendChild(this.forms);
+
+    // TODO add vertical filler to put form buttons at the bottom
+    // validate, remove, reset buttons
+    this.div.appendChild(this.createFormButtons());
+
+
+    // Renderer settings
     const onclickUnit = (id: number) => {
       if (this.originalBodies.has(id)) {
         // Set the corresponding form appropriately
         let body: MapUnit = this.originalBodies.get(id)!;
-        this.inputRobots.click();
+        this.robotsRadio.click();
         this.getActiveForm().setForm(body.loc, body, id);
       }
     };
+
     const onclickBlank = (loc: Victor) => {
       this.getActiveForm().setForm(loc);
     }
+
     this.renderer = new MapRenderer(canvas, imgs, conf, onclickUnit, onclickBlank);
 
     // Load callbacks and finally render
@@ -100,43 +118,43 @@ export default class MapEditorForm {
     this.render();
   }
 
-  /**
-   * Creates the div that contains all the map-editor related form elements.
-   */
-  private loadBaseDiv(): void {
-    // this.forms.appendChild(this.tree.div);
+  private createUnitOption(): HTMLFormElement {
+    const div = document.createElement("form");
 
-    this.div.appendChild(this.header.div);
-    this.div.appendChild(this.symmetry.div);
-    this.div.appendChild(this.createUnitOption());
+    // Radio button for changing tile passabilities
+    this.tilesRadio.id = "tiles-radio";
+    this.tilesRadio.type = "radio";
+    this.tilesRadio.name = "edit-option"; // radio buttons with same name are mutually exclusive
+    this.tilesRadio.onchange = () => {
+      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
+    }
+    const tilesLabel = document.createElement("label");
+    tilesLabel.setAttribute("for", this.tilesRadio.id);
+    tilesLabel.textContent = "Change Tiles";
 
-    this.div.appendChild(this.forms);
-    this.div.appendChild(this.createFormButtons());
-  }
 
-  private createUnitOption(): HTMLDivElement {
-    const div = document.createElement("div");
+    // Radio button for placing units
+    this.robotsRadio.id = "robots-radio"; 
+    this.robotsRadio.type = "radio";
+    this.robotsRadio.name = "edit-option";
 
-    // Tree option
-    this.inputTree.type = "radio";
-    this.inputTree.name = "bodytype";
-    this.inputTree.checked = true;
+    this.robotsRadio.onchange = () => {
+      // Change the displayed form
+      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
+      if (this.robotsRadio.checked) {
+        this.forms.appendChild(this.robots.div);
+      }
+    };    
+    const robotsLabel = document.createElement("label");
+    robotsLabel.setAttribute("for", this.robotsRadio.id);
+    robotsLabel.textContent = "Place Robots";
 
-    // Archon option
-    this.inputArchon.type = "radio";
-    this.inputArchon.name = "bodytype";
-
-    // Robots option
-    this.inputRobots.type = "radio";
-    this.inputRobots.name = "bodytype";
 
     // Add radio buttons HTML element
-    div.appendChild(this.inputTree);
-    div.appendChild(document.createTextNode("Tree"));
-    div.appendChild(this.inputArchon);
-    div.appendChild(document.createTextNode("Archon"));
-    div.appendChild(this.inputRobots);
-    div.appendChild(document.createTextNode("Robots"));
+    div.appendChild(this.tilesRadio);
+    div.appendChild(tilesLabel);
+    div.appendChild(this.robotsRadio);
+    div.appendChild(robotsLabel);
     div.appendChild(document.createElement("br"));
 
     return div;
@@ -160,29 +178,6 @@ export default class MapEditorForm {
   }
 
   private loadCallbacks() {
-
-    this.inputTree.onchange = () => {
-      // Change the displayed form
-      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
-      // if (this.inputTree.checked) {
-      //   this.forms.appendChild(this.tree.div);
-      // }
-    };
-    this.inputArchon.onchange = () => {
-      // Change the displayed form
-      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
-      // if (this.inputArchon.checked) {
-      //   this.forms.appendChild(this.archon.div);
-      // }
-    };
-    this.inputRobots.onchange = () => {
-      // Change the displayed form
-      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
-      if (this.inputRobots.checked) {
-        this.forms.appendChild(this.robots.div);
-      }
-    };
-
     this.buttonAdd.onclick = () => {
       const form: UnitForm = this.getActiveForm()
       const id: number = form.getID() || this.lastID;
@@ -238,6 +233,7 @@ export default class MapEditorForm {
    * Finally re-renders the canvas.
    */
   private setUnit(id: number, body: MapUnit): void {
+    console.error(id, body);
     if (!this.originalBodies.has(id)) {
       this.lastID += 1;
     }

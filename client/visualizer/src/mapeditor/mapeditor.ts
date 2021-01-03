@@ -60,7 +60,7 @@ export default class MapEditor {
     helpDiv.style.textAlign = "left";
     div.appendChild(helpDiv);
 
-    helpDiv.innerHTML = `Help text is not yet written :p`;
+    // helpDiv.innerHTML = `Help text is not yet written :p`;
     // `<i><br>Tip: "S"=quick add, "D"=quick delete.<br><br>
     //   Note: In tournaments, a starting map consists only of neutral trees and
     //   ${cst.MIN_NUMBER_OF_ARCHONS} to ${cst.MAX_NUMBER_OF_ARCHONS} archons per
