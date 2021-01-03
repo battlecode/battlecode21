@@ -109,16 +109,27 @@ Wielding influence enables you to amass a larger and more powerful army of robot
 Influence is not a global resource: your team's influence is distributed among your Enlightenment Centers,
 and is generated passively both by the Enlightenment Centers and by specific robot types.
 
+## Overview: Votes
+
+The objective of **Battlecode: Campaign** is to win the most votes.
+Each round, one citizen's vote is up for auction.
+Each Enlightenment Center may bid a non-negative amount of influence to win that vote,
+and Enlightenment Center which enters the highest bid will win that vote for its team.
+
+The victory conditions and tiebreakers are described in more detail in the [Victory](#victory) section.
+
 # Robots
 
 Each robot runs an independent copy of your code.
 It acts given only its own nearby surroundings through **actions**,
-such as movement, sensing, and special abilities.
+such as movement and special abilities.
+Robots are assigned random IDs no smaller than 10,000.
 
-Each action incurs a **cooldown penalty**, which varies for different robot types;
+Each action (movement or active ability) incurs a **cooldown penalty**,
+which varies for different robot types;
 robots can only perform actions when their cooldown is less than 1.
 Performing an action adds a corresponding cooldown penalty to the robot's total cooldown, given by
-$$ \left\lceil\frac{\text{base cooldown value}}{\text{passability of current map square}}\right\rceil $$
+$$ \frac{\text{base cooldown value}}{\text{passability of current map square}} $$
 
 Each round, all robots' cooldowns will decrease by 1,
 regardless of whether they choose to take an action.
@@ -129,25 +140,31 @@ regardless of whether they choose to take an action.
 Different types of units have different special abilities,
 and success in the election will depend on how your team uses these abilities to your advantage.
 
+You are able to create units by spending influence.
+The influence you spend is a parameter $C$ which you may choose for each new unit you create.
+The **conviction** of a unit describes how loyal it is to your party.
+Units with greater conviction are more loyal, but also cost more influence to produce.
+
 **Buildings** are immobile robots;
 the only type of available building is Enlightenment Centers.
 
-The conviction of a unit describes how loyal it is to your party.
-Units with greater conviction are more loyal, but also cost more to produce.
-
-| Robot                        | Enlightenment Center | Politician         | Slanderer            | Muckraker          |
+|                              | Enlightenment Center | Politician         | Slanderer            | Muckraker          |
 | ---------------------------- | -------------------- | ------------------ | -------------------- | ------------------ |
 | **Class**                    | Building             | Unit               | Unit                 | Unit               |
 | **Influence cost**           | Cannot be created    | $C$ (variable)     | $C$ (variable)       | $C$ (variable)     |
-| **Minimum cost**             | N/A                  | 1                  | 1                    | 1                  |
-| **Conviction**               | = current influence  | $\lceil1.0C\rceil$ | $\lceil1.0C\rceil$   | $\lceil0.7C\rceil$ |
+| **Minimum influence cost**   | N/A                  | 1                  | 1                    | 1                  |
+| **Initial conviction**[^1]   | = current influence  | $\lceil1.0C\rceil$ | $\lceil1.0C\rceil$   | $\lceil0.7C\rceil$ |
 | **Base action cooldown**     | 2.0                  | 1.0                | 2.0                  | 1.5                |
 | **Action radius squared**    | 2                    | 9                  | 0                    | 12                 |
 | **Sensor radius squared**    | 40                   | 25                 | 20                   | 30                 |
 | **Detection radius squared** | 40                   | 25                 | 20                   | 40                 |
 | **True sense**               | Yes                  | No                 | No                   | Yes                |
 | **Ability** *                | Bid                  | Empower            | Embezzle, Camouflage | Expose             |
+| **Bytecode limit**           | 12,000               | 6,000              | 3,000                | 9,000              |
 * an advanced mechanic; see below
+
+[^1] The $\lceil\cdot\rceil$ denotes the *ceiling* function, which you may read more about
+     [here](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions).
 
 ## Note: radius squared
 
@@ -165,21 +182,23 @@ This is legal when all of the following constraints are met.
 - The destination tile is adjacent to the current location (the 8 tiles around the unit's current location).
 - The destination tile is not occupied by another robot.
 
+Moving will then increase the robot's action cooldown.
+
 ## Sensing, detecting and vision
 
 Each map square has a passability value,
 and each robot has a number of characteristics
 including its robot type, influence cost at creation, and current conviction.
 
-All robots may sense properties of nearby map squares.
+All robots may **sense** the passability of nearby map squares and any robots located on them.
 Each robot has a specific sensor radius,
 and is able to sense map properties and robots within that range.
 However, there is the exception that **politicians and slanderers do not have true sense**:
 this means they are unable to distinguish between other politicians and slanderers.
 To them, all slanderers will appear to be politicians.
 
-Additionally, robots can detect the presence of robots near them,
-without sensing any properties about those robots.
+Additionally, robots can **detect** the presence of robots near them,
+without sensing any properties about those robots other than their location.
 Muckrakers have a larger detection radius than sensor radius,
 and so are able to detect robots further away than they can sense.
 
@@ -225,12 +244,15 @@ Slanderers advance the party's political agenda by spreading falsehoods, generat
 - **Embezzle (passive ability)**: For 50 turns after being created,
   as long as both it and the Enlightenment Center that created it are friendly,
   that Enlightenment Center passively receives
-  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round.
+  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round [^2].
 - **Camouflage (passive ability)**: 300 rounds after being created,
   the slanderer's claims fade from citizens' memory,
   and it transforms into a politician of equal conviction.
 
 You have no control over the Embezzle and Camouflage abilities of Slanderers, as these occur passively.
+
+[^2] The $\lfloor\cdot\rfloor$ denotes the *floor* function, which you may read more about
+     [here](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions).
 
 ### Muckrakers
 
@@ -241,6 +263,7 @@ Muckrakers search the map, exposing the lies of enemy slanderers.
   For the next 50 turns,
   all speeches made by the muckraker's team will have a multiplicative factor of
   $1.01^\text{slanderer's influence cost}$ applied.
+  If multiple slanderers are exposed, these factors are combined multiplicatively.
 
 ### Enlightenment Centers
 
@@ -256,7 +279,7 @@ They cannot be built, and can only change teams due to being empowered by politi
 - **Bid (active ability)**: Bid influence for a vote.
   This is described in more detail in the [Victory](#victory) section below.
 - When affiliated with a team, passively generate influence per turn,
-  where the amount generated is a function of the current round number $t$.
+  where the amount generated is a function $f(t)$ of the current round number $t$.
   $$ f(t)=\left\lceil0.2\sqrt{t}\right\rceil $$
 
 # Victory
@@ -348,6 +371,10 @@ More details on this at the end of the spec.
 a simple player which performs various game actions, is included with battlecode.
 It includes helpful comments and is a template you can use to see what `RobotPlayer` files should look like.
 
+If you are interested, you may find the full game engine implementation
+[here](https://github.com/battlecode/battlecode21/blob/master/engine/src/main/battlecode/).
+This is not at all required, but may be helpful if you are curious about the engine's implementation specifics.
+
 ## Debugging
 
 Debugging is extremely important. See the [debugging tips](http://2021.battlecode.org/debugging) to learn about our useful debug tools.
@@ -378,7 +405,7 @@ Every function you could possibly use to interact with the game can be found in 
 
 Players may use classes from any of the packages listed in `AllowedPackages.txt`,
 except for classes listed in `DisallowedPackages.txt`. 
-hese files can be found [here](https://github.com/battlecode/battlecode21/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
+These files can be found [here](https://github.com/battlecode/battlecode21/tree/master/engine/src/main/battlecode/instrumenter/bytecode/resources).
 
 Furthermore, the following restrictions apply:
 
