@@ -34,13 +34,9 @@ public class GameMapIOTest {
 
     @Test
     public void testRoundTrip() throws IOException {
-        LiveMap inputMap = new TestMapBuilder("simple", 55, 3, 58, 50, 1337, 50, 0)
-                .addRobot(0, Team.A, RobotType.HQ, new MapLocation(0, 0))
-                .addRobot(1, Team.B, RobotType.HQ, new MapLocation(25, 25))
-                .setSoup()
-                .setWater()
-                .setPollution()
-                .setDirt()
+        LiveMap inputMap = new TestMapBuilder("simple", 55, 3, 58, 50, 1337, 50)
+                .addEnlightenmentCenter(0, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(0, 0))
+                .addEnlightenmentCenter(1, Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(25, 25))
                 .build();
 
         LiveMap outputMap = GameMapIO.Serial.deserialize(GameMapIO.Serial.serialize(inputMap));
