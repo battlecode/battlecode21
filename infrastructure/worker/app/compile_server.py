@@ -17,7 +17,7 @@ def compile_report_result(submissionid, result, info):
         auth_token = util.get_api_auth_token()
         response = requests.patch(
             url=api_compile_update(submissionid), # https://2021.battlecode.org/api/0/submission/0/compilation_update/
-            data={  'compilation_status': result #'error_message': info
+            data={  'compilation_status': result #, 'error_message': info
             },
             headers={'Authorization': 'Bearer {}'.format(auth_token)}
         )
@@ -78,10 +78,7 @@ def compile_worker(submissionid):
         except:
             compile_log_error(submissionid, 'Could not retrieve source file from bucket')
 
-        try:
-            assert(os.path.getsize(os.path.join(rootdir, 'source.zip')) == 0 )
-        except:
-            compile_log_error(submissionid, 'Submissiom was empty')
+
 
         # Decompress submission archive
         result = util.monitor_command(
