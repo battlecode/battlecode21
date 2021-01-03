@@ -273,7 +273,7 @@ export default class Stats {
     // TODO: figure out if statbars.get(id) can actually be null??
     const statBar: StatBar = this.statBars.get(teamID)!.votes;
     statBar.label.innerText = String(count);
-    const maxVotes = 1000;
+    const maxVotes = 1500;
     statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
 
     // TODO add reactions to relative bars
