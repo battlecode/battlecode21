@@ -284,7 +284,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
     }
 
     @Override 
-    public double sensePassability(MapLocation loc) {
+    public double sensePassability(MapLocation loc) throws GameActionException {
         assertCanSenseLocation(loc);
         return this.gameWorld.getPassability(loc);
     }
