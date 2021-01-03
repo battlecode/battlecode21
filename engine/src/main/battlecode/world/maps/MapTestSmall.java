@@ -12,6 +12,7 @@ import battlecode.common.GameConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Generate a map.
@@ -39,10 +40,11 @@ public class MapTestSmall {
     public static void makeSimple() throws IOException {
         MapBuilder mapBuilder = new MapBuilder(mapName, 32, 32, 30);
         mapBuilder.addSymmetricEnlightenmentCenter(5, 5);
+        Random random = new Random(6147);
 
         for(int i = 0; i < mapBuilder.width / 2; i++) {
             for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricPassability(i, j,  (i * j + i + j) / (i * j + 1));
+                mapBuilder.setSymmetricPassability(i, j, random.nextDouble()*0.9+0.1);
             }
         }
 
