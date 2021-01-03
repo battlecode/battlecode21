@@ -1,6 +1,7 @@
 package battlecode.world;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import battlecode.common.*;
 import battlecode.schema.Action;
 
@@ -384,7 +385,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         for (int i = 0; i < toCreate.size(); i++) {
             RobotInfo info = toCreate.get(i);
             int id = this.gameWorld.spawnRobot(toCreateParents.get(i), info.getType(), info.getLocation(), this.team, info.getInfluence());
-            InternalRobot newBot = this.gameWorld.getRobotByID(id);
+            InternalRobot newBot = this.gameWorld.getObjectInfo().getRobotByID(id);
             newBot.addConviction(info.getConviction() - newBot.getConviction());
             this.gameWorld.getMatchMaker().addAction(info.getID(), Action.CHANGE_TEAM, id);
         }
