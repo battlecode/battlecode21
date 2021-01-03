@@ -204,7 +204,7 @@ export default class Renderer {
     const died = world.diedBodies;
     const diedImg: HTMLImageElement = this.imgs.effects["death"];
     for (let i = 0; i < died.length; i++) {
-      this.drawBot(diedImg, died.arrays.x[i], died.arrays.y[i]);
+      this.drawBot(diedImg, died.arrays.x[i], this.flip(died.arrays.y[i], minY, maxY));
     }
 
 

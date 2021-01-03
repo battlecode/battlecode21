@@ -148,6 +148,10 @@ export function abilityToEffectString(effect: number): string | null {
       return "expose";
     case 3:
       return "embezzle";
+    case 4:
+      return "camouflage_red";
+    case 5:
+      return "camouflage_blue";
     default:
       return null;
   }

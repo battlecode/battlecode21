@@ -120,7 +120,7 @@ function makeRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
     bodies.types[i] = bodyTypeList[random(0, bodyVariety-1)];
     bodies.xs[i] = random(0, SIZE-1);
     bodies.ys[i] = random(0, SIZE-1);
-    bodies.influences[i] = 0;
+    bodies.influences[i] = random(0,10);
   }
 
   return bodies;
@@ -577,11 +577,11 @@ function createVotesGame(turns: number) {
 
   for (let i = 1; i < turns+1; i++) {
     const bb_teamIDs = schema.Round.createTeamIDsVector(builder, [1, 2]);
-    const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, (Math.random() > 0.5)]);
+    const bb_teamVPs = schema.Round.createTeamVotesVector(builder, [1, (Math.random() > 0.5 ? 1 : 0)]);
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
     schema.Round.addTeamIDs(builder, bb_teamIDs);
-    schema.Round.addTeamVPs(builder, bb_teamVPs);
+    schema.Round.addTeamVotes(builder, bb_teamVPs);
     events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
   }
 
@@ -673,7 +673,7 @@ function createSoupGame(turns: number) {
 function main(){
   const games = [
     { name: "blank", game: createBlankGame(512)},
-    { name: "stand", game: createStandGame(1024) },
+    { name: "stand", game: createStandGame(4000) },
     //{ name: "pick", game: createPickGame(1024) },
     { name: "random-map", game: createBlankGame(512, true) },
     { name: "wander", game: createWanderGame(2048, 32) },

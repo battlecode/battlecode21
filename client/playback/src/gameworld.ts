@@ -306,7 +306,7 @@ export default class GameWorld {
       var teamID = delta.teamIDs(i);
       var statObj = this.teamStats.get(teamID);
 
-      statObj.votes += delta.teamVPs(i) ? 1 : 0;
+      statObj.votes += delta.teamVotes(i);
 
       this.teamStats.set(teamID, statObj);
   }
@@ -328,7 +328,7 @@ export default class GameWorld {
     }
 
     // Remove abilities from previous round
-    this.abilityRobots.forEach((id) => this.bodies.alter({id: id, ability: 0}));
+    this.bodies.alterBulk({id: new Int32Array(this.abilityRobots), ability: new Int8Array(this.abilityRobots.length)});
     this.abilityRobots = [];
 
     // Actions
@@ -349,6 +349,18 @@ export default class GameWorld {
             this.bodies.alter({ id: robotID, ability: 1});
             this.abilityRobots.push(robotID);
             break;
+          /// Slanderers passively generate influence for the
+          /// Enlightenment Center that created them.
+          /// Target: parent ID
+          case schema.Action.EMBEZZLE:
+            this.bodies.alter({ id: robotID, ability: 3});
+            this.abilityRobots.push(robotID);
+            break;
+          /// Slanderers turn into Politicians.
+          /// Target: none
+          case schema.Action.CAMOUFLAGE:
+            const team = this.bodies.lookup(robotID).team;
+            this.bodies.alter({ id: robotID, ability: (team == 1 ? 4 : 5)});
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
@@ -530,10 +542,7 @@ export default class GameWorld {
     // let this slide for now.
     
     // Initialize convictions
-    var convictions: Int32Array = influences.map((influence, i) => influence * this.meta.types[types[i]].convictionRatio);
-
-    // Initialize abilities
-    var abilities: Int8Array = types.map((type) => (type === schema.BodyType.SLANDERER ? 3 : 0));
+    var convictions: Int32Array = influences.map((influence, i) => influence * this.meta.types[types[i]].convictionRatio); //new Int32Array(bodies.robotIDsLength());
 
     // Insert bodies
     this.bodies.insertBulk({
@@ -546,7 +555,7 @@ export default class GameWorld {
       y: locs.ysArray(),
       flag: new Int8Array(bodies.robotIDsLength()),
       bytecodesUsed: new Int32Array(bodies.robotIDsLength()),
-      ability: abilities
+      ability: new Int8Array(bodies.robotIDsLength())
     });
   }
 

@@ -86,7 +86,9 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       death: null,
       embezzle: [],
       empower: [],
-      expose: []
+      expose: [],
+      camouflage_red: [],
+      camouflage_blue: []
     },
     controls: {
       goNext: null,
@@ -133,6 +135,9 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_2');
 
   loadImage(result.effects.expose, 0, 'effects/expose/expose_empty');
+
+  loadImage(result.effects.camouflage_red, 0, 'effects/camouflage/camo_red');
+  loadImage(result.effects.camouflage_blue, 0, 'effects/camouflage/camo_blue');
 
   // buttons are from https://material.io/resources/icons
   loadImage(result.controls, 'goNext', 'controls/go-next');
