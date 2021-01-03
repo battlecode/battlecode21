@@ -470,6 +470,11 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     // ****** VARIOUS METHODS **********
     // *********************************
 
+    public void die_exception() {
+        this.gameWorld.destroyRobot(getID());
+        this.gameWorld.getMatchMaker().addAction(getID(), Action.DIE_EXCEPTION, -1);
+    }
+
     // *****************************************
     // ****** MISC. METHODS ********************
     // *****************************************
