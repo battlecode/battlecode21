@@ -148,17 +148,17 @@ export default class MapRenderer {
     this.canvas.onmousedown = (event: MouseEvent) => {
       let x = map.width * event.offsetX / this.canvas.offsetWidth;
       let y = this.flip(map.height * event.offsetY / this.canvas.offsetHeight, map.height);
-      let loc = new Victor(x-0.5, y-0.5);
+      let loc = new Victor(Math.floor(x), Math.floor(y));
 
       // Get the ID of the selected unit
       let selectedID;
       map.originalBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
+        if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
       });
       map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
+        if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
       });

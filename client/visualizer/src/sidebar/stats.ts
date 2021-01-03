@@ -245,10 +245,10 @@ export default class Stats {
     this.statsTableElement = this.statsTable(teamIDs);
     this.div.appendChild(this.statsTableElement);
 
-    // relative bar
+    // TODO relative bar
     this.relativeBarElement = this.relativeBar(teamIDs);
-    this.div.appendChild(this.relativeBarElement);
-    console.log(this.relativeBarElement)
+    // this.div.appendChild(this.relativeBarElement);
+    // console.log(this.relativeBarElement)
   }
 
   tourIndexJumpFun(e) {

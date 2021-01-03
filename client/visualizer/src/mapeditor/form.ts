@@ -129,6 +129,7 @@ export default class MapEditorForm {
     const tilesLabel = document.createElement("label");
     tilesLabel.setAttribute("for", this.tilesRadio.id);
     tilesLabel.textContent = "Change Tiles";
+    this.tilesRadio.disabled = true;
 
 
     // Radio button for placing units
@@ -232,7 +233,6 @@ export default class MapEditorForm {
    * Finally re-renders the canvas.
    */
   private setUnit(id: number, body: MapUnit): void {
-    console.error(id, body);
     if (!this.originalBodies.has(id)) {
       this.lastID += 1;
     }

@@ -165,8 +165,8 @@ export default class RobotForm {
   }
 
   setForm(loc: Victor, body?: MapUnit, id?: number): void {
-    this.x.value = String(Math.floor(loc.x));
-    this.y.value = String(Math.floor(loc.y));
+    this.x.value = String(loc.x);
+    this.y.value = String(loc.y);
     this.id.textContent = id === undefined ? "" : String(id);
     if (body && id) {
       this.type.value = String(body.type);
