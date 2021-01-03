@@ -85,9 +85,12 @@ public class TeamInfo {
     private void updateNumBuffs(int currentRound, Team t) {
         int teamIdx = t.ordinal();
         TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);
-        for (int round : map.keySet()) {
-            if (round <= currentRound) {
-                this.numBuffs[teamIdx] -= map.remove(round);
+        Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> item = it.next();
+            if (item.getKey() <= currentRound) {
+                this.numBuffs[teamIdx] -= item.getValue();
+                it.remove();
             } else {
                 break; // treemaps are in increasing order
             }

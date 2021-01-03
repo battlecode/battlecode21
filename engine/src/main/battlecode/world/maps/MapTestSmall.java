@@ -41,7 +41,7 @@ public class MapTestSmall {
         mapBuilder.addSymmetricEnlightenmentCenter(5, 5);
 
         for(int i = 0; i < mapBuilder.width / 2; i++) {
-            for (int j = 0; j < mapBuilder.height / 2; j++) {
+            for (int j = 0; j < mapBuilder.height; j++) {
                 mapBuilder.setSymmetricPassability(i, j,  (i * j + i + j) / (i * j + 1));
             }
         }
