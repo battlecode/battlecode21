@@ -56,13 +56,9 @@ public class GameMakerTest {
 
         gm.makeGameHeader();
         GameMaker.MatchMaker mm = gm.getMatchMaker();
-        mm.makeMatchHeader(new TestMapBuilder("honolulu", 2, -3, 50, 50, 1337, 50, 0)
-                .addRobot(0, Team.A, RobotType.HQ, new MapLocation(0, 0))
-                .addRobot(1, Team.B, RobotType.HQ, new MapLocation(25, 25))
-                .setSoup()
-                .setWater()
-                .setPollution()
-                .setDirt()
+        mm.makeMatchHeader(new TestMapBuilder("honolulu", 2, -3, 50, 50, 1337, 50)
+                .addEnlightenmentCenter(0, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(0, 0))
+                .addEnlightenmentCenter(1, Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(25, 25))
                 .build());
         mm.addMoved(0, new MapLocation(1, 1));
         mm.makeRound(0);
@@ -71,13 +67,9 @@ public class GameMakerTest {
         mm.makeMatchFooter(Team.B, 2);
 
         GameMaker.MatchMaker mm2 = gm.getMatchMaker();
-        mm2.makeMatchHeader(new TestMapBuilder("argentina", 55, 3, 58, 50, 1337, 50, 0)
-                .addRobot(0, Team.A, RobotType.HQ, new MapLocation(0, 0))
-                .addRobot(1, Team.B, RobotType.HQ, new MapLocation(25, 25))
-                .setSoup()
-                .setWater()
-                .setPollution()
-                .setDirt()
+        mm2.makeMatchHeader(new TestMapBuilder("argentina", 55, 3, 58, 50, 1337, 50)
+                .addEnlightenmentCenter(0, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(0, 0))
+                .addEnlightenmentCenter(1, Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(25, 25))
                 .build());
         mm2.makeRound(0);
         mm2.makeMatchFooter(Team.A, 1);
