@@ -63,7 +63,7 @@ as described in the [Bytecode Limits](#bytecodelimits) section.
 ## Overview: Map
 
 The world of Mars is a discrete 2-dimensional rectangular grid, of size ranging between $32\times32$ and $64\times64$.
-The bottom-left corner of the map will have integer coordinates generated uniformly at random between 10000 and 30000;
+The bottom-left corner of the map will have integer coordinates generated uniformly at random between 10,000 and 30,000;
 in other words, all map coordinates will be offset by this amount.
 Coordinates increase East (right) and North (up).
 
@@ -123,7 +123,7 @@ The victory conditions and tiebreakers are described in more detail in the [Vict
 Each robot runs an independent copy of your code.
 It acts given only its own nearby surroundings through **actions**,
 such as movement and special abilities.
-Robots are assigned random IDs no smaller than 10,000.
+Robots are assigned unique random IDs no smaller than 10,000.
 
 Each action (movement or active ability) incurs a **cooldown penalty**,
 which varies for different robot types;
@@ -140,10 +140,13 @@ regardless of whether they choose to take an action.
 Different types of units have different special abilities,
 and success in the election will depend on how your team uses these abilities to your advantage.
 
-You are able to create units by spending influence.
-The influence you spend is a parameter $C$ which you may choose for each new unit you create.
-The **conviction** of a unit describes how loyal it is to your party.
-Units with greater conviction are more loyal, but also cost more influence to produce.
+You are able to create units by transferring part of your influence to the new unit.
+The influence you spend is an integer parameter $C$,
+which you may choose for each new unit you create.
+
+The **conviction** of a unit describes how loyal it is to your party;
+by transferring more influence,
+you will obtain units that have greater conviction and are therefore more loyal.
 
 **Buildings** are immobile robots;
 the only type of available building is Enlightenment Centers.
@@ -151,8 +154,8 @@ the only type of available building is Enlightenment Centers.
 |                              | Enlightenment Center | Politician         | Slanderer            | Muckraker          |
 | ---------------------------- | -------------------- | ------------------ | -------------------- | ------------------ |
 | **Class**                    | Building             | Unit               | Unit                 | Unit               |
-| **Influence cost**           | Cannot be created    | $C$ (variable)     | $C$ (variable)       | $C$ (variable)     |
-| **Minimum influence cost**   | N/A                  | 1                  | 1                    | 1                  |
+| **Influence**                | Cannot be created    | $C$ (variable)     | $C$ (variable)       | $C$ (variable)     |
+| **Minimum influence**        | N/A                  | 1                  | 1                    | 1                  |
 | **Initial conviction**[^1]   | = current influence  | $\lceil1.0C\rceil$ | $\lceil1.0C\rceil$   | $\lceil0.7C\rceil$ |
 | **Base action cooldown**     | 2.0                  | 1.0                | 2.0                  | 1.5                |
 | **Action radius squared**    | 2                    | 9                  | 0                    | 12                 |
@@ -188,7 +191,7 @@ Moving will then increase the robot's action cooldown.
 
 Each map square has a passability value,
 and each robot has a number of characteristics
-including its robot type, influence cost at creation, and current conviction.
+including its robot type, influence, and current conviction.
 
 All robots may **sense** the passability of nearby map squares and any robots located on them.
 Each robot has a specific sensor radius,
@@ -228,11 +231,11 @@ The politician is then destroyed, as delivering speeches is tremendously exhaust
   - Each non-friendly (enemy or neutral) robot will lose conviction.
     If its conviction becomes negative, then:
     - Politicians will be **converted** to your team,
-      with conviction equal to the absolute remaining conviction,
+      with conviction equal to the absolute value of the difference,
       capped at the robot's initial conviction.
     - Slanderers and muckrakers will be destroyed.
     - Buildings will be **converted** to your team,
-      with conviction equal to the absolute remaining conviction.
+      with conviction equal to the absolute value of the difference.
   - Unused conviction (i.e. conviction lost due to conviction caps) will be lost forever,
     with echoes of the speech carried away by the Martian wind.
 
@@ -262,7 +265,8 @@ Muckrakers search the map, exposing the lies of enemy slanderers.
 - **Expose (active ability)**: Targets an enemy slanderer, exposing its lies and destroying it.
   For the next 50 turns,
   all speeches made by the muckraker's team will have a multiplicative factor of
-  $1.01^\text{slanderer's influence cost}$ applied.
+  $1.01^\text{slanderer's influence}$ applied to the total conviction of the speech,
+  before the 10 units of conviction are deducted.
   If multiple slanderers are exposed, these factors are combined multiplicatively.
 
 ### Enlightenment Centers
@@ -274,7 +278,7 @@ They cannot be built, and can only change teams due to being empowered by politi
 - Either neutral or owned by a team.
   - Enlightenment Centers initially belonging to a team will have 150 influence.
   - Neutral enlightenment centers have a predetermined amount of influence between 50 and 500.
-- **Build robot**: Spawn a unit of a specified type,
+- **Build robot**: Spawn a unit of a specified type on an adjacent square,
   transferring part of the Enlightenment Center's influence to the newly spawned unit.
 - **Bid (active ability)**: Bid influence for a vote.
   This is described in more detail in the [Victory](#victory) section below.
