@@ -133,7 +133,9 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
     if not map_ids is None:
         scrimmage_server_data['maps'] = map_ids
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-    pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+    # TODO uncomment this and remove the print when done testing; avoiding flooding the pubsub for now
+    # pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+    print("would add to pubsub: ", data_bytestring)
 
 def get_random_maps(num):
     n = min(num, len(settings.SERVER_MAPS))
