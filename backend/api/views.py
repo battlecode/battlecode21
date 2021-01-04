@@ -110,7 +110,8 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
 
     # TODO save the scrimmage, again
 
-    return None
+    # return None
+    return Response({'message': scrimmage.id}, status.HTTP_200_OK)
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
@@ -906,6 +907,10 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         scrimmage_queried = get_object_or_404(queryset, pk=pk)
         scrimmage_serializer = ScrimmageSerializer(scrimmage_queried, context=self.get_serializer_context())
         return Response(scrimmage_serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def test_create_scrim(self, request, league_id, team, pk=None):
+        return create_scrimmage(1810, 1744, False, 1810)
 
     # TODO extract lots of this to the generic scrimmage creation method
     # TODO test this method, once done

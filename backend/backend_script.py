@@ -27,6 +27,6 @@ data = {
 headers = {"Authorization": "Bearer " + token}
 
 # response = requests.post(domain + 'api/match/enqueue/', data=data, headers=headers)
-response = requests.patch(domain + 'api/0/scrimmage/1/set_outcome/', data=data, headers=headers)
+response = requests.get(domain + 'api/0/scrimmage/0/test_create_scrim/', data=data, headers=headers)
 
 print(response.text)
