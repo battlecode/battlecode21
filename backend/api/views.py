@@ -89,7 +89,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
     # no need to set blue rating, red rating for ranked matches -- this is actually done when the outcome is set
 
     # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
-    # TODO save the scrimmage
+
     # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
     # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
     data = {
@@ -105,10 +105,14 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
     scrimmage = serializer.save()
 
-    # TODO put onto pubsub
-    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
+    # TODO check if autoaccept
+    # Also probably requires a force_autoaccept argument, or smth
 
-    # TODO save the scrimmage, again
+    # put onto pubsub
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay)
+
+    # save the scrimmage, again, to mark save
+    serializer.save(status = 'pending')
 
     # return None
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)

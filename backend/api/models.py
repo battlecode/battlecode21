@@ -189,6 +189,7 @@ class TeamSubmission(models.Model):
 
 class Scrimmage(models.Model):
     SCRIMMAGE_STATUS_CHOICES = (
+        ('created', 'Created'),
         ('pending', 'Pending'),
         ('queued', 'Queued'),
         ('running', 'Running'),
@@ -206,7 +207,7 @@ class Scrimmage(models.Model):
     ranked    = models.BooleanField(default=False)
 
     # Match-running (completed by match runner)
-    status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='pending')
+    status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='created')
     winscore  = models.IntegerField(null=True)
     losescore = models.IntegerField(null=True)
     replay    = models.TextField(blank=True)
