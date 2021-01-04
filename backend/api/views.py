@@ -154,6 +154,7 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         return Response({'message': 'Blue team does not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     # gametype is intended to always be scrimmage:
     # the infra uses gametype to figure out the url it should report results to, and we only have a set of urls for scrimmage.
+    # TODO change gametype here to actually be meaningful, and in the infra, always send to url of 'scrimmage'
     scrimmage_server_data = {
         'gametype': 'scrimmage',
         'gameid': str(scrimmage_id),
