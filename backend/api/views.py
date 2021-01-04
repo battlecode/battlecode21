@@ -69,8 +69,6 @@ def pub(project_id, topic_name, data, num_retries=5):
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
 # moving into scrim class would make more sense.
 def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league, map_ids):
-    # TODO how do ranked and type mix? tour matches should always be unranked, right....?
-
     # Don't use status as a var name, to avoid some http status enum
     scrim_status = 'created'
     # String used to associate to a replay file/link.
