@@ -112,7 +112,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay)
 
     # save the scrimmage, again, to mark save
-    serializer.save(status = 'pending')
+    serializer.save(status = 'queued')
 
     # return None
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
