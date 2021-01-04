@@ -94,7 +94,9 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
     # if map_ids is not specified, use some default way to select maps.
     if map_ids is None:
         # By default, pick 3 random maps (requires specifying maps in settings.py).
-        map_ids = ','.join(get_random_maps(3))
+        # map_ids = ','.join(get_random_maps(3))
+        # TODO At the moment, we only have one map. Change to a better method of selection later.
+        map_ids = 'maptestsmall,maptestsmall,maptestsmall'
 
     # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
     # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
