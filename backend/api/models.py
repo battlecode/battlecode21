@@ -208,6 +208,8 @@ class Scrimmage(models.Model):
     red_team  = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='red_team')
     blue_team = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='blue_team')
     ranked    = models.BooleanField(default=False)
+    map_ids    = models.TextField(null=True)
+
 
     # Match-running (completed by match runner)
     status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='created')
