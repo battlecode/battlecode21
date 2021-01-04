@@ -69,22 +69,44 @@ def pub(project_id, topic_name, data, num_retries=5):
 # TODO should this not be an external method? should this be moved into the scrim class? 
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
 # moving into scrim class would make more sense.
-def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by=None):
+def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
     # Note that if we ever use different leagues, league should become a method argument
     league = 0
-    status = 'queued'
-    replay_id = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+    # Don't use status as a var name, to avoid some http status enum
+    scrim_status = 'queued'
+    # String used to associate to a replay file/link.
+    # Sufficiently random, to ensure privacy (so that others can't guess the link and find a replay).
+    replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
 
     # TODO figure out which red, blue submission 
+    red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
+    blue_submission_id = TeamSubmission.objects.get(pk=blue_team_id).last_1_id
+    red_team_name = Team.objects.get(pk=red_team_id).name
+    blue_team_name = Team.objects.get(pk=blue_team_id).name
 
     # no need to set blue rating, red rating for ranked matches -- this is actually done when the outcome is set
 
     # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
     # TODO save the scrimmage
+    # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
+    # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
+    data = {
+        'league': league,
+        'red_team': red_team_name,
+        'blue_team': blue_team_name,
+        'ranked': ranked,
+        'requested_by': requested_by,
+        'replay': replay,
+    }
+    serializer = ScrimmageSerializer(data=data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    scrimmage = serializer.save()
 
     # TODO put onto pubsub
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
 
     # TODO save the scrimmage, again
 
