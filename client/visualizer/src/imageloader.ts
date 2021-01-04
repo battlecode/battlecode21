@@ -101,20 +101,31 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       goEnd: null
     }
   };
+  // helper function to manipulate images
+  const htmlToData = (ele: HTMLImageElement): ImageData => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if(!context) throw new Error("Error while converting a tile image");
+    canvas.width = ele.width;
+    canvas.height = ele.height;
+    context.drawImage(ele, 0, 0);
+    return context.getImageData(0, 0, ele.width, ele.height);
+  };
+  const dataToSrc = (data: ImageData): String => {
+    var canvas = document.createElement("canvas");
+    canvas.width = data.width;
+    canvas.height = data.height;
+    var context = canvas.getContext("2d");
+    if(!context) throw new Error("Error while converting a tile images");
+    context.putImageData(data, 0, 0);
+
+    return canvas.toDataURL(`edited.png`);
+  };
 
   loadImage(result, 'star', 'star');
 
   // terrain tiles
   {
-    const htmlToData = (ele: HTMLImageElement): ImageData => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      if(!context) throw new Error("Error while converting a tile image");
-      canvas.width = ele.width;
-      canvas.height = ele.height;
-      context.drawImage(ele, 0, 0);
-      return context.getImageData(0, 0, ele.width, ele.height);
-    };
     const tintData = (data: ImageData, colors: Uint8Array): ImageData => {
       const arr = new Uint8ClampedArray(data.data.length);
       for(let i=0; i<arr.length; i+=4){
@@ -128,16 +139,6 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       const result = new ImageData(arr, data.height);
       return result;
     }
-    const dataToSrc = (data: ImageData, idx: number = 0): String => {
-      var canvas = document.createElement("canvas");
-      canvas.width = data.width;
-      canvas.height = data.height;
-      var context = canvas.getContext("2d");
-      if(!context) throw new Error("Error while converting a tile images");
-      context.putImageData(data, 0, 0);
-
-      return canvas.toDataURL(`tiles/terrain_${idx}.png`);
-    };
 
     const baseTile: Image = new Image();
     baseTile.src = require(dirname + 'tiles/terrain.png').default;
@@ -147,17 +148,11 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
         for(let i=0; i<nLev; i++){
         const data: ImageData = htmlToData(baseTile);
         const tinted: ImageData = tintData(data, <Uint8Array><unknown>cst.TILE_COLORS[i]);
-        console.log(data.data);
         const path: String = dataToSrc(tinted);
-        console.log(path.slice(0, path.length-4));
         loadImage(result.tiles, i, "", path.slice(0, path.length-4));
       }
     }
   }
-  // loadImage(result.tiles, 0, 'tiles/DirtTerrain');
-  // loadImage(result.tiles, 1, 'tiles/SwampTerrain');
-  // loadImage(result.tiles, 2, 'tiles/terrain');
-  // loadImage(result.tiles, 3, 'tiles/terrain');
 
   // robot sprites
   loadImage(result.robots.enlightenmentCenter, RED, 'robots/center_red');
@@ -173,14 +168,35 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result.robots.enlightenmentCenter, NEUTRAL, 'robots/center');
 
   // effects
-
   loadImage(result.effects, 'death', 'effects/death/death_empty');
 
   loadImage(result.effects.embezzle, 0, 'effects/embezzle/slanderer_embezzle_empty_1');
   loadImage(result.effects.embezzle, 1, 'effects/embezzle/slanderer_embezzle_empty_2');
 
-  loadImage(result.effects.empower, 0, 'effects/empower/polit_empower_empty_1');
-  loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_2');
+  {
+    const makeTransparent = (data: ImageData): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        arr[i + 0] = data.data[i+0];
+        arr[i + 1] = data.data[i+1];
+        arr[i + 2] = data.data[i+2];
+        arr[i + 3] = data.data[i+3] / 1.5;
+      }
+      const result = new ImageData(arr, data.width);
+      return result;
+    }
+    for(let i=0; i<2; i++){
+      const base: Image = new Image();
+      base.src = require(dirname + `effects/empower/polit_empower_empty_${i+1}.png`).default;
+
+      base.onload = () => {
+        const data: ImageData = htmlToData(base);
+        const trans: ImageData = makeTransparent(data);
+        const path: String = dataToSrc(trans);
+        loadImage(result.effects.empower, i, "", path.slice(0, path.length-4));
+      }
+    }
+  }
 
   loadImage(result.effects.expose, 0, 'effects/expose/expose_empty');
 

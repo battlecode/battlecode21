@@ -174,7 +174,7 @@ export default class Renderer {
       this.drawBot(img, realXs[i], realYs[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
-      // draw effec
+      // draw effect
       let effect: string | null = cst.abilityToEffectString(abilities[i]);
       if (effect !== null) {
         const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
