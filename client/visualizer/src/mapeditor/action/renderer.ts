@@ -35,6 +35,7 @@ export default class MapRenderer {
   // Callbacks for clicking robots and trees on the canvas
   readonly onclickUnit: (id: number) => void;
   readonly onclickBlank: (loc: Victor) => void;
+  readonly onMouseover: (x: number, y: number, passability: number) => void
 
   // Other useful values
   readonly bgPattern: CanvasPattern;
@@ -42,12 +43,14 @@ export default class MapRenderer {
   private height: number; // in world units
 
   constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config,
-    onclickUnit: (id: number) => void, onclickBlank: (loc: Victor) => void) {
+    onclickUnit: (id: number) => void, onclickBlank: (loc: Victor) => void,
+    onMouseover: (x: number, y: number, passability: number) => void) {
     this.canvas = canvas;
     this.conf = conf;
     this.imgs = imgs;
     this.onclickUnit = onclickUnit;
     this.onclickBlank = onclickBlank;
+    this.onMouseover = onMouseover;
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -71,11 +74,11 @@ export default class MapRenderer {
     this.ctx.save();
     this.ctx.scale(scale, scale);
 
-    this.renderBackground();
+    this.renderBackground(map);
     this.renderBodies(map);
 
     // restore default rendering
-    this.setEventListener(map);
+    this.setEventListeners(map);
     this.ctx.restore();
   }
 
@@ -92,7 +95,7 @@ export default class MapRenderer {
   /**
    * Draw the background
    */
-  private renderBackground(): void {
+  private renderBackground(map: GameMap): void {
     this.ctx.save();
     this.ctx.fillStyle = this.bgPattern;
 
@@ -101,7 +104,9 @@ export default class MapRenderer {
 
     for(let i = 0; i < this.width; i++){
       for(let j = 0; j < this.height; j++){
-        this.ctx.drawImage(this.imgs.tiles[0], i*scale, j*scale, scale, scale);
+        const swampLevel = cst.getLevel(map.passability[(map.height-j-1)*this.width + i]);
+        const tileImg = this.imgs.tiles[swampLevel];
+        this.ctx.drawImage(tileImg, i*scale, j*scale, scale, scale);
       }
     }
     this.ctx.restore();
@@ -120,7 +125,6 @@ export default class MapRenderer {
       const type = body.type;
       let img: HTMLImageElement;
 
-      this.drawCircleBot(x, y, radius);
       const teamID = body.teamID || 0;
       img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
       this.drawImage(img, x, y, radius);
@@ -133,7 +137,6 @@ export default class MapRenderer {
       const radius = body.radius;
       let img: HTMLImageElement;
 
-      this.drawCircleBot(x, y, radius);
       img = this.imgs.robots[cst.bodyTypeToString(body.type)][2];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
@@ -144,11 +147,10 @@ export default class MapRenderer {
    * Sets the map editor display to contain of the information of the selected
    * tree, or on the selected coordinate if there is no tree.
    */
-  private setEventListener(map: GameMap) {
+  private setEventListeners(map: GameMap) {
     this.canvas.onmousedown = (event: MouseEvent) => {
-      let x = map.width * event.offsetX / this.canvas.offsetWidth;
-      let y = this.flip(map.height * event.offsetY / this.canvas.offsetHeight, map.height);
-      let loc = new Victor(Math.floor(x), Math.floor(y));
+      const {x,y} = this.getIntegerLocation(event, map);
+      let loc : Victor = new Victor(x, y);
 
       // Get the ID of the selected unit
       let selectedID;
@@ -169,18 +171,17 @@ export default class MapRenderer {
         this.onclickBlank(loc);
       }
     };
+
+    this.canvas.onmousemove = (event) => {
+      const {x,y} = this.getIntegerLocation(event, map);
+      this.onMouseover(x, y, map.passability[(y)*this.width + x]);
+    };
   }
 
-  /**
-   * Draws a circle centered at (x, y) with the given radius
-   */
-  private drawCircleBot(x: number, y: number, radius: number) {
-    if (!this.conf.circleBots) return; // skip if the option is turned off
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "#ddd";
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    this.ctx.fill();
+  private getIntegerLocation(event: MouseEvent, map: GameMap) {
+    let x = map.width * event.offsetX / this.canvas.offsetWidth;
+    let y = this.flip(map.height * event.offsetY / this.canvas.offsetHeight, map.height);
+    return {x: Math.floor(x), y: Math.floor(y)};
   }
 
   /**

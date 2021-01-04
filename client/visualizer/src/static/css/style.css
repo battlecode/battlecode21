@@ -129,7 +129,7 @@ form {
 }
 
 #export {
-    font-size: 24px;
+    font-size: 16px;
     width: 90%;
 }
 
@@ -519,4 +519,8 @@ h4 {
 #star {
     margin-top: 1em;
     width: 40px;
+}
+
+#change-tiles input {
+    width: 30%;
 }

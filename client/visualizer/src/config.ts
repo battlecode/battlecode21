@@ -76,12 +76,6 @@ export interface Config {
   seeDetectionRadius: boolean;
 
   /**
-   * Whether or not to draw a circle under each robot
-   */
-  circleBots: boolean; //TODO: is this needed?
-
-
-  /**
    * The mode of the game
    */
   mode: Mode;
@@ -142,7 +136,6 @@ export function defaults(supplied?: any): Config {
     seeActionRadius: false,
     seeSensorRadius: false,
     seeDetectionRadius: false,
-    circleBots: false,
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,

@@ -40,15 +40,10 @@ export default class Sidebar {
   // Update texts
   private updateText: HTMLDivElement;
 
-  // onkeydown event that uses the controls depending on the game mode
-  private readonly onkeydownControls: (event: KeyboardEvent) => void;
-
   // Callback to update the game area when changing modes
   cb: () => void;
 
-  // onkeydownControls is an onkeydown event that uses the controls depending on the game mode
-  constructor(conf: Config, images: AllImages, runner: Runner,
-    onkeydownControls: (event: KeyboardEvent) => void) {
+  constructor(conf: Config, images: AllImages, runner: Runner) {
     // Initialize fields
     this.div = document.createElement("div");
     this.innerDiv = document.createElement("div");
@@ -78,7 +73,6 @@ export default class Sidebar {
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
     this.conf = conf;
-    this.onkeydownControls = onkeydownControls;
 
     // Initialize div structure
     this.loadStyles();
@@ -128,7 +122,7 @@ export default class Sidebar {
     <li>Search <a href="https://discordapp.com/channels/386965718572466197/401552673523892227">Discord</a>.</li>
     <li>Ask on <a href="https://discordapp.com/channels/386965718572466197/401552673523892227">Discord</a> (attach a screenshot of console output using F12).</li>
     </ol>
-    <b class="blue">Keyboard Shortcuts</b><br>
+    <b class="blue">Keyboard Shortcuts (Game)</b><br>
     LEFT - Step Back One Turn<br>
     RIGHT - Step Forward One Turn<br>
     UP - Double Playback Speed<br>
@@ -143,6 +137,11 @@ export default class Sidebar {
     , - Toggle Detection Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
+    <br>
+    <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
+    <br>
+    S - Add<br>
+    D - Delete<br>
     
     <br>
     <b class="red">How to Play a Match</b><br>

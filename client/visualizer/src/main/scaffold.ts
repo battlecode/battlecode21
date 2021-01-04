@@ -49,7 +49,7 @@ export default class ScaffoldCommunicator {
 
     console.log('app path: ' + appPath);
 
-    // npm run electron in client, if battlecode20-scaffold is located in same level as battlecode20
+    // npm run electron in client, if battlecode21-scaffold is located in same level as battlecode21
     const fromDev = path.join(path.dirname(path.dirname(path.dirname(appPath))), 'battlecode20-scaffold');
     // scaffold/client/Battlecode Client[.exe]
     // (May never happen?)

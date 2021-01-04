@@ -99,18 +99,12 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      // equally divde 0.1 - 1
-      const getLevel = (x: number): number => {
-        const nLev = cst.TILE_COLORS.length;
-        const floatLevel = (x - 0.1) / 0.9 * nLev;
-        const level = Math.floor(floatLevel)
-        return Math.min(nLev - 1, Math.max(0, level));
-      }
-
-      const swampLevel = getLevel(map.passability[idxVal]);
+      // Fetch and draw tile image
+      const swampLevel = cst.getLevel(map.passability[idxVal]);
       const tileImg = this.imgs.tiles[swampLevel];
       this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
+      // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;

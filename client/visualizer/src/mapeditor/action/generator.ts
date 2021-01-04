@@ -96,7 +96,7 @@ export default class MapGenerator {
 
     // Get header information from form
     let name: string = map.name;
-    let minCorner: Victor = new Victor(Math.random()*500, Math.random()*500);
+    let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000);
     let maxCorner: Victor = minCorner.clone();
     maxCorner.add(new Victor(map.width, map.height));
     let randomSeed: number = Math.round(Math.random()*1000);
@@ -107,7 +107,7 @@ export default class MapGenerator {
     // Create the spawned bodies table
     let robotIDsVectorB = schema.SpawnedBodyTable.createRobotIDsVector(builder, this.bodiesArray.robotIDs);
     let teamIDsVectorB = schema.SpawnedBodyTable.createTeamIDsVector(builder, this.bodiesArray.teamIDs);
-    let typesVectorB = schema.SpawnedBodyTable.createTypesVector(builder, this.bodiesArray.types)
+    let typesVectorB = schema.SpawnedBodyTable.createTypesVector(builder, this.bodiesArray.types);
     let locsVecTableB = this.createVecTable(builder, this.bodiesArray.xs, this.bodiesArray.ys);
     schema.SpawnedBodyTable.startSpawnedBodyTable(builder)
     schema.SpawnedBodyTable.addRobotIDs(builder, robotIDsVectorB);
@@ -116,6 +116,8 @@ export default class MapGenerator {
     schema.SpawnedBodyTable.addLocs(builder, locsVecTableB);
     const bodies = schema.SpawnedBodyTable.endSpawnedBodyTable(builder);
 
+    const passability = schema.GameMap.createPassabilityVector(builder, map.passability);
+
     // Create the game map
     let nameP = builder.createString(name);
     schema.GameMap.startGameMap(builder);
@@ -123,6 +125,7 @@ export default class MapGenerator {
     schema.GameMap.addMinCorner(builder, schema.Vec.createVec(builder, minCorner.x, minCorner.y));
     schema.GameMap.addMaxCorner(builder, schema.Vec.createVec(builder, maxCorner.x, maxCorner.y));
     schema.GameMap.addBodies(builder, bodies);
+    schema.GameMap.addPassability(builder, passability);
     schema.GameMap.addRandomSeed(builder, randomSeed);
     const gameMap = schema.GameMap.endGameMap(builder);
 
