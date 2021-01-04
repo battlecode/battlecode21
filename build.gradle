@@ -140,8 +140,8 @@ task runFromClient(type: JavaExec, dependsOn: [':engine:build', ':internal-test-
             '-Dbc.engine.enable-profiler='+project.property('profilerEnabled'),
             '-Dbc.game.team-a='+project.property('teamA'),
             '-Dbc.game.team-b='+project.property('teamB'),
-            '-Dbc.game.team-a.url='+project.property('classLocation'),
-            '-Dbc.game.team-b.url='+project.property('classLocation'),
+            '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
+            '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
             '-Dbc.game.maps='+project.property('maps'),
             '-Dbc.server.save-file=' + project.property('replay')
     ]
