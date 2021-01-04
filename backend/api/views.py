@@ -104,15 +104,10 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
         'blue_team': blue_team_name,
         'ranked': ranked,
         'requested_by': requested_by,
+        'tournament_id': tournament_id,
         'replay': replay,
         'map_ids': map_ids,
     }
-    # Some extra fields for tournament matches.
-    if is_tour_match:
-        data['tournament_id'] = tournament_id
-    # TODO, if is_tour_match is False, tournament_id becomes null in the db -- effectively None.
-    # using None isn't the best idea -- we might change how we query things (as part of viewing tour matches in frontend), and null checking in the frontend is hard to work with. also it makes serialization, etc, harder.
-    # We should reserve a value, and default to it. -1? (It's possible that someone makes a tour w id 0)
 
     serializer = ScrimmageSerializer(data=data)
     if not serializer.is_valid():
@@ -386,9 +381,8 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     tournament_id = int(request.data.get("tournament_id"))
                     map_ids = request.data.get("map_ids")
                 else:
-                    # tournament_id of None indicates a normal scrimmage match.
-                    # TODO, using None isn't the best idea -- we might change how we query things (as part of viewing tour matches in frontend), and null checking in the frontend is hard to work with. We should reserve a value. -1? (It's possible that someone makes a tour w id 0)
-                    tournament_id = None
+                    # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
+                    tournament_id = -1
                     map_ids = None
 
                 result = create_scrimmage_helper(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, league, map_ids)
@@ -593,10 +587,10 @@ class TeamViewSet(viewsets.GenericViewSet,
         return_data = []
 
         # loop through all scrimmages involving this team
-        # only add ranked scriammges, and scrimmages with no tournament ID
+        # only add ranked, non-tournament scrimmages
         # add entry to result array defining whether or not this team won and time of scrimmage
         for scrimmage in scrimmages:
-            if (scrimmage.ranked and scrimmage.tournament_id is None):
+            if (scrimmage.ranked and scrimmage.tournament_id == -1):
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
@@ -918,7 +912,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=None)) 
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1)) 
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -957,10 +951,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             requested_by = this_team.id
             is_tour_match = False
-            # at the moment, with is_tour_match=False, tournament_id gets dropped from use.
-            # we still have to pass something, though.
-            # TODO change default value of tournament_id, etc; see other comments
-            tournament_id = None
+            # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
+            tournament_id = -1
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
@@ -1053,7 +1045,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.losescore = sc_losescore
 
                     # if tournament, then return here
-                    if scrimmage.tournament_id is not None:
+                    if scrimmage.tournament_id != -1:
                         scrimmage.save()
                         return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
 
