@@ -125,9 +125,9 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
 
 def accept_scrimmage_helper(scrimmage_id):
     scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
-    print(scrimmage)
     # put onto pubsub
-    # TODO if autoaccept, then a lot of these queries are performed twice in succession. Could use optimization.
+    # TODO if called through create_scrimmage_helper, then a lot of these queries are performed twice in succession, once in each method. Could use optimization.
+    # for example, pass data from create_scrimmage_helper into accept_scrimmage_helper, as an argument, and get your values from there.
     red_team_id = scrimmage.red_team.id
     blue_team_id = scrimmage.blue_team.id
     red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
@@ -146,7 +146,6 @@ def accept_scrimmage_helper(scrimmage_id):
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids):
 
-    print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams do not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     if red_submission_id is None:
