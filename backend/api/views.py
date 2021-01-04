@@ -374,23 +374,23 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if is_tour_match:
                     # Tour matches are unranked.
                     ranked = False
+                    tournament_id = int(request.data.get("tournament_id"))
+                    # In a tour, we use specific maps for each round.
+                    # Infra handles picking the maps, and sends it through the request.
+                    map_ids = request.data.get("map_ids")
                 else:
                     # For now regular matches created automatically are ranked; subjject to change.
                     ranked = True
+                    # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
+                    tournament_id = -1
+                    # Use default map selection
+                    map_ids = None
                 
                 # TODO admin_team has to be requeried every time. Easier to run this once (like as a setting, kinda).
                 admin_team = Team.objects.get(users__username=user.username)
                 requested_by = admin_team.id
 
                 league = 0
-
-                if match_type == "tour_scrimmage":
-                    tournament_id = int(request.data.get("tournament_id"))
-                    map_ids = request.data.get("map_ids")
-                else:
-                    # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
-                    tournament_id = -1
-                    map_ids = None
 
                 result = create_scrimmage_helper(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, league, map_ids)
                 return result
