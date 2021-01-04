@@ -52,7 +52,7 @@ export const EFFECT_STEP = 200; //time change between effect animations
 
 // Map editor canvas parameters
 export const DELTA = .0001;
-export const MIN_DIMENSION = 30;
+export const MIN_DIMENSION = 15;
 export const MAX_DIMENSION = 100;
 
 // Initial influence of enlightenment center, for map editor
