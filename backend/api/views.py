@@ -73,7 +73,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
     # Don't use status as a var name, to avoid some http status enum
-    scrim_status = 'queued'
+    scrim_status = 'created'
     # String used to associate to a replay file/link.
     # Sufficiently random, to ensure privacy (so that others can't guess the link and find a replay).
     replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
@@ -126,6 +126,8 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
     if accept:
         result = accept_scrimmage(scrimmage.id)
     else:
+        scrimmage.status = 'pending'
+        scrimmage.save()
         result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
     return result
 
