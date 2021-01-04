@@ -95,6 +95,8 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
 
     # no need to set blue rating, red rating for ranked matches -- this is actually done when the outcome is set
 
+    # TODO default map selection should be around here, not in pubsub call, in order to save this in db
+
     # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
 
     # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
@@ -111,6 +113,9 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
     # Some extra fields for tournament matches.
     if is_tour_match:
         data['tournament_id'] = tournament_id
+    # TODO, if is_tour_match is False, tournament_id becomes null in the db -- effectively None.
+    # using None isn't the best idea -- we might change how we query things (as part of viewing tour matches in frontend), and null checking in the frontend is hard to work with. also it makes serialization, etc, harder.
+    # We should reserve a value, and default to it. -1? (It's possible that someone makes a tour w id 0)
 
     serializer = ScrimmageSerializer(data=data)
     if not serializer.is_valid():
