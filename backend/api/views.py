@@ -394,7 +394,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 if not ScrimSerial.is_valid():
                     return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
                 scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
+                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
                 return Response({'message': scrim.id}, status.HTTP_200_OK)
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
