@@ -169,6 +169,13 @@ export default class Renderer {
     // Render the robots
     // render images with priority last to have them be on top of other units.
 
+    const drawEffect = (effect: string, x: number, y: number) => {
+      const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
+      const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
+      const effectImg = effectImgs[whichImg];
+      this.drawBot(effectImg, x, y);
+    }
+
     const renderBot = (i: number) => {
       const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
       this.drawBot(img, realXs[i], realYs[i]);
@@ -176,12 +183,7 @@ export default class Renderer {
 
       // draw effect
       let effect: string | null = cst.abilityToEffectString(abilities[i]);
-      if (effect !== null) {
-        const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
-        const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
-        const effectImg = effectImgs[whichImg];
-        this.drawBot(effectImg, realXs[i], realYs[i]);
-      }
+      if (effect !== null) drawEffect(effect, realXs[i], realYs[i]);
     }
 
     let priorityIndices: number[] = [];
@@ -196,14 +198,15 @@ export default class Renderer {
 
     priorityIndices.forEach((i) => renderBot(i));
 
-    // Render died bodies
+    // Render empowered bodies
 
-    const died = world.diedBodies;
-    const diedImg: HTMLImageElement = this.imgs.effects["death"];
-    for (let i = 0; i < died.length; i++) {
-      this.drawBot(diedImg, died.arrays.x[i], this.flip(died.arrays.y[i], minY, maxY));
+    const empowered = world.empowered;
+    const empowered_x = world.empowered.arrays.x;
+    const empowered_y = world.empowered.arrays.y;
+
+    for (let i = 0; i < empowered.length; i++) {
+      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
-
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -311,7 +314,7 @@ export default class Renderer {
       // const y = this.flip(_y, minY, maxY)
 
       // Set the location of the mouseover
-      const {x,y} = this.getIntegerLocation(event, world);
+      const {x,y} = this.getIntegerRelativeLocation(event, world);
       const idx = world.mapStats.getIdx(x, y);
       onMouseover(x, y, world.mapStats.passability[idx]);
       this.hoverPos = {x: x, y: y};
@@ -331,6 +334,11 @@ export default class Renderer {
     const _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
     const y = this.flip(_y, minY, maxY)
     return {x: Math.floor(x), y: Math.floor(y+1)};
+  }
+
+  private getIntegerRelativeLocation(event: MouseEvent, world: GameWorld) {
+    const {x,y} = this.getIntegerLocation(event, world);
+    return {x: x - world.minCorner.x, y: y - world.minCorner.y};
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {

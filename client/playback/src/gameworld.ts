@@ -13,6 +13,12 @@ export type DeadBodiesSchema = {
   y: Int32Array,
 }
 
+export type EmpowerSchema = {
+  id: Int32Array,
+  x: Int32Array,
+  y: Int32Array
+}
+
 export type BodiesSchema = {
   id: Int32Array,
   team: Int8Array,
@@ -83,6 +89,11 @@ export default class GameWorld {
    */
   bodies: StructOfArrays<BodiesSchema>;
 
+  /**
+   * Bodies that empowered this round.
+   */
+  empowered: StructOfArrays<EmpowerSchema>;
+
   /*
    * Stats for each team
    */
@@ -146,6 +157,12 @@ export default class GameWorld {
 
   constructor(meta: Metadata) {
     this.meta = meta;
+
+    this.empowered = new StructOfArrays({
+      id: new Int32Array(0),
+      x: new Int32Array(0),
+      y: new Int32Array(0),
+    }, 'id');
 
     this.diedBodies = new StructOfArrays({
       id: new Int32Array(0),
@@ -330,6 +347,7 @@ export default class GameWorld {
     // Remove abilities from previous round
     this.bodies.alterBulk({id: new Int32Array(this.abilityRobots), ability: new Int8Array(this.abilityRobots.length)});
     this.abilityRobots = [];
+    this.empowered.clear();
 
     // Actions
     if(delta.actionsLength() > 0){
@@ -346,21 +364,30 @@ export default class GameWorld {
           /// Politicians self-destruct and affect nearby bodies
           /// Target: none
           case schema.Action.EMPOWER:
-            this.bodies.alter({ id: robotID, ability: 1});
+            //this.bodies.alter({ id: robotID, ability: 1});
+            const x = this.bodies.lookup(robotID).x;
+            const y = this.bodies.lookup(robotID).y;
+            this.empowered.insert({'id': robotID, 'x': x, 'y': y});
             this.abilityRobots.push(robotID);
             break;
           /// Slanderers passively generate influence for the
           /// Enlightenment Center that created them.
           /// Target: parent ID
           case schema.Action.EMBEZZLE:
-            this.bodies.alter({ id: robotID, ability: 3});
+            //this.bodies.alter({ id: robotID, ability: 3});
             this.abilityRobots.push(robotID);
             break;
           /// Slanderers turn into Politicians.
           /// Target: none
           case schema.Action.CAMOUFLAGE:
             const team = this.bodies.lookup(robotID).team;
+            const type = this.bodies.lookup(robotID).type;
+            if (type !== schema.BodyType.SLANDERER) {
+              throw new Error("non-slanderer camouflaged");
+            }
+            this.bodies.alter({ id: robotID, type: schema.BodyType.POLITICIAN});
             this.bodies.alter({ id: robotID, ability: (team == 1 ? 4 : 5)});
+            break;
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
           case schema.Action.EXPOSE:
@@ -384,7 +411,6 @@ export default class GameWorld {
           /// Target: teamID
           case schema.Action.CHANGE_TEAM:
             // TODO remove the robot, don't alter it
-            this.bodies.alter({ id: robotID, team: target});
             break;
           /// A robot's influence changes.
           /// Target: delta value
