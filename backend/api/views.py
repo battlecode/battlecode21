@@ -989,8 +989,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
 
-    # TODO extract lots of this to the generic scrimmage creation method
-    # TODO test this method, once done
     @action(methods=['patch'], detail=True)
     def accept(self, request, league_id, team, pk=None):
         try:
@@ -1000,16 +998,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-            scrimmage.status = 'queued'
-            scrimmage.save()
-            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            red_team_name = scrimmage.red_team.name
-            blue_team_name = scrimmage.blue_team.name
-            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-
-            serializer = self.get_serializer(scrimmage)
-            return Response(serializer.data, status.HTTP_200_OK)
+            result = accept_scrimmage(scrimmage.id)
+            return result
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
