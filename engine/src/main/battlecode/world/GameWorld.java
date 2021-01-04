@@ -66,7 +66,6 @@ public strictfp class GameWorld {
             MapLocation newLocation = robot.location.translate(gm.getOrigin().x, gm.getOrigin().y);
             int newID = spawnRobot(null, robot.type, newLocation, robot.team, robot.influence);
             initialBodies[i] = new RobotInfo(newID, robot.team, robot.type, robot.influence, robot.conviction, newLocation); // update with non-deterministic ID and offset location
-            // System.out.println("robot influence: " + robot.influence);
         }
 
         // Write match header at beginning of match
