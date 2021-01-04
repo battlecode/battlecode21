@@ -61,7 +61,7 @@ public strictfp class GameWorld {
 
         // Add the robots contained in the LiveMap to this world.
         for (RobotInfo robot : this.gameMap.getInitialBodies()) {
-            spawnRobot(null, robot.type, robot.location, robot.team, robot.influence);
+            spawnRobot(null, robot.type, robot.location.translate(gm.getOrigin().x, gm.getOrigin().y), robot.team, robot.influence);
             System.out.println("robot influence: " + robot.influence);
         }
 
