@@ -95,6 +95,23 @@ public strictfp interface RobotController {
      */
     MapLocation getLocation();
 
+    /**
+     * Returns this robot's current influence.
+     *
+     * @return this robot's current influence.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getInfluence();
+
+    /**
+     * Returns this robot's current conviction.
+     *
+     * @return this robot's current conviction.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getConviction();
 
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****

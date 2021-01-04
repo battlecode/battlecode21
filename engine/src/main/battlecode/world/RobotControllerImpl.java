@@ -122,11 +122,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
  
-    private int getInfluence() {
+    public int getInfluence() {
         return this.robot.getInfluence();
     }
 
-    private double getConviction() {
+    public int getConviction() {
         return this.robot.getConviction();  
     }
 

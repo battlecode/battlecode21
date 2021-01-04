@@ -16,6 +16,7 @@ public class MapBuilder {
     public String name;
     public int width;
     public int height;
+    public MapLocation origin;
     public int seed;
     private MapSymmetry symmetry;
     private double[] passabilityArray;
@@ -23,10 +24,11 @@ public class MapBuilder {
 
     private List<RobotInfo> bodies;
 
-    public MapBuilder(String name, int width, int height, int seed) {
+    public MapBuilder(String name, int width, int height, int originX, int originY, int seed) {
         this.name = name;
         this.width = width;
         this.height = height;
+        this.origin = new MapLocation(originX, originY);
         this.seed = seed;
         this.bodies = new ArrayList<>();
 
@@ -53,7 +55,7 @@ public class MapBuilder {
         return x + y * width;
     }
 
-    public void addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc){
+    public void addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc) {
         // check if something already exists here, if so shout
         for (RobotInfo r : bodies) {
             if (r.location.equals(loc)) {
@@ -150,7 +152,7 @@ public class MapBuilder {
     // ********************
 
     public LiveMap build() {
-        return new LiveMap(width, height, new MapLocation(0, 0), seed, GameConstants.GAME_MAX_NUMBER_OF_ROUNDS, name,
+        return new LiveMap(width, height, origin, seed, GameConstants.GAME_MAX_NUMBER_OF_ROUNDS, name,
                 bodies.toArray(new RobotInfo[bodies.size()]), passabilityArray);
     }
 
