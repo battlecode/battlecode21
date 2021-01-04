@@ -65,9 +65,9 @@ def pub(project_id, topic_name, data, num_retries=5):
         else:
             break
 
-# TODO should this not be an external method? should this be moved into the scrim class? 
+# TODO at some point, these two methods should be moved into the scrim class. 
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
-# moving into scrim class would make more sense.
+# moving into scrim class would make more sense conceptually / for organization.
 def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league, map_ids):
     # Don't use status as a var name, to avoid some http status enum
     scrim_status = 'created'
