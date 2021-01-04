@@ -261,6 +261,7 @@ public final strictfp class GameMapIO {
             ArrayList<Byte> bodyTypes = new ArrayList<>();
             ArrayList<Integer> bodyLocsXs = new ArrayList<>();
             ArrayList<Integer> bodyLocsYs = new ArrayList<>();
+            ArrayList<Integer> bodyInfluences = new ArrayList<>();
             ArrayList<Double> passabilityArrayList = new ArrayList<>();
 
             for (int i = 0; i < gameMap.getWidth() * gameMap.getHeight(); i++) {
@@ -273,6 +274,7 @@ public final strictfp class GameMapIO {
                 bodyTypes.add(FlatHelpers.getBodyTypeFromRobotType(robot.type));
                 bodyLocsXs.add(robot.location.x);
                 bodyLocsYs.add(robot.location.y);
+                bodyInfluences.add(robot.getInfluence());
             }
 
             int robotIDs = SpawnedBodyTable.createRobotIDsVector(builder, ArrayUtils.toPrimitive(bodyIDs.toArray(new Integer[bodyIDs.size()])));
@@ -281,11 +283,13 @@ public final strictfp class GameMapIO {
             int locs = VecTable.createVecTable(builder,
                     VecTable.createXsVector(builder, ArrayUtils.toPrimitive(bodyLocsXs.toArray(new Integer[bodyLocsXs.size()]))),
                     VecTable.createYsVector(builder, ArrayUtils.toPrimitive(bodyLocsYs.toArray(new Integer[bodyLocsYs.size()]))));
+            int influences = SpawnedBodyTable.createInfluencesVector(builder, ArrayUtils.toPrimitive(bodyInfluences.toArray(new Integer[bodyInfluences.size()])));
             SpawnedBodyTable.startSpawnedBodyTable(builder);
             SpawnedBodyTable.addRobotIDs(builder, robotIDs);
             SpawnedBodyTable.addTeamIDs(builder, teamIDs);
             SpawnedBodyTable.addTypes(builder, types);
             SpawnedBodyTable.addLocs(builder, locs);
+            SpawnedBodyTable.addInfluences(builder, influences);
             int bodies = SpawnedBodyTable.endSpawnedBodyTable(builder);
             int passabilityArrayInt = battlecode.schema.GameMap.createPassabilityVector(builder, ArrayUtils.toPrimitive(passabilityArrayList.toArray(new Double[passabilityArrayList.size()])));
             // Build LiveMap for flatbuffer
@@ -315,7 +319,7 @@ public final strictfp class GameMapIO {
                 Team bodyTeam = TeamMapping.team(bodyTable.teamIDs(i));
                 int bodyInfluence = bodyTable.influences(i);
                 if (bodyType == RobotType.ENLIGHTENMENT_CENTER)
-                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyType, bodyInfluence, 0, new MapLocation(bodyX, bodyY)));
+                    initialBodies.add(new RobotInfo(bodyID, bodyTeam, bodyType, bodyInfluence, bodyInfluence, new MapLocation(bodyX, bodyY)));
                 // ignore robots that are not enlightenment centers, TODO throw error?
             }
         }
