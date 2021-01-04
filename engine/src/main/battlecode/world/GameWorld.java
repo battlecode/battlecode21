@@ -62,6 +62,7 @@ public strictfp class GameWorld {
         // Add the robots contained in the LiveMap to this world.
         for (RobotInfo robot : this.gameMap.getInitialBodies()) {
             spawnRobot(null, robot.ID, robot.type, robot.location, robot.team, robot.influence);
+            System.out.println("robot influence: " + robot.influence);
         }
 
         // Write match header at beginning of match
@@ -196,27 +197,27 @@ public strictfp class GameWorld {
     // ***********************************
 
     public InternalRobot getRobot(MapLocation loc) {
-        return this.robots[loc.x][loc.y];
+        return this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y];
     }
 
     public void moveRobot(MapLocation start, MapLocation end) {
-        addRobot(end, this.robots[start.x][start.y]);
+        addRobot(end, getRobot(start));
         removeRobot(start);
     }
 
     public void addRobot(MapLocation loc, InternalRobot robot) {
-        this.robots[loc.x][loc.y] = robot;
+        this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y] = robot;
     }
 
     public void removeRobot(MapLocation loc) {
-        this.robots[loc.x][loc.y] = null;
+        this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y] = null;
     }
 
     public InternalRobot[] getAllRobotsWithinRadiusSquared(MapLocation center, int radiusSquared) {
         ArrayList<InternalRobot> returnRobots = new ArrayList<InternalRobot>();
         for (MapLocation newLocation : getAllLocationsWithinRadiusSquared(center, radiusSquared))
-            if (this.robots[newLocation.x][newLocation.y] != null)
-                returnRobots.add(this.robots[newLocation.x][newLocation.y]);
+            if (getRobot(newLocation) != null)
+                returnRobots.add(getRobot(newLocation));
         return returnRobots.toArray(new InternalRobot[returnRobots.size()]);
     }
 
