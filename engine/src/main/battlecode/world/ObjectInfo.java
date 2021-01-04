@@ -143,7 +143,7 @@ public strictfp class ObjectInfo {
     // *** ADDING OBJECTS *********
     // ****************************
 
-    public void spawnRobot(InternalRobot robot){
+    public void spawnRobot(InternalRobot robot) {
         incrementRobotCount(robot.getTeam());
         incrementRobotTypeCount(robot.getTeam(), robot.getType());
 
@@ -160,7 +160,7 @@ public strictfp class ObjectInfo {
     // *** EXISTS CHECKS **********
     // ****************************
 
-    public boolean existsRobot(int id){
+    public boolean existsRobot(int id) {
         return gameRobotsByID.containsKey(id);
     }
 
@@ -168,15 +168,8 @@ public strictfp class ObjectInfo {
     // *** DESTROYING OBJECTS *****
     // ****************************
 
-    public void destroyRobot(int id){
+    public void destroyRobot(int id) {
         InternalRobot robot = getRobotByID(id);
-
-        // drop a unit if one is currently held
-        if (robot.getType() == RobotType.DELIVERY_DRONE && robot.isCurrentlyHoldingUnit()) {
-            int pickedUpUnitid = robot.getIdOfUnitCurrentlyHeld();
-            InternalRobot pickedUpUnit = getRobotByID(id);
-            pickedUpUnit.unblockUnit();
-        }
 
         decrementRobotCount(robot.getTeam());
         decrementRobotTypeCount(robot.getTeam(), robot.getType());

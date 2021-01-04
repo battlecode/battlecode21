@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../out",
+    "target": "es6",
+    "declaration": true,
+    "typeRoots": [
+      "../../node_modules/@types"
+    ],
+    "lib": [ "es2016", "dom" ],
+  },
+  "include": [
+    "*.ts",
+  ],
+  "exclude": [
+    "legacy/**"
+  ]
+}

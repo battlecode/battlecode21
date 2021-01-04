@@ -93,10 +93,10 @@ public class PlayerControlProvider implements RobotControlProvider {
             this.sandboxes.put(robot.getID(), player);
         } catch (InstrumentationException e) {
             ErrorReporter.report("Error while loading player "+ teamPackage +": "+e.getMessage(), false);
-            robot.suicide();
+            robot.die_exception();
         } catch (RuntimeException e) {
             ErrorReporter.report(e, true);
-            robot.suicide();
+            robot.die_exception();
         }
 
     }

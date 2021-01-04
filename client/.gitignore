@@ -1,0 +1,23 @@
+# .gitignore file for visualizer and playback
+# feel free to add additional local paths with brief explanation
+
+# installed npm modules
+*/node_modules/
+
+# bundled visualizer
+visualizer/out/
+
+# bundled playback
+playback/out/
+
+# built client
+dist/
+
+# Generated test bc21 files
+examples/
+
+# any battlecode files
+*.bc21
+
+# for mac users?
+**/.DS_Store

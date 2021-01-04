@@ -23,24 +23,37 @@ public class RobotInfo {
     public final RobotType type;
 
     /**
+     * The influence of the robot.
+     */
+    public final int influence;
+
+    /**
+     * The conviction of the robot.
+     */
+    public final int conviction;
+
+    /**
      * The current location of the robot.
      */
     public final MapLocation location;
 
-    public int getID() {
-        return this.ID;
-    }
-
-    public MapLocation getLocation() {
-        return this.location;
-    }
-
-    public RobotInfo(int ID, Team team, RobotType type, MapLocation location) {
+    public RobotInfo(int ID, Team team, RobotType type, int influence, int conviction, MapLocation location) {
         super();
         this.ID = ID;
         this.team = team;
         this.type = type;
+        this.influence = influence;
+        this.conviction = conviction;
         this.location = location;
+    }
+
+    /**
+     * Returns the ID of this robot.
+     *
+     * @return the ID of this robot
+     */
+    public int getID() {
+        return this.ID;
     }
 
     /**
@@ -61,6 +74,33 @@ public class RobotInfo {
         return type;
     }
 
+    /**
+     * Returns the influence of this robot.
+     *
+     * @return the influence of this robot
+     */
+    public int getInfluence() {
+        return influence;
+    }
+
+    /**
+     * Returns the conviction of this robot.
+     *
+     * @return the conviction of this robot
+     */
+    public int getConviction() {
+        return conviction;
+    }
+
+    /**
+     * Returns the location of this robot.
+     *
+     * @return the location of this robot
+     */
+    public MapLocation getLocation() {
+        return this.location;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,17 +111,19 @@ public class RobotInfo {
         if (ID != robotInfo.ID) return false;
         if (team != robotInfo.team) return false;
         if (type != robotInfo.type) return false;
+        if (influence != robotInfo.influence) return false;
+        if (conviction != robotInfo.conviction) return false;
         return location.equals(robotInfo.location);
-
     }
 
     @Override
     public int hashCode() {
         int result;
-        long temp;
         result = ID;
         result = 31 * result + team.hashCode();
-        result = 31 * result + type.hashCode();
+        result = 31 * result + type.ordinal();
+        result = 31 * result + influence;
+        result = 31 * result + conviction;
         result = 31 * result + location.hashCode();
         return result;
     }
@@ -92,6 +134,8 @@ public class RobotInfo {
                 "ID=" + ID +
                 ", team=" + team +
                 ", type=" + type +
+                ", influence=" + influence +
+                ", conviction=" + conviction +
                 ", location=" + location +
                 '}';
     }

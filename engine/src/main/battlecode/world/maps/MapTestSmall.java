@@ -12,6 +12,7 @@ import battlecode.common.GameConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Generate a map.
@@ -38,40 +39,15 @@ public class MapTestSmall {
 
     public static void makeSimple() throws IOException {
         MapBuilder mapBuilder = new MapBuilder(mapName, 32, 32, 30);
-        mapBuilder.setWaterLevel(0);
-        mapBuilder.addSymmetricHQ(5, 5);
-        mapBuilder.addSymmetricCow(10, 10);
-        mapBuilder.addSymmetricCow(4, 18);
+        mapBuilder.addSymmetricEnlightenmentCenter(5, 5);
+        Random random = new Random(6147);
 
-        for(int i = 0; i < mapBuilder.width; i++) {
+        for(int i = 0; i < mapBuilder.width / 2; i++) {
             for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricSoup(i, j,  i * j + i + j);
+                mapBuilder.setSymmetricPassability(i, j, random.nextDouble()*0.9+0.1);
             }
         }
 
-        for(int i = 0; i < mapBuilder.width/2; i++) {
-            for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricWater(i, j,  false);
-                if (i < 4 && j < 4) {
-                    mapBuilder.setSymmetricWater(i,j,true);
-                }
-            }
-        }
-
-        for(int i = 0; i < mapBuilder.width/2; i++) {
-            for (int j = 0; j < mapBuilder.height; j++) {
-                mapBuilder.setSymmetricDirt(i, j,  3);
-                if (i < 16 && j < 8) {
-                    mapBuilder.setSymmetricDirt(i,j,2);
-                }
-                if (i < 8 && j < 8) {
-                    mapBuilder.setSymmetricDirt(i,j,1);
-                }
-            }
-        }
-
-        mapBuilder.setSymmetricDirt(2, 2, GameConstants.MIN_WATER_ELEVATION);
         mapBuilder.saveMap(outputDirectory);
-
     }
 }

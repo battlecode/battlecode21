@@ -11,16 +11,17 @@ import java.util.*;
 public class TeamInfo {
 
     private GameWorld gameWorld;
-    private int[] teamSoup;
-    private boolean[] destroyedHQ;
-    private int[] blockchainsSent;
+    private int[] teamVotes;
+    private int[] numBuffs;
+    private Map<Integer, TreeMap<Integer, Integer>> buffExpirations; // team -> round number, number of buffs expiring at the beginning of that round
 
     public TeamInfo(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
-        this.teamSoup = new int[2];
-        Arrays.fill(teamSoup, GameConstants.INITIAL_SOUP);
-        this.destroyedHQ = new boolean[2];
-        blockchainsSent = new int[2];
+        this.teamVotes = new int[2];
+        this.numBuffs = new int[2];
+        this.buffExpirations = new HashMap<>();
+        for (int i = 0; i < 2; i++)
+            this.buffExpirations.put(i, new TreeMap<>());
     }
 
     // *********************************
@@ -28,36 +29,71 @@ public class TeamInfo {
     // *********************************
 
     // Breaks if t.ordinal() > 1 (Team NEUTRAL)
-    public int getSoup(Team t) {
-        return teamSoup[t.ordinal()];
+    public int getVotes(Team t) {
+        return this.teamVotes[t.ordinal()];
     }
 
-    public int getBlockchainsSent(Team t) {
-        return blockchainsSent[t.ordinal()];
+    // returns current buff
+    public double getBuff(Team t) {
+        return Math.pow(GameConstants.EXPOSE_BUFF_FACTOR, this.numBuffs[t.ordinal()]);
+    }
+
+    // returns the buff at specified round
+    public double getBuff(Team t, int roundNumber) {
+        int buffs = getNumBuffs(t, roundNumber);
+        return Math.pow(GameConstants.EXPOSE_BUFF_FACTOR, buffs);
+    }
+
+    // returns the number of buffs at specified round
+    private int getNumBuffs(Team t, int roundNumber) {
+        int teamIdx = t.ordinal();
+        int buffs = numBuffs[teamIdx];
+        TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);
+        for (int round : map.keySet()) {
+            if (round <= roundNumber) {
+                buffs -= map.get(round);
+            } else {
+                break; // treemaps are in increasing order
+            }
+        }
+        return buffs;
     }
 
     // *********************************
     // ***** UPDATE METHODS ************
     // *********************************
 
-    public void addSoupIncome(int amount) {
-        adjustSoup(Team.A, amount);
-        adjustSoup(Team.B, amount);
+    public void addVote(Team t) {
+        teamVotes[t.ordinal()]++;
     }
 
-    public void adjustSoup(Team t, int amount) {
-        this.teamSoup[t.ordinal()] += amount;
+    // called at the end of every round
+    public void addBuffs(int nextRound, Team t, int buffs) {
+        int teamIdx = t.ordinal();
+        this.numBuffs[teamIdx] += buffs;
+        TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);
+        int expirationRound = nextRound + GameConstants.EXPOSE_BUFF_NUM_ROUNDS;
+        map.put(expirationRound, map.getOrDefault(expirationRound, 0) + buffs);
     }
 
-    public boolean getDestroyedHQ(Team t) {
-        return destroyedHQ[t.ordinal()];
+    // called at the beginning of every round
+    public void updateNumBuffs(int currentRound) {
+        updateNumBuffs(currentRound, Team.A);
+        updateNumBuffs(currentRound, Team.B);
     }
 
-    public void destroyHQ(Team t) {
-        destroyedHQ[t.ordinal()] = true;
-    }
-
-    public void addBlockchainSent(Team t) {
-        blockchainsSent[t.ordinal()]++;
+    private void updateNumBuffs(int currentRound, Team t) {
+        int teamIdx = t.ordinal();
+        TreeMap<Integer, Integer> map = this.buffExpirations.get(teamIdx);
+        Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> item = it.next();
+            if (item.getKey() <= currentRound) {
+                this.numBuffs[teamIdx] -= item.getValue();
+                it.remove();
+            } else {
+                break; // treemaps are in increasing order
+            }
+        }
     }
 }
