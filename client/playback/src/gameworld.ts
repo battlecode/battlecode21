@@ -523,7 +523,7 @@ export default class GameWorld {
     // Store frequently used arrays
     var teams = bodies.teamIDsArray();
     var types = bodies.typesArray();
-    var influences = bodies.influencesArray();
+    var influences = bodies.influencesArray() || new Int32Array(teams.length);
 
     // Update spawn stats
     for(let i = 0; i < bodies.robotIDsLength(); i++) {

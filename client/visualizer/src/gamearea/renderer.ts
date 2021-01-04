@@ -5,6 +5,7 @@ import NextStep from './nextstep';
 import {GameWorld, Metadata, schema, Game} from 'battlecode-playback';
 import {AllImages} from '../imageloader';
 import Victor = require('victor');
+import { constants } from 'buffer';
 
 /**
  * Renders the world.
@@ -90,15 +91,6 @@ export default class Renderer {
 
     const map = world.mapStats;
 
-    // dirt - swamp threshold
-    const T = 0.5;
-
-    function getOverlayColor(x: number): string {
-      const val = [85,90,70];
-      const a = x > T ? x/2 : Math.min(0.1/x, 0.7);
-      return `rgba(${val[0]},${val[1]},${val[2]},${a})`;
-    }
-
     for (let i = 0; i < width; i++) for (let j = 0; j < height; j++){
       let idxVal = map.getIdx(i,j);
       let plotJ = height-j-1;
@@ -107,12 +99,16 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      const useDirt = map.passability[idxVal] > T;
-      const tileImg = useDirt ? this.imgs.tiles.dirt : this.imgs.tiles.swamp;
-      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      // equally divde 0.1 - 1
+      const getLevel = (x: number): number => {
+        const nLev = cst.TILE_COLORS.length;
+        const floatLevel = (x - 0.1) / 0.9 * nLev;
+        return Math.min(nLev - 1, Math.floor(floatLevel));
+      }
 
-      this.ctx.fillStyle = getOverlayColor(map.passability[idxVal]);
-      this.ctx.fillRect(cx, cy, scale, scale);
+      const swampLevel = getLevel(map.passability[idxVal]);
+      const tileImg = this.imgs.tiles[swampLevel];
+      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';

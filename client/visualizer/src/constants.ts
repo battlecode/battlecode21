@@ -14,6 +14,11 @@ export const bodyTypePriority: number[] = []; // for guns, drones, etc. that sho
 
 // old colors for reference
 
+export const TILE_COLORS: Array<number>[] = [
+  [120, 0, 0],
+  [0, 120, 0]
+];
+
 // maps elevation to rgb values
 export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<number>>([
   [-5, [0, 147, 83]], // turquoise

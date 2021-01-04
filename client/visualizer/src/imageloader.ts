@@ -3,10 +3,7 @@ type Image = HTMLImageElement;
 
 export type AllImages = {
   star: Image,
-  tiles: {
-    dirt: Image,
-    swamp: Image
-  },
+  tiles: Array<Image>,
   robots: {
     enlightenmentCenter: Array<Image>,
     politician: Array<Image>,
@@ -72,10 +69,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage.requestedAll = false;
 
   const result = {
-    tiles: {
-      dirt: null,
-      swamp: null
-    },
+    tiles: [],
     robots: {
       enlightenmentCenter: [],
       politician: [],
@@ -108,8 +102,8 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result, 'star', 'star');
 
   // terrain tiles
-  loadImage(result.tiles, 'dirt', 'tiles/DirtTerrain');
-  loadImage(result.tiles, 'swamp', 'tiles/SwampTerrain');
+  loadImage(result.tiles, 0, 'tiles/DirtTerrain');
+  loadImage(result.tiles, 1, 'tiles/SwampTerrain');
 
   // robot sprites
   loadImage(result.robots.enlightenmentCenter, RED, 'robots/center_red');

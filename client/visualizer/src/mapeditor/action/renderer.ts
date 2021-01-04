@@ -56,7 +56,7 @@ export default class MapRenderer {
       this.ctx = ctx;
     }
 
-    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles.dirt, 'repeat');
+    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles[0], 'repeat');
   }
 
   /**
@@ -101,7 +101,7 @@ export default class MapRenderer {
 
     for(let i = 0; i < this.width; i++){
       for(let j = 0; j < this.height; j++){
-        this.ctx.drawImage(this.imgs.tiles.dirt, i*scale, j*scale, scale, scale);
+        this.ctx.drawImage(this.imgs.tiles[0], i*scale, j*scale, scale, scale);
       }
     }
     this.ctx.restore();
