@@ -364,6 +364,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
     def enqueue(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
+            # TODO multiple accesses to request.data are annyoing; replace w setting to a stingle var, data
             match_type = request.data.get("type")
             if match_type == "scrimmage" or match_type == "tour_scrimmage":
                 team_1_id = request.data.get("player1")
@@ -380,7 +381,8 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     tournament_id = int(request.data.get("tournament_id"))
                     map_ids = request.data.get("map_ids")
                 else:
-                    # TODO should prob set to a better value. (I think in the past we might've used 0 or -1 or smth? need to check)
+                    # tournament_id of None indicates a normal scrimmage match.
+                    # TODO, using None isn't the best idea -- we might change how we query things (as part of viewing tour matches in frontend), and null checking in the frontend is hard to work with. We should reserve a value. -1? (It's possible that someone makes a tour w id 0)
                     tournament_id = None
                     map_ids = None
 
