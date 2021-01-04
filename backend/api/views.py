@@ -941,11 +941,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         scrimmage_serializer = ScrimmageSerializer(scrimmage_queried, context=self.get_serializer_context())
         return Response(scrimmage_serializer.data)
 
-    # TODO remove this method once done
-    @action(methods=['get'], detail=True)
-    def test_create_scrim(self, request, league_id, team, pk=None):
-        return create_scrimmage(1810, 1744, False, 1810, False, 0, True)
-
     def create(self, request, league_id, team):
         try:
             red_team_id = int(request.data['red_team'])
