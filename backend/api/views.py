@@ -116,9 +116,12 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
     scrimmage = serializer.save()
 
-    # TODO check if autoaccept
-    # Also probably requires a force_autoaccept argument, or smth
-    return accept_scrimmage(scrimmage.id)
+    # If applicable, immediately accept scrimmage, rather than wait for the other team to accept.
+    if accept:
+        result = accept_scrimmage(scrimmage.id)
+    else:
+        result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
+    return result
 
 def accept_scrimmage(scrimmage_id):
     scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
