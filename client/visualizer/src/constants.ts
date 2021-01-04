@@ -55,6 +55,9 @@ export const DELTA = .0001;
 export const MIN_DIMENSION = 30;
 export const MAX_DIMENSION = 100;
 
+// Initial influence of enlightenment center, for map editor
+export const INITIAL_INFLUENCE = 150;
+
 // Server settings
 export const NUMBER_OF_TEAMS = 2;
 // export const VICTORY_POINT_THRESH = 1000;

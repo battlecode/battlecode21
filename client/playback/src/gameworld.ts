@@ -374,7 +374,7 @@ export default class GameWorld {
           /// Enlightenment Center that created them.
           /// Target: parent ID
           case schema.Action.EMBEZZLE:
-            //this.bodies.alter({ id: robotID, ability: 3});
+            this.bodies.alter({ id: robotID, ability: 3});
             this.abilityRobots.push(robotID);
             break;
           /// Slanderers turn into Politicians.

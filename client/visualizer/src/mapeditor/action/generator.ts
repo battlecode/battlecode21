@@ -11,7 +11,8 @@ export type BodiesSchema = {
   teamIDs: number[],
   types: schema.BodyType[],
   xs: number[],
-  ys: number[]
+  ys: number[],
+  influences: number[]
 };
 
 /**
@@ -55,12 +56,13 @@ export default class MapGenerator {
   /**
    * Adds a robot body to the internal array
    */
-  private static addBody(robotID: number, teamID: number, type: schema.BodyType, x: number, y: number) {
+  private static addBody(robotID: number, teamID: number, type: schema.BodyType, x: number, y: number, influence: number) {
     this.bodiesArray.robotIDs.push(robotID);
     this.bodiesArray.teamIDs.push(teamID);
     this.bodiesArray.types.push(type);
     this.bodiesArray.xs.push(x);
     this.bodiesArray.ys.push(y);
+    this.bodiesArray.influences.push(influence);
   }
 
   /**
@@ -74,7 +76,8 @@ export default class MapGenerator {
         unit.teamID || 0, // Must be set if not a neutral tree
         unit.type,
         unit.loc.x + minCorner.x,
-        unit.loc.y + minCorner.y
+        unit.loc.y + minCorner.y,
+        cst.INITIAL_INFLUENCE
       );
     });
   }
@@ -91,12 +94,13 @@ export default class MapGenerator {
       teamIDs: [],
       types: [],
       xs: [],
-      ys: []
+      ys: [],
+      influences: []
     };
 
     // Get header information from form
     let name: string = map.name;
-    let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000);
+    let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000); // Coordinates in [10000, 30000]
     let maxCorner: Victor = minCorner.clone();
     maxCorner.add(new Victor(map.width, map.height));
     let randomSeed: number = Math.round(Math.random()*1000);
@@ -109,11 +113,13 @@ export default class MapGenerator {
     let teamIDsVectorB = schema.SpawnedBodyTable.createTeamIDsVector(builder, this.bodiesArray.teamIDs);
     let typesVectorB = schema.SpawnedBodyTable.createTypesVector(builder, this.bodiesArray.types);
     let locsVecTableB = this.createVecTable(builder, this.bodiesArray.xs, this.bodiesArray.ys);
+    let influencesVectorB = schema.SpawnedBodyTable.createInfluencesVector(builder, this.bodiesArray.influences);
     schema.SpawnedBodyTable.startSpawnedBodyTable(builder)
     schema.SpawnedBodyTable.addRobotIDs(builder, robotIDsVectorB);
     schema.SpawnedBodyTable.addTeamIDs(builder, teamIDsVectorB);
     schema.SpawnedBodyTable.addTypes(builder, typesVectorB);
     schema.SpawnedBodyTable.addLocs(builder, locsVecTableB);
+    schema.SpawnedBodyTable.addInfluences(builder, influencesVectorB);
     const bodies = schema.SpawnedBodyTable.endSpawnedBodyTable(builder);
 
     const passability = schema.GameMap.createPassabilityVector(builder, map.passability);
