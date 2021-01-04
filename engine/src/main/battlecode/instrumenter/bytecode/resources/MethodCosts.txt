@@ -39,10 +39,12 @@ battlecode/common/RobotController/canSenseRobot                    5    true
 battlecode/common/RobotController/detectNearbyRobots               100  true
 battlecode/common/RobotController/empower                          0    true
 battlecode/common/RobotController/expose                           0    true
+battlecode/common/RobotController/getConviction                    1    true
 battlecode/common/RobotController/getCooldownTurns                 1    true
 battlecode/common/RobotController/getEmpowerFactor                 1    true
 battlecode/common/RobotController/getFlag                          5    true
 battlecode/common/RobotController/getID                            1    true
+battlecode/common/RobotController/getInfluence                     1    true
 battlecode/common/RobotController/getLocation                      1    true
 battlecode/common/RobotController/getRobotCount                    20   true
 battlecode/common/RobotController/getRoundNum                      1    true
