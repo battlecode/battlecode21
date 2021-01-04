@@ -80,7 +80,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
     # Sufficiently random, to ensure privacy (so that others can't guess the link and find a replay).
     replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
 
-    # TODO figure out which red, blue submission 
+    # get team submission ids and names
     red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
     blue_submission_id = TeamSubmission.objects.get(pk=blue_team_id).last_1_id
     red_team_name = Team.objects.get(pk=red_team_id).name
@@ -128,10 +128,7 @@ def accept_scrimmage(scrimmage_id):
     scrimmage.status = 'queued'
     scrimmage.save()
 
-    # return None
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
-
-    return None
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
