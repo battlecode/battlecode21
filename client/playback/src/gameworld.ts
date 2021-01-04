@@ -21,7 +21,7 @@ export type BodiesSchema = {
   y: Int32Array,
   influence: Int32Array;
   conviction: Int32Array;
-  flag: Int8Array;
+  flag: Int32Array;
   bytecodesUsed: Int32Array, // TODO: is this needed?
   ability: Int8Array
 };
@@ -161,7 +161,7 @@ export default class GameWorld {
       y: new Int32Array(0),
       influence: new Int32Array(0),
       conviction: new Int32Array(0),
-      flag: new Int8Array(0),
+      flag: new Int32Array(0),
       bytecodesUsed: new Int32Array(0),
       ability: new Int8Array(0)
     }, 'id');
@@ -523,7 +523,7 @@ export default class GameWorld {
     // Store frequently used arrays
     var teams = bodies.teamIDsArray();
     var types = bodies.typesArray();
-    var influences = bodies.influencesArray() || new Int32Array(teams.length);
+    var influences = bodies.influencesArray();
 
     // Update spawn stats
     for(let i = 0; i < bodies.robotIDsLength(); i++) {
@@ -553,7 +553,7 @@ export default class GameWorld {
       conviction: convictions,
       x: locs.xsArray(),
       y: locs.ysArray(),
-      flag: new Int8Array(bodies.robotIDsLength()),
+      flag: new Int32Array(bodies.robotIDsLength()),
       bytecodesUsed: new Int32Array(bodies.robotIDsLength()),
       ability: new Int8Array(bodies.robotIDsLength())
     });
