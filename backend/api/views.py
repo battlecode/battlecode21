@@ -107,23 +107,29 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
 
     # TODO check if autoaccept
     # Also probably requires a force_autoaccept argument, or smth
-    accept_scrimmage(scrimmage.id)
+    return accept_scrimmage(scrimmage.id)
 
+def accept_scrimmage(scrimmage_id):
+    scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
+    print(scrimmage)
     # put onto pubsub
+    # TODO if autoaccept, then a lot of these queries are performed twice in succession. Could use optimization.
+    red_team_id = scrimmage.red_team.id
+    blue_team_id = scrimmage.blue_team.id
+    red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
+    blue_submission_id = TeamSubmission.objects.get(pk=blue_team_id).last_1_id
+    red_team_name = Team.objects.get(pk=red_team_id).name
+    blue_team_name = Team.objects.get(pk=blue_team_id).name
+    replay = scrimmage.replay
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay)
 
     # save the scrimmage, again, to mark save
-    serializer.save(status = 'queued')
+    # TODO if/when this is moved to scrimmage method, there's a better way to edit/save, involving serializiers
+    scrimmage.status = 'queued'
+    scrimmage.save()
 
     # return None
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
-
-def accept_scrimmage(scrimmage_id):
-    # TODO look up the scrimmage
-    scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
-    print(scrimmage)
-    # TODO put onto pubsub
-    # TODO save the scrim
 
     return None
 
