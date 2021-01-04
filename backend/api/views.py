@@ -91,7 +91,10 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
 
     # no need to set blue rating, red rating for ranked matches -- this is actually done when the outcome is set
 
-    # TODO default map selection should be around here, not in pubsub call, in order to save this in db
+    # if map_ids is not specified, use some default way to select maps.
+    if map_ids is None:
+        # By default, pick 3 random maps (requires specifying maps in settings.py).
+        map_ids = ','.join(get_random_maps(3))
 
     # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
 
@@ -149,7 +152,7 @@ def accept_scrimmage_helper(scrimmage_id):
 
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids):
 
     print('attempting publication to scrimmage pub/sub')
     if red_submission_id is None and blue_submission_id is None:
@@ -168,11 +171,9 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'player2': str(blue_submission_id),
         'name1': str(red_team_name),
         'name2': str(blue_team_name),
-        'maps': ','.join(get_random_maps(3)),
+        'maps': str(map_ids),
         'replay': scrimmage_replay
     }
-    if not map_ids is None:
-        scrimmage_server_data['maps'] = map_ids
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     # TODO uncomment this and remove the print when done testing; avoiding flooding the pubsub for now
     # pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
