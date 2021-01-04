@@ -379,7 +379,6 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 # TODO, requested_by for these matches should rlly be the database admin
                 league = 0
 
-                map_ids = None
                 if match_type == "tour_scrimmage":
                     tournament_id = int(request.data.get("tournament_id"))
                     map_ids = request.data.get("map_ids")
