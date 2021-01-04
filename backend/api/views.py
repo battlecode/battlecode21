@@ -69,7 +69,7 @@ def pub(project_id, topic_name, data, num_retries=5):
 # TODO should this not be an external method? should this be moved into the scrim class? 
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
 # moving into scrim class would make more sense.
-def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
+def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept):
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
     # Note that if we ever use different leagues, league should become a method argument
@@ -80,9 +80,18 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
     # Sufficiently random, to ensure privacy (so that others can't guess the link and find a replay).
     replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
 
-    # get team submission ids and names
-    red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
-    blue_submission_id = TeamSubmission.objects.get(pk=blue_team_id).last_1_id
+    # get team submission ids and names, with careful attention to tour matches
+    # TODO rename the 1, 2 vars to red, blue
+    team_sub_1 = TeamSubmission.objects.get(pk=red_team_id) 
+    team_sub_2 = TeamSubmission.objects.get(pk=blue_team_id) 
+    if is_tour_match:
+        tour = Tournament.objects.get(pk=int(tournament_id))
+        column_name = tour.teamsubmission_column_name
+        sub_1 = getattr(team_sub_1, column_name)
+        sub_2 = getattr(team_sub_2, column_name)
+    else:
+        red_submission_id = team_sub_1.last_1_id
+        blue_submission_id = team_sub_2.last_1_id
     red_team_name = Team.objects.get(pk=red_team_id).name
     blue_team_name = Team.objects.get(pk=blue_team_id).name
 
@@ -100,6 +109,10 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
         'requested_by': requested_by,
         'replay': replay,
     }
+    # Some extra fields for tournament matches.
+    if is_tour_match:
+        data['tour_id'] = tournament_id
+
     serializer = ScrimmageSerializer(data=data)
     if not serializer.is_valid():
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -928,7 +941,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     # TODO remove this method once done
     @action(methods=['get'], detail=True)
     def test_create_scrim(self, request, league_id, team, pk=None):
-        return create_scrimmage(1810, 1744, False, 1810, True)
+        return create_scrimmage(1810, 1744, False, 1810, False, 0, True)
 
     # TODO extract lots of this to the generic scrimmage creation method
     # TODO test this method, once done
