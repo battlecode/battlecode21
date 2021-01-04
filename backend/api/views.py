@@ -976,6 +976,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
                 accept = True
+            else:
+                accept = False
 
             # Use default map selection
             map_ids = None
