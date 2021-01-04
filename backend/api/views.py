@@ -361,7 +361,8 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
-        is_admin = User.objects.all().get(username=request.user).is_superuser
+        user = User.objects.all().get(username=request.user)
+        is_admin = user.is_superuser
         if is_admin:
             # TODO multiple accesses to request.data are annyoing; replace w setting to a stingle var, data
             match_type = request.data.get("type")
@@ -377,8 +378,11 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                 else:
                     # For now regular matches created automatically are ranked; subjject to change.
                     ranked = True
-                requested_by = team_1_id
-                # TODO, requested_by for these matches should rlly be the database admin
+                
+                # TODO admin_team has to be requeried every time. Easier to run this once (like as a setting, kinda).
+                admin_team = Team.objects.get(users__username=user.username)
+                requested_by = admin_team.id
+
                 league = 0
 
                 if match_type == "tour_scrimmage":
