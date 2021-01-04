@@ -939,8 +939,6 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     def test_create_scrim(self, request, league_id, team, pk=None):
         return create_scrimmage(1810, 1744, False, 1810, False, 0, True)
 
-    # TODO extract lots of this to the generic scrimmage creation method
-    # TODO test this method, once done
     def create(self, request, league_id, team):
         try:
             red_team_id = int(request.data['red_team'])
@@ -961,34 +959,23 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if that_team is None:
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
-            replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-            data = {
-                'league': league_id,
-                'red_team': red_team.name,
-                'blue_team': blue_team.name,
-                'ranked': ranked,
-                'requested_by': this_team.id,
-                'replay': replay_string,
-            }
+            requested_by = this_team.id
+            is_tour_match = False
+            # at the moment, with is_tour_match=False, tournament_id gets dropped from use.
+            # we still have to pass something, though.
+            # TODO change default value of tournament_id, etc; see other comments
+            tournament_id = None
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
-                data['status'] = 'queued'
+                accept = True
 
-            serializer = self.get_serializer(data=data)
-            if not serializer.is_valid():
-                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-            scrimmage = serializer.save()
+            # Use default map selection
+            map_ids = None
 
-            # check the ID
-            # if auto accept, then create scrimmage
-            if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
-                red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-                blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
-                blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
-                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-            return Response(serializer.data, status.HTTP_201_CREATED)
+            result = create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league_id, map_ids)
+
+            return result
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
