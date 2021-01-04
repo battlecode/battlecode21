@@ -107,6 +107,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
 
     # TODO check if autoaccept
     # Also probably requires a force_autoaccept argument, or smth
+    accept_scrimmage(scrimmage.id)
 
     # put onto pubsub
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay)
@@ -119,6 +120,8 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
 
 def accept_scrimmage(scrimmage_id):
     # TODO look up the scrimmage
+    scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
+    print(scrimmage)
     # TODO put onto pubsub
     # TODO save the scrim
 
@@ -922,7 +925,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     # TODO remove this method once done
     @action(methods=['get'], detail=True)
     def test_create_scrim(self, request, league_id, team, pk=None):
-        return create_scrimmage(1810, 1744, False, 1810)
+        return create_scrimmage(1810, 1744, False, 1810, True)
 
     # TODO extract lots of this to the generic scrimmage creation method
     # TODO test this method, once done
