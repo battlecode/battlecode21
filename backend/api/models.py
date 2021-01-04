@@ -81,7 +81,10 @@ class Tournament(models.Model):
     name        = models.TextField()
     style       = models.TextField(choices=TOURNAMENT_STYLE_CHOICES)
     date_time   = models.DateTimeField()
-    divisions   = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), blank=True, default=list)
+    # Allow for divisions to be anything.
+    # This could be dangerous, but I don't think we use divsions in our code anywhere else.
+    # divisions   = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), blank=True, default=list)
+    divisions   = models.TextField(blank=True)
     stream_link = models.TextField(blank=True)
     hidden      = models.BooleanField(default=True)
     bracket_link = models.TextField(blank=True)
