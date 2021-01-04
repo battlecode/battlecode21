@@ -40,7 +40,7 @@ The replay file will be in `/matches`. Use `headlessX` for bots that are in `bat
 
 (Make sure you have a recent version of `npm`: `sudo npm cache clean -f && sudo npm install -g n && sudo n stable && PATH="$PATH"`.)
 
-First run `npm install` in the `schema` folder, followed by `npm run install_all` in the `client` folder. You can then run
+Navigate to the `client` folder and run `npm run install-all`. You can then run
 
 ```
 npm run watch
