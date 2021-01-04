@@ -358,9 +358,6 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
-    # TODO extract lots of this to the generic scrimmage creation method
-    # TODO test this method, once done
-    # TODO tour scrimms, tour id, etc esp needs testing
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
