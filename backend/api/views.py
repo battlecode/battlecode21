@@ -371,8 +371,12 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
                 is_tour_match = (match_type == "tour_scrimmage")
 
-                ranked = True
-                # TODO, tour matches should prob be unranked
+                if is_tour_match:
+                    # Tour matches are unranked.
+                    ranked = False
+                else:
+                    # For now regular matches created automatically are ranked; subjject to change.
+                    ranked = True
                 requested_by = team_1_id
                 # TODO, requested_by for these matches should rlly be the database admin
                 league = 0
