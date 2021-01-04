@@ -104,6 +104,8 @@ class COMPILE_STATUS:
     SUCCESS = 1
     FAIL = 2
     ERROR = 3
+    UPLOADED = 4
+    QUEUED = 5
 
 
 # Application definition
@@ -272,4 +274,4 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 
 # google cloud
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')

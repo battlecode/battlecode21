@@ -19,11 +19,16 @@ export interface Config {
   readonly height: number;
 
   /**
+   * Controls resolution of the canvas.
+   */
+  readonly upscale: number;
+
+  /**
    * Turns per second.
    *
    * (DISTINCT from fps!)
    */
-  readonly defaultTPS: number;
+  readonly defaultTPS: number; // TODO: use this.
 
   /**
    * The url to listen for websocket data on, if any.
@@ -51,11 +56,6 @@ export interface Config {
   interpolate: boolean;
 
   /**
-   * Whether or not to draw a circle under each robot
-   */
-  circleBots: boolean; //TODO: is this needed?
-
-  /**
    * Whether or not to display indicator dots and lines
    */
   indicators: boolean;
@@ -74,6 +74,12 @@ export interface Config {
    * Whether or not to display the detection radius.
    */
   seeDetectionRadius: boolean;
+
+  /**
+   * Whether or not to draw a circle under each robot
+   */
+  circleBots: boolean; //TODO: is this needed?
+
 
   /**
    * The mode of the game
@@ -123,19 +129,20 @@ export function defaults(supplied?: any): Config {
     fullscreen: false,
     width: 600,
     height: 600,
+    upscale: 1500,
     defaultTPS: 20,
     websocketURL: null,
     matchFileURL: null,
     pollEvery: 500,
     tournamentMode: false,
-    interpolate: true,
-    circleBots: false,
+    interpolate: false,
     indicators: false,
     mode: Mode.QUEUE,
     splash: true,
     seeActionRadius: false,
     seeSensorRadius: false,
     seeDetectionRadius: false,
+    circleBots: false,
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,

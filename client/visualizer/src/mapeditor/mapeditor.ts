@@ -48,7 +48,8 @@ export default class MapEditor {
     div.appendChild(this.form.div);
 
     div.appendChild(this.validateButton());
-    div.appendChild(this.removeInvalidButton());
+    // TODO
+    // div.appendChild(this.removeInvalidButton());
     div.appendChild(this.resetButton());
     div.appendChild(document.createElement("br"));
     div.appendChild(document.createElement("br"));
@@ -60,7 +61,7 @@ export default class MapEditor {
     helpDiv.style.textAlign = "left";
     div.appendChild(helpDiv);
 
-    helpDiv.innerHTML = `Help text is not yet written :p`;
+    // helpDiv.innerHTML = `Help text is not yet written :p`;
     // `<i><br>Tip: "S"=quick add, "D"=quick delete.<br><br>
     //   Note: In tournaments, a starting map consists only of neutral trees and
     //   ${cst.MIN_NUMBER_OF_ARCHONS} to ${cst.MAX_NUMBER_OF_ARCHONS} archons per
@@ -77,6 +78,7 @@ export default class MapEditor {
     return (event: KeyboardEvent) => {
       var input = (<Element>document.activeElement).nodeName == "INPUT";
       if(!input) {
+        console.error(event.keyCode);
         switch (event.keyCode) {
           case 67: // "c" - Toggle Circle Bots
             this.conf.circleBots = !this.conf.circleBots;
@@ -172,11 +174,12 @@ export default class MapEditor {
             if (err) {
               console.log(err);
             } else {
-              alert("Good to go! Click \"Refresh\" in the Queue to use your new map.");
+              // alert("Good to go! Click \"Refresh\" in the Queue to use your new map.");
+              alert("Successfully exported!");
             }
           });
         } else {
-          MapGenerator.exportFile(data, `${name}.map17`);
+          MapGenerator.exportFile(data, `${name}.map21`);
         }
       }
     }

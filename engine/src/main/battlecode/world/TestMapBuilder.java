@@ -35,6 +35,7 @@ public class TestMapBuilder {
         bodies.add(new RobotInfo(
                 id,
                 team,
+                RobotType.ENLIGHTENMENT_CENTER,
                 influence,
                 0,
                 loc
@@ -44,7 +45,7 @@ public class TestMapBuilder {
     }
     
     public TestMapBuilder setPassability() {
-        this.passabilityArray = new int[width*height];
+        this.passabilityArray = new double[width * height];
         for(int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 this.passabilityArray[i + j * width] = (i * j + i + j) / (i * j + 1);

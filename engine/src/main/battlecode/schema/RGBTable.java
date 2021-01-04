@@ -13,22 +13,18 @@ import com.google.flatbuffers.*;
  */
 public final class RGBTable extends Table {
   public static RGBTable getRootAsRGBTable(ByteBuffer _bb) { return getRootAsRGBTable(_bb, new RGBTable()); }
-  public static RGBTable getRootAsRGBTable(ByteBuffer _bb, RGBTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
-  public RGBTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static RGBTable getRootAsRGBTable(ByteBuffer _bb, RGBTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public RGBTable __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
 
   public int red(int j) { int o = __offset(4); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int redLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer redAsByteBuffer() { return __vector_as_bytebuffer(4, 4); }
-  public ByteBuffer redInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 4); }
   public int green(int j) { int o = __offset(6); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int greenLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer greenAsByteBuffer() { return __vector_as_bytebuffer(6, 4); }
-  public ByteBuffer greenInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 4); }
   public int blue(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int blueLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer blueAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
-  public ByteBuffer blueInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
 
   public static int createRGBTable(FlatBufferBuilder builder,
       int redOffset,

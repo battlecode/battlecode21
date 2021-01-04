@@ -98,6 +98,7 @@ class ScrimmageHistory extends Component {
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>Status</th>
+                                    <th>Score</th>
                                     <th>Team</th>
                                     <th>Ranked</th>
                                     <th>Replay</th>
@@ -122,6 +123,7 @@ class ScrimmageHistory extends Component {
                                             <td>{ s.date }</td>
                                             <td>{ s.time }</td>
                                             { stat_row }
+                                            <td>{ s.score }</td>
                                             <td>{ s.team }</td>
                                             <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
                                             { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.txt`} target="_blank">Watch</a></td>:<td>N/A</td> }

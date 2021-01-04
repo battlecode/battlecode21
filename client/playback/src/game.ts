@@ -59,7 +59,7 @@ export default class Game {
     const gameStarted = this._meta !== null;
     const matchCount = this._matches.length;
     const lastMatchFinished = matchCount > 0? this._matches[this._matches.length - 1].finished : true;
-    console.log("event!: " + (event.eType()));
+    // console.log("event!: " + (event.eType()));
 
     switch (event.eType()) {
       case schema.Event.GameHeader:
@@ -136,6 +136,7 @@ export default class Game {
     if (eventCount < 5) {
       throw new Error(`Too few events for well-formed game: ${eventCount}`);
     }
+    console.log("Applying events!");
     for (let i = 0; i < eventCount; i++) {
       this.applyEvent(wrapper.events(i, eventSlot));
     }
@@ -151,6 +152,7 @@ export default class Game {
    */
   loadFullGameRaw(data: ArrayBuffer) {
     const ungzipped = ungzip(new Uint8Array(data));
+    console.log("Game un-gzipped!");
     const wrapper = schema.GameWrapper.getRootAsGameWrapper(
       new flatbuffers.ByteBuffer(ungzipped)
     );

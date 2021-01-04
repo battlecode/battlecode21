@@ -14,74 +14,41 @@ public class TestMapBuilder {
     private int height;
     private int seed;
     private int rounds;
-    private int[] soupArray;
-    private int[] pollutionArray;
-    private boolean[] waterArray;
-    private int[] dirtArray;
-    private int initialWater;
+    private double[] passabilityArray;
 
     private List<RobotInfo> bodies;
 
-    public TestMapBuilder(String name, int oX, int oY, int width, int height, int seed, int rounds, int initialWater) {
-        this(name, new MapLocation(oX, oY), width, height, seed, rounds, initialWater);
+    public TestMapBuilder(String name, int oX, int oY, int width, int height, int seed, int rounds) {
+        this(name, new MapLocation(oX, oY), width, height, seed, rounds);
     }
 
-    public TestMapBuilder(String name, MapLocation origin, int width, int height, int seed, int rounds, int initialWater) {
+    public TestMapBuilder(String name, MapLocation origin, int width, int height, int seed, int rounds) {
         this.name = name;
         this.origin = origin;
         this.width = width;
         this.height = height;
         this.seed = seed;
         this.bodies = new ArrayList<>();
-        this.initialWater = initialWater;
     }
 
-    public TestMapBuilder addRobot(int id, Team team, RobotType type, MapLocation loc){
+    public TestMapBuilder addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc) {
         bodies.add(new RobotInfo(
                 id,
                 team,
-                type,
+                RobotType.ENLIGHTENMENT_CENTER,
+                influence,
+                0,
                 loc
         ));
 
         return this;
     }
     
-    public TestMapBuilder setSoup() {
-        this.soupArray = new int[width*height];
+    public TestMapBuilder setPassability() {
+        this.passabilityArray = new double[width * height];
         for(int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                this.soupArray[i + j * width] = i * j + i + j;
-            }
-        }
-        return this;
-    }
-    
-    public TestMapBuilder setPollution() {
-        this.pollutionArray = new int[width*height];
-        for(int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                this.pollutionArray[i + j * width] = 0;
-            }
-        }
-        return this;
-    }
-
-    public TestMapBuilder setWater() {
-        this.waterArray = new boolean[width*height];
-        for(int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                this.waterArray[i + j * width] = false;
-            }
-        }
-        return this;
-    }
-
-    public TestMapBuilder setDirt() {
-        this.dirtArray = new int[width*height];
-        for(int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                this.dirtArray[i + j * width] = 0;
+                this.passabilityArray[i + j * width] = (i * j + i + j) / (i * j + 1);
             }
         }
         return this;
@@ -93,6 +60,6 @@ public class TestMapBuilder {
     }
 
     public LiveMap build() {
-        return new LiveMap(width, height, origin, seed, GameConstants.GAME_MAX_NUMBER_OF_ROUNDS, name, bodies.toArray(new RobotInfo[bodies.size()]), soupArray, pollutionArray, waterArray, dirtArray, initialWater);
+        return new LiveMap(width, height, origin, seed, GameConstants.GAME_MAX_NUMBER_OF_ROUNDS, name, bodies.toArray(new RobotInfo[bodies.size()]), passabilityArray);
     }
 }

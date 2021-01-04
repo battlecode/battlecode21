@@ -32,7 +32,6 @@ public class MapBuilder {
 
         // default values
         this.symmetry = MapSymmetry.vertical;
-        this.waterLevel = 0;
         this.idCounter = 0;
         this.passabilityArray = new double[width*height];
         for (int i = 0; i < passabilityArray.length; i++) {
@@ -64,8 +63,9 @@ public class MapBuilder {
         bodies.add(new RobotInfo(
                 id,
                 team,
+                RobotType.ENLIGHTENMENT_CENTER,
                 influence,
-                0, // Enlightenment Centers have 0 conviction
+                influence, // Enlightenment Centers conviction == influence
                 loc
         ));
     }
@@ -130,9 +130,9 @@ public class MapBuilder {
      * @param x x position
      * @param y y position
      */
-    public void addSymmetricEnlightenmentCenter(int x, int y, int influence) {
-        addEnlightenmentCenter(x, y, Team.A, influence);
-        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.B, influence);
+    public void addSymmetricEnlightenmentCenter(int x, int y) {
+        addEnlightenmentCenter(x, y, Team.A, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE);
+        addEnlightenmentCenter(symmetricX(x), symmetricY(y), Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE);
     }
 
     public void addSymmetricNeutralEnlightenmentCenter(int x, int y, int influence) {
@@ -162,7 +162,7 @@ public class MapBuilder {
     public void saveMap(String pathname) throws IOException {
         // validate
         assertIsValid();
-        System.out.println("Saving " + this.name + ": has " + Integer.toString(getTotalSoup())+ " total soup.");
+        System.out.println("Saving " + this.name + ".");
         GameMapIO.writeMap(this.build(), new File(pathname));
     }
 
@@ -257,8 +257,8 @@ public class MapBuilder {
 
     private boolean symmetricTeams(Team a, Team b) {
         switch (a) {
-            case Team.A: return b == Team.B;
-            case Team.B: return b == Team.A;
+            case A: return b == Team.B;
+            case B: return b == Team.A;
             default: return b == Team.NEUTRAL;
         }
     }

@@ -82,7 +82,6 @@ export default class Looper {
         // (radii, etc. may change between matches)
         this.renderer = new Renderer(this.gamearea.canvas, this.imgs,
             this.conf, meta as Metadata, onRobotSelected, onMouseover);
-        console.log("r", this.renderer);
 
         // How fast the simulation should progress
         this.goalUPS = this.controls.getUPS();
@@ -226,14 +225,13 @@ export default class Looper {
                 let id = bodies.id[index];
                 let x = bodies.x[index];
                 let y = bodies.y[index];
-
                 let influence = bodies.influence[index];
                 let conviction = bodies.conviction[index];
-
                 let type = bodies.type[index];
                 let bytecodes = bodies.bytecodesUsed[index];
-                // change below depending on the unit type
-                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes);
+                let flag = bodies.flag[index];
+
+                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes, flag);
             }
         }
 
@@ -247,7 +245,7 @@ export default class Looper {
             this.match.current.turn + 1 < this.match.deltas.length &&
             this.goalUPS < this.rendersPerSecond.tps) {
 
-            console.log('interpolating!!');
+            //console.log('interpolating!!');
 
             this.nextStep.loadNextStep(
                 this.match.current,
@@ -257,12 +255,12 @@ export default class Looper {
             let lerp = Math.min(this.interpGameTime - this.match.current.turn, 1);
 
             // @ts-ignore
-            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, this.nextStep, lerp);
+            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime, this.nextStep, lerp);
         } else {
-            console.log('not interpolating!!');
+            //console.log('not interpolating!!');
             // interpGameTime might be incorrect if we haven't computed fast enough
             // @ts-ignore
-            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner);
+            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime);
         }
 
         this.updateStats(this.match.current, this.meta);

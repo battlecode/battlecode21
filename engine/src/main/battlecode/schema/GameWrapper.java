@@ -18,15 +18,14 @@ import com.google.flatbuffers.*;
  */
 public final class GameWrapper extends Table {
   public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb) { return getRootAsGameWrapper(_bb, new GameWrapper()); }
-  public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb, GameWrapper obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
-  public GameWrapper __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static GameWrapper getRootAsGameWrapper(ByteBuffer _bb, GameWrapper obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public GameWrapper __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
 
   /**
    * The series of events comprising the game.
    */
   public EventWrapper events(int j) { return events(new EventWrapper(), j); }
-  public EventWrapper events(EventWrapper obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public EventWrapper events(EventWrapper obj, int j) { int o = __offset(4); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
   public int eventsLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
   /**
    * The indices of the headers of the matches, in order.
@@ -34,14 +33,12 @@ public final class GameWrapper extends Table {
   public int matchHeaders(int j) { int o = __offset(6); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int matchHeadersLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer matchHeadersAsByteBuffer() { return __vector_as_bytebuffer(6, 4); }
-  public ByteBuffer matchHeadersInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 4); }
   /**
    * The indices of the footers of the matches, in order.
    */
   public int matchFooters(int j) { int o = __offset(8); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int matchFootersLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer matchFootersAsByteBuffer() { return __vector_as_bytebuffer(8, 4); }
-  public ByteBuffer matchFootersInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 4); }
 
   public static int createGameWrapper(FlatBufferBuilder builder,
       int eventsOffset,

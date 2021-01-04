@@ -59,8 +59,6 @@ export default class Client {
   gamearea: GameArea; // Inner game area
   console: Console; // Console to display logs
   profiler: Profiler;
-  gamecanvas: HTMLCanvasElement;
-  mapcanvas: HTMLCanvasElement;
   matchqueue: MatchQueue; // Match queue  
 
   runner: Runner;

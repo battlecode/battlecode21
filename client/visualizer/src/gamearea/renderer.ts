@@ -5,6 +5,7 @@ import NextStep from './nextstep';
 import {GameWorld, Metadata, schema, Game} from 'battlecode-playback';
 import {AllImages} from '../imageloader';
 import Victor = require('victor');
+import { constants } from 'buffer';
 
 /**
  * Renders the world.
@@ -37,11 +38,13 @@ export default class Renderer {
 
   /**
    * world: world to render
-   * time: time in turns
    * viewMin: min corner of view (in world units)
    * viewMax: max corner of view (in world units)
+   * timeDelta: real time passed since last call to render
+   * nextStep: contains positions of bodies after the next turn
+   * lerpAmount: fractional progress between this turn and the next
    */
-  render(world: GameWorld, viewMin: Victor, viewMax: Victor, nextStep?: NextStep, lerpAmount?: number) {
+  render(world: GameWorld, viewMin: Victor, viewMax: Victor, curTime: number, nextStep?: NextStep, lerpAmount?: number) {
     // setup correct rendering
     const viewWidth = viewMax.x - viewMin.x
     const viewHeight = viewMax.y - viewMin.y
@@ -53,7 +56,7 @@ export default class Renderer {
 
     this.renderBackground(world);
 
-    this.renderBodies(world, nextStep, lerpAmount);
+    this.renderBodies(world, curTime, nextStep, lerpAmount);
 
     this.renderIndicatorDotsLines(world);
     this.setMouseoverEvent(world);
@@ -70,8 +73,6 @@ export default class Renderer {
   }
 
   private renderBackground(world: GameWorld) {
-    let swampLayer = this.conf.viewSwamp;
-
     this.ctx.save();
     this.ctx.fillStyle = "white";
     this.ctx.globalAlpha = 1;
@@ -90,48 +91,6 @@ export default class Renderer {
 
     const map = world.mapStats;
 
-    // TODO use color pacakge for nicer manipulation?
-    // TODO don't just reuse dirt function
-    const getTileColor = (x: number): string => {
-      // should be using image for now
-      // TODO change swamp color depending on the parameter
-
-      return `rgb(${x*139 + (1 - x)*233},${x*0 + (1 - x)*116},${x*0 + (1 - x)*82})`;
-      // iterate and find the two colors
-      let lo: number[] = [0,0,0];
-      let hi: number[] = [0,0,0];
-      let mx: number = -1000;
-      let mn: number = -1000;
-      for (let entry of Array.from(cst.SWAMP_COLORS)) {
-        lo = hi;
-        hi = entry[1];
-        mn = mx;
-        mx = entry[0];
-        if (x <= entry[0]) {
-          break;
-        }
-      }
-      if (mn === -1000) {
-        lo = hi;
-        mn = mx;
-        mx += 1;
-      }
-
-      // convert into range and truncate
-      let t = (x - mn) / (mx - mn);
-      if (x <= mn) {
-        t = 0;
-      }
-      if (x >= mx) {
-        t = 1;
-      }
-
-      let now = [0,0,0];
-      for(let i=0; i<3; i++) now[i] = (hi[i]-lo[i]) * t + lo[i];
-
-      return `rgb(${now[0]},${now[1]},${now[2]})`;
-    }
-
     for (let i = 0; i < width; i++) for (let j = 0; j < height; j++){
       let idxVal = map.getIdx(i,j);
       let plotJ = height-j-1;
@@ -140,10 +99,16 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      if (swampLayer) this.ctx.fillStyle = getTileColor(map.passability[idxVal]);
-      else this.ctx.fillStyle = getTileColor(1); 
+      // equally divde 0.1 - 1
+      const getLevel = (x: number): number => {
+        const nLev = cst.TILE_COLORS.length;
+        const floatLevel = (x - 0.1) / 0.9 * nLev;
+        return Math.min(nLev - 1, Math.floor(floatLevel));
+      }
 
-      this.ctx.fillRect(cx, cy, scale, scale);
+      const swampLevel = getLevel(map.passability[idxVal]);
+      const tileImg = this.imgs.tiles[swampLevel];
+      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
@@ -164,7 +129,7 @@ export default class Renderer {
     this.ctx.restore();
   }
 
-  private renderBodies(world: GameWorld, nextStep?: NextStep, lerpAmount?: number) {
+  private renderBodies(world: GameWorld, curTime: number, nextStep?: NextStep, lerpAmount?: number) {
     const bodies = world.bodies;
     const length = bodies.length;
     const types = bodies.arrays.type;
@@ -172,20 +137,15 @@ export default class Renderer {
     const ids = bodies.arrays.id;
     const xs = bodies.arrays.x;
     const ys = bodies.arrays.y;
+    const abilities = bodies.arrays.ability;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y -1;
 
     let nextXs: Int32Array, nextYs: Int32Array, realXs: Float32Array, realYs: Float32Array;
     if (nextStep && lerpAmount) {
-      // Interpolated (not going to happen in 2019)
       nextXs = nextStep.bodies.arrays.x;
       nextYs = nextStep.bodies.arrays.y;
       lerpAmount = lerpAmount || 0;
-    }
-    else{
-      // supposed to be error?
-      // console.log("Error in renderer.ts");
-      // return;
     }
 
     // Calculate the real xs and ys
@@ -206,37 +166,43 @@ export default class Renderer {
     }
 
     // Render the robots
-    // render drones last to have them be on top of other units.
-    let droneIndices = new Array<number>();
-    for (let i = 0; i < length; i++) {
-      const team = teams[i];
-      const type = types[i];
-      const x = realXs[i];
-      const y = realYs[i];
+    // render images with priority last to have them be on top of other units.
 
-      //TODO*: fetch bot image here.
+    const renderBot = (i: number) => {
+      const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
+      this.drawBot(img, realXs[i], realYs[i]);
+      this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
-      let img = this.imgs.cow;
-
-      // if (type !== cst.COW) {
-      //   let tmp = this.imgs.robot[cst.bodyTypeToString(type)];
-      //   // TODO how to change drone?
-      //   if(type == cst.DRONE){
-      //     // tmp = (cargo[i]!=0 ? tmp.carry : tmp.empty);
-      //     droneIndices.push(i);
-      //     continue;
-      //   }
-      //   img = tmp[team];
-      // }
-      // this.drawCircleBot(x, y, radius);
-      // this.drawImage(img, x, y, radius);
-      this.drawBot(img, x, y);
-      
-      // Draw the sight radius if the robot is selected
-      if (this.lastSelectedID === undefined || ids[i] === this.lastSelectedID) {
-        this.drawSightRadii(x, y, type, ids[i] === this.lastSelectedID);
+      // draw effec
+      let effect: string | null = cst.abilityToEffectString(abilities[i]);
+      if (effect !== null) {
+        const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
+        const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
+        const effectImg = effectImgs[whichImg];
+        this.drawBot(effectImg, realXs[i], realYs[i]);
       }
     }
+
+    let priorityIndices: number[] = [];
+
+    for (let i = 0; i < length; i++) {
+      if(cst.bodyTypePriority.includes(types[i])){
+        priorityIndices.push(i);
+        continue;
+      }
+      renderBot(i);
+    }
+
+    priorityIndices.forEach((i) => renderBot(i));
+
+    // Render died bodies
+
+    const died = world.diedBodies;
+    const diedImg: HTMLImageElement = this.imgs.effects["death"];
+    for (let i = 0; i < died.length; i++) {
+      this.drawBot(diedImg, died.arrays.x[i], this.flip(died.arrays.y[i], minY, maxY));
+    }
+
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -253,17 +219,8 @@ export default class Renderer {
   }
 
   /**
-   * Draws a circle centered at (x, y) with the given radius
+   * Draws a cirlce centered at (x,y) with given squared radius and color.
    */
-  private drawCircleBot(x: number, y: number, radius: number) {
-    if (!this.conf.circleBots) return; // skip if the option is turned off
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "#ddd";
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    this.ctx.fill();
-  }
-
   private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
     this.ctx.beginPath();
     this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
@@ -273,8 +230,7 @@ export default class Renderer {
   }
 
   /**
-   * Draws a circular outline representing the sight radius or bullet sight
-   * radius of the given robot type, centered at (x, y)
+   * Draws the sight radii of the robot.
    */
   private drawSightRadii(x: number, y: number, type: schema.BodyType, single?: Boolean) {
     // handle bots with no radius here, if necessary
@@ -299,10 +255,12 @@ export default class Renderer {
   }
 
   /**
-   * Draws a bot at (x, y)
+   * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
   private drawBot(img: HTMLImageElement, x: number, y: number) {
-    this.ctx.drawImage(img, x, y, 1, 1);
+    let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
+    let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
+    this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
   }
 
   private setInfoStringEvent(world: GameWorld,
@@ -325,13 +283,12 @@ export default class Renderer {
       for (let i in ids) {
         if (xs[i] == x && ys[i] == y) {
           selectedRobotID = ids[i];
-          // if any robot should get selection priority, handle logic below
-          //if(world.bodies.arrays.type[i] == cst.DRONE)
-            //possiblePriorityID = ids[i];
+          if(cst.bodyTypePriority.includes(types[i]))
+            possiblePriorityID = ids[i];
         }
       }
 
-      // if there are two robots in same cell, choose the one with selection priority
+      // if there are two robots in same cell, choose the one with priority
       if(possiblePriorityID != undefined) selectedRobotID = possiblePriorityID;
       // Set the info string even if the robot is undefined
       this.lastSelectedID = selectedRobotID;
@@ -394,7 +351,7 @@ export default class Renderer {
     const maxY = world.maxCorner.y - 1;
 
     for (let i = 0; i < dots.length; i++) {
-      if (this.lastSelectedID === undefined || dotsID[i] === this.lastSelectedID) {
+      if (dotsID[i] === this.lastSelectedID) {
         const red = dotsRed[i];
         const green = dotsGreen[i];
         const blue = dotsBlue[i];
@@ -420,7 +377,7 @@ export default class Renderer {
     this.ctx.lineWidth = cst.INDICATOR_LINE_WIDTH;
 
     for (let i = 0; i < lines.length; i++) {
-      if (this.lastSelectedID === undefined || linesID[i] === this.lastSelectedID) {
+      if (linesID[i] === this.lastSelectedID) {
         const red = linesRed[i];
         const green = linesGreen[i];
         const blue = linesBlue[i];

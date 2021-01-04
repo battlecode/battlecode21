@@ -18,24 +18,30 @@ public class RobotInfo {
     public final Team team;
 
     /**
+     * The type of the robot.
+     */
+    public final RobotType type;
+
+    /**
      * The influence of the robot.
      */
-    public final double influence;
+    public final int influence;
 
     /**
      * The conviction of the robot.
      */
-    public final double conviction;
+    public final int conviction;
 
     /**
      * The current location of the robot.
      */
     public final MapLocation location;
 
-    public RobotInfo(int ID, Team team, double influence, double conviction, MapLocation location) {
+    public RobotInfo(int ID, Team team, RobotType type, int influence, int conviction, MapLocation location) {
         super();
         this.ID = ID;
         this.team = team;
+        this.type = type;
         this.influence = influence;
         this.conviction = conviction;
         this.location = location;
@@ -60,11 +66,20 @@ public class RobotInfo {
     }
 
     /**
+     * Returns the type of this robot.
+     *
+     * @return the type of this robot.
+     */
+    public RobotType getType() {
+        return type;
+    }
+
+    /**
      * Returns the influence of this robot.
      *
      * @return the influence of this robot
      */
-    public double getInfluence() {
+    public int getInfluence() {
         return influence;
     }
 
@@ -73,7 +88,7 @@ public class RobotInfo {
      *
      * @return the conviction of this robot
      */
-    public double conviction() {
+    public int getConviction() {
         return conviction;
     }
 
@@ -95,6 +110,7 @@ public class RobotInfo {
 
         if (ID != robotInfo.ID) return false;
         if (team != robotInfo.team) return false;
+        if (type != robotInfo.type) return false;
         if (influence != robotInfo.influence) return false;
         if (conviction != robotInfo.conviction) return false;
         return location.equals(robotInfo.location);
@@ -105,8 +121,9 @@ public class RobotInfo {
         int result;
         result = ID;
         result = 31 * result + team.hashCode();
-        result = 31 * result + Double.hashCode(influence);
-        result = 31 * result + Double.hashCode(conviction);
+        result = 31 * result + type.ordinal();
+        result = 31 * result + influence;
+        result = 31 * result + conviction;
         result = 31 * result + location.hashCode();
         return result;
     }
@@ -116,6 +133,7 @@ public class RobotInfo {
         return "RobotInfo{" +
                 "ID=" + ID +
                 ", team=" + team +
+                ", type=" + type +
                 ", influence=" + influence +
                 ", conviction=" + conviction +
                 ", location=" + location +

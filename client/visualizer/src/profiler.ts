@@ -29,8 +29,6 @@ function load(file: ProfilerFile, robot: number): void {
     profiles,
   };
 
-  console.log(data);
-
   (window as any).speedscope.loadFileFromBase64('data.json', btoa(JSON.stringify(data)));
 }
 

@@ -4,7 +4,7 @@ This repository contains the [Flatbuffers](https://google.github.io/flatbuffers/
 ### Spec
 
 ##### Match Files
-A match file has the extension `.bc20`. It consists of a single flatbuffer with a GameWrapper at its root, containing a valid stream of Events (as described in `battlecode.fbs`). The buffer will be compressed with GZIP.
+A match file has the extension `.bc21`. It consists of a single flatbuffer with a GameWrapper at its root, containing a valid stream of Events (as described in `battlecode.fbs`). The buffer will be compressed with GZIP.
 
 ##### Network Protocol
 The battlecode server hosts an unsecured websocket server on port 6175. When you connect to that port, you will receive each Event that has occurred in the current match as a separate websocket message, in order. There are no messages that can be sent from the client to the server. The server may disconnect at any time, and might not resend its messages when it does; any client has to be able to deal with a game being only half-finished over the network. Messages over the network are unsecured.
@@ -46,18 +46,17 @@ public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos)
 public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
 ```
 
-3. For array fields, the generated file will contain something like this:
+3. For Object array fields, the generated file will contain something like this:
 ```java
 public BodyTypeMetadata bodyTypeMetadata(int j) { return bodyTypeMetadata(new BodyTypeMetadata(), j); }
 public BodyTypeMetadata bodyTypeMetadata(BodyTypeMetadata obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-public int bodyTypeMetadataLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
 ```
 Replace every case of `__assign` with `__init`. This will result in something like this:
 ```java
 public BodyTypeMetadata bodyTypeMetadata(int j) { return bodyTypeMetadata(new BodyTypeMetadata(), j); }
 public BodyTypeMetadata bodyTypeMetadata(BodyTypeMetadata obj, int j) { int o = __offset(8); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
-public int bodyTypeMetadataLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
 ```
+Note that this includes tables, e.g. `VecTable`.
 
 #### OLD, 2017, WAY BELOW:
 
