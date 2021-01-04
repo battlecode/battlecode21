@@ -109,7 +109,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
     }
     # Some extra fields for tournament matches.
     if is_tour_match:
-        data['tour_id'] = tournament_id
+        data['tournament_id'] = tournament_id
 
     serializer = ScrimmageSerializer(data=data)
     if not serializer.is_valid():
