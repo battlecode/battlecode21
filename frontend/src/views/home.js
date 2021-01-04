@@ -97,14 +97,13 @@ class InstrCard extends UpdateCard {
         return (
             <div className="card ">
                 <div className="header">
-                    <h4 className="title">Welcome to Battlehack 2020!</h4>
+                    <h4 className="title">Welcome to Battlecode 2021!</h4>
                 </div>
                 <div className="content">
             <p>
-            <i>Sponsored by <a href="https://www.hudsonrivertrading.com">HRT</a>!</i>
             </p>
                     <p>
-                        ♟️. Be sure to look at the getting started section for information on how to get the game and your first bot running! 
+                        👀 The competition has not been released yet. Feel free to register a team and watch for our release on January 4, 2021!
                     </p>
                 </div>
             </div>
@@ -143,6 +142,10 @@ class LinksCard extends Component {
                             </li>
                             <li>
                                 <a href='https://battlecode.org'>Battlecode.org</a>
+                                <ul>
+                                    <li><a href='https://battlecode.org#faq'>FAQs</a></li>
+                                    <li><a href='https://battlecode.org#about'>Eligibility</a></li>
+                                </ul>
                             </li>
                         </ul>
                     </p>

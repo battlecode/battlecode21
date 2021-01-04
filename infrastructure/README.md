@@ -1,5 +1,29 @@
 # Infrastructure and docker setup
 
+## Overview
+This folder contains code for four types of servers:
+- The compile servers
+- The game servers
+- The scrimmage servers
+- The tournament servers
+
+Compile and game servers basically read from a google-managed queue; they get
+a list of either source code that needs compiling, or scheduled matches that
+need running. They'll claim a task, run it, update the database accordingly,
+and then remove that task from the queue. These servers can be found in
+`worker > app`. Their behavior is partially specified by values in `config.py`
+(stores urls and aquires system variables) and `util.py` (contains functions
+for interacting with the gcloud pub-sub and getting access tokens from backend)
+
+Scrimmage and Tournament servers schedule matches. They can be found in `matcher`.
+The scrimmage server will pull games from the backend and shift them onto the gcloud
+pubsub (I am unsure whether this is necessary or if backend does this themselves).
+The tournament server is more annoying and in need of some retrofits; It pushes all the
+required games for the tournament to the scrimmage pub-sub, waits for results, pushes the
+next batch, etc. etc. until the tournament has been completed. Results are returned
+in a json file (bad).
+
+
 ## Configurations in Google Cloud
 
 In GCloud > PubSub:
@@ -36,6 +60,7 @@ In GCloud > Compute Engine > Instance templates:
   ```
 - To push docker images to the container registry:
   ```
+  Acquire gcloud-key.json from the developer slack or someone who knows what theyre doing, put it in `worker/app`
   gcloud auth configure-docker # Only needs to be run once to configure settings
   make push
   ```
@@ -44,6 +69,19 @@ In GCloud > Compute Engine > Instance templates:
   export GOOGLE_APPLICATION_CREDENTIALS=worker/app/gcloud-key.json
   ./pub.py battlecode18 bc20-compile
   ```
+- To run docker images on the gcloud servers:
+  push the images to the container registry (see above)
+  Set up instance templates in gcloud:
+  - Navigate to `Compute Engine > Instance Templates`
+  - Hit Create Instance Template
+  - Check `deploy a container image to this VM instance`
+  - Type in the name of the image, e.g. `gcr.io/battlecode18/bc20-X`
+  Spin up the instance
+  - Go to `Compute Engine > VM Instances`
+  - Hit 'Create Instance'
+  - Hit 'from Template' on the left
+  - Select the template you made
+  Good Job
 
 ## Tournaments
 

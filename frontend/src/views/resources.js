@@ -25,7 +25,7 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p className='text-center'>
-                                    <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Read the Game Specifications</a>
+                                    <a type="button" className="btn btn-info btn-fill text-center" href='/specs.html'>Specifications have not been released yet for 2021!</a>
                                 </p>
                                 </div>
                             </div>
@@ -65,7 +65,12 @@ class Resources extends Component {
                                 </div>
                                 <div className="content">
                                 <p>
-                                    Battlehack 2020 will not be holding official lectures. However, if you are experiencing issues with anything, join the Discord (see <a href="getting-started">Getting Started</a>)!
+                                    Battlecode 2021 will be holding lectures, where a dev will be going over possible strategy, coding up an example player, answering questions, etc.
+                                    Lectures are streamed on Twitch every weekday the first two weeks of IAP 7-10 PM Eastern Time.
+                                </p>
+                                <p>
+                                    All lectures are streamed live on <a href='https://twitch.tv/mitbattlecode'>our Twitch account</a>, and
+                                    are later uploaded to <a href='https://youtube.com/channel/UCOrfTSnyimIXfYzI8j_-CTQ'>our YouTube channel</a>.
                                 </p>
 
                                 </div>

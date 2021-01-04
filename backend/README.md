@@ -4,69 +4,41 @@ Written in Django Rest Framework. Based on `battlecode19/api`.
 
 ## Local Development
 
-You can run `docker-compose up --build` in the root directory of `battlecode20` to run the entire website stack. If for some reason you want to run Django outside of Docker, follow the instructions below.
+The best way to run the backend locally is to run `docker-compose up --build backend` from the repo's root directory.
+
+If you don't have Docker, or want to run Django outside of Docker, follow the instructions in the rest of this section.
 
 For a nice interface to test the backend, go to `localhost:8000/docs/`.
 
 ### First-Time Setup
 
-#### Virtual Environment
-
-Create a virtual environment by following the instructions below.
-
-- `pip3 install virtualenv` (or `pip` if your default Python installation is 3)
-- `virtualenv venv -p python3`
-- `source venv/bin/activate`
-- `pip install -r requirements.txt` (`pip3` is not necessary since the default Python version within the virtualenv is 3)
-
-It would be good, sometime, to fix `psycopg2` at 2.7.7. Unfortunately, deploy seems to fail. But, this would prevents a bug, in which `psycopg2` requires a working build environmment for the included C code.
-
-If you still have this bug: On Mac, [this StackOverflow answer has a solution](https://stackoverflow.com/a/39800677/3767728) (command should be `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2==2.8.3 --upgrade`) (if you still have problems with psycopg2 on mac after this, try `brew reinstall openssl` and `brew install postgresql`)
-
-#### Database
-
-Any time you start the backend, there must be a Postgres instance up on `localhost:5432` (or whatever credentials are used in `battlecode/dev_settings_real.py`) with a database named `battlecode`. It is easy to run Postgres in [Docker](https://docs.docker.com/install/):
-
-```
-docker run -p 5432:5432 -e POSTGRES_USER=battlecode -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=battlecode --name bc20db -d postgres
-```
-
-To stop or start the database container: `docker stop bc20db` `docker start bc20db`. [Postico](https://eggerapps.at/postico/) and [pgAdmin](https://www.pgadmin.org/) are two useful tools for managing the database.
-
-#### Migrations
-
-Run the following to set up the database:
-
-```
-python manage.py migrate
-```
-
-This must be run the first time the database is setup, or anytime models are changed. When models are changed, you also need to run `python manage.py makemigrations` and then commit the migrations. If run through docker-compose, you need to first `docker exec -it battlecode20_backend_1 /bin/bash` and then perform the `python manage.py makemigrations`.
-
-This will automatically create a new league with league ID 0. This is something we might want to change in the future, if we decide to make use of the multiple leagues.
+The process of using a virtual environment uses a lot of one-time steps. See the `docs/SETUP.md` file for more.
 
 ### Running
 
-Make sure you work in your virtual environment, make sure all packages are up to date, start the database, and set the necessary environment variables (only needed once per terminal session):
+Make sure you work in your virtual environment. Also, if `requirements.txt` has been changed, make sure all packages are up to date; and, if models are changed, make sure to migrate. (Instructions can be found in the file referenced above.)
 
-```
-source venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-docker start bc20db
-export DJANGO_SETTINGS_MODULE="dev_settings_real"
-export EMAIL_PASS="passwordtobattlecodegmail"
+Then, set the necessary environment variables (only needed once per terminal session):
+
+```python3
+export DJANGO_SETTINGS_MODULE="dev_settings"
 ```
 
 Then, start the server:
 
-```
+```python3
 python manage.py runserver
 ```
 
 The backend should now be running on `localhost:8000`. You can open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to verify that it works.
 
-You can also test with uWSGI (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`.
+If you've installed uWSGI, you can utilize it (which is what is used in production) by running `uwsgi --ini uwsgi-dev.ini`. Note that the backend may be running on port 80, instead of 8000. You should check this, and then change URLs in `frontend/.env.development` as necessary.
+
+When you're done, make sure to leave your venv:
+
+```python3
+deactivate
+```
 
 ### Testing
 
@@ -85,10 +57,25 @@ When installing a new Python package:
 
 Always commit the most recent `requirements.txt`.
 
-
 ## Deployment
 
-#### Steps
+Note that the deployed version of the backend uses regular `docker` and this folder's `Dockerfile` to build. In particular, `docker-compose.yml` is not used by the deployment process at all.
+
+Also, note that the deployed version uses `uWSGI` to run (as specified in the Dockerfile), and serves out of port 80, as opposed to Django's own serving and port 8000.
+
+### First-Time Deployment Setup
+
+A backend must be created (in addition to the database). See the "Deployment Setup" section in `docs/SETUP.md` file for more.
+
+We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
+
+The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group (instructions below).
+
+Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
+
+Ideally, we would like to move to Kubernetes for everything, as that would make everything much easier, but it doesn't currently support having a load balancer that also points to storage buckets. This is a deal-breaker, since the frontend is static.
+
+### Deploying
 
 1. Push to master.
 2. Go to [Cloud Build Triggers](https://console.cloud.google.com/cloud-build/triggers?project=battlecode18) on Google Cloud.
@@ -99,15 +86,3 @@ Always commit the most recent `requirements.txt`.
 7. Wait until all spinning blue icons have turned into green checkmarks (this takes like 10 minutes I think).
 
 This procedure is currently very long and requires too much manual intervention. We should write a script that does all of this for us (which shouldn't be too hard).
-
-#### Setup
-
-A database should be created.
-
-We currently have continuous builds triggered by pushes to master. Therefore, make sure that everything is actually working before pushing. Also, make sure that any new database migrations are also applied to the production server before deploying. A good way to ensure this is to always test locally with the production database, before committing and pushing to master.
-
-The images are then deployed as an instance group on GCE. To update the instances to use the newly built image, perform a rolling update of the instance group.
-
-Pls pls use SHA256 digests in the `Dockerfile`. Otherwise, the image might be rebuilt, from the same commit tag as before, but not working anymore (this happened, and it was not fun).
-
-Ideally, we would like to move to Kubernetes for everything, as that would make everything much easier, but it doesn't currently support having a load balancer that also points to storage buckets. This is a deal-breaker, since the frontend is static.

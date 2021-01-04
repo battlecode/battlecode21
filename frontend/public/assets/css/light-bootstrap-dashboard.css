@@ -247,12 +247,16 @@ input:focus {
 }
 .sidebar .logo {
   padding: 10px 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.sidebar .logo img {
+  max-width: 100%;
+  margin-top: 20px;
+  margin-bottom: 30px;
 }
 .sidebar .logo p {
   float: left;
   font-size: 20px;
-  margin: 10px 10px;
+  margin: 0 0 30px 10px;
   color: #FFFFFF;
   line-height: 20px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -317,16 +321,22 @@ input:focus {
 .sidebar .logo,
 body > .navbar-collapse .logo {
   padding: 10px 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 .sidebar .logo p,
 body > .navbar-collapse .logo p {
   float: left;
   font-size: 20px;
-  margin: 10px 10px;
+  margin: 0 0 30px 10px;
   color: #FFFFFF;
   line-height: 20px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.sidebar .logo img,
+body > .navbar-collapse .logo img {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  max-width: 100%;
 }
 .sidebar .logo .simple-text,
 body > .navbar-collapse .logo .simple-text {
@@ -476,6 +486,17 @@ body > .navbar-collapse[data-color="chess"]:after, .chessBackground {
   background: -o-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
   background: -ms-linear-gradient(top, #9A6D4C 0%, #8F6647 100%);
   background: linear-gradient(to bottom, #9A6D4C 0%, #8F6647 100%);
+  background-size: 150% 150%;
+}
+.sidebar[data-color="dust"],
+body > .navbar-collapse[data-color="dust"]:after, .dustBackground {
+  background: #2F3061;
+  background: -moz-linear-gradient(top, #2F3061 10%, #96ACB7 60%, #FEDC97 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(10%, #2F3061), color-stop(100%, #96ACB7), color-stop(100%, #FEDC97));
+  background: -webkit-linear-gradient(top, #2F3061 10%, #96ACB7 60%, #FEDC97 100%);
+  background: -o-linear-gradient(top, #2F3061 10%, #96ACB7 60%, #FEDC97 100%);
+  background: -ms-linear-gradient(top, #2F3061 10%, #96ACB7 60%, #FEDC97 100%);
+  background: linear-gradient(to bottom, #2F3061 10%, #96ACB7 60%, #FEDC97 100%);
   background-size: 150% 150%;
 }
 
@@ -1553,27 +1574,27 @@ body > .navbar-collapse[data-color="chess"]:after, .chessBackground {
 .navbar-default .navbar-nav > li > a:not(.btn):focus {
   background-color: transparent;
   border-radius: 3px;
-  color: #1DC7EA;
+  color: #6e6eb6;
   opacity: 1;
   filter: alpha(opacity=100);
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret,
 .navbar-default .navbar-nav > .dropdown > a:focus .caret {
-  border-bottom-color: #1DC7EA;
-  border-top-color: #1DC7EA;
+  border-bottom-color: #6e6eb6;
+  border-top-color: #6e6eb6;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   background-color: transparent;
-  color: #1DC7EA;
+  color: #6e6eb6;
 }
 .navbar-default .navbar-nav .navbar-toggle:hover, .navbar-default .navbar-nav .navbar-toggle:focus {
   background-color: transparent;
 }
 .navbar-default:not(.navbar-transparent) .btn-default:hover {
-  color: #1DC7EA;
-  border-color: #1DC7EA;
+  color: #6e6eb6;
+  border-color: #6e6eb6;
 }
 .navbar-default:not(.navbar-transparent) .btn-neutral, .navbar-default:not(.navbar-transparent) .btn-neutral:hover, .navbar-default:not(.navbar-transparent) .btn-neutral:active {
   color: #9A9A9A;

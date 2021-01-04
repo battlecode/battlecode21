@@ -8,13 +8,14 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 # Constants, parameters and configurations
+DOMAIN = os.getenv('DOMAIN')
 
-API_AUTHENTICATE = 'https://2020.battlecode.org/auth/token/'
-API_USERNAME = os.getenv('BC20_DB_USERNAME')
-API_PASSWORD = os.getenv('BC20_DB_PASSWORD')
+API_AUTHENTICATE = f'{DOMAIN}/auth/token/'
+API_USERNAME = os.getenv('BC_DB_USERNAME')
+API_PASSWORD = os.getenv('BC_DB_PASSWORD')
 
-API_SCRIM_LIST = 'https://2020.battlecode.org/api/match/scrimmage_list/'
-API_ENQUEUE = 'https://2020.battlecode.org/api/match/enqueue/'
+API_SCRIM_LIST = f'{DOMAIN}/api/match/scrimmage_list/'
+API_ENQUEUE = f'{DOMAIN}/api/match/enqueue/'
 
 NUM_WORKER_THREADS = 10
 
@@ -25,4 +26,4 @@ def api_match_status(gameid):
     Returns the API link for obtaining the status of a scrimmage
     gameid: the ID of the game
     """
-    return 'https://2020.battlecode.org/api/0/scrimmage/{}/'.format(gameid)
+    return f'{DOMAIN}/api/0/scrimmage/{gameid}/'

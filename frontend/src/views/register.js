@@ -126,7 +126,7 @@ class Register extends Component {
         }}
       >
       <div
-        className="chessBackground"
+        className="dustBackground"
         style={{
           height: '100vh',
           width: '100vw',
@@ -140,12 +140,12 @@ class Register extends Component {
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Battlehack 2020</h1>
+        }}>Battlecode 2021</h1>
         <p style={{
           textAlign: 'center',
           fontWeight: 'bold',
           color: 'white'
-        }}>Register below to participate in Battlehack 2020!</p>
+        }}>Register below to participate in Battlecode 2021!</p>
         {errorDiv}
         {successDiv}
         <form onSubmit={this.formSubmit}>
