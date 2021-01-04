@@ -106,6 +106,7 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
         'ranked': ranked,
         'requested_by': requested_by,
         'replay': replay,
+        'map_ids': map_ids,
     }
     # Some extra fields for tournament matches.
     if is_tour_match:
@@ -135,7 +136,8 @@ def accept_scrimmage(scrimmage_id):
     red_team_name = Team.objects.get(pk=red_team_id).name
     blue_team_name = Team.objects.get(pk=blue_team_id).name
     replay = scrimmage.replay
-    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay)
+    map_ids = scrimmage.map_ids
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
 
     # save the scrimmage, again, to mark save
     # TODO if/when this is moved to scrimmage method, there's a better way to edit/save, involving serializiers
