@@ -36,14 +36,14 @@ public strictfp class RobotPlayer {
 
         turnCount = 0;
 
-        System.out.println("I'm a " + rc.getType() + " and I just got created!");
+        System.out.println("I'm a " + rc.getType() + " and I just got created! I have influence " + rc.getInfluence());
         while (true) {
             turnCount += 1;
             // Try/catch blocks stop unhandled exceptions, which cause your robot to freeze
             try {
                 // Here, we've separated the controls into a different method for each RobotType.
                 // You may rewrite this into your own control structure if you wish.
-                System.out.println("I'm a " + rc.getType() + "! Location " + rc.getLocation());
+                // System.out.println("I'm a " + rc.getType() + "! Location " + rc.getLocation());
                 switch (rc.getType()) {
                     case ENLIGHTENMENT_CENTER: runEnlightenmentCenter(); break;
                     case POLITICIAN:           runPolitician();          break;
@@ -83,13 +83,13 @@ public strictfp class RobotPlayer {
             System.out.println("empowered");
             return;
         }
-        if (tryMove(randomDirection()))
-            System.out.println("I moved!");
+        if (tryMove(randomDirection()));
+            // System.out.println("I moved!");
     }
 
     static void runSlanderer() throws GameActionException {
-        if (tryMove(randomDirection()))
-            System.out.println("I moved!");
+        if (tryMove(randomDirection()));
+            // System.out.println("I moved!");
     }
 
     static void runMuckraker() throws GameActionException {
@@ -105,8 +105,8 @@ public strictfp class RobotPlayer {
                 }
             }
         }
-        if (tryMove(randomDirection()))
-            System.out.println("I moved!");
+        if (tryMove(randomDirection()));
+            // System.out.println("I moved!");
     }
 
     /**
@@ -135,7 +135,7 @@ public strictfp class RobotPlayer {
      * @throws GameActionException
      */
     static boolean tryMove(Direction dir) throws GameActionException {
-        System.out.println("I am trying to move " + dir + "; " + rc.isReady() + " " + rc.getCooldownTurns() + " " + rc.canMove(dir));
+        // System.out.println("I am trying to move " + dir + "; " + rc.isReady() + " " + rc.getCooldownTurns() + " " + rc.canMove(dir));
         if (rc.canMove(dir)) {
             rc.move(dir);
             return true;

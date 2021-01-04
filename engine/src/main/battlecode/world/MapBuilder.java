@@ -53,7 +53,7 @@ public class MapBuilder {
         return x + y * width;
     }
 
-    public void addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc){
+    public void addEnlightenmentCenter(int id, Team team, int influence, MapLocation loc) {
         // check if something already exists here, if so shout
         for (RobotInfo r : bodies) {
             if (r.location.equals(loc)) {
