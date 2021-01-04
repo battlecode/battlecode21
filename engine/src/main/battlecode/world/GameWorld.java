@@ -60,9 +60,13 @@ public strictfp class GameWorld {
         controlProvider.matchStarted(this);
 
         // Add the robots contained in the LiveMap to this world.
-        for (RobotInfo robot : this.gameMap.getInitialBodies()) {
-            spawnRobot(null, robot.type, robot.location.translate(gm.getOrigin().x, gm.getOrigin().y), robot.team, robot.influence);
-            System.out.println("robot influence: " + robot.influence);
+        RobotInfo[] initialBodies = this.gameMap.getInitialBodies();
+        for (int i = 0; i < initialBodies.length; i++) {
+            RobotInfo robot = initialBodies[i];
+            MapLocation newLocation = robot.location.translate(gm.getOrigin().x, gm.getOrigin().y);
+            int newID = spawnRobot(null, robot.type, newLocation, robot.team, robot.influence);
+            initialBodies[i] = new RobotInfo(newID, robot.team, robot.type, robot.influence, robot.conviction, newLocation); // update with non-deterministic ID and offset location
+            // System.out.println("robot influence: " + robot.influence);
         }
 
         // Write match header at beginning of match
