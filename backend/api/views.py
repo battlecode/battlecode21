@@ -359,44 +359,33 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     # TODO extract lots of this to the generic scrimmage creation method
     # TODO test this method, once done
+    # TODO tour scrimms, tour id, etc esp needs testing
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
             match_type = request.data.get("type")
             if match_type == "scrimmage" or match_type == "tour_scrimmage":
-                team_1 = Team.objects.get(pk=request.data.get("player1"))
-                team_2 = Team.objects.get(pk=request.data.get("player2"))
-                team_sub_1 = TeamSubmission.objects.get(pk=team_1.id)
-                team_sub_2 = TeamSubmission.objects.get(pk=team_2.id)
-                sub_1 = team_sub_1.last_1_id
-                sub_2 = team_sub_2.last_1_id
-                if match_type == "tour_scrimmage":
-                    tour = Tournament.objects.get(pk=int(request.data.get("tournament_id")))
-                    column_name = tour.teamsubmission_column_name
-                    sub_1 = getattr(team_sub_1, column_name)
-                    sub_2 = getattr(team_sub_2, column_name)
-                scrimmage = {
-                    'league': 0,
-                    'red_team': team_1.name,
-                    'blue_team': team_2.name,
-                    'requested_by': team_1.id,
-                    'ranked': True,
-                    'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
-                    'status': 'queued'
-                }
+                team_1_id = request.data.get("player1")
+                team_2_id = request.data.get("player2")
+
+                is_tour_match = (match_type == "tour_scrimmage")
+
+                ranked = True
+                # TODO, tour matches should prob be unranked
+                requested_by = team_1_id
+                # TODO, requested_by for these matches should rlly be the database admin
                 map_ids = None
                 if match_type == "tour_scrimmage":
-                    tour_id = int(request.data.get("tournament_id"))
-                    scrimmage['tournament_id'] = tour_id
+                    tournament_id = int(request.data.get("tournament_id"))
                     map_ids = request.data.get("map_ids")
+                else:
+                    # TODO should prob set to a better value. (I think in the past we might've used 0 or -1 or smth? need to check)
+                    tournament_id = None
+                    map_ids = None
 
-                ScrimSerial = ScrimmageSerializer(data=scrimmage)
-                if not ScrimSerial.is_valid():
-                    return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-                scrim = ScrimSerial.save()
-                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
-                return Response({'message': scrim.id}, status.HTTP_200_OK)
+                result = create_scrimmage(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, map_ids)
+                return result
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
         else:
