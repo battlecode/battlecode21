@@ -24,8 +24,6 @@ import Looper from './main/looper';
  * (Not related to the runner for the scaffold.)
  */
 export default class Runner {
-  readonly ctx: CanvasRenderingContext2D;
-
   private matchqueue: MatchQueue;
   private controls: Controls;
   private stats: Stats;
@@ -155,8 +153,9 @@ export default class Runner {
       let input = document.activeElement.nodeName == "INPUT";
       if (!input) {
         // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-        console.log(event.keyCode);
-        switch (event.keyCode) {
+        const keyCode = event.keyCode;
+        console.log(`Key pressed: ${keyCode} (${String.fromCharCode(keyCode)})`);
+        switch (keyCode) {
           case 80: // "p" - Pause/Unpause
             this.controls.pause();
             break;
@@ -180,9 +179,6 @@ export default class Runner {
             break;
           case 82: // "r" - reverse UPS
             this.controls.reverseUPS();
-            break;
-          case 67: // "c" - Toggle Circle Bots
-            this.conf.circleBots = !this.conf.circleBots;
             break;
           case 86: // "v" - Toggle Indicator Dots and Lines
             this.conf.indicators = !this.conf.indicators;

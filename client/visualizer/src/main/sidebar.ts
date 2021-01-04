@@ -74,7 +74,6 @@ export default class Sidebar {
       this.updateUpdate();
     });
     this.profiler = new Profiler();
-    console.log("runner:", runner);
     this.matchqueue = new MatchQueue(conf, images, this.profiler, runner);
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();

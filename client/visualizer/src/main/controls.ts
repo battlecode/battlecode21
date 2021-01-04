@@ -58,7 +58,7 @@ export default class Controls {
   constructor(conf: Config, images: imageloader.AllImages, runner: Runner) {
     this.div = this.baseDiv();
     this.timeReadout = document.createTextNode('No match loaded');
-    this.tileInfo = document.createTextNode('X | Y | Dirt | Water | Pollution | Soup');
+    this.tileInfo = document.createTextNode('X | Y | Passability');
     this.speedReadout = document.createElement('span');
     this.speedReadout.style.cssFloat = 'right';
     this.speedReadout.textContent = 'UPS: 0 FPS: 0';
@@ -278,11 +278,9 @@ export default class Controls {
   updatePlayPauseButton(isPaused) {
     // toggle the play/pause button
     if (isPaused) {
-      console.log("should be paused");
       this.buttons["playbackStart"].img.style.display = "unset";
       this.buttons["playbackPause"].img.style.display = "none";
     } else {
-      console.log("should be playing");
       this.buttons["playbackStart"].img.style.display = "none";
       this.buttons["playbackPause"].img.style.display = "unset";
     }
@@ -416,7 +414,7 @@ export default class Controls {
     let content: string = "";
     content += 'X: ' + `${x}`.padStart(3);
     content += ' | Y: ' + `${y}`.padStart(3);
-    content += ' | P: ' + `${passability}`;
+    content += ' | Passability: ' + `${passability.toFixed(3)}`;
 
     this.tileInfo.textContent = content;
   }
@@ -429,15 +427,13 @@ export default class Controls {
    * Bytecodes Used: bytecodes"
    */
   // TODO fix this (different stats)
-  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes?: number): void {
+  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes: number, flag: number): void {
     // console.log(carryDirt);
     let infoString = `Robot ID ${id} (${bodyType})<br>
       Location: (${x}, ${y})<br>
-      Influence: ${influence}, Conviction: ${conviction}`;
+      Influence: ${influence}, Conviction: ${conviction} <br>
+      Bytecodes Used: ${bytecodes}, Flag ${flag}`;
 
-      if (bytecodes !== undefined) {
-        infoString += `<br>Bytecodes Used: ${bytecodes}`;
-      }
       this.infoString.innerHTML = infoString;
   }
 }

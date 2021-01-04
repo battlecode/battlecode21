@@ -34,12 +34,10 @@ export default class Stats {
   private statBars: Map<number, { votes: StatBar }>;
   private statsTableElement: HTMLTableElement;
 
+  private relativeBarElement: HTMLElement;
+  private relBars: HTMLDivElement[];
+
   private robotConsole: HTMLDivElement;
-
-  private blockchain: HTMLDivElement;
-
-  private waterLabel: HTMLHeadingElement;
-  private waterHorizontalSlider: HTMLDivElement;
 
   private runner: Runner; //needed for file uploading in tournament mode
 
@@ -96,21 +94,12 @@ export default class Stats {
       let tdRobot: HTMLTableCellElement = document.createElement("td");
       tdRobot.className = "robotSpriteStats";
 
-      if(robotName === "drone"){
-        // tdRobot.appendChild(this.images.robot[robotName]['carry'][inGameID]);
-        tdRobot.appendChild(this.images.robot[robotName]['empty'][inGameID]);
-      }
-      else{
-        //tdRobot.appendChild(this.images.robot[robotName][inGameID]);
-      }
+      const img = this.images.robots[robotName][inGameID];
+      img.style.width = "64px";
+      img.style.height = "64px";
 
-      if(robotName === 'vaporator'){
-        // Wrap around
-        // table.appendChild(robotImages);
-        // robotImages = document.createElement("tr");
-        // table.appendChild(robotCounts);
-        // robotCounts = document.createElement("tr");
-      }
+      tdRobot.appendChild(img);
+
       robotImages.appendChild(tdRobot);
 
       let tdCount: HTMLTableCellElement = this.robotTds[teamID][robot];
@@ -126,25 +115,14 @@ export default class Stats {
     const table = document.createElement("table");
     const bars = document.createElement("tr");
     const counts = document.createElement("tr");
-    const labels = document.createElement("tr");
     table.id = "stats-table";
     bars.id = "stats-bars";
     table.setAttribute("align", "center");
 
-    // Duplicate of the following, but left just in case
-    // teamIDs.forEach((id: number) => {
-    //   const bar = document.createElement("td");
-    //   bar.height = "150";
-    //   bar.vAlign = "bottom";
-    //   // TODO: figure out if statbars.get(id) can actually be null??
-    //   // bar.appendChild(this.statBars.get(id)!.bullets.bar);
-    //   bars.appendChild(bar);
-
-    //   const count = document.createElement("td");
-    //   // TODO: figure out if statbars.get(id) can actually be null??
-    //   // count.appendChild(this.statBars.get(id)!.bullets.label);
-    //   counts.appendChild(count);
-    // });
+    const title = document.createElement('td');
+    title.colSpan= 2;
+    const label = document.createElement('h3');
+    label.innerText = 'Votes';
 
     teamIDs.forEach((id: number) => {
       const bar = document.createElement("td");
@@ -160,18 +138,34 @@ export default class Stats {
       counts.appendChild(count);
     });
 
-    // Label for votes
-    const labelPoints = document.createElement("td");
-    labelPoints.colSpan = 2;
-    let ll = document.createElement('h4');
-    ll.innerText = 'Votes';
-    labelPoints.appendChild(ll);
-
+    title.appendChild(label);
+    table.appendChild(title);
     table.appendChild(bars);
     table.appendChild(counts);
-    table.appendChild(labels);
-    labels.appendChild(labelPoints);
     return table;
+  }
+
+  private relativeBar(teamIds: Array<number>): HTMLElement {
+    const div = document.createElement("div");
+    div.setAttribute("align", "center");
+    this.relBars = [];
+
+    const frame = document.createElement("div");
+    frame.style.width = "250px";
+    frame.style.height = "30px";
+
+    teamIds.forEach((id: number) => {
+      const bar = document.createElement("div");
+      bar.style.backgroundColor = hex[id];
+      bar.style.height = frame.style.height;
+      bar.style.width = `${100*id}px`;
+
+      this.relBars[id] = bar;
+      frame.appendChild(bar);
+    });
+
+    div.appendChild(frame);
+    return div;
   }
 
   /**
@@ -207,7 +201,6 @@ export default class Stats {
       let teamID = teamIDs[index];
       let teamName = teamNames[index];
       let inGameID = index + 1; // teams start at index 1
-      console.log("Team: " + inGameID);
 
       // A div element containing all stats information about this team
       let teamDiv = document.createElement("div");
@@ -240,32 +233,22 @@ export default class Stats {
       // Add the team name banner and the robot count table
       teamDiv.appendChild(this.teamHeaderNode(teamName, inGameID));
       teamDiv.appendChild(this.robotTable(teamID, inGameID));
-      // teamDiv.appendChild(document.createElement("br"));
+      teamDiv.appendChild(document.createElement("br"));
 
       this.div.appendChild(teamDiv);
     }
+
+    this.div.appendChild(document.createElement("hr"));
 
     // Add stats table
     this.statsTableElement.remove();
     this.statsTableElement = this.statsTable(teamIDs);
     this.div.appendChild(this.statsTableElement);
-    
 
-    const bl = document.createElement("h4");
-    bl.innerText = "Blockchain";
-    this.div.appendChild(bl);
-    this.div.appendChild(this.blockchainViewer());
-  }
-
-  blockchainViewer(): HTMLDivElement {
-    // create a blockchain
-    this.blockchain = document.createElement('div');
-
-    // make it a console
-    this.blockchain.id = "blockchain";
-    this.blockchain.className = "console";
-
-    return this.blockchain;
+    // TODO relative bar
+    this.relativeBarElement = this.relativeBar(teamIDs);
+    // this.div.appendChild(this.relativeBarElement);
+    // console.log(this.relativeBarElement)
   }
 
   tourIndexJumpFun(e) {
@@ -290,21 +273,16 @@ export default class Stats {
     // TODO: figure out if statbars.get(id) can actually be null??
     const statBar: StatBar = this.statBars.get(teamID)!.votes;
     statBar.label.innerText = String(count);
-    const maxVotes = 1000;
-    statBar.bar.style.height = `${Math.min(100 * count / maxVotes, 100)}%`;
+    const maxVotes = 1500;
+    statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
 
-    if (this.images.star.parentNode === statBar.bar) {
-      this.images.star.remove();
-    }
+    // TODO add reactions to relative bars
+    // TODO get total votes to get ratio
+    // this.relBars[teamID].width;
+
+    // TODO winner gets star?
+    // if (this.images.star.parentNode === statBar.bar) {
+    //   this.images.star.remove();
+    // }
   }
-
-  /**
-   * Change the bullets of the given team
-   */
-  // setBullets(teamID: number, count: number) {
-  //   // TODO: figure out if statbars.get(id) can actually be null??
-  //   const statBar: StatBar = this.statBars.get(teamID)!.bullets;
-  //   statBar.label.innerText = String(count.toPrecision(5));
-  //   statBar.bar.style.height = `${100 * count / cst.BULLET_THRESH}%`;
-  // }
 }

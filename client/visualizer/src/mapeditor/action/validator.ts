@@ -36,8 +36,8 @@ export default class MapValidator {
     // Invariant: bodies in originalBodies don't overlap with each other, and
     //            bodies in symmetricBodies don't overlap with each other
     map.originalBodies.forEach((unit: MapUnit, id: number) => {
-      let x = unit.loc.x;
-      let y = unit.loc.y;
+      let x = unit.loc.x + 0.5;
+      let y = unit.loc.y + 0.5;
       let distanceToWall = Math.min(x, y, map.width - x, map.height - y);
       if (unit.radius > distanceToWall || x < 0 || y < 0 || x > map.width || y > map.height) {
         errors.push(`ID ${id} is off the map.`);

@@ -59,7 +59,7 @@ export default class Game {
     const gameStarted = this._meta !== null;
     const matchCount = this._matches.length;
     const lastMatchFinished = matchCount > 0? this._matches[this._matches.length - 1].finished : true;
-    console.log("event!: " + (event.eType()));
+    // console.log("event!: " + (event.eType()));
 
     switch (event.eType()) {
       case schema.Event.GameHeader:

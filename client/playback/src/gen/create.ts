@@ -104,7 +104,7 @@ class IDsManager {
   }
 };
 
-function createRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
+function makeRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
   const bodies: BodiesType = {
     robotIDs: Array(unitCount),
     teamIDs: Array(unitCount),
@@ -120,10 +120,24 @@ function createRandomBodies(manager: IDsManager, unitCount: number): BodiesType{
     bodies.types[i] = bodyTypeList[random(0, bodyVariety-1)];
     bodies.xs[i] = random(0, SIZE-1);
     bodies.ys[i] = random(0, SIZE-1);
-    bodies.influences[i] = 0;
+    bodies.influences[i] = random(0,10);
   }
 
   return bodies;
+}
+
+// Random map, no units.
+function makeRandomMap(): MapType {
+
+  const map: MapType = {
+    passability: new Array(SIZE*SIZE)
+  };
+  for(let i=0; i<SIZE; i++) for(let j=0; j<SIZE; j++){
+    const idxVal = i*SIZE + j;
+    map.passability[idxVal] = Math.random();
+  }
+
+  return map;
 }
 
 function createEventWrapper(builder: flatbuffers.Builder, event: flatbuffers.Offset, type: schema.Event): flatbuffers.Offset {
@@ -250,13 +264,13 @@ function createGameWrapper(builder: flatbuffers.Builder, events: flatbuffers.Off
 }
 
 // Game without any unit & changes
-function createBlankGame(turns: number) {
+function createBlankGame(turns: number, randomMap: boolean = false) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
 
   events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
 
-  const map = createMap(builder, null, 'Blank Demo');
+  const map = createMap(builder, null, 'Blank Demo', (randomMap ? makeRandomMap(): undefined));
   events.push(createEventWrapper(builder, createMatchHeader(builder, turns, map), schema.Event.MatchHeader));
 
   for (let i = 1; i < turns+1; i++) {
@@ -281,24 +295,31 @@ function createStandGame(turns: number) {
 
   events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
 
-  const unitCount = bodyVariety * 2;
-  let robotIDs = new Array(unitCount);
-  let teamIDs = new Array(unitCount);
-  let types = new Array(unitCount);
-  let xs = new Array(unitCount);
-  let ys = new Array(unitCount);
-  let influences = new Array(unitCount);
-  for (let i = 0; i < unitCount; i++) {
-    robotIDs[i] = i;
-    teamIDs[i] = i%2+1; // 1 2 1 2 1 2 ...
+  let robotIDs = [];
+  let teamIDs = [];
+  let types = [];
+  let xs = [];
+  let ys = [];
+  let influences = [];
+
+  var i = 0;
+  for (i = 0; i < bodyVariety * 2; i++) {
+    robotIDs.push(i);
+    teamIDs.push(i%2+1); // 1 2 1 2 1 2 ...
 
     let type = Math.floor(i/2);
-    types[i] = bodyTypeList[type];
+    types.push(bodyTypeList[type]);
 
     // assume map is large enough
     xs[i] = Math.floor(i/2) * 2 + 5;
     ys[i] = 5*(i%2)+5;
   }
+  // add neutral enlightenment center
+  robotIDs.push(i);
+  teamIDs.push(0);
+  types.push(schema.BodyType.ENLIGHTENMENT_CENTER);
+  xs[i] = Math.floor(i/2) * 2 + 5;
+  ys[i] = 5*(i%2)+5;  
 
   const bb_locs = createVecTable(builder, xs, ys);
   const bb_robotIDs = schema.SpawnedBodyTable.createRobotIDsVector(builder, robotIDs);
@@ -416,7 +437,7 @@ function createLifeGame(turns: number) {
 
   const manager = new IDsManager(maxID);
 
-  const bodies = createRandomBodies(manager, 10);
+  const bodies = makeRandomBodies(manager, 10);
   const SBTable = createSBTable(builder, bodies);
   const map = createMap(builder, SBTable, "Life Demo");
   events.push(createEventWrapper(builder, createMatchHeader(builder, turns, map), schema.Event.MatchHeader));
@@ -432,7 +453,7 @@ function createLifeGame(turns: number) {
       diedIDs.push(ID);
     }
 
-    const bodies = createRandomBodies(manager, spawnUnits);
+    const bodies = makeRandomBodies(manager, spawnUnits);
 
     const bb_diedIDs = schema.Round.createDiedIDsVector(builder, diedIDs);
     const bb_spawnedBodies = createSBTable(builder, bodies);
@@ -455,7 +476,7 @@ function createLifeGame(turns: number) {
 }
 
 // Game with every units, moving in random constant speed & direction, with optional actions
-function createWanderGame(turns: number, unitCount: number, doActions: boolean = false) {
+function createWanderGame(turns: number, unitCount: number, doActions: boolean = false, randomMap: boolean = false) {
   let builder = new flatbuffers.Builder();
   let events: flatbuffers.Offset[] = [];
 
@@ -463,9 +484,9 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
 
   const manager = new IDsManager(maxID);
 
-  const bodies = createRandomBodies(manager, unitCount);
+  const bodies = makeRandomBodies(manager, unitCount);
   const SBTable = createSBTable(builder, bodies);
-  const map = createMap(builder, SBTable, "Wander Demo");
+  const map = createMap(builder, SBTable, "Wander Demo", (randomMap ? makeRandomMap() : undefined));
   events.push(createEventWrapper(builder, createMatchHeader(builder, turns, map), schema.Event.MatchHeader));
 
   let velxs = new Array(unitCount);
@@ -499,10 +520,10 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
     let actions: number[] = [];
     let actionTargets: number[] = [];
 
-    if (doActions && i%10 == 0) {
+    if (doActions && i%3 == 0) {
       for (let j = 0; j < unitCount; j++) {
-        let action: number | null;
-        let actionTarget: number | null;
+        let action: number | null = null;
+        let actionTarget: number | null = null;
         switch (bodies.types[j]) {
             case schema.BodyType.POLITICIAN:
               action = schema.Action.EMPOWER;
@@ -513,7 +534,7 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
             default:
               break;
         }
-        if (action) {
+        if (action !== null) {
           actionIDs.push(bodies.robotIDs[j]);
           actions.push(action);
           actionTargets.push(actionTarget);
@@ -544,41 +565,6 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
   return builder.asUint8Array();
 }
 
-
-// Game with random map, no units.
-function createPassabilityGame(turns: number) {
-
-  let builder = new flatbuffers.Builder();
-  let events: flatbuffers.Offset[] = [];
-
-  events.push(createEventWrapper(builder, createGameHeader(builder), schema.Event.GameHeader));
-
-  const map: MapType = {
-    passability: new Array(SIZE*SIZE)
-  };
-  for(let i=0; i<SIZE; i++) for(let j=0; j<SIZE; j++){
-    const idxVal = i*SIZE + j;
-    map.passability[idxVal] = random(0.1, 1);
-  }
-
-  const bb_map = createMap(builder, null, 'Water Demo', map);
-  events.push(createEventWrapper(builder, createMatchHeader(builder, turns, bb_map), schema.Event.MatchHeader));
-
-  for (let i = 1; i < turns+1; i++) {
-    schema.Round.startRound(builder);
-    schema.Round.addRoundID(builder, i);
-
-    events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
-  }
-
-  events.push(createEventWrapper(builder, createMatchFooter(builder, turns, 1), schema.Event.MatchFooter));
-  events.push(createEventWrapper(builder, createGameFooter(builder, 1), schema.Event.GameFooter));
-
-  const wrapper = createGameWrapper(builder, events, turns);
-  builder.finish(wrapper);
-  return builder.asUint8Array();
-}
-
 // Game with voting
 function createVotesGame(turns: number) {
   let builder = new flatbuffers.Builder();
@@ -591,11 +577,11 @@ function createVotesGame(turns: number) {
 
   for (let i = 1; i < turns+1; i++) {
     const bb_teamIDs = schema.Round.createTeamIDsVector(builder, [1, 2]);
-    const bb_teamVPs = schema.Round.createTeamVPsVector(builder, [true, false]);
+    const bb_teamVPs = schema.Round.createTeamVotesVector(builder, [1, (Math.random() > 0.5 ? 1 : 0)]);
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
     schema.Round.addTeamIDs(builder, bb_teamIDs);
-    schema.Round.addTeamVPs(builder, bb_teamVPs);
+    schema.Round.addTeamVotes(builder, bb_teamVPs);
     events.push(createEventWrapper(builder, schema.Round.endRound(builder), schema.Event.Round));
   }
 
@@ -687,19 +673,19 @@ function createSoupGame(turns: number) {
 function main(){
   const games = [
     { name: "blank", game: createBlankGame(512)},
-    { name: "stand", game: createStandGame(1024) },
+    { name: "stand", game: createStandGame(4000) },
     //{ name: "pick", game: createPickGame(1024) },
+    { name: "random-map", game: createBlankGame(512, true) },
     { name: "wander", game: createWanderGame(2048, 32) },
     { name: "wander-actions", game: createWanderGame(2048, 32, true) },
+    { name: "wander-actions-random-map", game: createWanderGame(2048, 32, true, true)},
     { name: "life", game: createLifeGame(512) },
-    { name: "passability", game: createPassabilityGame(512) },
     { name: "votes", game: createVotesGame(512) } 
     //{ name: "soup", game: createSoupGame(512) }, 
     //{ name: "viewOptions", game: createViewOptionGame(512) }
   ];
   SIZE = 64;
   games.push({ name: "big-wander", game: createWanderGame(2048, 128) });
-  SIZE = 32;
   
   const prefix = "../examples/";
 

@@ -49,11 +49,13 @@ export default class GameArea {
    * Sets canvas size to maximum dimensions while maintaining the aspect ratio
    */
   setCanvasDimensions(world: GameWorld): void {
-    const scale: number = 30; // arbitrary scaling factor
+    const scale: number = this.conf.upscale; // scaling factor
 
-    this.canvas.width = world.minCorner.absDistanceX(world.maxCorner) * scale;
-    this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) * scale;
-
+    this.canvas.width = scale;
+    this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) / world.minCorner.absDistanceX(world.maxCorner) * scale;
+    // TODO: transfer below to CSS
+    this.canvas.style.width = (this.div.clientWidth*0.8).toString() + 'px';
+    this.canvas.style.width = (this.div.clientHeight*0.8).toString() + 'px';
   }
   
   /**
@@ -136,7 +138,7 @@ export default class GameArea {
           break;
         default:
           this.wrapper.appendChild(this.canvas); // TODO: Only append if a game is available in client.games
-          console.log("Now a game");
+          console.log("Running a game");
       }
     }
     

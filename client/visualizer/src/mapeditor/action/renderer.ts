@@ -56,7 +56,7 @@ export default class MapRenderer {
       this.ctx = ctx;
     }
 
-    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.background, 'repeat');
+    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles.dirt, 'repeat');
   }
 
   /**
@@ -99,8 +99,11 @@ export default class MapRenderer {
     const scale = 20;
     this.ctx.scale(1/scale, 1/scale);
 
-    // scale the background pattern
-    this.ctx.fillRect(0, 0, this.width * scale, this.height * scale);
+    for(let i = 0; i < this.width; i++){
+      for(let j = 0; j < this.height; j++){
+        this.ctx.drawImage(this.imgs.tiles.dirt, i*scale, j*scale, scale, scale);
+      }
+    }
     this.ctx.restore();
   }
 
@@ -118,8 +121,8 @@ export default class MapRenderer {
       let img: HTMLImageElement;
 
       this.drawCircleBot(x, y, radius);
-      const teamID = body.teamID || 1;
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][teamID];
+      const teamID = body.teamID || 0;
+      img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
@@ -131,7 +134,7 @@ export default class MapRenderer {
       let img: HTMLImageElement;
 
       this.drawCircleBot(x, y, radius);
-      img = this.imgs.robot[cst.bodyTypeToString(body.type)][2];
+      img = this.imgs.robots[cst.bodyTypeToString(body.type)][2];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
@@ -145,17 +148,17 @@ export default class MapRenderer {
     this.canvas.onmousedown = (event: MouseEvent) => {
       let x = map.width * event.offsetX / this.canvas.offsetWidth;
       let y = this.flip(map.height * event.offsetY / this.canvas.offsetHeight, map.height);
-      let loc = new Victor(x, y);
+      let loc = new Victor(Math.floor(x), Math.floor(y));
 
       // Get the ID of the selected unit
       let selectedID;
       map.originalBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
+        if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
       });
       map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.distance(body.loc) <= body.radius) {
+        if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
       });
@@ -181,19 +184,11 @@ export default class MapRenderer {
   }
 
   /**
-   * Draws goodies centered at (x, y) with the given radius, if there are any
-   */
-  // private drawGoodies(x: number, y: number, radius: number, bullets: number, body: schema.BodyType) {
-  //   if (bullets > 0) this.drawImage(this.imgs.tree.bullets, x, y, radius);
-  //   if (body !== cst.NONE) this.drawImage(this.imgs.tree.robot, x, y, radius);
-  // }
-
-  /**
    * Draws an image centered at (x, y) with the given radius
    */
   private drawImage(img: HTMLImageElement, x: number, y: number, radius: number) {
     this.ctx['imageSmoothingEnabled'] = false;
-    this.ctx.drawImage(img, x-radius, y-radius, radius*2, radius*2);
+    this.ctx.drawImage(img, x, y-radius*2, radius*2, radius*2);
   }
 }
 
