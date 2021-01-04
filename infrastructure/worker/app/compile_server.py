@@ -89,7 +89,7 @@ def compile_worker(submissionid):
             compile_log_error(submissionid, 'Could not decompress source file')
 
         # Update distribution
-        # util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
+        util.pull_distribution(rootdir, lambda: compile_log_error(submissionid, 'Could not pull distribution'))
 
         # Execute compilation
         result = util.monitor_command(

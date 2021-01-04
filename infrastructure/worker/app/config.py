@@ -36,7 +36,7 @@ API_PASSWORD = os.getenv('BC_DB_PASSWORD')
 
 COMPILE_INPROGRESS = 0
 COMPILE_SUCCESS = 1
-COMPILE_FAILED  = 2
+COMPILE_FAIL  = 2
 COMPILE_ERROR   = 3 #error somewhere along the way
 
 def api_compile_update(submissionid):

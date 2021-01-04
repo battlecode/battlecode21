@@ -144,7 +144,7 @@ def game_worker(gameinfo):
                 '-PpackageNameA={}'.format(package1),
                 '-PpackageNameB={}'.format(package2),
                 '-Pmaps={}'.format(maps),
-                '-Preplay=replay.bc20'
+                '-Preplay=replay.bc21'
             ],
             cwd=rootdir,
             timeout=TIMEOUT_GAME)
@@ -155,8 +155,8 @@ def game_worker(gameinfo):
         # Upload replay file
         bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
         try:
-            with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
-                bucket.blob(os.path.join('replays', '{}.bc20'.format(replay))).upload_from_file(file_obj)
+            with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
+                bucket.blob(os.path.join('replays', '{}.bc21'.format(replay))).upload_from_file(file_obj)
         except:
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
@@ -192,7 +192,7 @@ def game_worker(gameinfo):
         try:
             shutil.rmtree(classdir)
             shutil.rmtree(builddir)
-            os.remove(os.path.join(rootdir, 'replay.bc20'))
+            os.remove(os.path.join(rootdir, 'replay.bc21'))
         except:
             logging.warning('Could not clean up game execution directory')
 
