@@ -65,11 +65,10 @@ def pub(project_id, topic_name, data, num_retries=5):
         else:
             break
 
-# TODO a method for scrimmages in general
 # TODO should this not be an external method? should this be moved into the scrim class? 
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
 # moving into scrim class would make more sense.
-def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league, map_ids):
+def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league, map_ids):
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
     # Don't use status as a var name, to avoid some http status enum
@@ -124,14 +123,14 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_ma
 
     # If applicable, immediately accept scrimmage, rather than wait for the other team to accept.
     if accept:
-        result = accept_scrimmage(scrimmage.id)
+        result = accept_scrimmage_helper(scrimmage.id)
     else:
         scrimmage.status = 'pending'
         scrimmage.save()
         result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
     return result
 
-def accept_scrimmage(scrimmage_id):
+def accept_scrimmage_helper(scrimmage_id):
     scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
     print(scrimmage)
     # put onto pubsub
@@ -397,7 +396,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
                     tournament_id = None
                     map_ids = None
 
-                result = create_scrimmage(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, league, map_ids)
+                result = create_scrimmage_helper(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, league, map_ids)
                 return result
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
@@ -977,7 +976,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             # Use default map selection
             map_ids = None
 
-            result = create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league_id, map_ids)
+            result = create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league_id, map_ids)
 
             return result
         except Exception as e:
@@ -993,7 +992,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-            result = accept_scrimmage(scrimmage.id)
+            result = accept_scrimmage_helper(scrimmage.id)
             return result
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
