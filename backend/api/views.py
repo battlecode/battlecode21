@@ -76,17 +76,16 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
     replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
 
     # get team submission ids and names, with careful attention to tour matches
-    # TODO rename the 1, 2 vars to red, blue
-    team_sub_1 = TeamSubmission.objects.get(pk=red_team_id) 
-    team_sub_2 = TeamSubmission.objects.get(pk=blue_team_id) 
+    red_team_sub = TeamSubmission.objects.get(pk=red_team_id) 
+    blue_team_sub = TeamSubmission.objects.get(pk=blue_team_id) 
     if is_tour_match:
         tour = Tournament.objects.get(pk=int(tournament_id))
         column_name = tour.teamsubmission_column_name
-        sub_1 = getattr(team_sub_1, column_name)
-        sub_2 = getattr(team_sub_2, column_name)
+        sub_1 = getattr(red_team_sub, column_name)
+        sub_2 = getattr(blue_team_sub, column_name)
     else:
-        red_submission_id = team_sub_1.last_1_id
-        blue_submission_id = team_sub_2.last_1_id
+        red_submission_id = red_team_sub.last_1_id
+        blue_submission_id = blue_team_sub.last_1_id
     red_team_name = Team.objects.get(pk=red_team_id).name
     blue_team_name = Team.objects.get(pk=blue_team_id).name
 
