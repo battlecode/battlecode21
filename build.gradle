@@ -65,7 +65,7 @@ task headless(type: JavaExec, dependsOn: [':engine:build', ':example-bots:build'
     '-Dbc.game.team-a.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.team-b.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.maps='+project.property('maps'),
-    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
   ]
 }
 
@@ -84,7 +84,7 @@ task debug(type: JavaExec, dependsOn: [':engine:build', ':example-bots:build']) 
     '-Dbc.game.team-a.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.team-b.url='+project(':example-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.maps='+project.property('maps'),
-    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
   ]
 }
 
@@ -102,7 +102,7 @@ task headlessX(type: JavaExec, dependsOn: [':engine:build', ':internal-test-bots
     '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.maps='+project.property('maps'),
-    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
   ]
 }
 
@@ -121,7 +121,7 @@ task debugX(type: JavaExec, dependsOn: [':engine:build', ':internal-test-bots:bu
     '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
     '-Dbc.game.maps='+project.property('maps'),
-    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+    '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
   ]
 }
 
@@ -137,13 +137,13 @@ task runFromClient(type: JavaExec, dependsOn: [':engine:build', ':internal-test-
             '-Dbc.server.debug=false',
             '-Dbc.server.robot-player-to-system-out=false',
             '-Dbc.engine.debug-methods=true',
-            '-Dbc.engine.enable-profiler='+project.property('profilerEnabled'),
+            '-Dbc.engine.enable-profiler=false',
             '-Dbc.game.team-a='+project.property('teamA'),
             '-Dbc.game.team-b='+project.property('teamB'),
             '-Dbc.game.team-a.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
             '-Dbc.game.team-b.url='+project(':internal-test-bots').sourceSets.main.output.classesDirs.getAsPath(),
             '-Dbc.game.maps='+project.property('maps'),
-            '-Dbc.server.save-file=' + project.property('replay')
+            '-Dbc.server.save-file=' + 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
     ]
 }
 
