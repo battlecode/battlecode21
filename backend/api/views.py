@@ -96,8 +96,6 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
         # By default, pick 3 random maps (requires specifying maps in settings.py).
         map_ids = ','.join(get_random_maps(3))
 
-    # TODO auto-accept mechanics may make this following process need tweaks. Consider like -- a separate "accept method". Then here, save scrimmage; if auto accept on, call accept method, too.
-
     # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
     # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
     data = {
