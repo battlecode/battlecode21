@@ -146,7 +146,6 @@ def accept_scrimmage_helper(scrimmage_id):
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
 
     # save the scrimmage, again, to mark save
-    # TODO if/when this is moved to scrimmage method, there's a better way to edit/save, involving serializiers
     scrimmage.status = 'queued'
     scrimmage.save()
 
