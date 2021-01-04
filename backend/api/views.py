@@ -69,7 +69,7 @@ def pub(project_id, topic_name, data, num_retries=5):
 # TODO should this not be an external method? should this be moved into the scrim class? 
 # by not adding decorators, we can create a method which has no url -- essentially a private helper method.
 # moving into scrim class would make more sense.
-def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
+def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by, accept):
     # TODO how do ranked and type mix? tour matches should always be unranked, right....?
 
     # Note that if we ever use different leagues, league should become a method argument
@@ -116,6 +116,13 @@ def create_scrimmage(red_team_id, blue_team_id, ranked, requested_by):
 
     # return None
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
+
+def accept_scrimmage(scrimmage_id):
+    # TODO look up the scrimmage
+    # TODO put onto pubsub
+    # TODO save the scrim
+
+    return None
 
 def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
 
