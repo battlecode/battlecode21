@@ -1,4 +1,6 @@
+import { basename } from 'path';
 import {Config} from './config';
+import * as cst from "./constants";
 type Image = HTMLImageElement;
 
 export type AllImages = {
@@ -34,7 +36,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   const RED: number = 1;
   const BLU: number = 2;
 
-  function loadImage(obj, slot, path) : void {
+  function loadImage(obj, slot, path, src?) : void {
     const f = loadImage;
     f.expected++;
     const image = new Image();
@@ -56,12 +58,13 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       obj[slot] = image;
       f.failure++;
       console.error(`CANNOT LOAD IMAGE: ${slot}, ${path}, ${image}`);
+      if(src) console.error(`Source: ${src}`);
       onFinish();
     }
 
     // might want to use path library
     // webpack url loader triggers on require("<path>.png"), so .png should be explicit
-    image.src = require(dirname + path + '.png').default;
+    image.src = (src ? src : require(dirname + path + '.png').default);
   }
   loadImage.expected = 0;
   loadImage.success = 0;
@@ -102,8 +105,59 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result, 'star', 'star');
 
   // terrain tiles
-  loadImage(result.tiles, 0, 'tiles/DirtTerrain');
-  loadImage(result.tiles, 1, 'tiles/SwampTerrain');
+  {
+    const htmlToData = (ele: HTMLImageElement): ImageData => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if(!context) throw new Error("Error while converting a tile image");
+      canvas.width = ele.width;
+      canvas.height = ele.height;
+      context.drawImage(ele, 0, 0);
+      return context.getImageData(0, 0, ele.width, ele.height);
+    };
+    const tintData = (data: ImageData, colors: Uint8Array): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        const rock = data.data[i] > 128;
+        const factor = rock ? 1.5 : 1;
+        arr[i + 0] = colors[0] / factor;
+        arr[i + 1] = colors[1] / factor;
+        arr[i + 2] = colors[2] / factor;
+        arr[i + 3] = 255;
+      }
+      const result = new ImageData(arr, data.height);
+      return result;
+    }
+    const dataToSrc = (data: ImageData, idx: number = 0): String => {
+      var canvas = document.createElement("canvas");
+      canvas.width = data.width;
+      canvas.height = data.height;
+      var context = canvas.getContext("2d");
+      if(!context) throw new Error("Error while converting a tile images");
+      context.putImageData(data, 0, 0);
+
+      return canvas.toDataURL(`tiles/terrain_${idx}.png`);
+    };
+
+    const baseTile: Image = new Image();
+    baseTile.src = require(dirname + 'tiles/terrain.png').default;
+
+    const nLev = cst.TILE_COLORS.length;
+    baseTile.onload = () => {
+        for(let i=0; i<nLev; i++){
+        const data: ImageData = htmlToData(baseTile);
+        const tinted: ImageData = tintData(data, <Uint8Array><unknown>cst.TILE_COLORS[i]);
+        console.log(data.data);
+        const path: String = dataToSrc(tinted);
+        console.log(path.slice(0, path.length-4));
+        loadImage(result.tiles, i, "", path.slice(0, path.length-4));
+      }
+    }
+  }
+  // loadImage(result.tiles, 0, 'tiles/DirtTerrain');
+  // loadImage(result.tiles, 1, 'tiles/SwampTerrain');
+  // loadImage(result.tiles, 2, 'tiles/terrain');
+  // loadImage(result.tiles, 3, 'tiles/terrain');
 
   // robot sprites
   loadImage(result.robots.enlightenmentCenter, RED, 'robots/center_red');

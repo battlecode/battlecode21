@@ -12,22 +12,21 @@ export const initialBodyTypeList: number[] = [ENLIGHTENMENT_CENTER];
 
 export const bodyTypePriority: number[] = []; // for guns, drones, etc. that should be drawn over other robots
 
-// old colors for reference
-
-export const TILE_COLORS: Array<number>[] = [
-  [120, 0, 0],
-  [0, 120, 0]
+export const TILE_COLORS: Array<number>[] = [ // RGB
+  [214, 110, 16],
+  [167, 72, 8],
+  [135, 13, 13],
+  [105, 26, 26],
+  [88, 22, 22],
+  [60, 15, 15]
 ];
-
-// maps elevation to rgb values
-export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<number>>([
-  [-5, [0, 147, 83]], // turquoise
-  [3, [29, 201, 2]], // green
-  [10, [254,205,54]], // yellow
-  [90, [222, 145, 1]], // brown
-  [500, [255, 0, 0]], // red
-  [2000, [242, 0, 252]] // pink
-]);
+// flashy colors
+// [0, 147, 83], // turquoise
+// [29, 201, 2], // green
+// [254, 205, 54], // yellow
+// [222, 145, 1], // brown
+// [255, 0, 0], // red
+// [242, 0, 252] // pink
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
 export const SENSOR_RADIUS_COLOR = "#0000ff";

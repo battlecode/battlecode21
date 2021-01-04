@@ -103,7 +103,8 @@ export default class Renderer {
       const getLevel = (x: number): number => {
         const nLev = cst.TILE_COLORS.length;
         const floatLevel = (x - 0.1) / 0.9 * nLev;
-        return Math.min(nLev - 1, Math.floor(floatLevel));
+        const level = Math.floor(floatLevel)
+        return Math.min(nLev - 1, Math.max(0, level));
       }
 
       const swampLevel = getLevel(map.passability[idxVal]);
