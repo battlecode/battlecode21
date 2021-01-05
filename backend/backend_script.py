@@ -13,20 +13,15 @@ data = {
 response = requests.post(domain + 'auth/token/', data=data)
 token = json.loads(response.text)['access']
 
-# data = {
-#   'type': 'tour_scrimmage',
-#   'tournament_id': '-1',
-#   'player1': '917',
-#   'player2': '919'
-# }
 data = {
-  'status': 'error',
-  'winscore': None,
-  'losescore': None
+  'type': 'scrimmage',
+  'tournament_id': '0',
+  'player1': '1744',
+  'player2': '1810',
 }
+
 headers = {"Authorization": "Bearer " + token}
 
-# response = requests.post(domain + 'api/match/enqueue/', data=data, headers=headers)
-response = requests.patch(domain + 'api/0/scrimmage/1/set_outcome/', data=data, headers=headers)
+response = requests.post(domain + 'api/match/enqueue/', data=data, headers=headers)
 
 print(response.text)

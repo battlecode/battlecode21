@@ -58,7 +58,7 @@ Next, we need to register a superuser account (for use by the infra). Run the ba
 Also, have this superuser create and join a team (this is necessary for some permissions).
 Then, go back to your Postgres editor. In `api_user`, find the user you just created. Change `is_superuser` and `is_staff` to true. Finally, pass the username and password of this account to the infrastructure team.
 
-Then stop the old database (on its main page, press "stop").
+Then stop the old database (on its main page, press "stop"). **Don't delete it!** It's free to keep a stopped database, and handy to have around for future development.
 
 ## Deployment Setup
 
