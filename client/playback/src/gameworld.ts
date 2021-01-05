@@ -425,7 +425,7 @@ export default class GameWorld {
           /// Target: delta value, i.e. red 5 -> blue 3 is -2
           case schema.Action.CHANGE_CONVICTION:
             const old_conviction = this.bodies.lookup(robotID).conviction; 
-            this.bodies.alter({ id: robotID, influence: old_conviction + target});
+            this.bodies.alter({ id: robotID, conviction: old_conviction + target});
             break;
     
           case schema.Action.DIE_EXCEPTION:
