@@ -308,6 +308,8 @@ export default class GameWorld {
       this.teamStats.set(key, deepcopy(value));
     });
     this.mapStats = deepcopy(source.mapStats);
+    this.empowered.copyFrom(source.empowered);
+    this.abilityRobots = Array.from(source.abilityRobots);
   }
 
   /**
@@ -439,16 +441,12 @@ export default class GameWorld {
       }
     }
 
-    // TODO Passive Changes, need game constants.
-    
     // Died bodies
     if (delta.diedIDsLength() > 0) {
-      console.log("died bodies:", delta.diedIDsArray());
       // Update team stats
       var indices = this.bodies.lookupIndices(delta.diedIDsArray());
       for(let i = 0; i < delta.diedIDsLength(); i++) {
           let index = indices[i];
-          // console.log("robot died: " + this.bodies.arrays.id[index]);
           let team = this.bodies.arrays.team[index];
           let type = this.bodies.arrays.type[index];
           var statObj = this.teamStats.get(team);
