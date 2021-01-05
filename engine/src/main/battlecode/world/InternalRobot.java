@@ -457,7 +457,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
             throw new IllegalStateException("The robot's parent is not an Enlightenment Center");
         }
         int passiveInfluence = this.type.getPassiveInfluence(this.influence, this.roundsAlive, this.gameWorld.getCurrentRound());
-        if (passiveInfluence > 0 && this.team.isPlayer()) {
+        if (passiveInfluence > 0 && this.team.isPlayer() && this.gameWorld.getObjectInfo().existsRobot(target.ID)) {
             target.addInfluenceAndConviction(passiveInfluence);
             if (this.type == RobotType.SLANDERER) {
                 this.gameWorld.getMatchMaker().addAction(this.ID, Action.EMBEZZLE, target.ID);
