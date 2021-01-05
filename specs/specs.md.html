@@ -162,12 +162,12 @@ the only type of available building is Enlightenment Centers.
 | **Sensor radius squared**    | 40                   | 25                 | 20                   | 30                 |
 | **Detection radius squared** | 40                   | 25                 | 20                   | 40                 |
 | **True sense**               | Yes                  | No                 | No                   | Yes                |
-| **Ability** *                | Bid                  | Empower            | Embezzle, Camouflage | Expose             |
+| **Ability**[^2]              | Bid                  | Empower            | Embezzle, Camouflage | Expose             |
 | **Bytecode limit**           | 12,000               | 6,000              | 3,000                | 9,000              |
-* an advanced mechanic; see below
 
 [^1] The $\lceil\cdot\rceil$ denotes the *ceiling* function, which you may read more about
      [here](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions).
+[^2] an advanced mechanic; see below
 
 ## Note: radius squared
 
@@ -239,6 +239,11 @@ The politician is then destroyed, as delivering speeches is tremendously exhaust
   - Unused conviction (i.e. conviction lost due to conviction caps) will be lost forever,
     with echoes of the speech carried away by the Martian wind.
 
+Robot flags may be reset if the robot changes team.
+If the robot rejoins your team later, you are **not guaranteed** that it will have the same ID,
+and it **will be possible** that a new copy of your code will be created to control the robot
+(so your old controller is erased).
+
 ### Slanderers
 
 Slanderers advance the party's political agenda by spreading falsehoods, generating influence for the Enlightenment Center that had created it.
@@ -247,14 +252,14 @@ Slanderers advance the party's political agenda by spreading falsehoods, generat
 - **Embezzle (passive ability)**: For 50 turns after being created,
   as long as both it and the Enlightenment Center that created it are friendly,
   that Enlightenment Center passively receives
-  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round [^2].
+  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round [^3].
 - **Camouflage (passive ability)**: 300 rounds after being created,
   the slanderer's claims fade from citizens' memory,
   and it transforms into a politician of equal conviction.
 
 You have no control over the Embezzle and Camouflage abilities of Slanderers, as these occur passively.
 
-[^2] The $\lfloor\cdot\rfloor$ denotes the *floor* function, which you may read more about
+[^3] The $\lfloor\cdot\rfloor$ denotes the *floor* function, which you may read more about
      [here](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions).
 
 ### Muckrakers
@@ -278,10 +283,11 @@ They cannot be built, and can only change teams due to being empowered by politi
 - Either neutral or owned by a team.
   - Enlightenment Centers initially belonging to a team will have 150 influence.
   - Neutral enlightenment centers have a predetermined amount of influence between 50 and 500.
-- **Build robot**: Spawn a unit of a specified type on an adjacent square,
+- **Build robot (active ability)**: Spawn a unit of a specified type on an adjacent square,
   transferring part of the Enlightenment Center's influence to the newly spawned unit.
-- **Bid (active ability)**: Bid influence for a vote.
+- **Bid**: Bid influence for a vote.
   This is described in more detail in the [Victory](#victory) section below.
+  This action does not affect or depend on the robot's cooldown.
 - When affiliated with a team, passively generate influence per turn,
   where the amount generated is a function $f(t)$ of the current round number $t$.
   $$ f(t)=\left\lceil0.2\sqrt{t}\right\rceil $$
@@ -462,15 +468,20 @@ If something is unclear, direct your questions to our [Discord](https://discord.
 
 # Changelog
 
-- Version 2021.1.0.0 (1/4/21)
-    - Initial release
+- Version 2021.1.0.3 (not yet released)
+    - Spec clarifications:
+        - Clarify cooldowns for Enlightenment Center abilities
+        - Clarify what happens on robot team conversion
+
+- Version 2021.1.0.2 (1/4/21)
+    - Registered maptestsmall in client
 
 - Version 2021.1.0.1 (1/4/21)
     - Fixed map extensions in client, scaffold
     - Implemented enlightenment centers can get flags of all bots
 
-- Version 2021.1.0.2 (1/4/21)
-    - Registered maptestsmall in client
+- Version 2021.1.0.0 (1/4/21)
+    - Initial release
 
 <style class="fallback">body{visibility:hidden}</style>
 <script>markdeepOptions={tocStyle:'long'};</script>
