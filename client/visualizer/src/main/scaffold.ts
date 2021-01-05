@@ -117,7 +117,7 @@ export default class ScaffoldCommunicator {
 
         // paths are relative for readdir
         return cb(null, new Set(files.filter((file) => file.endsWith('.map21'))
-                  .map((file) => file.substring(0, file.length - 6))
+                  .map((file) => file.substring(0, file.length - '.map21'.length))
                   .concat(Array.from(SERVER_MAPS.keys()))));
       });
     });
