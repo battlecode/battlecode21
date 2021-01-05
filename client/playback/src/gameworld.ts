@@ -387,6 +387,9 @@ export default class GameWorld {
             }
             this.bodies.alter({ id: robotID, type: schema.BodyType.POLITICIAN});
             this.bodies.alter({ id: robotID, ability: (team == 1 ? 4 : 5)});
+            this.abilityRobots.push(robotID);
+            this.teamStats.get(team).robots[schema.BodyType.SLANDERER]--;
+            this.teamStats.get(team).robots[schema.BodyType.POLITICIAN]++;
             break;
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
@@ -440,7 +443,7 @@ export default class GameWorld {
     
     // Died bodies
     if (delta.diedIDsLength() > 0) {
-
+      console.log("died bodies:", delta.diedIDsArray());
       // Update team stats
       var indices = this.bodies.lookupIndices(delta.diedIDsArray());
       for(let i = 0; i < delta.diedIDsLength(); i++) {
