@@ -190,7 +190,7 @@ public class RobotTypeTaglet implements Taglet {
              if (rt.spawnSource != null) {
                  builder.append("<br />");
                  appendField(builder, rt, "spawnSource");
-                 appendField(builder, rt, "cost");
+                //  appendField(builder, rt, "cost"); Cost is variable in 2021
              }
 
             if (rt.bytecodeLimit != 0) {
