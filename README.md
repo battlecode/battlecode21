@@ -2,6 +2,8 @@
 
 🚩
 
+## Note, Competitors
+This is the development repo! Do not clone this. Instead, follow the instructions [here](http://2021.battlecode.org/getting-started)
 ## Repository Structure
 
 - `/backend`: Backend API in Django Rest Framework
