@@ -292,6 +292,10 @@ public strictfp class Server implements Runnable {
                 Team.B,
                 new PlayerControlProvider(game.getTeamBPackage(), game.getTeamBURL(), gameMaker.getMatchMaker().getOut())
         );
+        teamProvider.registerControlProvider(
+            Team.NEUTRAL,
+            new NullControlProvider()
+        );
         return teamProvider;
     }
 
