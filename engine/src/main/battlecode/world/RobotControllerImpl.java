@@ -564,7 +564,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (bot == null)
             throw new GameActionException(CANT_DO_THAT,
                     "Robot of given ID does not exist.");
-        if (bot.getType() != RobotType.ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
+        if (getType() != RobotType.ENLIGHTENMENT_CENTER &&
+            bot.getType() != RobotType.ENLIGHTENMENT_CENTER &&
+            !canSenseLocation(bot.getLocation()))
             throw new GameActionException(CANT_SENSE_THAT,
                     "Robot at location is out of sensor range and not an Enlightenment Center.");
     }
