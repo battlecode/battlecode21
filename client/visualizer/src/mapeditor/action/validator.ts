@@ -9,11 +9,10 @@ import {GameMap, MapUnit} from '../index';
  * In a valid map:
  * - No units overlap
  * - No units are off the map
- * - Neutral trees have radius >= the radius of the body they contain
  *
  * Additionally, in a valid starting map:
- * - There are 1 to 3 archons
- * - There are no other units than archons and neutral trees
+ * - There are 1 to 3 enlightenment centers
+ * - There are no other units than enlightenment centers
  */
 export default class MapValidator {
 
@@ -36,10 +35,9 @@ export default class MapValidator {
     // Invariant: bodies in originalBodies don't overlap with each other, and
     //            bodies in symmetricBodies don't overlap with each other
     map.originalBodies.forEach((unit: MapUnit, id: number) => {
-      let x = unit.loc.x + 0.5;
-      let y = unit.loc.y + 0.5;
-      let distanceToWall = Math.min(x, y, map.width - x, map.height - y);
-      if (unit.radius > distanceToWall || x < 0 || y < 0 || x > map.width || y > map.height) {
+      let x = unit.loc.x;
+      let y = unit.loc.y;
+      if (x < 0 || y < 0 || x > map.width || y > map.height) {
         errors.push(`ID ${id} is off the map.`);
       }
     });
@@ -47,22 +45,11 @@ export default class MapValidator {
     // Bodies must not overlap
     map.originalBodies.forEach((unitA: MapUnit, idA: number) => {
       map.symmetricBodies.forEach((unitB: MapUnit, idB: number) => {
-        if (unitA.loc.distance(unitB.loc) < unitA.radius + unitB.radius) {
+        if (unitA.loc.distanceSq(unitB.loc) == 0) {
           errors.push (`IDs ${idA} and ${idB} are overlapping.`);
         }
       });
     });
-
-    // Neutral trees cannot have a smaller radius than the body they contain
-    // map.originalBodies.forEach((unit: MapUnit, id: number) => {
-    //   if (unit.type === cst.TREE_NEUTRAL) {
-    //     const treeRadius = unit.radius;
-    //     const bodyRadius = cst.radiusFromBodyType(unit.containedBody);
-    //     if (treeRadius < bodyRadius) {
-    //       errors.push(`Tree ID ${id} with radius ${treeRadius.toFixed(2)} contains a body with radius ${bodyRadius}`);
-    //     }
-    //   }
-    // });
 
     if (errors.length > 0) {
       alert(errors.join("\n"));

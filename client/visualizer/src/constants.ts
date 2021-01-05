@@ -13,12 +13,12 @@ export const initialBodyTypeList: number[] = [ENLIGHTENMENT_CENTER];
 export const bodyTypePriority: number[] = []; // for guns, drones, etc. that should be drawn over other robots
 
 export const TILE_COLORS: Array<number>[] = [ // RGB
-  [214, 110, 16],
-  [167, 72, 8],
-  [135, 13, 13],
-  [105, 26, 26],
-  [88, 22, 22],
-  [60, 15, 15]
+  [234, 255, 241],
+  [247, 236, 142],
+  [251, 253, 63],
+  [225, 172, 107],
+  [239, 88, 193],
+  [254, 15, 252]
 ];
 // flashy colors
 // [0, 147, 83], // turquoise
