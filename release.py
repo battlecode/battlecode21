@@ -132,7 +132,7 @@ if __name__ == '__main__':
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('version', help='Version number, e.g. 0.1.1')
+    parser.add_argument('version', help='Version number, e.g. 2021.0.1.1')
 
     args = parser.parse_args()
 
