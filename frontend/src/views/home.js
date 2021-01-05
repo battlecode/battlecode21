@@ -103,7 +103,7 @@ class InstrCard extends UpdateCard {
             <p>
             </p>
                     <p>
-                        👀 The competition has not been released yet. Feel free to register a team and watch for our release on January 4, 2021!
+                        The competition is now running! Check out the <a href="/getting-started">Getting Started</a> page for instructions on how to get started.
                     </p>
                 </div>
             </div>

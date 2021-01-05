@@ -147,7 +147,7 @@ If you are unable to find this option, you may be using an old version of Eclips
 
                                     </p>
                                     <p>
-                                        Battlecode 2021 has not been released yet! Register a team and watch out for the January 2021 launch. 
+                                        Battlecode 2021 is now running! See below for instructions on getting started.
                                     </p>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     </p>
                                     <h6 class="installation-steps">Step 2: Coming later!</h6>
                                     <p>
-                                        2021-specific installation instructions will appear here once the game is released.
+                                        Download the competition scaffold <a href="https://github.com/battlecode/battlecode21-scaffold">here</a>. The scaffold includes a sample bot called <code>examplefuncsplayer</code> which demonstrates a simple usage of the competition interface. The package contains instructions on how to implement your bot and run games locally.
                                     </p>
                                 </div>
                             </div>   
