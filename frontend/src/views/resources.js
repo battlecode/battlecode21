@@ -27,6 +27,9 @@ class Resources extends Component {
                                 <p className='text-center'>
                                     <a type="button" className="btn btn-info btn-fill text-center" href='/specs/specs.md.html'>Specifications for 2021!</a>
                                 </p>
+                                <p className='text-center'>
+                                    <a type="button" className="btn btn-info btn-fill text-center" href='/javadoc/index.html'>Javadoc reference</a>
+                                </p>
                                 </div>
                             </div>
                             <div className="card">
