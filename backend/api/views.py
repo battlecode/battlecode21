@@ -134,8 +134,8 @@ def accept_scrimmage_helper(scrimmage_id):
     # for example, pass data from create_scrimmage_helper into accept_scrimmage_helper, as an argument, and get your values from there.
     red_team_id = scrimmage.red_team.id
     blue_team_id = scrimmage.blue_team.id
-    red_submission_id = TeamSubmission.objects.get(pk=red_team_id).last_1_id
-    blue_submission_id = TeamSubmission.objects.get(pk=blue_team_id).last_1_id
+    red_submission_id = scrimmage.red_submission_id
+    blue_submission_id = scrimmage.blue_submission_id
     red_team_name = Team.objects.get(pk=red_team_id).name
     blue_team_name = Team.objects.get(pk=blue_team_id).name
     replay = scrimmage.replay
@@ -170,7 +170,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'replay': scrimmage_replay
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-    pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+    # pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
+    print(data_bytestring)
 
 def get_random_maps(num):
     n = min(num, len(settings.SERVER_MAPS))
