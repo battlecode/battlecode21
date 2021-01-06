@@ -362,7 +362,7 @@ public strictfp class GameWorld {
 
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {
-            if (robot.getTeam().isPlayer()) {
+            if (robot.getTeam().isPlayer() && robot.getType().canBid()) {
                 int bid = robot.getBid();
                 int teamIdx = robot.getTeam().ordinal();
                 if (bid > highestBids[teamIdx] || highestBidders[teamIdx] == null ||
@@ -370,8 +370,8 @@ public strictfp class GameWorld {
                     highestBids[teamIdx] = bid;
                     highestBidders[teamIdx] = robot;
                 }
+                robot.resetBid();
             }
-            robot.resetBid();
             robot.processEndOfRound();
             return true;
         });
