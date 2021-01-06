@@ -97,7 +97,7 @@ export default class SymmetryForm {
   };
 
   // Returns the symmetric location on the canvas
-  private transformLoc (loc: Victor, width: number, height: number): Victor {
+  transformLoc (loc: Victor, width: number, height: number): Victor {
     function reflect(x: number, mid: number): number {
       if (x > mid) {
         return mid - Math.abs(x - mid);

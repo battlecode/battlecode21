@@ -43,6 +43,7 @@ export default class MapEditorForm {
   readonly buttonAdd: HTMLButtonElement;
   readonly buttonDelete: HTMLButtonElement;
   readonly buttonReverse: HTMLButtonElement;
+  readonly buttonRandomize: HTMLButtonElement;
 
   readonly tileInfo: HTMLDivElement;
 
@@ -99,11 +100,13 @@ export default class MapEditorForm {
     this.buttonDelete = document.createElement("button");
     this.buttonAdd = document.createElement("button");
     this.buttonReverse = document.createElement("button");
+    this.buttonRandomize = document.createElement("button");
     this.div.appendChild(this.forms);
 
     this.buttonDelete.hidden = true;
     this.buttonAdd.hidden = true;
     this.buttonReverse.hidden = true;
+    this.buttonRandomize.hidden = true;
 
     // TODO add vertical filler to put form buttons at the bottom
     // validate, remove, reset buttons
@@ -161,7 +164,8 @@ export default class MapEditorForm {
         this.forms.appendChild(this.tiles.div);
         this.buttonDelete.hidden = true;
         this.buttonAdd.hidden = false;
-        this.buttonReverse.hidden = false;
+        this.buttonReverse.hidden = true;
+        this.buttonRandomize.hidden = false;
       }
     };
     const tilesLabel = document.createElement("label");
@@ -182,6 +186,7 @@ export default class MapEditorForm {
         this.buttonDelete.hidden = false;
         this.buttonAdd.hidden = false;
         this.buttonReverse.hidden = false;
+        this.buttonRandomize.hidden = true;
       }
     };
     const robotsLabel = document.createElement("label");
@@ -205,6 +210,7 @@ export default class MapEditorForm {
     buttons.appendChild(this.buttonDelete);
     buttons.appendChild(this.buttonAdd);
     buttons.appendChild(this.buttonReverse);
+    buttons.appendChild(this.buttonRandomize);
 
     // Delete and Add/Update buttons
     this.buttonDelete.type = "button";
@@ -216,6 +222,9 @@ export default class MapEditorForm {
     this.buttonReverse.type = "button";
     this.buttonReverse.className = "form-button";
     this.buttonReverse.appendChild(document.createTextNode("Switch Team"));
+    this.buttonRandomize.type = "button";
+    this.buttonRandomize.className = "form-button";
+    this.buttonRandomize.appendChild(document.createTextNode("Randomize Map"));
 
     return buttons;
   }
@@ -268,6 +277,23 @@ export default class MapEditorForm {
           this.setUnit(id, unit);
           form.resetForm();
         }
+      }
+    }
+
+    this.buttonRandomize.onclick = () => {
+      if (this.getActiveForm() == this.tiles) {
+        for(let x: number = 0; x < this.header.getWidth(); x++) {
+          for(let y:number = 0; y < this.header.getHeight(); y++) {
+            this.passability[y*this.header.getWidth() + x] = Math.random() * 0.9 + 0.1;
+          }
+        }
+        for(var x: number = 0; x < this.header.getWidth(); x++) {
+          for(var y:number = 0; y < this.header.getHeight(); y++) {
+            const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
+            this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x];
+          }
+        }
+        this.render();
       }
     }
   }
