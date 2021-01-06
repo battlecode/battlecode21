@@ -60,10 +60,9 @@ export default class SymmetryForm {
    */
   private createForm(): HTMLFormElement {
     const form = document.createElement("form");
-    form.appendChild(document.createTextNode("Symmetry:"));
+    form.style.textAlign = 'left';
+    form.appendChild(document.createTextNode("Symmetry: "));
     form.appendChild(this.select);
-    form.appendChild(document.createElement("br"));
-    form.appendChild(document.createElement("br"));
     return form;
   }
 

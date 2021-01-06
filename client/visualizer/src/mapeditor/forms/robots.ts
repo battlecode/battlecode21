@@ -91,25 +91,26 @@ export default class RobotForm {
     form.appendChild(x);
     form.appendChild(y);
     form.appendChild(document.createElement("br"));
+    form.style.textAlign = 'left';
 
     // Robot ID
-    id.appendChild(document.createTextNode("ID:"));
+    id.appendChild(document.createTextNode("ID: "));
     id.appendChild(this.id);
 
     // Robot type
-    type.appendChild(document.createTextNode("Type:"));
+    type.appendChild(document.createTextNode("Type: "));
     type.appendChild(this.type);
 
     // Team
-    team.appendChild(document.createTextNode("Team:"));
+    team.appendChild(document.createTextNode("Team: "));
     team.appendChild(this.team);
 
     // X coordinate
-    x.appendChild(document.createTextNode("X:"));
+    x.appendChild(document.createTextNode("X: "));
     x.appendChild(this.x);
 
     // Y coordinate
-    y.appendChild(document.createTextNode("Y:"));
+    y.appendChild(document.createTextNode("Y: "));
     y.appendChild(this.y);
 
     return form;

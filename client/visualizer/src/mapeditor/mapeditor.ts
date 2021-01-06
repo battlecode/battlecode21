@@ -52,20 +52,27 @@ export default class MapEditor {
     // div.appendChild(this.removeInvalidButton());
     div.appendChild(this.resetButton());
     div.appendChild(document.createElement("br"));
-    div.appendChild(document.createElement("br"));
 
     div.appendChild(this.exportButton());
     div.appendChild(document.createElement("br"));
+    div.appendChild(document.createElement("hr"));
 
     const helpDiv = document.createElement("div");
     helpDiv.style.textAlign = "left";
+    div.appendChild(document.createElement("br"));
     div.appendChild(helpDiv);
 
-    // helpDiv.innerHTML = `Help text is not yet written :p`;
-    // `<i><br>Tip: "S"=quick add, "D"=quick delete.<br><br>
-    //   Note: In tournaments, a starting map consists only of neutral trees and
-    //   ${cst.MIN_NUMBER_OF_ARCHONS} to ${cst.MAX_NUMBER_OF_ARCHONS} archons per
-    //   team. The validator only checks for overlapping and off-map units.<br><br>
+    helpDiv.innerHTML = ` <i>
+      "S" = add unit <br>
+      "D" = delete unit <br>
+      "R" = reverse team <br>
+      <br>
+      You can assign specific passibility values to the chosen rectangle in the map. <br>
+      To do so, select bottom-left and top-right corners of the rectangle and hit "Update".<br>
+      <br>
+      Exported file name is same as the map name chosen above. <br>
+      e.g. DefaultMap.bc21
+      </i>`;
 
     return div;
   }
@@ -155,7 +162,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.id = "export";
     button.type = "button";
-    button.appendChild(document.createTextNode("Export (keep the same file name!)"));
+    button.innerText = "Export!";
 
     button.onclick = () => {
       if (!this.isValid()) return;

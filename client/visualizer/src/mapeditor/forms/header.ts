@@ -57,29 +57,32 @@ export default class HeaderForm {
     const name: HTMLDivElement = document.createElement("div");
     const width: HTMLDivElement = document.createElement("div");
     const height: HTMLDivElement = document.createElement("div");
+    form.style.textAlign = 'left';
     form.appendChild(name);
     form.appendChild(width);
     form.appendChild(height);
 
     // Map name
+    this.name.style.width = "200px";
     let nameLabel = document.createElement("label");
-    nameLabel.innerHTML = "Map name: ";
+    nameLabel.innerHTML = "Name:";
     name.appendChild(nameLabel);
     name.appendChild(this.name);
 
     // Map width
+    this.width.style.width = "200px";
     let widthLabel = document.createElement("label");
-    widthLabel.innerHTML = "Width: ";
+    widthLabel.innerHTML = "Width:";
     width.appendChild(widthLabel);
     width.appendChild(this.width);
 
     // Map height
+    this.height.style.width = "200px";
     let heightLabel = document.createElement("label");
-    heightLabel.innerHTML = "Height: ";
+    heightLabel.innerHTML = "Height:";
     height.appendChild(heightLabel);
     height.appendChild(this.height);
 
-    form.appendChild(document.createElement("br"));
     return form;
   }
 

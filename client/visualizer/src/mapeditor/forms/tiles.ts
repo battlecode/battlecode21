@@ -20,20 +20,13 @@ export default class TileForm {
 
   // Selecting (x1, y1) or (x2, y2)?
   private whichCorner: number = 1;
+  private readonly bottomLeftTip = "Select bottom-left corner";
+  private readonly topRightTip = "Select top-right corner";
 
   // Callbacks on input change
   readonly width: () => number;
   readonly height: () => number;
   readonly maxRadius: (x: number, y: number, ignoreID?: number) => number;
-
-  // Constant
-  private readonly ROBOT_TYPES: schema.BodyType[] = cst.initialBodyTypeList;
-
-  private readonly TEAMS = {
-    "0": "Neutral",
-    "1": "Red",
-    "2": "Blue"
-  };
 
   constructor(width: () => number, height: () => number,
     maxRadius: (x: number, y: number, ignoreID?: number) => number) {
@@ -51,7 +44,7 @@ export default class TileForm {
     this.y2 = document.createElement("input");
     this.pass = document.createElement("input");
     this.whichCornerDiv = document.createElement("div");
-    this.whichCornerDiv.textContent = "Select bottom-left corner...";
+    this.whichCornerDiv.textContent = this.bottomLeftTip;
     this.whichCornerDiv.style.color = "red";
 
     // Create the form
@@ -181,13 +174,13 @@ export default class TileForm {
       this.x1.value = this.validate(loc.x);
       this.y1.value = this.validate(loc.y);
       this.whichCorner = 2;
-      this.whichCornerDiv.textContent = "Select top-right corner..."
+      this.whichCornerDiv.textContent = this.topRightTip;
     }
     else {
       this.x2.value = this.validate(loc.x, this.getX1());
       this.y2.value = this.validate(loc.y, this.getY1());
       this.whichCorner = 1;
-      this.whichCornerDiv.textContent = "Select bottom-left corner..."
+      this.whichCornerDiv.textContent = this.bottomLeftTip;
     }
   }
 

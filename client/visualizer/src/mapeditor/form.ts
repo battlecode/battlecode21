@@ -83,15 +83,18 @@ export default class MapEditorForm {
     });
     this.div.appendChild(this.header.div);
 
-    // TODO symmetry
+    // symmetry
     this.symmetry = new SymmetryForm(() => {this.render()});
+    this.div.appendChild(document.createElement("br"));
     this.div.appendChild(this.symmetry.div);
+    this.div.appendChild(document.createElement("br"));
+    this.div.appendChild(document.createElement("hr"));
 
     // radio buttons
     this.tilesRadio = document.createElement("input");
     this.robotsRadio = document.createElement("input");
     this.div.appendChild(this.createUnitOption());
-
+    this.div.appendChild(document.createElement("br"));
 
     // robot delete + add/update buttons
     this.forms = document.createElement("div");
@@ -224,7 +227,7 @@ export default class MapEditorForm {
     this.buttonReverse.appendChild(document.createTextNode("Switch Team"));
     this.buttonRandomize.type = "button";
     this.buttonRandomize.className = "form-button";
-    this.buttonRandomize.appendChild(document.createTextNode("Randomize Map"));
+    this.buttonRandomize.appendChild(document.createTextNode("Randomize Tiles"));
 
     return buttons;
   }
