@@ -23,7 +23,7 @@ export default class Renderer {
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,
-    readonly onMouseover: (x: number, y: number, passability: number) => void) {
+    readonly onMouseover: (x: number, y: number, xrel: number, yrel: number, passability: number) => void) {
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -308,10 +308,12 @@ export default class Renderer {
       // const y = this.flip(_y, minY, maxY)
 
       // Set the location of the mouseover
-      const {x,y} = this.getIntegerRelativeLocation(event, world);
-      const idx = world.mapStats.getIdx(x, y);
-      onMouseover(x, y, world.mapStats.passability[idx]);
-      this.hoverPos = {x: x, y: y};
+      const {x,y} = this.getIntegerLocation(event, world);
+      const xrel = x - world.minCorner.x;
+      const yrel = y - world.minCorner.y;
+      const idx = world.mapStats.getIdx(xrel, yrel);
+      onMouseover(x, y, xrel, yrel, world.mapStats.passability[idx]);
+      this.hoverPos = {x: xrel, y: yrel};
     };
 
     this.canvas.onmouseout = (event) => {
@@ -328,11 +330,6 @@ export default class Renderer {
     const _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
     const y = this.flip(_y, minY, maxY)
     return {x: Math.floor(x), y: Math.floor(y+1)};
-  }
-
-  private getIntegerRelativeLocation(event: MouseEvent, world: GameWorld) {
-    const {x,y} = this.getIntegerLocation(event, world);
-    return {x: x - world.minCorner.x, y: y - world.minCorner.y};
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {

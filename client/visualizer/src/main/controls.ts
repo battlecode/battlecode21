@@ -410,10 +410,10 @@ export default class Controls {
   /**
    * Updates the location readout
    */
-  setTileInfo(x: number, y: number, passability: number): void {
+  setTileInfo(x: number, y: number, xrel: number, yrel: number, passability: number): void {
     let content: string = "";
-    content += 'X: ' + `${x}`.padStart(3);
-    content += ' | Y: ' + `${y}`.padStart(3);
+    content += 'X: ' + `${xrel}`.padStart(3) + ` (${x})`.padStart(3);
+    content += ' | Y: ' + `${yrel}`.padStart(3) + ` (${y})`.padStart(3);
     content += ' | Passability: ' + `${passability.toFixed(3)}`;
 
     this.tileInfo.textContent = content;

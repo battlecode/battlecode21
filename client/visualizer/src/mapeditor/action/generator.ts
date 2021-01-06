@@ -75,8 +75,8 @@ export default class MapGenerator {
         id,
         unit.teamID || 0, // Must be set if not a neutral tree
         unit.type,
-        unit.loc.x + minCorner.x,
-        unit.loc.y + minCorner.y,
+        unit.loc.x,
+        unit.loc.y,
         cst.INITIAL_INFLUENCE
       );
     });
@@ -100,8 +100,7 @@ export default class MapGenerator {
 
     // Get header information from form
     let name: string = map.name;
-    //let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000);
-    let minCorner: Victor = new Victor(0, 0); // offset is done by engine when loading into game world
+    let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000);
     let maxCorner: Victor = minCorner.clone();
     maxCorner.add(new Victor(map.width, map.height));
     let randomSeed: number = Math.round(Math.random()*1000);
