@@ -409,11 +409,11 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         else
             addConviction(amount);
 
-        if (conviction < 0) {
+        if (this.conviction < 0) {
             if (this.type.canBeConverted()) {
-                int influence = this.type == RobotType.ENLIGHTENMENT_CENTER ? -this.influence : this.influence;
-                int conviction = -this.conviction;
-                caller.addToCreate(this.parent, this.ID, this.type, influence, conviction, this.location);
+                int newInfluence = Math.abs(this.influence);
+                int newConviction = -this.conviction;
+                caller.addToCreate(this.parent, this.ID, this.type, newInfluence, newConviction, this.location);
             }
             this.gameWorld.destroyRobot(getID());
         }
