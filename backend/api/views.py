@@ -136,15 +136,18 @@ def accept_scrimmage_helper(scrimmage_id):
     blue_team_id = scrimmage.blue_team.id
     red_submission_id = scrimmage.red_submission_id
     blue_submission_id = scrimmage.blue_submission_id
+    # save the scrimmage, again, to mark save
+    if red_submission_id is None and blue_submission_id is None:
+        scrimmage.status = 'error'
+        scrimmage.error_msg = 'Make sure your team and the team you requested have a submission.'
+    else:
+        scrimmage.status = 'queued'
+    scrimmage.save()
     red_team_name = Team.objects.get(pk=red_team_id).name
     blue_team_name = Team.objects.get(pk=blue_team_id).name
     replay = scrimmage.replay
     map_ids = scrimmage.map_ids
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
-
-    # save the scrimmage, again, to mark save
-    scrimmage.status = 'queued'
-    scrimmage.save()
 
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
 
