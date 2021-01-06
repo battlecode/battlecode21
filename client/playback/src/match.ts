@@ -156,9 +156,7 @@ export default class Match {
     }
     this.deltas.push(delta);
 
-    if(delta.logs()){
-      this.parseLogs(delta.roundID(), <string> delta.logs(flatbuffers.Encoding.UTF16_STRING));
-    }
+    this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
   }
 
   /**
@@ -166,7 +164,6 @@ export default class Match {
    */
   parseLogs(round: number, logs: string) {
     // TODO regex this properly
-
     // Regex
     let lines = logs.split(/\r?\n/);
     let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SLANDERER|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
