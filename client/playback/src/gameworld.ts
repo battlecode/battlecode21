@@ -569,7 +569,7 @@ export default class GameWorld {
     // let this slide for now.
     
     // Initialize convictions
-    var convictions: Int32Array = influences.map((influence, i) => influence * this.meta.types[types[i]].convictionRatio); //new Int32Array(bodies.robotIDsLength());
+    var convictions: Int32Array = influences.map((influence, i) => Math.ceil(influence * this.meta.types[types[i]].convictionRatio)); //new Int32Array(bodies.robotIDsLength());
 
     // Insert bodies
     this.bodies.insertBulk({
