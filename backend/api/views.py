@@ -137,7 +137,7 @@ def accept_scrimmage_helper(scrimmage_id):
     red_submission_id = scrimmage.red_submission_id
     blue_submission_id = scrimmage.blue_submission_id
     # save the scrimmage, again, to mark save
-    if red_submission_id is None and blue_submission_id is None:
+    if red_submission_id is None or blue_submission_id is None:
         scrimmage.status = 'error'
         scrimmage.error_msg = 'Make sure your team and the team you requested have a submission.'
     else:
