@@ -156,6 +156,7 @@ class Submission(models.Model):
     submitted_at         = models.DateTimeField(auto_now_add=True)
     link                 = models.TextField(null=True)
     compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
+    error_msg            = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
         if self.id is not None:
@@ -213,6 +214,7 @@ class Scrimmage(models.Model):
 
     # Match-running (completed by match runner)
     status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='created')
+    error_msg = models.TextField(blank=True)
     winscore  = models.IntegerField(null=True)
     losescore = models.IntegerField(null=True)
     replay    = models.TextField(blank=True)
