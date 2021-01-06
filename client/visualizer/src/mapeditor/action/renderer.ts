@@ -9,8 +9,8 @@ import {GameMap} from '../index';
 
 export type MapUnit = {
   loc: Victor,
-  radius: number,
   type: schema.BodyType,
+  radius: 0.5,
   teamID?: number
 };
 
@@ -104,9 +104,16 @@ export default class MapRenderer {
 
     for(let i = 0; i < this.width; i++){
       for(let j = 0; j < this.height; j++){
-        const swampLevel = cst.getLevel(map.passability[(map.height-j-1)*this.width + i]);
+        const passability = map.passability[(map.height-j-1)*this.width + i];
+        const swampLevel = cst.getLevel(passability);
         const tileImg = this.imgs.tiles[swampLevel];
         this.ctx.drawImage(tileImg, i*scale, j*scale, scale, scale);
+        // Draw using heat map colors (more precise than being limited to 5 tiles):
+        // this.ctx.fillStyle = `hsl(${250-200*passability}, 100%, ${20+60*passability}%)`;
+        // this.ctx.fillRect(i*scale, j*scale, scale, scale);
+        // this.ctx.strokeStyle = 'rgb(0, 0, 0)';
+        // this.ctx.rect(i*scale, j*scale, scale, scale);
+        // this.ctx.stroke();
       }
     }
     this.ctx.restore();
@@ -137,7 +144,8 @@ export default class MapRenderer {
       const radius = body.radius;
       let img: HTMLImageElement;
 
-      img = this.imgs.robots[cst.bodyTypeToString(body.type)][2];
+      const teamID = body.teamID || 0;
+      img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
       this.drawImage(img, x, y, radius);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
@@ -192,4 +200,3 @@ export default class MapRenderer {
     this.ctx.drawImage(img, x, y-radius*2, radius*2, radius*2);
   }
 }
-

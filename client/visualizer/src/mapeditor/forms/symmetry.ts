@@ -97,7 +97,7 @@ export default class SymmetryForm {
   };
 
   // Returns the symmetric location on the canvas
-  private transformLoc (loc: Victor, width: number, height: number): Victor {
+  transformLoc (loc: Victor, width: number, height: number): Victor {
     function reflect(x: number, mid: number): number {
       if (x > mid) {
         return mid - Math.abs(x - mid);
@@ -106,8 +106,8 @@ export default class SymmetryForm {
       }
     }
 
-    const midX = width / 2;
-    const midY = height / 2;
+    const midX = width / 2 - 0.5;
+    const midY = height / 2 - 0.5;
     switch(this.getSymmetry()) {
       case(Symmetry.ROTATIONAL):
       return new Victor(reflect(loc.x, midX), reflect(loc.y, midY));
@@ -128,20 +128,27 @@ export default class SymmetryForm {
     // no symmetric (neutral) body in 2021 game
 
     const symmetricBodies: Map<number, MapUnit> = new Map<number, MapUnit>();
-    // bodies.forEach((body: MapUnit, id: number) => {
-    //   if (!this.onSymmetricLine(body.loc, width, height)) {
-    //     const type = body.type;
-    //     const teamID = type === cst.COW ? this.NEUTRAL_TEAM_ID : this.BLUE_TEAM_ID;
-    //     if (type === cst.COW) {
-    //         symmetricBodies.set(id, {
-    //         loc: this.transformLoc(body.loc, width, height),
-    //         radius: body.radius,
-    //         type: type,
-    //         teamID: teamID
-    //       });
-    //     }
-    //   }
-    // });
+    bodies.forEach((body: MapUnit, id: number) => {
+      if (!this.onSymmetricLine(body.loc, width, height)) {
+        const type = body.type;
+        const teamID = body.teamID === undefined? 0 : body.teamID;
+        if (teamID === 0) {
+            symmetricBodies.set(id, {
+            loc: this.transformLoc(body.loc, width, height),
+            radius: body.radius,
+            type: type,
+            teamID: teamID
+          });
+        } else {
+              symmetricBodies.set(id, {
+              loc: this.transformLoc(body.loc, width, height),
+              radius: body.radius,
+              type: type,
+              teamID: 3 - teamID
+            });
+        }
+      }
+    });
 
     return symmetricBodies;
   }
