@@ -234,7 +234,7 @@ export default class Renderer {
     // handle bots with no radius here, if necessary
     if (this.conf.seeActionRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].actionRadiusSquared, cst.ACTION_RADIUS_COLOR);
-    } 
+    }
 
     if (this.conf.seeSensorRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].sensorRadiusSquared, cst.SENSOR_RADIUS_COLOR);
@@ -242,7 +242,7 @@ export default class Renderer {
 
     if (this.conf.seeDetectionRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].detectionRadiusSquared, cst.SENSOR_RADIUS_COLOR);
-    } 
+    }
   }
 
   /**
@@ -352,6 +352,8 @@ export default class Renderer {
     const dotsBlue = dots.arrays.blue;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y - 1;
+
+    console.log(dots.length);
 
     for (let i = 0; i < dots.length; i++) {
       if (dotsID[i] === this.lastSelectedID) {

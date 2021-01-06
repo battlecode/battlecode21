@@ -42,6 +42,8 @@ export default class MapEditorForm {
 
   readonly buttonAdd: HTMLButtonElement;
   readonly buttonDelete: HTMLButtonElement;
+  readonly buttonReverse: HTMLButtonElement;
+  readonly buttonRandomize: HTMLButtonElement;
 
   readonly tileInfo: HTMLDivElement;
 
@@ -83,7 +85,7 @@ export default class MapEditorForm {
 
     // TODO symmetry
     this.symmetry = new SymmetryForm(() => {this.render()});
-    // this.div.appendChild(this.symmetry.div);
+    this.div.appendChild(this.symmetry.div);
 
     // radio buttons
     this.tilesRadio = document.createElement("input");
@@ -97,16 +99,20 @@ export default class MapEditorForm {
     this.tiles = new TileForm(cbWidth, cbHeight, cbMaxRadius);
     this.buttonDelete = document.createElement("button");
     this.buttonAdd = document.createElement("button");
+    this.buttonReverse = document.createElement("button");
+    this.buttonRandomize = document.createElement("button");
     this.div.appendChild(this.forms);
 
     this.buttonDelete.hidden = true;
     this.buttonAdd.hidden = true;
+    this.buttonReverse.hidden = true;
+    this.buttonRandomize.hidden = true;
 
     // TODO add vertical filler to put form buttons at the bottom
     // validate, remove, reset buttons
     this.div.appendChild(this.createFormButtons());
     this.div.appendChild(document.createElement('hr'));
-    
+
     this.tileInfo = document.createElement("div");
     this.tileInfo.textContent = "X: | Y: | Passability:";
     this.div.appendChild(this.tileInfo);
@@ -158,6 +164,8 @@ export default class MapEditorForm {
         this.forms.appendChild(this.tiles.div);
         this.buttonDelete.hidden = true;
         this.buttonAdd.hidden = false;
+        this.buttonReverse.hidden = true;
+        this.buttonRandomize.hidden = false;
       }
     };
     const tilesLabel = document.createElement("label");
@@ -166,7 +174,7 @@ export default class MapEditorForm {
 
 
     // Radio button for placing units
-    this.robotsRadio.id = "robots-radio"; 
+    this.robotsRadio.id = "robots-radio";
     this.robotsRadio.type = "radio";
     this.robotsRadio.name = "edit-option";
 
@@ -177,6 +185,8 @@ export default class MapEditorForm {
         this.forms.appendChild(this.robots.div);
         this.buttonDelete.hidden = false;
         this.buttonAdd.hidden = false;
+        this.buttonReverse.hidden = false;
+        this.buttonRandomize.hidden = true;
       }
     };
     const robotsLabel = document.createElement("label");
@@ -199,14 +209,22 @@ export default class MapEditorForm {
     const buttons = document.createElement("div");
     buttons.appendChild(this.buttonDelete);
     buttons.appendChild(this.buttonAdd);
+    buttons.appendChild(this.buttonReverse);
+    buttons.appendChild(this.buttonRandomize);
 
     // Delete and Add/Update buttons
     this.buttonDelete.type = "button";
     this.buttonDelete.className = "form-button";
-    this.buttonDelete.appendChild(document.createTextNode("Delete"));    
+    this.buttonDelete.appendChild(document.createTextNode("Delete"));
     this.buttonAdd.type = "button";
     this.buttonAdd.className = "form-button";
     this.buttonAdd.appendChild(document.createTextNode("Add/Update"));
+    this.buttonReverse.type = "button";
+    this.buttonReverse.className = "form-button";
+    this.buttonReverse.appendChild(document.createTextNode("Switch Team"));
+    this.buttonRandomize.type = "button";
+    this.buttonRandomize.className = "form-button";
+    this.buttonRandomize.appendChild(document.createTextNode("Randomize Map"));
 
     return buttons;
   }
@@ -241,6 +259,41 @@ export default class MapEditorForm {
           this.deleteUnit(id);
           this.getActiveForm().resetForm();
         }
+      }
+    }
+
+    this.buttonReverse.onclick = () => {
+      if (this.getActiveForm() == this.robots) {
+        const form: RobotForm = this.robots;
+        const id: number = form.getID() || this.lastID - 1;
+        const unit: MapUnit = this.originalBodies.get(id)!;
+        if (unit) {
+          var teamID: number = unit.teamID === undefined? 0 : unit.teamID;
+          if(teamID > 0) {
+            teamID = 3 - teamID;
+          }
+          unit.teamID = teamID;
+          // Create a new unit or update an existing unit
+          this.setUnit(id, unit);
+          form.resetForm();
+        }
+      }
+    }
+
+    this.buttonRandomize.onclick = () => {
+      if (this.getActiveForm() == this.tiles) {
+        for(let x: number = 0; x < this.header.getWidth(); x++) {
+          for(let y:number = 0; y < this.header.getHeight(); y++) {
+            this.passability[y*this.header.getWidth() + x] = Math.random() * 0.9 + 0.1;
+          }
+        }
+        for(var x: number = 0; x < this.header.getWidth(); x++) {
+          for(var y:number = 0; y < this.header.getHeight(); y++) {
+            const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
+            this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x];
+          }
+        }
+        this.render();
       }
     }
   }

@@ -83,6 +83,9 @@ export default class MapEditor {
         case 68: // "d" - Delete
           this.form.buttonDelete.click();
           break;
+        case 82: // "r" - Reverse team
+          this.form.buttonReverse.click();
+          break;
       }
     }
   }
