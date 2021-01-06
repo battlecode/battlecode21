@@ -414,7 +414,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
         this.robot.addCooldownTurns();
         this.robot.addInfluenceAndConviction(-influence);
-        gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
         int robotID = gameWorld.spawnRobot(this.robot, type, adjacentLocation(dir), getTeam(), influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
