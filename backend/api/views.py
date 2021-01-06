@@ -607,7 +607,7 @@ class TeamViewSet(viewsets.GenericViewSet,
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status != 'error') else None,
+                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status == 'redwon' or scrimmage.status == 'bluewon') else None,
                                     'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
