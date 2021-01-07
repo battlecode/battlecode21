@@ -96,7 +96,7 @@ this is described in more detail in the [Robots](#robots) section.
 The map also defines the locations of the starting units.
 At the beginning of a match, each team will own between 1 and 3 Enlightenment Centers.
 These buildings serve as the foundation of your army, and are where your new politicians will be educated.
-There may also be a number of neutral Enlightenment Centers scattered on the map,
+There may also be up to 6 neutral Enlightenment Centers scattered on the map,
 which your team may wish to acquire.
 
 In order to prevent maps from favoring one player over another,
@@ -143,6 +143,7 @@ and success in the election will depend on how your team uses these abilities to
 You are able to create units by transferring part of your influence to the new unit.
 The influence you spend is an integer parameter $C$,
 which you may choose for each new unit you create.
+Newly built politicians and muckrakers will have a cooldown of 10 rounds.
 
 The **conviction** of a unit describes how loyal it is to your party;
 by transferring more influence,
@@ -157,6 +158,7 @@ the only type of available building is Enlightenment Centers.
 | **Influence**                | Cannot be created    | $C$ (variable)     | $C$ (variable)       | $C$ (variable)     |
 | **Minimum influence**        | N/A                  | 1                  | 1                    | 1                  |
 | **Initial conviction**[^1]   | = current influence  | $\lceil1.0C\rceil$ | $\lceil1.0C\rceil$   | $\lceil0.7C\rceil$ |
+| **Initial cooldown**         | 0                    | 10                 | 0                    | 15                 |
 | **Base action cooldown**     | 2.0                  | 1.0                | 2.0                  | 1.5                |
 | **Action radius squared**    | 2                    | 9                  | 0                    | 12                 |
 | **Sensor radius squared**    | 40                   | 25                 | 20                   | 30                 |
@@ -249,10 +251,11 @@ and it **will be possible** that a new copy of your code will be created to cont
 Slanderers advance the party's political agenda by spreading falsehoods, generating influence for the Enlightenment Center that had created it.
 
 - **Sensing**: will see other slanderers to be politicians.
-- **Embezzle (passive ability)**: For 50 turns after being created,
+- **Embezzle (passive ability)**: Suppose the slanderer has $x$ influence.
+  For 50 turns after being created,
   as long as both it and the Enlightenment Center that created it are friendly,
   that Enlightenment Center passively receives
-  $\lfloor 0.05\times\text{slanderer influence}\rfloor$ influence per round [^3].
+  $\left\lfloor\left(\frac{1}{50}+0.03e^{-0.001x}\right)\cdot x\right\rfloor$ influence per round [^3].
 - **Camouflage (passive ability)**: 300 rounds after being created,
   the slanderer's claims fade from citizens' memory,
   and it transforms into a politician of equal conviction.
@@ -270,7 +273,7 @@ Muckrakers search the map, exposing the lies of enemy slanderers.
 - **Expose (active ability)**: Targets an enemy slanderer, exposing its lies and destroying it.
   For the next 50 turns,
   all speeches made by the muckraker's team will have a multiplicative factor of
-  $1.01^\text{slanderer's influence}$ applied to the total conviction of the speech,
+  $1.001^\text{slanderer's influence}$ applied to the total conviction of the speech,
   before the 10 units of conviction are deducted.
   If multiple slanderers are exposed, these factors are combined multiplicatively.
 
@@ -364,10 +367,10 @@ This will pause computation where you choose, and resume on the next line next t
 
 The per-turn bytecode limits for various robots are as follows:
 
-- Politician: 6,000
-- Slanderer: 3,000
-- Muckraker: 9,000
-- Enlightenment Center: 12,000
+- Politician: 15,000
+- Slanderer: 7,500
+- Muckraker: 15,000
+- Enlightenment Center: 20,000
 
 Some standard functions such as the math library and sensing functions have fixed bytecode costs,
 available [here](https://github.com/battlecode/battlecode21/blob/master/engine/src/main/battlecode/instrumenter/bytecode/resources/MethodCosts.txt).
@@ -407,7 +410,7 @@ Unhandled exceptions may paralyze your robot.
 
 ## Complete documentation
 
-Every function you could possibly use to interact with the game can be found in our [javadocs](https://2021.battlecode.org/javadoc/index.html).
+Every function you could possibly use to interact with the game can be found in our [javadocs](/javadoc/).
 
 # Other restrictions
 
@@ -464,9 +467,25 @@ and is only intended to prevent teams from repeatedly instantiating excessively 
 
 # Lingering questions and clarifications
 
-If something is unclear, direct your questions to our [Discord](https://discord.gg/N86mxkH) where other people may have the same question. We'll update this spec as the competition progresses.
+If something is unclear, direct your questions to our [Discord](https://discord.gg/N86mxkH) where other people may have the same question.
+We'll update this spec as the competition progresses.
 
 # Changelog
+
+- Version 2021.2.0.0 (not yet released)
+    - Breaking changes:
+        - Change slanderer influence function from linear to exponential decay, preventing exponential growth
+        - Remove `GameConstants.MAX_ROBOT_ID`
+          (cannot guarantee reasonable upper bound as new IDs are generated when robots change teams)
+    - Major game spec changes:
+        - Newly built politicians and muckrakers have an action cooldown of 10 rounds
+        - Guarantee no more than 6 neutral Enlightenment Centers
+    - Other adjusted constants
+        - Muckraker buff exponentiation base decreased from 1.01 to 1.001
+        - Significantly increased bytecode limits
+    - New features:
+        - Add `RobotController::expose(int id)`
+        - New maps for experimentation
 
 - Version 2021.1.0.3 (1/5/21)
     - Spec clarifications:
@@ -476,6 +495,7 @@ If something is unclear, direct your questions to our [Discord](https://discord.
         - Corrected influence and conviction tracking
         - Handles neutral enlightenment centers
         - Fixed animations and various crashes during game playback
+
 - Version 2021.1.0.2 (1/4/21)
     - Registered maptestsmall in client
 
