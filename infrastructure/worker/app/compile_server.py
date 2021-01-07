@@ -11,13 +11,13 @@ import sys, os, shutil, logging, requests
 from google.cloud import storage
 
 
-def compile_report_result(submissionid, result, info):
+def compile_report_result(submissionid, result, reason=None):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(
             url=api_compile_update(submissionid), # https://2021.battlecode.org/api/0/submission/0/compilation_update/
-            data={  'compilation_status': result #, 'error_message': info
+            data={  'compilation_status': result #, 'reason': reason
             },
             headers={'Authorization': 'Bearer {}'.format(auth_token)}
         )
@@ -29,18 +29,18 @@ def compile_report_result(submissionid, result, info):
 def compile_log_error(submissionid, reason):
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    compile_report_result(submissionid, COMPILE_ERROR, reason)
+    compile_report_result(submissionid, COMPILE_ERROR, reason=reason)
     sys.exit(1)
 
 def compile_log_fail(submissionid, reason):
     """Reports a compilation failure to the backend"""
     logging.error(reason)
-    compile_report_result(submissionid, COMPILE_FAIL, reason)
+    compile_report_result(submissionid, COMPILE_FAIL, reason=reason)
 
 def compile_log_success(submissionid):
-    """Reports a server-side error to the backend and terminates with failure"""
+    """Reports a server-side success to the backend"""
     logging.info('Compilation succeeded')
-    compile_report_result(submissionid, COMPILE_SUCCESS, None)
+    compile_report_result(submissionid, COMPILE_SUCCESS)
 
 def compile_worker(submissionid):
     """

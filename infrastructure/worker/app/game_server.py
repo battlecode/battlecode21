@@ -11,7 +11,7 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=None):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
@@ -27,11 +27,15 @@ def game_report_result(gametype, gameid, result, winscore=None, losescore=None):
         logging.critical('Could not report result to API endpoint', exc_info=e)
         sys.exit(1)
 
-def game_log_error(gametype, gameid, reason):
+def game_log_error(gametype, gameid, reason): #For when the game fails and it is our fault
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    game_report_result(gametype, gameid, GAME_ERROR)
+    game_report_result(gametype, gameid, GAME_ERROR, reason=reason)
     sys.exit(1)
+
+def game_log_fail(gametype, gameid, reason): #For when the game fails and its not our fault
+    logging.error(reason)
+    game_report_result(gametype, gameid, GAME_ERROR, reason=reason)
 
 def game_worker(gameinfo):
     """
@@ -83,8 +87,10 @@ def game_worker(gameinfo):
             teamname2 = gameinfo['name2']
         else:
             teamname2 = player2
-    except:
+    except Exception as ex:
         game_log_error(gametype, gameid, 'Game information in incorrect format')
+        
+
 
     rootdir  = os.path.join('/', 'box')
     classdir = os.path.join(rootdir, 'classes')
@@ -198,4 +204,4 @@ def game_worker(gameinfo):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=True)
