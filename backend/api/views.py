@@ -604,7 +604,7 @@ class TeamViewSet(viewsets.GenericViewSet,
         # only add ranked, non-tournament scrimmages
         # add entry to result array defining whether or not this team won and time of scrimmage
         for scrimmage in scrimmages:
-            if (scrimmage.ranked and scrimmage.tournament_id == -1):
+            if (scrimmage.ranked):
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
@@ -1102,7 +1102,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.error_msg = sc_error_msg
                     scrimmage.save()
                     # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
-                    return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
+                    return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:
