@@ -205,7 +205,9 @@ public enum RobotType {
                 return (int) Math.ceil(GameConstants.PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER * Math.sqrt(roundNum));
             case SLANDERER:
                 if (roundsAlive <= GameConstants.EMBEZZLE_NUM_ROUNDS)
-                    return (int) (GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * robotInfluence);
+                    return (int) (robotInfluence *
+                            (1.0 / GameConstants.EMBEZZLE_NUM_ROUNDS +
+                            GameConstants.EMBEZZLE_SCALE_FACTOR * Math.exp(-GameConstants.EMBEZZLE_DECAY_FACTOR * robotInfluence)));
                 return 0;
             default:
                 return 0;
