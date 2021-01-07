@@ -170,8 +170,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'replay': scrimmage_replay
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
-    # pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
-    print(data_bytestring)
+    # print(data_bytestring)
+    pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
 def get_random_maps(num):
     n = min(num, len(settings.SERVER_MAPS))
