@@ -77,6 +77,7 @@ class Issues extends Component {
                                     </p>
                                 <p>
                                     <ul>
+                                        <li>Are you on the latest version of Battlecode? try <code>./gradlew update</code></li>
                                         <li>Did you download the Oracle JDK 8 listed in <NavLink to='getting-started'>the installation instructions</NavLink>?</li>
                                         <li>Did you set your <code>JAVA_HOME</code> correctly?</li>
                                         <li><code>./gradlew clean</code> (always good to try)</li>
@@ -84,7 +85,7 @@ class Issues extends Component {
                                         <li><code>Refresh Gradle Dependencies</code> in IntelliJ (see above)</li>
                                         <li><code>./gradlew --stop</code> (stops Gradle daemons)</li>
                                         <li><code>rm -r ~/.gradle</code> (removes the Gradle cache)</li>
-                                        <li>Redownload <a href="https://github.com/battlecode/battlecode20-scaffold">the scaffold</a>.</li>
+                                        <li>Redownload <b><a href="https://github.com/battlecode/battlecode21-scaffold">the scaffold</a></b>.</li>
                                     </ul>
                                 </p>
                                 </div>
