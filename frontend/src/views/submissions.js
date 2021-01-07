@@ -288,6 +288,9 @@ class Submissions extends Component {
                 case 11:
                     status_str = "Successfully queued for compilation!"
                     break
+                case 12:
+                    status_str = "Files cannot be submitted without a team."
+                    break
                 case 13:
                     status_str = "Submitting failed. Try re-submitting your code."
                     break
