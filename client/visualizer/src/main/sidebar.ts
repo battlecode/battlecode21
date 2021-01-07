@@ -137,6 +137,7 @@ export default class Sidebar {
     , - Toggle Detection Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
+    L - Toggle whether to process logs.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>

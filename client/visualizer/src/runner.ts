@@ -48,10 +48,9 @@ export default class Runner {
 
     // If it's in dev, we're not using server
     if (this.conf.websocketURL !== null && process.env.NODE_ENV !== 'development') {
-      this.listener = new WebSocketListener(
-        this.conf.websocketURL,
-        this.conf.pollEvery
-      );
+      this.listener = new WebSocketListener(this.conf.websocketURL,
+        this.conf.pollEvery,
+        this.conf);
     }
   }
 
@@ -235,7 +234,7 @@ export default class Runner {
 
   onGameLoaded(data: ArrayBuffer) {
     let lastGame = this.games.length
-    this.games[lastGame] = new Game();
+    this.games[lastGame] = new Game(this.conf.processLogs);
     this.games[lastGame].loadFullGameRaw(data);
 
     this.startGame();
@@ -456,7 +455,7 @@ export default class Runner {
           // reset all games so as to save memory
           // because things can be rough otherwise
           this.games.pop();
-          this.games = [new Game()];
+          this.games = [new Game(this.conf.processLogs)];
           this.games[0].loadFullGameRaw(data);
           this.setGame(0);
         });
@@ -552,6 +551,9 @@ export default class Runner {
           this.nextTournamentThing();
           this.updateTournamentState();
           break;
+        case 76: // 'l' - Toggle process logs
+          this.conf.processLogs = !this.conf.processLogs;
+          this.console.setNotLoggingDiv(this.conf.processLogs);
       }
     }
 

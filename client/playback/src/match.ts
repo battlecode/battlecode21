@@ -129,9 +129,14 @@ export default class Match {
   readonly maxTurn: number;
 
   /**
+   * Whether to process logs.
+   */
+  private readonly processLogs;
+
+  /**
    * Create a Timeline.
    */
-  constructor(header: schema.MatchHeader, meta: Metadata) {
+  constructor(header: schema.MatchHeader, meta: Metadata, processLogs: boolean = true) {
     this._current = new GameWorld(meta);
     this._current.loadFromMatchHeader(header);
     this._farthest = this._current;
@@ -145,6 +150,7 @@ export default class Match {
     this._lastTurn = null;
     this._seekTo = 0;
     this._winner = null;
+    this.processLogs = processLogs;
   }
 
   /**
@@ -156,7 +162,9 @@ export default class Match {
     }
     this.deltas.push(delta);
 
-    this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
+    if (this.processLogs) {
+      this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
+    }
   }
 
   /**
