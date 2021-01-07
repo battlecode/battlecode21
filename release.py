@@ -25,6 +25,7 @@ def main(version):
 
     # TODO should be adapted now that we use markdeep instead
     # fancy_specs()
+    client()
 
     deploy_frontend()
 
@@ -127,6 +128,15 @@ def commit_tag_push(version):
     subprocess.call(f'git tag v{version}', shell=True)
     subprocess.call('git push', shell=True)
     subprocess.call('git push --tags', shell=True)
+
+def client():
+    """
+    Build client for web.
+    """
+    os.chdir("client/visualizer")
+    subprocess.call("npm run prod", shell=True)
+    subprocess.call("cp -r out ../../frontend/public", shell=True)
+    os.chdir("../../frontend")
 
 
 if __name__ == '__main__':
