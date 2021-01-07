@@ -12,17 +12,29 @@ export const initialBodyTypeList: number[] = [ENLIGHTENMENT_CENTER];
 
 export const bodyTypePriority: number[] = []; // for guns, drones, etc. that should be drawn over other robots
 
-// old colors for reference
+export const TILE_COLORS: Array<number>[] = [ // RGB
+  [214, 110, 16],
+  [167, 72, 8],
+  [135, 13, 13],
+  [105, 26, 26],
+  [88, 22, 22],
+  [60, 15, 15]
+];
+// flashy colors
+// [0, 147, 83], // turquoise
+// [29, 201, 2], // green
+// [254, 205, 54], // yellow
+// [222, 145, 1], // brown
+// [255, 0, 0], // red
+// [242, 0, 252] // pink
 
-// maps elevation to rgb values
-export const SWAMP_COLORS: Map<number, Array<number>> = new Map<number, Array<number>>([
-  [-5, [0, 147, 83]], // turquoise
-  [3, [29, 201, 2]], // green
-  [10, [254,205,54]], // yellow
-  [90, [222, 145, 1]], // brown
-  [500, [255, 0, 0]], // red
-  [2000, [242, 0, 252]] // pink
-]);
+// Given passability, get index of tile to use.
+export const getLevel = (x: number): number => {
+  const nLev = TILE_COLORS.length;
+  const floatLevel = ((1-x) - 0.1) / 0.9 * nLev;
+  const level = Math.floor(floatLevel)
+  return Math.min(nLev - 1, Math.max(0, level));
+}
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
 export const SENSOR_RADIUS_COLOR = "#0000ff";
@@ -40,8 +52,11 @@ export const EFFECT_STEP = 200; //time change between effect animations
 
 // Map editor canvas parameters
 export const DELTA = .0001;
-export const MIN_DIMENSION = 30;
+export const MIN_DIMENSION = 15;
 export const MAX_DIMENSION = 100;
+
+// Initial influence of enlightenment center, for map editor
+export const INITIAL_INFLUENCE = 150;
 
 // Server settings
 export const NUMBER_OF_TEAMS = 2;
@@ -64,6 +79,7 @@ export enum MapType {
   CUSTOM
 };
 export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
+     ["maptestsmall", MapType.DEFAULT]
   // ["Maze", MapType.INTL_QUALIFYING],
   // ["Squares", MapType.INTL_QUALIFYING],
   // ["RealArt", MapType.INTL_QUALIFYING],

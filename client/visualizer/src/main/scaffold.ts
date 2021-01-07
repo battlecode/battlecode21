@@ -49,8 +49,8 @@ export default class ScaffoldCommunicator {
 
     console.log('app path: ' + appPath);
 
-    // npm run electron in client, if battlecode20-scaffold is located in same level as battlecode20
-    const fromDev = path.join(path.dirname(path.dirname(path.dirname(appPath))), 'battlecode20-scaffold');
+    // npm run electron in client, if battlecode21-scaffold is located in same level as battlecode21
+    const fromDev = path.join(path.dirname(path.dirname(path.dirname(appPath))), 'battlecode21-scaffold');
     // scaffold/client/Battlecode Client[.exe]
     // (May never happen?)
     const fromWin = path.dirname(path.dirname(appPath));
@@ -116,8 +116,8 @@ export default class ScaffoldCommunicator {
         }
 
         // paths are relative for readdir
-        return cb(null, new Set(files.filter((file) => file.endsWith('.map20'))
-                  .map((file) => file.substring(0, file.length - 6))
+        return cb(null, new Set(files.filter((file) => file.endsWith('.map21'))
+                  .map((file) => file.substring(0, file.length - '.map21'.length))
                   .concat(Array.from(SERVER_MAPS.keys()))));
       });
     });
@@ -132,7 +132,7 @@ export default class ScaffoldCommunicator {
       fs.mkdirSync(dir);
     }
 
-    fs.writeFile(path.join(this.scaffoldPath, 'maps', `${mapName}.map17`),
+    fs.writeFile(path.join(this.scaffoldPath, 'maps', `${mapName}.map21`),
                  new Buffer(mapData),
                  cb);
   }

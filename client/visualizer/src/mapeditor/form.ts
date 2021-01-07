@@ -5,14 +5,15 @@ import {AllImages} from '../imageloader';
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
-import {MapRenderer, Symmetry, MapUnit, HeaderForm, SymmetryForm, RobotForm} from './index';
+import {MapRenderer, Symmetry, MapUnit, HeaderForm, SymmetryForm, RobotForm, TileForm} from './index';
 
 export type GameMap = {
   name: string,
   width: number,
   height: number,
   originalBodies: Map<number, MapUnit>
-  symmetricBodies: Map<number, MapUnit>
+  symmetricBodies: Map<number, MapUnit>,
+  passability: number[]
 };
 
 /**
@@ -28,10 +29,11 @@ export default class MapEditorForm {
   private readonly canvas: HTMLCanvasElement;
   private readonly renderer: MapRenderer;
 
-  // Forms
+  // Forms and text display
   private readonly header: HeaderForm;
   private readonly symmetry: SymmetryForm;
   private readonly robots: RobotForm;
+  private readonly tiles: TileForm;
 
   private robotsRadio: HTMLInputElement;
   private tilesRadio: HTMLInputElement;
@@ -41,6 +43,8 @@ export default class MapEditorForm {
   readonly buttonAdd: HTMLButtonElement;
   readonly buttonDelete: HTMLButtonElement;
 
+  readonly tileInfo: HTMLDivElement;
+
   // Options
   private readonly conf: Config
 
@@ -48,6 +52,7 @@ export default class MapEditorForm {
   private lastID: number; // To give bodies unique IDs
   private originalBodies: Map<number, MapUnit>;
   private symmetricBodies: Map<number, MapUnit>;
+  private passability: number[];
 
   constructor(conf: Config, imgs: AllImages, canvas: HTMLCanvasElement) {
     // Store the parameters
@@ -70,7 +75,10 @@ export default class MapEditorForm {
     const cbMaxRadius = (x, y, id) => {return this.maxRadius(x, y, id)};
 
     // header (name, width, height)
-    this.header = new HeaderForm(() => {this.render()});
+    this.header = new HeaderForm(() => {
+      this.initPassibility();
+      this.render();
+    });
     this.div.appendChild(this.header.div);
 
     // TODO symmetry
@@ -86,30 +94,49 @@ export default class MapEditorForm {
     // robot delete + add/update buttons
     this.forms = document.createElement("div");
     this.robots = new RobotForm(cbWidth, cbHeight, cbMaxRadius); // robot info (type, x, y, ...)
+    this.tiles = new TileForm(cbWidth, cbHeight, cbMaxRadius);
     this.buttonDelete = document.createElement("button");
     this.buttonAdd = document.createElement("button");
     this.div.appendChild(this.forms);
 
+    this.buttonDelete.hidden = true;
+    this.buttonAdd.hidden = true;
+
     // TODO add vertical filler to put form buttons at the bottom
     // validate, remove, reset buttons
     this.div.appendChild(this.createFormButtons());
-
+    this.div.appendChild(document.createElement('hr'));
+    
+    this.tileInfo = document.createElement("div");
+    this.tileInfo.textContent = "X: | Y: | Passability:";
+    this.div.appendChild(this.tileInfo);
+    this.div.appendChild(document.createElement('hr'));
 
     // Renderer settings
     const onclickUnit = (id: number) => {
-      if (this.originalBodies.has(id)) {
+      if (this.originalBodies.has(id) && this.getActiveForm() == this.robots) {
         // Set the corresponding form appropriately
         let body: MapUnit = this.originalBodies.get(id)!;
         this.robotsRadio.click();
-        this.getActiveForm().setForm(body.loc, body, id);
+        this.robots.setForm(body.loc, body, id);
       }
     };
 
     const onclickBlank = (loc: Victor) => {
       this.getActiveForm().setForm(loc);
-    }
+    };
 
-    this.renderer = new MapRenderer(canvas, imgs, conf, onclickUnit, onclickBlank);
+    const onMouseover = (x: number, y: number, passability: number) => {
+      let content: string = "";
+      content += 'X: ' + `${x}`.padStart(3);
+      content += ' | Y: ' + `${y}`.padStart(3);
+      content += ' | Passability: ' + `${passability.toFixed(3)}`;
+      this.tileInfo.textContent = content;
+    };
+
+    this.renderer = new MapRenderer(canvas, imgs, conf, onclickUnit, onclickBlank, onMouseover);
+
+    this.initPassibility();
 
     // Load callbacks and finally render
     this.loadCallbacks();
@@ -123,13 +150,19 @@ export default class MapEditorForm {
     this.tilesRadio.id = "tiles-radio";
     this.tilesRadio.type = "radio";
     this.tilesRadio.name = "edit-option"; // radio buttons with same name are mutually exclusive
+
     this.tilesRadio.onchange = () => {
-      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
+      // Change the displayed form
+      if (this.tilesRadio.checked) {
+        while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
+        this.forms.appendChild(this.tiles.div);
+        this.buttonDelete.hidden = true;
+        this.buttonAdd.hidden = false;
+      }
     };
     const tilesLabel = document.createElement("label");
     tilesLabel.setAttribute("for", this.tilesRadio.id);
     tilesLabel.textContent = "Change Tiles";
-    this.tilesRadio.disabled = true;
 
 
     // Radio button for placing units
@@ -139,9 +172,11 @@ export default class MapEditorForm {
 
     this.robotsRadio.onchange = () => {
       // Change the displayed form
-      while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
       if (this.robotsRadio.checked) {
+        while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
         this.forms.appendChild(this.robots.div);
+        this.buttonDelete.hidden = false;
+        this.buttonAdd.hidden = false;
       }
     };
     const robotsLabel = document.createElement("label");
@@ -168,7 +203,7 @@ export default class MapEditorForm {
     // Delete and Add/Update buttons
     this.buttonDelete.type = "button";
     this.buttonDelete.className = "form-button";
-    this.buttonDelete.appendChild(document.createTextNode("Delete"));
+    this.buttonDelete.appendChild(document.createTextNode("Delete"));    
     this.buttonAdd.type = "button";
     this.buttonAdd.className = "form-button";
     this.buttonAdd.appendChild(document.createTextNode("Add/Update"));
@@ -178,22 +213,34 @@ export default class MapEditorForm {
 
   private loadCallbacks() {
     this.buttonAdd.onclick = () => {
-      const form: RobotForm = this.getActiveForm()
-      const id: number = form.getID() || this.lastID;
-      const unit: MapUnit | undefined = form.getUnit(id);
-
-      if (unit) {
-        // Create a new unit or update an existing unit
-        this.setUnit(id, unit);
-        form.resetForm();
+      if (this.getActiveForm() == this.robots) {
+        const form: RobotForm = this.robots;
+        const id: number = form.getID() || this.lastID;
+        const unit: MapUnit | undefined = form.getUnit(id);
+        if (unit) {
+          // Create a new unit or update an existing unit
+          this.setUnit(id, unit);
+          form.resetForm();
+        }
+      }
+      if (this.getActiveForm() == this.tiles) {
+        const form: TileForm = this.tiles;
+        const x1: number = form.getX1();
+        const x2: number = form.getX2();
+        const y1: number = form.getY1();
+        const y2: number = form.getY2();
+        const pass: number = form.getPass();
+        this.setPassability(x1, y1, x2, y2, pass);
       }
     }
 
     this.buttonDelete.onclick = () => {
-      const id: number | undefined = this.getActiveForm().getID();
-      if (id && !isNaN(id)) {
-        this.deleteUnit(id);
-        this.getActiveForm().resetForm();
+      if (this.getActiveForm() == this.robots) {
+        const id: number | undefined = this.robots.getID();
+        if (id && !isNaN(id)) {
+          this.deleteUnit(id);
+          this.getActiveForm().resetForm();
+        }
       }
     }
   }
@@ -252,10 +299,30 @@ export default class MapEditorForm {
   }
 
   /**
+   * Initialize passability array based on map dimensions.
+   */
+  private initPassibility() {
+    this.passability = new Array(this.header.getHeight() * this.header.getWidth());
+    this.passability.fill(0.5);
+  }
+
+  /**
+   * Set passability of all tiles from top-left to bottom-right.
+   */
+  private setPassability(x1: number, y1: number, x2: number, y2: number, pass: number) {
+    for (let x = x1; x <= x2; x++) {
+      for (let y = y1; y <= y2; y++) {
+        this.passability[y*this.header.getWidth() + x] = pass;
+      }
+    }
+    this.render();
+  }
+
+  /**
    * @return the active form based on which radio button is selected
    */
-  private getActiveForm(): RobotForm {
-    return this.robots;
+  private getActiveForm(): RobotForm | TileForm {
+    return (this.tilesRadio.checked ? this.tiles : this.robots)
   }
 
   /**
@@ -280,7 +347,8 @@ export default class MapEditorForm {
       width: this.header.getWidth(),
       height: this.header.getHeight(),
       originalBodies: this.originalBodies,
-      symmetricBodies: this.symmetricBodies
+      symmetricBodies: this.symmetricBodies,
+      passability: this.passability
     };
   }
 

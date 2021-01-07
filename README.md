@@ -2,6 +2,8 @@
 
 🚩
 
+## Note, Competitors
+This is the development repo! Do not clone this. Instead, follow the instructions [here](http://2021.battlecode.org/getting-started)
 ## Repository Structure
 
 - `/backend`: Backend API in Django Rest Framework
@@ -57,6 +59,10 @@ You can generate javadocs as follows:
 ```
 
 This will create a `zip` file. Unzip and open the `index.html` file in it to view the docs. In particular, looking at the documentation for `RobotController` will be helpful.
+
+To deploy these docs, get the above zip file, and unzip it. Rename the resulting folder to `javadoc`. Then, put it in `frontend/public`, suchh that there's a `frontend/public/javadoc/index.html`. Then run the frontend deploy process!
+
+TODO -- these steps ought to simply be in the frontend deploy script.
 
 ## Notes for porting to a new repo
 

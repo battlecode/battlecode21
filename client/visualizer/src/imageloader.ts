@@ -1,12 +1,11 @@
+import { basename } from 'path';
 import {Config} from './config';
+import * as cst from "./constants";
 type Image = HTMLImageElement;
 
 export type AllImages = {
   star: Image,
-  tiles: {
-    dirt: Image,
-    swamp: Image
-  },
+  tiles: Array<Image>,
   robots: {
     enlightenmentCenter: Array<Image>,
     politician: Array<Image>,
@@ -37,7 +36,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   const RED: number = 1;
   const BLU: number = 2;
 
-  function loadImage(obj, slot, path) : void {
+  function loadImage(obj, slot, path, src?) : void {
     const f = loadImage;
     f.expected++;
     const image = new Image();
@@ -59,12 +58,13 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       obj[slot] = image;
       f.failure++;
       console.error(`CANNOT LOAD IMAGE: ${slot}, ${path}, ${image}`);
+      if(src) console.error(`Source: ${src}`);
       onFinish();
     }
 
     // might want to use path library
     // webpack url loader triggers on require("<path>.png"), so .png should be explicit
-    image.src = require(dirname + path + '.png').default;
+    image.src = (src ? src : require(dirname + path + '.png').default);
   }
   loadImage.expected = 0;
   loadImage.success = 0;
@@ -72,10 +72,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage.requestedAll = false;
 
   const result = {
-    tiles: {
-      dirt: null,
-      swamp: null
-    },
+    tiles: [],
     robots: {
       enlightenmentCenter: [],
       politician: [],
@@ -104,12 +101,58 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       goEnd: null
     }
   };
+  // helper function to manipulate images
+  const htmlToData = (ele: HTMLImageElement): ImageData => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if(!context) throw new Error("Error while converting a tile image");
+    canvas.width = ele.width;
+    canvas.height = ele.height;
+    context.drawImage(ele, 0, 0);
+    return context.getImageData(0, 0, ele.width, ele.height);
+  };
+  const dataToSrc = (data: ImageData): String => {
+    var canvas = document.createElement("canvas");
+    canvas.width = data.width;
+    canvas.height = data.height;
+    var context = canvas.getContext("2d");
+    if(!context) throw new Error("Error while converting a tile images");
+    context.putImageData(data, 0, 0);
+
+    return canvas.toDataURL(`edited.png`);
+  };
 
   loadImage(result, 'star', 'star');
 
   // terrain tiles
-  loadImage(result.tiles, 'dirt', 'tiles/DirtTerrain');
-  loadImage(result.tiles, 'swamp', 'tiles/SwampTerrain');
+  {
+    const tintData = (data: ImageData, colors: Uint8Array): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        const rock = data.data[i] > 128;
+        const factor = rock ? 1.5 : 1;
+        arr[i + 0] = colors[0] / factor;
+        arr[i + 1] = colors[1] / factor;
+        arr[i + 2] = colors[2] / factor;
+        arr[i + 3] = 255;
+      }
+      const result = new ImageData(arr, data.height);
+      return result;
+    }
+
+    const baseTile: Image = new Image();
+    baseTile.src = require(dirname + 'tiles/terrain.png').default;
+
+    const nLev = cst.TILE_COLORS.length;
+    baseTile.onload = () => {
+        for(let i=0; i<nLev; i++){
+        const data: ImageData = htmlToData(baseTile);
+        const tinted: ImageData = tintData(data, <Uint8Array><unknown>cst.TILE_COLORS[i]);
+        const path: String = dataToSrc(tinted);
+        loadImage(result.tiles, i, "", path.slice(0, path.length-4));
+      }
+    }
+  }
 
   // robot sprites
   loadImage(result.robots.enlightenmentCenter, RED, 'robots/center_red');
@@ -125,14 +168,35 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
   loadImage(result.robots.enlightenmentCenter, NEUTRAL, 'robots/center');
 
   // effects
-
   loadImage(result.effects, 'death', 'effects/death/death_empty');
 
   loadImage(result.effects.embezzle, 0, 'effects/embezzle/slanderer_embezzle_empty_1');
   loadImage(result.effects.embezzle, 1, 'effects/embezzle/slanderer_embezzle_empty_2');
 
-  loadImage(result.effects.empower, 0, 'effects/empower/polit_empower_empty_1');
-  loadImage(result.effects.empower, 1, 'effects/empower/polit_empower_empty_2');
+  {
+    const makeTransparent = (data: ImageData): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        arr[i + 0] = data.data[i+0];
+        arr[i + 1] = data.data[i+1];
+        arr[i + 2] = data.data[i+2];
+        arr[i + 3] = data.data[i+3] / 1.5;
+      }
+      const result = new ImageData(arr, data.width);
+      return result;
+    }
+    for(let i=0; i<2; i++){
+      const base: Image = new Image();
+      base.src = require(dirname + `effects/empower/polit_empower_empty_${i+1}.png`).default;
+
+      base.onload = () => {
+        const data: ImageData = htmlToData(base);
+        const trans: ImageData = makeTransparent(data);
+        const path: String = dataToSrc(trans);
+        loadImage(result.effects.empower, i, "", path.slice(0, path.length-4));
+      }
+    }
+  }
 
   loadImage(result.effects.expose, 0, 'effects/expose/expose_empty');
 

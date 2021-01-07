@@ -73,9 +73,9 @@ export default class Looper {
             this.lastSelectedID = id;
             this.console.setIDFilter(id);
         };
-        const onMouseover = (x: number, y: number, passability: number) => {
+        const onMouseover = (x: number, y: number, xrel: number, yrel: number, passability: number) => {
             // Better make tile type and hand that over
-            controls.setTileInfo(x, y, passability);
+            controls.setTileInfo(x, y, xrel, yrel, passability);
         };
 
         // Configure renderer for this match

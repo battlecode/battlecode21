@@ -18,11 +18,13 @@ import os
 import datetime
 
 def main(version):
-    generate_comparison_link()
+    # generate_comparison_link()
 
-    specs(version)
+    # TODO change to use right file name. also, make that file name a easy-to-set variable
+    # specs(version)
 
-    fancy_specs()
+    # TODO should be adapted now that we use markdeep instead
+    # fancy_specs()
 
     deploy_frontend()
 
@@ -132,7 +134,7 @@ if __name__ == '__main__':
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('version', help='Version number, e.g. 0.1.1')
+    parser.add_argument('version', help='Version number, e.g. 2021.0.1.1')
 
     args = parser.parse_args()
 

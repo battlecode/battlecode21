@@ -147,7 +147,7 @@ If you are unable to find this option, you may be using an old version of Eclips
 
                                     </p>
                                     <p>
-                                        Battlecode 2021 has not been released yet! Register a team and watch out for the January 2021 launch. 
+                                        Battlecode 2021 is now running! See below for instructions on getting started.
                                     </p>
                                 </div>
                             </div>
@@ -191,9 +191,33 @@ If you are unable to find this option, you may be using an old version of Eclips
                                     </p><p>
                                     If you're unsure how to install the JDK, you can find instructions for all operating systems <a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html'>here</a> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
                                     </p>
-                                    <h6 class="installation-steps">Step 2: Coming later!</h6>
+                                    <h6 class="installation-steps">Step 2: Download the Game</h6>
                                     <p>
-                                        2021-specific installation instructions will appear here once the game is released.
+                                        Download the <b><a href="https://github.com/battlecode/battlecode21-scaffold">competition scaffold</a></b>.
+                                    </p>
+
+                                    <h6 class="installation-steps">Step 3: Build the Game...</h6>
+                                    <p>
+                                        Open a terminal in the scaffold you just downloaded. Run the commands `./gradlew update` and `./gradlew build`
+                                    </p>
+
+
+                                    <h6 class="installation-steps">Developing your Bot</h6>
+                                    <p>
+                                        Place each version of your robot in a new subfolder in the `src` folder. Make sure every version has a `RobotPlayer.java`
+                                    </p>
+
+                                    <h6 class="installation-steps">Running Game from the Client</h6>
+                                    <p>
+                                        Now that you have installed battlecode and all its dependencies, a folder called `client` should have appeared. Navigate here
+                                        and run `Battlecode Client`, or `battlecode-visualizer`. Navigate to the runner tab, select which bots and maps to run, and hit Run Game!
+                                        Finally, click the play/pause button to view the replay. 
+                                    </p>
+
+
+                                    <h6 class="installation-steps">Running Game from the Terminal</h6>
+                                    <p>
+                                        Open a terminal in the scaffold. Run the commands `./gradlew run -Pmaps=[map] -PteamA=[Team A] -PteamB=[Team B]`
                                     </p>
                                 </div>
                             </div>   

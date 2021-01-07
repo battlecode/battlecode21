@@ -9,7 +9,7 @@ import Victor = require('victor');
 import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap} from './index';
 
 /**
- * Allows the user to download a .map17 file representing the map generated
+ * Allows the user to download a .map21 file representing the map generated
  * in the map editor.
  */
 export default class MapEditor {
@@ -66,7 +66,6 @@ export default class MapEditor {
     //   Note: In tournaments, a starting map consists only of neutral trees and
     //   ${cst.MIN_NUMBER_OF_ARCHONS} to ${cst.MAX_NUMBER_OF_ARCHONS} archons per
     //   team. The validator only checks for overlapping and off-map units.<br><br>
-    //   Note: The map editor currently does not support bullet trees.</i>`;
 
     return div;
   }
@@ -74,25 +73,18 @@ export default class MapEditor {
   /**
    * Quick add and delete units in the map editor
    */
-  onkeydown(): (event: KeyboardEvent) => void {
-    return (event: KeyboardEvent) => {
-      var input = (<Element>document.activeElement).nodeName == "INPUT";
-      if(!input) {
-        console.error(event.keyCode);
-        switch (event.keyCode) {
-          case 67: // "c" - Toggle Circle Bots
-            this.conf.circleBots = !this.conf.circleBots;
-            this.form.render();
-            break;
-          case 83: // "s" - Set (Add/Update)c
-            this.form.buttonAdd.click();
-            break;
-          case 68: // "d" - Delete
-            this.form.buttonDelete.click();
-            break;
-        }
+  readonly onkeydown = (event: KeyboardEvent) => {
+    var input = (<Element>document.activeElement).nodeName == "INPUT";
+    if(!input) {
+      switch (event.keyCode) {
+        case 83: // "s" - Set (Add/Update)c
+          this.form.buttonAdd.click();
+          break;
+        case 68: // "d" - Delete
+          this.form.buttonDelete.click();
+          break;
       }
-    };
+    }
   }
 
   private isValid(): boolean {
@@ -110,7 +102,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.type = "button";
     button.className = 'form-button';
-    button.appendChild(document.createTextNode("Validate"));
+    button.appendChild(document.createTextNode("Validate Map"));
     button.onclick = () => {
       if (this.isValid()) {
         alert("Congratulations! Your map is valid. :)")
@@ -145,7 +137,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.type = "button";
     button.className = 'form-button';
-    button.appendChild(document.createTextNode("RESET"));
+    button.appendChild(document.createTextNode("Reset Map"));
     button.onclick = () => {
       let youAreSure = confirm(
         "WARNING: you will lose all your data. Click OK to continue anyway.");
@@ -160,7 +152,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.id = "export";
     button.type = "button";
-    button.appendChild(document.createTextNode("EXPORT!"));
+    button.appendChild(document.createTextNode("Export (keep the same file name!)"));
 
     button.onclick = () => {
       if (!this.isValid()) return;

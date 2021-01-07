@@ -5,6 +5,7 @@ import NextStep from './nextstep';
 import {GameWorld, Metadata, schema, Game} from 'battlecode-playback';
 import {AllImages} from '../imageloader';
 import Victor = require('victor');
+import { constants } from 'buffer';
 
 /**
  * Renders the world.
@@ -22,7 +23,7 @@ export default class Renderer {
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,
-    readonly onMouseover: (x: number, y: number, passability: number) => void) {
+    readonly onMouseover: (x: number, y: number, xrel: number, yrel: number, passability: number) => void) {
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -90,15 +91,6 @@ export default class Renderer {
 
     const map = world.mapStats;
 
-    // dirt - swamp threshold
-    const T = 0.5;
-
-    function getOverlayColor(x: number): string {
-      const val = [85,90,70];
-      const a = x > T ? x/2 : Math.min(0.1/x, 0.7);
-      return `rgba(${val[0]},${val[1]},${val[2]},${a})`;
-    }
-
     for (let i = 0; i < width; i++) for (let j = 0; j < height; j++){
       let idxVal = map.getIdx(i,j);
       let plotJ = height-j-1;
@@ -107,13 +99,12 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      const useDirt = map.passability[idxVal] > T;
-      const tileImg = useDirt ? this.imgs.tiles.dirt : this.imgs.tiles.swamp;
+      // Fetch and draw tile image
+      const swampLevel = cst.getLevel(map.passability[idxVal]);
+      const tileImg = this.imgs.tiles[swampLevel];
       this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
-      this.ctx.fillStyle = getOverlayColor(map.passability[idxVal]);
-      this.ctx.fillRect(cx, cy, scale, scale);
-
+      // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;
@@ -172,19 +163,21 @@ export default class Renderer {
     // Render the robots
     // render images with priority last to have them be on top of other units.
 
+    const drawEffect = (effect: string, x: number, y: number) => {
+      const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
+      const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
+      const effectImg = effectImgs[whichImg];
+      this.drawBot(effectImg, x, y);
+    }
+
     const renderBot = (i: number) => {
       const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
       this.drawBot(img, realXs[i], realYs[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
-      // draw effec
+      // draw effect
       let effect: string | null = cst.abilityToEffectString(abilities[i]);
-      if (effect !== null) {
-        const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
-        const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
-        const effectImg = effectImgs[whichImg];
-        this.drawBot(effectImg, realXs[i], realYs[i]);
-      }
+      if (effect !== null) drawEffect(effect, realXs[i], realYs[i]);
     }
 
     let priorityIndices: number[] = [];
@@ -199,14 +192,15 @@ export default class Renderer {
 
     priorityIndices.forEach((i) => renderBot(i));
 
-    // Render died bodies
+    // Render empowered bodies
 
-    const died = world.diedBodies;
-    const diedImg: HTMLImageElement = this.imgs.effects["death"];
-    for (let i = 0; i < died.length; i++) {
-      this.drawBot(diedImg, died.arrays.x[i], this.flip(died.arrays.y[i], minY, maxY));
+    const empowered = world.empowered;
+    const empowered_x = world.empowered.arrays.x;
+    const empowered_y = world.empowered.arrays.y;
+
+    for (let i = 0; i < empowered.length; i++) {
+      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
-
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -315,9 +309,11 @@ export default class Renderer {
 
       // Set the location of the mouseover
       const {x,y} = this.getIntegerLocation(event, world);
-      const idx = world.mapStats.getIdx(x, y);
-      onMouseover(x, y, world.mapStats.passability[idx]);
-      this.hoverPos = {x: x, y: y};
+      const xrel = x - world.minCorner.x;
+      const yrel = y - world.minCorner.y;
+      const idx = world.mapStats.getIdx(xrel, yrel);
+      onMouseover(x, y, xrel, yrel, world.mapStats.passability[idx]);
+      this.hoverPos = {x: xrel, y: yrel};
     };
 
     this.canvas.onmouseout = (event) => {

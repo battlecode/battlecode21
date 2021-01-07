@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.function.ToIntFunction;
 import java.util.zip.GZIPOutputStream;
 
@@ -150,9 +151,9 @@ public strictfp class GameMaker {
         if (finishedGame == null) {
             assertState(State.DONE);
 
-            int events = offsetVector(fileBuilder, this.events, GameWrapper::startEventsVector);
-            int matchHeaders = offsetVector(fileBuilder, this.matchHeaders, GameWrapper::startMatchHeadersVector);
-            int matchFooters = offsetVector(fileBuilder, this.matchFooters, GameWrapper::startMatchFootersVector);
+            int events = GameWrapper.createEventsVector(fileBuilder, this.events.toArray());
+            int matchHeaders = GameWrapper.createMatchHeadersVector(fileBuilder, this.matchHeaders.toArray());
+            int matchFooters = GameWrapper.createMatchFootersVector(fileBuilder, this.matchFooters.toArray());
 
             GameWrapper.startGameWrapper(fileBuilder);
             GameWrapper.addEvents(fileBuilder, events);
@@ -278,7 +279,7 @@ public strictfp class GameMaker {
         }
 
         // Make and return BodyTypeMetadata Vector offset
-        return offsetVector(builder, bodyTypeMetadataOffsets, GameHeader::startBodyTypeMetadataVector);
+        return GameHeader.createBodyTypeMetadataVector(builder, bodyTypeMetadataOffsets.toArray());
     }
 
     private byte robotTypeToBodyType(RobotType type){
@@ -428,10 +429,10 @@ public strictfp class GameMaker {
             createEvent((builder) -> {
                 // The bodies that spawned
                 int spawnedBodiesLocsP = createVecTable(builder, spawnedBodiesLocsXs, spawnedBodiesLocsYs);
-                int spawnedBodiesRobotIDsP = intVector(builder, spawnedBodiesRobotIDs, SpawnedBodyTable::startRobotIDsVector);
-                int spawnedBodiesTeamIDsP = byteVector(builder, spawnedBodiesTeamIDs, SpawnedBodyTable::startTeamIDsVector);
-                int spawnedBodiesTypesP = byteVector(builder, spawnedBodiesTypes, SpawnedBodyTable::startTypesVector);
-                int spawnedBodiesInfluencesP = intVector(builder, spawnedBodiesInfluences, SpawnedBodyTable::startInfluencesVector);
+                int spawnedBodiesRobotIDsP = SpawnedBodyTable.createRobotIDsVector(builder, spawnedBodiesRobotIDs.toArray());
+                int spawnedBodiesTeamIDsP = SpawnedBodyTable.createTeamIDsVector(builder, spawnedBodiesTeamIDs.toArray());
+                int spawnedBodiesTypesP = SpawnedBodyTable.createTypesVector(builder, spawnedBodiesTypes.toArray());
+                int spawnedBodiesInfluencesP = SpawnedBodyTable.createInfluencesVector(builder, spawnedBodiesInfluences.toArray());
                 SpawnedBodyTable.startSpawnedBodyTable(builder);
                 SpawnedBodyTable.addLocs(builder, spawnedBodiesLocsP);
                 SpawnedBodyTable.addRobotIDs(builder, spawnedBodiesRobotIDsP);
@@ -441,36 +442,36 @@ public strictfp class GameMaker {
                 int spawnedBodiesP = SpawnedBodyTable.endSpawnedBodyTable(builder);
 
                 // Round statistics
-                int teamIDsP = intVector(builder, teamIDs, Round::startTeamIDsVector);
-                int teamVotesP = intVector(builder, teamVotes, Round::startTeamVotesVector);
-                int teamBidderIDsP = intVector(builder, teamBidderIDs, Round::startTeamBidderIDsVector);
+                int teamIDsP = Round.createTeamIDsVector(builder, teamIDs.toArray());
+                int teamVotesP = Round.createTeamVotesVector(builder, teamVotes.toArray());
+                int teamBidderIDsP = Round.createTeamBidderIDsVector(builder, teamBidderIDs.toArray());
 
                 // The bodies that moved
-                int movedIDsP = intVector(builder, movedIDs, Round::startMovedIDsVector);
+                int movedIDsP = Round.createMovedIDsVector(builder, movedIDs.toArray());
                 int movedLocsP = createVecTable(builder, movedLocsXs, movedLocsYs);
 
                 // The bodies that died
-                int diedIDsP = intVector(builder, diedIDs, Round::startDiedIDsVector);
+                int diedIDsP = Round.createDiedIDsVector(builder, diedIDs.toArray());
 
                 // The actions that happened
-                int actionIDsP = intVector(builder, actionIDs, Round::startActionIDsVector);
-                int actionsP = byteVector(builder, actions, Round::startActionsVector);
-                int actionTargetsP = intVector(builder, actionTargets, Round::startActionTargetsVector);
+                int actionIDsP = Round.createActionIDsVector(builder, actionIDs.toArray());
+                int actionsP = Round.createActionsVector(builder, actions.toArray());
+                int actionTargetsP = Round.createActionTargetsVector(builder, actionTargets.toArray());
 
                 // The indicator dots that were set
-                int indicatorDotIDsP = intVector(builder, indicatorDotIDs, Round::startIndicatorDotIDsVector);
+                int indicatorDotIDsP = Round.createIndicatorDotIDsVector(builder, indicatorDotIDs.toArray());
                 int indicatorDotLocsP = createVecTable(builder, indicatorDotLocsX, indicatorDotLocsY);
                 int indicatorDotRGBsP = createRGBTable(builder, indicatorDotRGBsRed, indicatorDotRGBsGreen, indicatorDotRGBsBlue);
 
                 // The indicator lines that were set
-                int indicatorLineIDsP = intVector(builder, indicatorLineIDs, Round::startIndicatorLineIDsVector);
+                int indicatorLineIDsP = Round.createIndicatorLineIDsVector(builder, indicatorLineIDs.toArray());
                 int indicatorLineStartLocsP = createVecTable(builder, indicatorLineStartLocsX, indicatorLineStartLocsY);
                 int indicatorLineEndLocsP = createVecTable(builder, indicatorLineEndLocsX, indicatorLineEndLocsY);
                 int indicatorLineRGBsP = createRGBTable(builder, indicatorLineRGBsRed, indicatorLineRGBsGreen, indicatorLineRGBsBlue);
 
                 // The bytecode usage
-                int bytecodeIDsP = intVector(builder, bytecodeIDs, Round::startBytecodeIDsVector);
-                int bytecodesUsedP = intVector(builder, bytecodesUsed, Round::startBytecodesUsedVector);
+                int bytecodeIDsP = Round.createBytecodeIDsVector(builder, bytecodeIDs.toArray());
+                int bytecodesUsedP = Round.createBytecodesUsedVector(builder, bytecodesUsed.toArray());
 
                 int logsP = builder.createString(ByteBuffer.wrap(logs));
 

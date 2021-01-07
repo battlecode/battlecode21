@@ -112,17 +112,7 @@ export default class Client {
    * Loads stats bar with team information
    */
   private loadSidebar() {
-    let onkeydownControls = (event: KeyboardEvent) => {
-      switch (event.keyCode) {
-        case 80: // "p" - Pause/Unpause
-          this.controls.pause();
-          break;
-        case 79: // "o" - Stop
-          this.controls.stop();
-          break;
-      }
-    };
-    this.sidebar = new Sidebar(this.conf, this.imgs, this.runner, onkeydownControls);
+    this.sidebar = new Sidebar(this.conf, this.imgs, this.runner);
     this.stats = this.sidebar.stats;
     this.console = this.sidebar.console;
     this.mapeditor = this.sidebar.mapeditor;
@@ -136,9 +126,23 @@ export default class Client {
    */
   private loadGameArea() {
     this.gamearea = new GameArea(this.conf, this.imgs, this.mapeditor.canvas, this.profiler.iframe);
+    // Handles all non-sidebar changes (gamearea, controls, and key stroke processing) on mode switch.
+    // TODO: refactor.
     this.sidebar.cb = () => {
       this.gamearea.setCanvas();
       this.controls.setControls();
+      if (this.conf.mode == config.Mode.MAPEDITOR) {
+        document.onkeydown = this.mapeditor.onkeydown;
+      }
+      else if (this.conf.mode == config.Mode.PROFILER) {
+        document.onkeydown = null;
+      }
+      else if (this.conf.mode != config.Mode.HELP) {
+        document.onkeydown = this.runner.onkeydown;
+      }
+      else {
+        // Canvas can be anything in help mode
+      }
     };
 
     return this.gamearea.div;

@@ -122,11 +122,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         return this.gameWorld.getObjectInfo().getRobotByID(id);
     }
  
-    private int getInfluence() {
+    public int getInfluence() {
         return this.robot.getInfluence();
     }
 
-    private double getConviction() {
+    public int getConviction() {
         return this.robot.getConviction();  
     }
 
@@ -414,7 +414,6 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
         this.robot.addCooldownTurns();
         this.robot.addInfluenceAndConviction(-influence);
-        gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, -influence);
 
         int robotID = gameWorld.spawnRobot(this.robot, type, adjacentLocation(dir), getTeam(), influence);
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
@@ -564,7 +563,9 @@ public final strictfp class RobotControllerImpl implements RobotController {
         if (bot == null)
             throw new GameActionException(CANT_DO_THAT,
                     "Robot of given ID does not exist.");
-        if (bot.getType() != RobotType.ENLIGHTENMENT_CENTER && !canSenseLocation(bot.getLocation()))  
+        if (getType() != RobotType.ENLIGHTENMENT_CENTER &&
+            bot.getType() != RobotType.ENLIGHTENMENT_CENTER &&
+            !canSenseLocation(bot.getLocation()))
             throw new GameActionException(CANT_SENSE_THAT,
                     "Robot at location is out of sensor range and not an Enlightenment Center.");
     }

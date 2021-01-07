@@ -76,12 +76,6 @@ export interface Config {
   seeDetectionRadius: boolean;
 
   /**
-   * Whether or not to draw a circle under each robot
-   */
-  circleBots: boolean; //TODO: is this needed?
-
-
-  /**
    * The mode of the game
    */
   mode: Mode;
@@ -125,7 +119,7 @@ export enum Mode {
  */
 export function defaults(supplied?: any): Config {
   let conf: Config = {
-    gameVersion: "2021.1.1.1", //TODO: Change this on each release!
+    gameVersion: "2021.1.0.3", //TODO: Change this on each release!
     fullscreen: false,
     width: 600,
     height: 600,
@@ -142,7 +136,6 @@ export function defaults(supplied?: any): Config {
     seeActionRadius: false,
     seeSensorRadius: false,
     seeDetectionRadius: false,
-    circleBots: false,
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,

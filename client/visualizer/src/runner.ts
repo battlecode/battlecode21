@@ -143,77 +143,6 @@ export default class Runner {
     //     });
     //   }
     // }
-        // set key options
-    document.onkeydown = (event) => {
-      // TODO: figure out what this is???
-      if (document.activeElement == null) {
-        throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-      }
-
-      let input = document.activeElement.nodeName == "INPUT";
-      if (!input) {
-        // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-        const keyCode = event.keyCode;
-        console.log(`Key pressed: ${keyCode} (${String.fromCharCode(keyCode)})`);
-        switch (keyCode) {
-          case 80: // "p" - Pause/Unpause
-            this.controls.pause();
-            break;
-          case 79: // "o" - Stop
-            this.controls.stop();
-            break;
-          case 69: // 'e' - go to end
-            this.controls.end();
-            break;
-          case 37: // "LEFT" - Step Backward
-            this.controls.stepBackward();
-            break;
-          case 39: // "RIGHT" - Step Forward
-            this.controls.stepForward();
-            break;
-          case 38: // "UP" - Faster
-            this.controls.doubleUPS();
-            break;
-          case 40: // "DOWN" - Slower
-            this.controls.halveUPS();
-            break;
-          case 82: // "r" - reverse UPS
-            this.controls.reverseUPS();
-            break;
-          case 86: // "v" - Toggle Indicator Dots and Lines
-            this.conf.indicators = !this.conf.indicators;
-            break;
-          case 66: // "b" - Toggle Interpolation
-            this.conf.interpolate = !this.conf.interpolate;
-            break;
-          case 78: // "n" - Toggle action radius
-            this.conf.seeActionRadius = !this.conf.seeActionRadius;
-            break;
-          case 77: // "m" - Toggle sensor radius
-            this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
-          break;
-          case 188: // "," - Toggle detection radius
-          this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
-            break;
-          case 71: // "g" - Toogle grid view
-            this.conf.showGrid = !this.conf.showGrid;
-            break;
-          case 72: // "h" - Toggle short log header
-            this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
-            this.console.updateLogHeader();
-            break;
-          case 65: // "a" - previous tournament Match
-            this.previousTournamentThing();
-            this.updateTournamentState();
-            break;
-          case 68: // 'd' - next tournament match
-            this.nextTournamentThing();
-            this.updateTournamentState();
-            break;
-        }
-      }
-
-    };
 
     if (this.listener != null) {
       this.listener.start(
@@ -557,6 +486,76 @@ export default class Runner {
     this.looper = new Looper(match, meta, this.conf, this.imgs,
       this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
   }
+
+  readonly onkeydown = (event: KeyboardEvent) => {
+    // TODO: figure out what this is???
+    if (document.activeElement == null) {
+      throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
+    }
+
+    let input = document.activeElement.nodeName == "INPUT";
+    if (!input) {
+      // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
+      const keyCode = event.keyCode;
+      switch (keyCode) {
+        case 80: // "p" - Pause/Unpause
+          this.controls.pause();
+          break;
+        case 79: // "o" - Stop
+          this.controls.stop();
+          break;
+        case 69: // 'e' - go to end
+          this.controls.end();
+          break;
+        case 37: // "LEFT" - Step Backward
+          this.controls.stepBackward();
+          break;
+        case 39: // "RIGHT" - Step Forward
+          this.controls.stepForward();
+          break;
+        case 38: // "UP" - Faster
+          this.controls.doubleUPS();
+          break;
+        case 40: // "DOWN" - Slower
+          this.controls.halveUPS();
+          break;
+        case 82: // "r" - reverse UPS
+          this.controls.reverseUPS();
+          break;
+        case 86: // "v" - Toggle Indicator Dots and Lines
+          this.conf.indicators = !this.conf.indicators;
+          break;
+        case 66: // "b" - Toggle Interpolation
+          this.conf.interpolate = !this.conf.interpolate;
+          break;
+        case 78: // "n" - Toggle action radius
+          this.conf.seeActionRadius = !this.conf.seeActionRadius;
+          break;
+        case 77: // "m" - Toggle sensor radius
+          this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
+        break;
+        case 188: // "," - Toggle detection radius
+        this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
+          break;
+        case 71: // "g" - Toogle grid view
+          this.conf.showGrid = !this.conf.showGrid;
+          break;
+        case 72: // "h" - Toggle short log header
+          this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
+          this.console.updateLogHeader();
+          break;
+        case 65: // "a" - previous tournament Match
+          this.previousTournamentThing();
+          this.updateTournamentState();
+          break;
+        case 68: // 'd' - next tournament match
+          this.nextTournamentThing();
+          this.updateTournamentState();
+          break;
+      }
+    }
+
+  };
 }
 
 export enum TournamentState {

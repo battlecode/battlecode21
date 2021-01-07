@@ -36,7 +36,7 @@ public strictfp class RobotPlayer {
 
         turnCount = 0;
 
-        System.out.println("I'm a " + rc.getType() + " and I just got created!");
+        System.out.println("I'm a " + rc.getType() + " and I just got created! I have influence " + rc.getInfluence());
         while (true) {
             turnCount += 1;
             // Try/catch blocks stop unhandled exceptions, which cause your robot to freeze
@@ -71,6 +71,7 @@ public strictfp class RobotPlayer {
                 break;
             }
         }
+        rc.bid(1); // submit a bid for a vote
     }
 
     static void runPolitician() throws GameActionException {
