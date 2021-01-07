@@ -170,6 +170,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'replay': scrimmage_replay
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+    # In testing, it's helpful to comment out the actual pubsub call, and print what would be added instead, so you can see it.
+    # Make sure to revert this before pushing to master and deploying!
     # print(data_bytestring)
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
