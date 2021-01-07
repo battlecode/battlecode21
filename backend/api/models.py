@@ -156,7 +156,7 @@ class Submission(models.Model):
     submitted_at         = models.DateTimeField(auto_now_add=True)
     link                 = models.TextField(null=True)
     compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
-    error_msg            = models.TextField(blank=True)
+    error_msg            = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.id is not None:
