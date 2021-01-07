@@ -19,6 +19,7 @@ export default class Console {
   private teamBInput: HTMLInputElement;
   private lengthInput: HTMLInputElement;
   private copyButton: HTMLButtonElement;
+  private notLoggingDiv: HTMLDivElement;
 
   // Filters
   // use teamA(), teamB(), minRound(), and maxRound() to get the other filters
@@ -69,6 +70,13 @@ export default class Console {
     this.lengthInput = this.getHTMLInput();
     this.copyButton = this.getHTMLCopyButton();
 
+    this.notLoggingDiv =  document.createElement("div");
+    this.notLoggingDiv.className = "not-logging-div";
+    this.notLoggingDiv.textContent = "Not processing logs for new matches.";
+    this.notLoggingDiv.hidden = this.conf.processLogs;
+
+    div.appendChild(this.notLoggingDiv);
+
     // Add a tip
     const span = document.createElement("span");
     const p = document.createElement('p');
@@ -106,7 +114,6 @@ export default class Console {
     div.appendChild(this.copyButton);
 
     this.updateLogHeader();
-
 
     return div;
   }
@@ -199,6 +206,13 @@ export default class Console {
   setIDFilter(id: number | undefined): void {
     this.robotID = id;
     this.applyFilter();
+  }
+
+  /**
+   * Sets indicator of whether logs are being processed.
+   */
+  setNotLoggingDiv(processLogs: boolean) {
+    this.notLoggingDiv.hidden = processLogs;
   }
 
   /**

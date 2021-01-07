@@ -137,6 +137,7 @@ export default class Sidebar {
     , - Toggle Detection Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
+    L - Toggle whether to process logs.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>
@@ -147,7 +148,9 @@ export default class Sidebar {
     <b class="blue">How to Play a Match</b><br>
     <i>From the application:</i> Click <code>Runner</code> and follow the
     instructions in the sidebar. Note that it may take a few seconds for
-    matches to be displayed. (<i>The runner may not work until a few days after release.</i>)<br>
+    matches to be displayed. (<i>Currently, the runner has some memory leak
+    issues. Until they are fixed, please be wary of memory usage by the client
+    and Gradle Daemons in the background.</i>)<br>
     <br>
     <i>From the web client:</i> You can always upload a <code>.bc21</code> file by
     clicking the upload button in the <code>Queue</code> section.<br>
@@ -159,9 +162,9 @@ export default class Sidebar {
     The console displays all <code>System.out.println()</code> data up to the current round.
     You can filter teams by checking the boxes and robot IDs by clicking the
     robot. You can also change the maximum number of rounds displayed in the
-    input box. Beware of doing too much logging! This slows down the client.
+    input box. <b class="red">Beware of doing too much logging!</b> This slows down the client.
     (WARNING: If you want to, say, suddenly display 3000 rounds
-    of data on round 2999, pause the client first to prevent freezing.)<br>
+    of data, pause the client first to prevent freezing.)<br>
     <br>
     <b class="blue">How to Use the Profiler</b><br>
     <i> The profiler is currently disabled.</i><br>

@@ -37,12 +37,18 @@ export default class Game {
   private _meta: Metadata | null;
 
   /**
+   * Whether to process logs.
+   */
+  private readonly processLogs;
+
+  /**
    * Create a Game with nothing inside.
    */
-  constructor() {
+  constructor(processLogs: boolean = true) {
     this._winner = null;
     this._matches = new Array();
     this._meta = null;
+    this.processLogs = processLogs;
   }
 
   /**
@@ -74,7 +80,7 @@ export default class Game {
       case schema.Event.MatchHeader:
         const matchHeader = event.e(new schema.MatchHeader()) as schema.MatchHeader;
         if (gameStarted && (matchCount === 0 || lastMatchFinished)) {
-          this._matches.push(new Match(matchHeader, this._meta as Metadata));
+          this._matches.push(new Match(matchHeader, this._meta as Metadata, this.processLogs));
         } else {
           throw new Error("Can't create new game when last hasn't finished");
         }

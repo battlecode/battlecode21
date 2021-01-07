@@ -99,6 +99,11 @@ export interface Config {
    * Whether logs should show shorter header
    */
   shorterLogHeader: boolean;
+
+  /**
+   * Whether we should process a match's logs by default.
+   */
+  processLogs: boolean;
 }
 
 /**
@@ -139,6 +144,7 @@ export function defaults(supplied?: any): Config {
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
+    processLogs: true
   };
   return Object.assign(conf, supplied);
 }

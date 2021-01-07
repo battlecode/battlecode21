@@ -17,7 +17,7 @@ export default class WebSocketListener {
   onFirstMatch: () => void;
   onOtherMatch: () => void;
 
-  constructor(url: string, pollEvery: number) {
+  constructor(url: string, pollEvery: number, readonly conf: Config) {
     this.url = url;
     this.pollEvery = pollEvery;
     this.firstMatch = true;
@@ -61,7 +61,7 @@ export default class WebSocketListener {
         console.error("Skipping end of game from websocket.");
       }
 
-      this.currentGame = new Game();
+      this.currentGame = new Game(this.conf.processLogs);
       this.onGameReceived(this.currentGame);
       this.firstMatch = true;
       this.currentGame.applyEvent(event);
