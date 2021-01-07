@@ -1042,6 +1042,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             if 'status' in request.data:
                 sc_status = request.data['status']
+                sc_error_msg = request.data['error_msg']
                 if sc_status == "redwon" or sc_status == "bluewon":
 
                     if 'winscore' in request.data and 'losescore' in request.data:
@@ -1097,7 +1098,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 elif sc_status == "error":
                     scrimmage.status = sc_status
-
+                    scrimmage.error_msg = sc_error_msg
                     scrimmage.save()
                     # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
                     return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
