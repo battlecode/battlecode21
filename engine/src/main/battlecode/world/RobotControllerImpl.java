@@ -416,6 +416,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         this.robot.addInfluenceAndConviction(-influence);
 
         int robotID = gameWorld.spawnRobot(this.robot, type, adjacentLocation(dir), getTeam(), influence);
+
+        // set cooldown turns here, because not all new robots have cooldown (eg. switching teams)
+        InternalRobot newBot = getRobotByID(robotID);
+        newBot.setCooldownTurns(type.initialCooldown);
+
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
     
