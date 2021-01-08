@@ -184,7 +184,7 @@ class GettingStarted extends Component {
                                         To participate in Battlecode, you need an account and a team. Each team can consist of 1 to 4 people.
                                     </p>
                                     <p>
-                                        Create an account on this website, and then go to the <NavLink to='team'>team</NavLink> section to either create
+                                        Create an account on this website, and then go to the <NavLink to='team' style={{fontWeight:700}}>team</NavLink> section to either create
                                         or join a team.
                                     </p>
                                 </div>
@@ -195,7 +195,7 @@ class GettingStarted extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        If you experience problems with the instructions below, check <b><NavLink to='common-issues'>common issues</NavLink></b>, and if that doesn't help, ask on the Discord.
+                                        If you experience problems with the instructions below, check <b><NavLink to='common-issues' style={{fontWeight:700}}>common issues</NavLink></b>, and if that doesn't help, ask on the Discord.
                                     </p> <h6 class="installation-steps">Step 1: Install Java</h6>
                                     <p>
                                         You'll need a Java Development Kit (JDK) version 8. Unfortunately, higher versions will not
@@ -212,18 +212,18 @@ class GettingStarted extends Component {
                                     </p>
                                     <p></p>
                                     <p>
-                                        If you're unsure how to install the JDK, you can find instructions for all operating systems
-                                        <b><a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html'>here</a></b> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
+                                        If you're unsure how to install the JDK, you can find instructions for all operating
+                                        systems <b><a href='https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html' style={{fontWeight:700}}>here</a></b> (pay attention to <code>PATH</code> and <code>CLASSPATH</code>).
                                     </p>
                                     <h6 class="installation-steps">Step 2: Download Battlecode</h6>
                                     <p>
-                                        Next, you should download the <b><a href="https://github.com/battlecode/battlecode21-scaffold">Battlecode 2021 scaffold</a></b>.
+                                        Next, you should download the <b><a href="https://github.com/battlecode/battlecode21-scaffold" style={{fontWeight:700}}>Battlecode 2021 scaffold</a></b>.
                                         To get up and running quickly, you can click "Clone or download" and then "Download ZIP," and move on to the next step.
                                     </p>
                                     <p>
-                                        We recommend, however, that you instead use Git to organize your code. If you haven't used Git before, read
-                                        <b><a href='https://guides.github.com/introduction/git-handbook/'>this guide</a></b> (or wait for our lecture covering it). On the
-                                        <b><a href="https://github.com/battlecode/battlecode21-scaffold">scaffold page</a></b>, click "Use this template."
+                                        We recommend, however, that you instead use Git to organize your code. If you haven't used Git before,
+                                        read <b><a href='https://guides.github.com/introduction/git-handbook/' style={{fontWeight:700}}>this guide</a></b> (or wait for our lecture covering it).
+                                        On the <b><a href="https://github.com/battlecode/battlecode21-scaffold" style={{fontWeight:700}}>scaffold page</a></b>, click "Use this template."
                                         Importantly, on the next page, make your new repo <b>private</b> (you don't want other teams to steal your code!).
                                         You can then clone your newly created repo and invite your team members to collaborate on it.
                                     </p>
@@ -292,7 +292,7 @@ class GettingStarted extends Component {
                                         Battlecode has a Discord server! 
                                         Everyone is encouraged to join. 
                                         Announcements, strategy discussions, bug fixes and ~memes~ all 
-                                        happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH'>https://discord.gg/N86mxkH</a>.
+                                        happen on Discord. Follow this invite link to join: <a href='https://discord.gg/N86mxkH' style={{fontWeight:700}}>https://discord.gg/N86mxkH</a>.
                                     </p>
                                 </div>
                             </div>
