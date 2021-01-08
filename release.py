@@ -137,6 +137,10 @@ def client():
     """
     # TODO this should be in the npm script too, to get this to run during local development.
     os.chdir("client/visualizer")
+    # TODO apparently need to run npm install first.
+    # This is okay in the deploy script. (we run npm install for the frontend folder too)
+    # However, for development, devs should run npm install in client dir. Can just drop a note about this in readme.
+    # Easiest to do each of these builds thru npm run install-all in top client folder.
     subprocess.call("npm run prod", shell=True)
     subprocess.call("cp -r out ../../frontend/public", shell=True)
     os.chdir("../../frontend")
