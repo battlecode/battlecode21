@@ -29,11 +29,13 @@ def main(version):
 
     deploy_frontend()
 
-    update_setup_py_version(version)
+    # These steps are used for a Python-based engine, eg Battlehack 2020.
+    # When running a Python game, these commands should be maintained and used, instead.
+    # update_setup_py_version(version)
 
-    publish_pypi()
+    # publish_pypi()
 
-    commit_tag_push(version)
+    # commit_tag_push(version)
 
 
 def generate_comparison_link():
