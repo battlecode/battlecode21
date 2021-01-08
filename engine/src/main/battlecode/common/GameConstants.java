@@ -26,6 +26,12 @@ public class GameConstants {
 
     /** The maximum possible map width. */
     public static final int MAP_MAX_WIDTH = 64;
+    
+    /** The minimum possible passability for a MapLocation */
+    public static final double MINIMUM_TERRAIN_PASSABILITY = 0.1;
+    
+    /** The maximum possible passability for a MapLocation */
+    public static final double MAXIMUM_TERRAIN_PASSABILITY = 1.0;
 
     // *********************************
     // ****** GAME PARAMETERS **********
