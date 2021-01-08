@@ -11,14 +11,15 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=None):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason="None"):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_game_update(gametype, gameid), data={
             'status': result,
             'winscore': winscore,
-            'losescore': losescore
+            'losescore': losescore,
+            'error_msg': reason
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
@@ -204,4 +205,4 @@ def game_worker(gameinfo):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=True)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)
