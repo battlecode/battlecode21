@@ -143,6 +143,7 @@ export default class Sidebar {
     <br>
     S - Add<br>
     D - Delete<br>
+    R - Reverse team<br>
     
     <br>
     <b class="blue">How to Play a Match</b><br>
@@ -187,10 +188,10 @@ export default class Sidebar {
     <br>
     To place enlightenment centers, enter the "change robots" mode, set the coordinates, and clicking
     "Add/Update" or "Delete." The coordinates can also be set by clicking the map. <i> (The map editor may be a bit glitchy
-    at the moment, as we iron out bugs. </i>) <br>
+    at the moment, as we iron out bugs.) </i> <br>
     <br>
-    To set tiles' passability values, enter the "change tiles" mode, and select a bottom-left and top-right corner of the set of tiles to target. Then, input the new passability value and press
-    "Add/Update".
+    To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
+    and then <b>hold and drag</b> your mouse across the map.
     <br>
     <!--Before exporting, click "Validate" to see if any changes need to be
     made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or

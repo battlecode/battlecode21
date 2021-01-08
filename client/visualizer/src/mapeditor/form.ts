@@ -1,6 +1,7 @@
 import {Config} from '../config';
 import * as cst from '../constants';
 import {AllImages} from '../imageloader';
+import {cow_border as cow} from '../cow';
 
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
@@ -81,7 +82,6 @@ export default class MapEditorForm {
     // callback functions for getting constants
     const cbWidth = () => {return this.header.getWidth()};
     const cbHeight = () => {return this.header.getHeight()};
-    const cbMaxRadius = (x, y, id) => {return this.maxRadius(x, y, id)};
 
     // header (name, width, height)
     this.header = new HeaderForm(() => {
@@ -150,7 +150,26 @@ export default class MapEditorForm {
       this.tileInfo.textContent = content;
     };
 
-    this.renderer = new MapRenderer(canvas, imgs, conf, onclickUnit, onclickBlank, onMouseover);
+    const onDrag = (loc: Victor) => {
+      if (this.getActiveForm() === this.tiles && this.tiles.isValid()) {
+        let r: number = this.tiles.getBrush();
+        let inBrush: (dx, dy) => boolean = () => true;
+        switch (this.tiles.getStyle()) {
+          case "Circle":
+            inBrush = (dx, dy) => dx*dx + dy*dy <= r*r;
+            break;
+          case "Square":
+            inBrush = (dx, dy) => Math.max(Math.abs(dx), Math.abs(dy)) <= r;
+            break;
+          case "Cow":
+            inBrush = (dx,dy) => (Math.abs(dx) < r && Math.abs(dy) < r && cow[Math.floor(20*(1+dx/r))][Math.floor(20*(1-dy/r))]);
+        }
+        this.setAreaPassability(loc.x, loc.y, this.tiles.getPass(), inBrush);
+        this.render();
+      }
+    }
+
+    this.renderer = new MapRenderer(canvas, imgs, conf, onclickUnit, onclickBlank, onMouseover, onDrag);
 
     this.initPassibility();
 
@@ -173,7 +192,7 @@ export default class MapEditorForm {
         while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
         this.forms.appendChild(this.tiles.div);
         this.buttonDelete.hidden = true;
-        this.buttonAdd.hidden = false;
+        this.buttonAdd.hidden = true;
         this.buttonReverse.hidden = true;
         this.buttonRandomize.hidden = false;
       }
@@ -202,7 +221,6 @@ export default class MapEditorForm {
     const robotsLabel = document.createElement("label");
     robotsLabel.setAttribute("for", this.robotsRadio.id);
     robotsLabel.textContent = "Place Robots";
-
 
     // Add radio buttons HTML element
     div.appendChild(this.tilesRadio);
@@ -250,15 +268,6 @@ export default class MapEditorForm {
           this.setUnit(id, unit);
           form.resetForm();
         }
-      }
-      if (this.getActiveForm() == this.tiles && this.tiles.isValid()) {
-        const form: TileForm = this.tiles;
-        const x1: number = form.getX1();
-        const x2: number = form.getX2();
-        const y1: number = form.getY1();
-        const y2: number = form.getY2();
-        const pass: number = form.getPass();
-        this.setRectPassability(x1, y1, x2, y2, pass);
       }
     }
 
@@ -374,6 +383,19 @@ export default class MapEditorForm {
     this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x] = pass;
   }
 
+  private setAreaPassability(x0: number, y0: number, pass: number, inBrush: (dx, dy) => boolean) {
+    const width = this.header.getWidth();
+    const height = this.header.getHeight();
+
+   for (let x = 0; x < width; x++) {
+     for (let y = 0; y < height; y++) {
+       if (inBrush(x-x0, y-y0)) {
+          this.setPassability(x, y, pass);
+       }
+     }
+   }
+  }
+
   /**
    * Set passability of all tiles from top-left to bottom-right.
    */
@@ -383,7 +405,6 @@ export default class MapEditorForm {
         this.setPassability(x, y, pass);
       }
     }
-    this.render();
   }
 
   /**

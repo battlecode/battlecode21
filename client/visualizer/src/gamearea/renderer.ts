@@ -19,7 +19,7 @@ export default class Renderer {
   // For rendering robot information on click
   private lastSelectedID: number;
   // position of mouse cursor hovering
-  private hoverPos: {x: number, y: number} | null;
+  private hoverPos: {x: number, y: number} | null = null;
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,

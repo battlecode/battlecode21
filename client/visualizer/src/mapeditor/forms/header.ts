@@ -14,7 +14,7 @@ export default class HeaderForm {
   private readonly cb: () => void;
 
   // Constants
-  private readonly DEFAULT_DIM: string = "20";
+  private readonly DEFAULT_DIM: string = "50";
 
   constructor(cb: () => void) {
 
