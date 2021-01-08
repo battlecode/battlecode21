@@ -11,12 +11,13 @@ import sys, os, shutil, logging, requests
 from google.cloud import storage
 
 
-def compile_report_result(submissionid, result):
+def compile_report_result(submissionid, result, errormsg=''):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_compile_update(submissionid), data={
-            'compilation_status': result
+            'compilation_status': result,
+            'error_msg': errormsg
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
@@ -28,7 +29,7 @@ def compile_report_result(submissionid, result):
 def compile_log_error(submissionid, reason):
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    compile_report_result(submissionid, COMPILE_ERROR)
+    compile_report_result(submissionid, COMPILE_ERROR, reason)
     sys.exit(1)
 
 def compile_worker(submissionid):

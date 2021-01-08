@@ -166,6 +166,10 @@ input[type='file'] {
     width: 100%;
 }
 
+.not-logging-div {
+    color: red;
+}
+
 .custom-button:active, button:target {
     background-color: #8c8c8c;
 }

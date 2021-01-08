@@ -33,8 +33,8 @@ class Issues extends Component {
                                         installed from earlier. We will add instructions here shortly, but for now, ask on the Discord for the fix.
                                         <ul>
                                             <li>Before doing the following two suggestions, try adding the line <code>org.gradle.java.home=&lt;path to your java 8 jdk&gt;</code> to your <code>gradle.properties</code> file</li>
-                                            <li>For Windows, try following <a href="https://www.theserverside.com/feature/How-to-set-JAVA_HOME-in-Windows-and-echo-the-result">these instructions</a>.</li>
-                                            <li>Try setting <code>org.gradle.java.home=/path_to_jdk_1.8_directory</code>. You need to know your <code>JAVA_HOME</code> (try <a href='https://www.baeldung.com/find-java-home'>this guide</a>).</li>
+                                            <li>For Windows, try following <a href="https://www.theserverside.com/feature/How-to-set-JAVA_HOME-in-Windows-and-echo-the-result" style={{fontWeight:700}}>these instructions</a>.</li>
+                                            <li>Try setting <code>org.gradle.java.home=/path_to_jdk_1.8_directory</code>. You need to know your <code>JAVA_HOME</code> (try <a href='https://www.baeldung.com/find-java-home' style={{fontWeight:700}}>this guide</a>).</li>
                                         </ul>
                                         </li>
                                         <li><code>Exception in thread "WebsocketSelector14" java.lang.NullPointerException</code>. A common error in java, but sometimes happens if you close the client while a game is running.
@@ -44,7 +44,7 @@ class Issues extends Component {
                                         things in IntelliJ, click the elephant in the Gradle Tool Window (the right-hand sidebar) and then execute <code>gradle --stop</code> in the
                                         window that pops up). If that doesn't work, ask on the Discord.</li>
                                     </ul>
-                                    If your error is not listed above, ask on <a href='https://discordapp.com/channels/386965718572466197/662426611563626537'>the Discord</a>.
+                                    If your error is not listed above, ask on <a href='https://discordapp.com/channels/386965718572466197/662426611563626537' style={{fontWeight:700}}>the Discord</a>.
                                 </p>
                                 </div>
                             </div>
@@ -77,14 +77,15 @@ class Issues extends Component {
                                     </p>
                                 <p>
                                     <ul>
-                                        <li>Did you download the Oracle JDK 8 listed in <NavLink to='getting-started'>the installation instructions</NavLink>?</li>
+                                        <li>Are you on the latest version of Battlecode? try <code>./gradlew update</code></li>
+                                        <li>Did you download the Oracle JDK 8 listed in <NavLink to='getting-started' style={{fontWeight:700}}>the installation instructions</NavLink>?</li>
                                         <li>Did you set your <code>JAVA_HOME</code> correctly?</li>
                                         <li><code>./gradlew clean</code> (always good to try)</li>
                                         <li><code>./gradlew cleanEclipse</code> (if Eclipse)</li>
                                         <li><code>Refresh Gradle Dependencies</code> in IntelliJ (see above)</li>
                                         <li><code>./gradlew --stop</code> (stops Gradle daemons)</li>
                                         <li><code>rm -r ~/.gradle</code> (removes the Gradle cache)</li>
-                                        <li>Redownload <a href="https://github.com/battlecode/battlecode20-scaffold">the scaffold</a>.</li>
+                                        <li>Redownload <b><a href="https://github.com/battlecode/battlecode21-scaffold" style={{fontWeight:700}}>the scaffold</a></b>.</li>
                                     </ul>
                                 </p>
                                 </div>

@@ -35,7 +35,9 @@ THIS_URL = 'https://2021.battlecode.org'
 # TODO: update this every time we update maps
 # TODO once we have more maps, update the default map selection (see views.py)
 SERVER_MAPS = [
-  "maptestsmall"
+  "maptestsmall",
+  "circle",
+  "quadrants"
 ]
 
 # this is the constant used in the ELO calculation

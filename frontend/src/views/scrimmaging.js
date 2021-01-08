@@ -113,7 +113,9 @@ class ScrimmageHistory extends Component {
                                             { s.status } 
                                             <Floater content={
                                                 <div>
-                                                <p>Our server has run into an error running this scrimmage. Don't worry, we're working on resolving it!</p></div> } showCloseButton={true}>
+                                                    <p>Our server has run into an error running this scrimmage. Don't worry, we're working on resolving it!</p>
+                                                    <p>Error: {s.error_msg}</p>
+                                                </div> } showCloseButton={true}>
                                                  <i className="pe-7s-info pe-fw" />
                                             </Floater>
                                         </td>)
@@ -126,7 +128,7 @@ class ScrimmageHistory extends Component {
                                             <td>{ s.score }</td>
                                             <td>{ s.team }</td>
                                             <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
-                                            { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.txt`} target="_blank">Watch</a></td>:<td>N/A</td> }
+                                            { s.replay?<td><a href={`/visualizer.html?${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.bc21`} target="_blank">Watch</a></td>:<td>N/A</td> }
                                         </tr>
                                     )
                                 }) }
