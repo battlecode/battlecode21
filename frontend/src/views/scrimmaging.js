@@ -126,7 +126,7 @@ class ScrimmageHistory extends Component {
                                             <td>{ s.score }</td>
                                             <td>{ s.team }</td>
                                             <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
-                                            { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.txt`} target="_blank">Watch</a></td>:<td>N/A</td> }
+                                            { s.replay?<td><a href={`${process.env.THIS_URL}/visualizer.html?${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.bc21`} target="_blank">Watch</a></td>:<td>N/A</td> }
                                         </tr>
                                     )
                                 }) }
