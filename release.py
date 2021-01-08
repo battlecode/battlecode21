@@ -139,8 +139,8 @@ def client():
     os.chdir("client/visualizer")
     # TODO apparently need to run npm install first.
     # This is okay in the deploy script. (we run npm install for the frontend folder too)
-    # However, for development, devs should run npm install in client dir. Can just drop a note about this in readme.
-    # Easiest to do each of these builds thru npm run install-all in top client folder.
+    # However, for development, devs should run npm install in client dir. Can just drop a note about this in readme. (also note that if client ever looks out of date, do npm run install-all, npm run build again.)
+    # Easiest to do each of these builds thru npm run install-all, npm run build. in top client folder.
     subprocess.call("npm run prod", shell=True)
     subprocess.call("cp -r out ../../frontend/public", shell=True)
     os.chdir("../../frontend")
