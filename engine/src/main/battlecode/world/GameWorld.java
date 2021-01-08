@@ -173,7 +173,14 @@ public strictfp class GameWorld {
     }
 
     public double getPassability(MapLocation loc) {
-        return this.passability[locationToIndex(loc)];
+        double passability = this.passability[locationToIndex(loc)];
+        if (passability < GameConstants.MINIMUM_TERRAIN_PASSABILITY) {
+            return GameConstants.MINIMUM_TERRAIN_PASSABILITY;
+        }
+        if (passability > GameConstants.MAXIMUM_TERRAIN_PASSABILITY) {
+            return GameConstants.MAXIMUM_TERRAIN_PASSABILITY;
+        }
+        return passability;
     }
 
     /**
