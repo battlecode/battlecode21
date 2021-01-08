@@ -45,3 +45,7 @@ Delete frontend/public/javadoc, and frontend/public/out, if they exist, in order
 Produce a new javadoc folder and copy it into public. (see the top level readme)
 
 Also build a production version of the client and copy it into public. (see some notes, somewhere)
+
+Remove version.txt
+
+Then run the deploy.sh script.
