@@ -18,6 +18,8 @@ Client/visualizer/src/config or smth
 
 gradle properties
 
+push this to master!
+
 ## Release packages
 
 Set BC21_GITUSERNAME: `export BC21_GITUSERNAME=n8kim1`, etc
@@ -34,9 +36,11 @@ In our game spec (specs folder), make sure changes are up to date.
 
 Pay attention to the version number at the top of specs.md.html, and to the changelog at the bottom.
 
+push to master btw!
+
 ## Deploy frontend
 
-Delete frontend/public/javadoc, and frontend/public/out, if they exist, in order to produce new version of the,.
+Delete frontend/public/javadoc, and frontend/public/out, if they exist, in order to produce new version of them.
 
 Produce a new javadoc folder and copy it into public. (see the top level readme)
 
