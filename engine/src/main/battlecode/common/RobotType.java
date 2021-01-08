@@ -39,7 +39,7 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  15, 12,  30,  40,  15000),
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  10, 12,  30,  40,  15000),
     //                       SS                     CR     AC     IC  AR   SR   DR   BL
     ;
     
