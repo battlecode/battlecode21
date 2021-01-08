@@ -20,6 +20,14 @@ gradle properties
 
 push this to master!
 
+## Update specs and javadoc
+
+In our game spec (specs folder), make sure changes are up to date.
+
+Pay attention to the version number at the top of specs.md.html, and to the changelog at the bottom.
+
+push to master btw!
+
 ## Release packages
 
 Set BC21_GITUSERNAME: `export BC21_GITUSERNAME=n8kim1`, etc
@@ -29,14 +37,6 @@ Set BC21_GITKEY similarly
 ./gradlew publish
 
 Now set version.txt in gcloud (also set cache policy to no-store)
-
-## Update specs and javadoc
-
-In our game spec (specs folder), make sure changes are up to date.
-
-Pay attention to the version number at the top of specs.md.html, and to the changelog at the bottom.
-
-push to master btw!
 
 ## Deploy frontend
 
