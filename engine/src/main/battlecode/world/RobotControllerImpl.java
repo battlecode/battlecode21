@@ -416,6 +416,11 @@ public final strictfp class RobotControllerImpl implements RobotController {
         this.robot.addInfluenceAndConviction(-influence);
 
         int robotID = gameWorld.spawnRobot(this.robot, type, adjacentLocation(dir), getTeam(), influence);
+
+        // set cooldown turns here, because not all new robots have cooldown (eg. switching teams)
+        InternalRobot newBot = getRobotByID(robotID);
+        newBot.setCooldownTurns(type.initialCooldown);
+
         gameWorld.getMatchMaker().addAction(getID(), Action.SPAWN_UNIT, robotID);
     }
     
@@ -464,7 +469,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
             throw new GameActionException(CANT_DO_THAT,
                     "Robot is of type " + getType() + " which cannot expose.");
         if (!onTheMap(loc))
-            throw new GameActionException(CANT_DO_THAT,
+            throw new GameActionException(OUT_OF_RANGE,
                     "Location is not on the map.");
         if (!this.robot.canActLocation(loc))
             throw new GameActionException(CANT_DO_THAT,
@@ -481,10 +486,38 @@ public final strictfp class RobotControllerImpl implements RobotController {
                     "Robot at target location is not on the enemy team.");
     }
 
+    private void assertCanExpose(int id) throws GameActionException {
+        assertIsReady();
+        if (!getType().canExpose())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is of type " + getType() + " which cannot expose.");
+        if (!canSenseRobot(id))
+            throw new GameActionException(OUT_OF_RANGE,
+                    "The targeted robot cannot be sensed.");
+        InternalRobot bot = getRobotByID(id);
+        if (!this.robot.canActLocation(bot.getLocation()))
+            throw new GameActionException(OUT_OF_RANGE,
+                    "Robot can't be exposed because it is out of range.");
+        if (!(bot.getType().canBeExposed()))
+            throw new GameActionException(CANT_DO_THAT, 
+                    "Robot is not of a type that can be exposed.");
+        if (bot.getTeam() == getTeam())
+            throw new GameActionException(CANT_DO_THAT,
+                    "Robot is not on the enemy team.");
+    }
+
     @Override
     public boolean canExpose(MapLocation loc) {
         try {
             assertCanExpose(loc);
+            return true;
+        } catch (GameActionException e) { return false; }  
+    }
+
+    @Override
+    public boolean canExpose(int id) {
+        try {
+            assertCanExpose(id);
             return true;
         } catch (GameActionException e) { return false; }  
     }
@@ -498,6 +531,16 @@ public final strictfp class RobotControllerImpl implements RobotController {
         int exposedID = bot.getID();
         this.robot.expose(bot);
         gameWorld.getMatchMaker().addAction(getID(), Action.EXPOSE, exposedID);
+    }
+
+    @Override
+    public void expose(int id) throws GameActionException {
+        assertCanExpose(id);
+
+        this.robot.addCooldownTurns();
+        InternalRobot bot = getRobotByID(id);
+        this.robot.expose(bot);
+        gameWorld.getMatchMaker().addAction(getID(), Action.EXPOSE, id);
     }
 
     // ***********************************
