@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """
+For releasing a new version of a Python-based game (eg Battlehack 2020).
 Here's what this script does:
 * Generates a comparison link to review the changes
 * Adds version number and changelog to specs/specs.md
