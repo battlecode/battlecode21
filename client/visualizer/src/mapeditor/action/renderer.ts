@@ -5,20 +5,7 @@ import {GameWorld, schema} from 'battlecode-playback';
 import {AllImages} from '../../imageloader';
 import Victor = require('victor');
 
-import {GameMap} from '../index';
-
-export type MapUnit = {
-  loc: Victor,
-  type: schema.BodyType,
-  radius: 0.5,
-  teamID?: number
-};
-
-export enum Symmetry {
-  ROTATIONAL,
-  HORIZONTAL,
-  VERTICAL
-};
+import {GameMap, MapUnit} from '../index';
 
 /**
  * Renders the world.

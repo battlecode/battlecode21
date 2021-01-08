@@ -26,15 +26,12 @@ export default class TileForm {
   // Callbacks on input change
   readonly width: () => number;
   readonly height: () => number;
-  readonly maxRadius: (x: number, y: number, ignoreID?: number) => number;
 
-  constructor(width: () => number, height: () => number,
-    maxRadius: (x: number, y: number, ignoreID?: number) => number) {
+  constructor(width: () => number, height: () => number) {
 
     // Store the callbacks
     this.width = width;
     this.height = height;
-    this.maxRadius = maxRadius;
 
     // Create HTML elements
     this.div = document.createElement("div");
@@ -201,7 +198,7 @@ export default class TileForm {
   // }
 
   isValid(): boolean {
-    return !(isNaN(this.getX1()) || isNaN(this.getY1()) || isNaN(this.getX2()) || isNaN(this.getY2())) || isNaN(this.getPass());
+    return !(isNaN(this.getX1()) || isNaN(this.getY1()) || isNaN(this.getX2()) || isNaN(this.getY2()) || isNaN(this.getPass()));
   }
 
   // getUnit(id: number): MapUnit | undefined {

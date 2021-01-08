@@ -5,7 +5,14 @@ import {AllImages} from '../imageloader';
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
-import {MapRenderer, Symmetry, MapUnit, HeaderForm, SymmetryForm, RobotForm, TileForm} from './index';
+import {MapRenderer, HeaderForm, SymmetryForm, RobotForm, TileForm} from './index';
+
+export type MapUnit = {
+  loc: Victor,
+  type: schema.BodyType,
+  radius: 0.5,
+  teamID?: number
+};
 
 export type GameMap = {
   name: string,
@@ -78,13 +85,13 @@ export default class MapEditorForm {
 
     // header (name, width, height)
     this.header = new HeaderForm(() => {
-      this.initPassibility();
+      this.reset();
       this.render();
     });
     this.div.appendChild(this.header.div);
 
     // symmetry
-    this.symmetry = new SymmetryForm(() => {this.render()});
+    this.symmetry = new SymmetryForm(() => {this.initPassibility(); this.render()});
     this.div.appendChild(document.createElement("br"));
     this.div.appendChild(this.symmetry.div);
     this.div.appendChild(document.createElement("br"));
@@ -98,8 +105,8 @@ export default class MapEditorForm {
 
     // robot delete + add/update buttons
     this.forms = document.createElement("div");
-    this.robots = new RobotForm(cbWidth, cbHeight, cbMaxRadius); // robot info (type, x, y, ...)
-    this.tiles = new TileForm(cbWidth, cbHeight, cbMaxRadius);
+    this.robots = new RobotForm(cbWidth, cbHeight); // robot info (type, x, y, ...)
+    this.tiles = new TileForm(cbWidth, cbHeight);
     this.buttonDelete = document.createElement("button");
     this.buttonAdd = document.createElement("button");
     this.buttonReverse = document.createElement("button");
@@ -244,14 +251,14 @@ export default class MapEditorForm {
           form.resetForm();
         }
       }
-      if (this.getActiveForm() == this.tiles) {
+      if (this.getActiveForm() == this.tiles && this.tiles.isValid()) {
         const form: TileForm = this.tiles;
         const x1: number = form.getX1();
         const x2: number = form.getX2();
         const y1: number = form.getY1();
         const y2: number = form.getY2();
         const pass: number = form.getPass();
-        this.setPassability(x1, y1, x2, y2, pass);
+        this.setRectPassability(x1, y1, x2, y2, pass);
       }
     }
 
@@ -359,16 +366,21 @@ export default class MapEditorForm {
    */
   private initPassibility() {
     this.passability = new Array(this.header.getHeight() * this.header.getWidth());
-    this.passability.fill(0.5);
+    this.passability.fill(1);
+  }
+
+  private setPassability(x: number, y: number, pass: number) {
+    const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
+    this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x] = pass;
   }
 
   /**
    * Set passability of all tiles from top-left to bottom-right.
    */
-  private setPassability(x1: number, y1: number, x2: number, y2: number, pass: number) {
+  private setRectPassability(x1: number, y1: number, x2: number, y2: number, pass: number) {
     for (let x = x1; x <= x2; x++) {
       for (let y = y1; y <= y2; y++) {
-        this.passability[y*this.header.getWidth() + x] = pass;
+        this.setPassability(x, y, pass);
       }
     }
     this.render();
@@ -412,6 +424,7 @@ export default class MapEditorForm {
     this.lastID = 1;
     this.originalBodies = new Map<number, MapUnit>();
     this.symmetricBodies = new Map<number, MapUnit>();
+    this.initPassibility();
     this.render();
   }
 }

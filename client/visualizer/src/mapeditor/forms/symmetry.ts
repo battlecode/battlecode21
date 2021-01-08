@@ -25,8 +25,6 @@ export default class SymmetryForm {
   private readonly SYMMETRY_OPTIONS: Symmetry[] = [
     Symmetry.ROTATIONAL, Symmetry.HORIZONTAL, Symmetry.VERTICAL
   ];
-  private readonly NEUTRAL_TEAM_ID = 0;
-  private readonly BLUE_TEAM_ID = 2;
 
   constructor(cb: () => void) {
 
@@ -95,6 +93,10 @@ export default class SymmetryForm {
     }
   };
 
+  flipTeamID(teamID: number) {
+    return teamID === 0 ? 0 : 3 - teamID;
+  }
+
   // Returns the symmetric location on the canvas
   transformLoc (loc: Victor, width: number, height: number): Victor {
     function reflect(x: number, mid: number): number {
@@ -131,21 +133,12 @@ export default class SymmetryForm {
       if (!this.onSymmetricLine(body.loc, width, height)) {
         const type = body.type;
         const teamID = body.teamID === undefined? 0 : body.teamID;
-        if (teamID === 0) {
-            symmetricBodies.set(id, {
-            loc: this.transformLoc(body.loc, width, height),
-            radius: body.radius,
-            type: type,
-            teamID: teamID
-          });
-        } else {
-              symmetricBodies.set(id, {
-              loc: this.transformLoc(body.loc, width, height),
-              radius: body.radius,
-              type: type,
-              teamID: 3 - teamID
-            });
-        }
+        symmetricBodies.set(id, {
+          loc: this.transformLoc(body.loc, width, height),
+          radius: body.radius,
+          type: type,
+          teamID: this.flipTeamID(teamID)
+        });
       }
     });
 

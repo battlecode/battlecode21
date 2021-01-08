@@ -31,13 +31,11 @@ export default class RobotForm {
     "2": "Blue"
   };
 
-  constructor(width: () => number, height: () => number,
-    maxRadius: (x: number, y: number, ignoreID?: number) => number) {
+  constructor(width: () => number, height: () => number) {
 
     // Store the callbacks
     this.width = width;
     this.height = height;
-    this.maxRadius = maxRadius;
 
     // Create HTML elements
     this.div = document.createElement("div");
@@ -91,11 +89,6 @@ export default class RobotForm {
     form.appendChild(x);
     form.appendChild(y);
     form.appendChild(document.createElement("br"));
-    form.style.textAlign = 'left';
-
-    // Robot ID
-    id.appendChild(document.createTextNode("ID: "));
-    id.appendChild(this.id);
 
     // Robot type
     type.appendChild(document.createTextNode("Type: "));
