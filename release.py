@@ -135,6 +135,7 @@ def client():
     """
     Build client for web.
     """
+    # TODO this should be in the npm script too, to get this to run during local development.
     os.chdir("client/visualizer")
     subprocess.call("npm run prod", shell=True)
     subprocess.call("cp -r out ../../frontend/public", shell=True)
