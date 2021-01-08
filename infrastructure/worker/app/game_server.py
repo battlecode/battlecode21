@@ -11,12 +11,13 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, errormsg=''):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_game_update(gametype, gameid), data={
             'status': result,
+            'error_msg': errormsg,
             'winscore': winscore,
             'losescore': losescore
         }, headers={
@@ -30,7 +31,7 @@ def game_report_result(gametype, gameid, result, winscore=None, losescore=None):
 def game_log_error(gametype, gameid, reason):
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    game_report_result(gametype, gameid, GAME_ERROR)
+    game_report_result(gametype, gameid, GAME_ERROR, errormsg=reason)
     sys.exit(1)
 
 def game_worker(gameinfo):
