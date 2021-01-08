@@ -161,7 +161,7 @@ export default class MapEditor {
   private resetButton(): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = 'form-button';
+    button.className = 'form-button custom-button';
     button.appendChild(document.createTextNode("Reset Map"));
     button.onclick = () => {
       this.form.reset();
@@ -174,6 +174,7 @@ export default class MapEditor {
     button.id = "export";
     button.type = "button";
     button.innerText = "Export!";
+    button.className = 'form-button custom-button';
 
     button.onclick = () => {
       if (!this.isValid()) return;

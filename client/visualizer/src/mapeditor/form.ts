@@ -52,6 +52,7 @@ export default class MapEditorForm {
   readonly buttonDelete: HTMLButtonElement;
   readonly buttonReverse: HTMLButtonElement;
   readonly buttonRandomize: HTMLButtonElement;
+  readonly buttonInvert: HTMLButtonElement;
 
   readonly tileInfo: HTMLDivElement;
 
@@ -111,12 +112,14 @@ export default class MapEditorForm {
     this.buttonAdd = document.createElement("button");
     this.buttonReverse = document.createElement("button");
     this.buttonRandomize = document.createElement("button");
+    this.buttonInvert = document.createElement("button");
     this.div.appendChild(this.forms);
 
-    this.buttonDelete.hidden = true;
-    this.buttonAdd.hidden = true;
-    this.buttonReverse.hidden = true;
-    this.buttonRandomize.hidden = true;
+    this.buttonDelete.style.display = "none";
+    this.buttonAdd.style.display = "none";
+    this.buttonReverse.style.display = "none";
+    this.buttonRandomize.style.display = "none";
+    this.buttonInvert.style.display = "none";
 
     // TODO add vertical filler to put form buttons at the bottom
     // validate, remove, reset buttons
@@ -191,10 +194,11 @@ export default class MapEditorForm {
       if (this.tilesRadio.checked) {
         while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
         this.forms.appendChild(this.tiles.div);
-        this.buttonDelete.hidden = true;
-        this.buttonAdd.hidden = true;
-        this.buttonReverse.hidden = true;
-        this.buttonRandomize.hidden = false;
+        this.buttonDelete.style.display = "none";
+        this.buttonAdd.style.display = "none";
+        this.buttonReverse.style.display = "none";
+        this.buttonRandomize.style.display = "";
+        this.buttonInvert.style.display = "";
       }
     };
     const tilesLabel = document.createElement("label");
@@ -212,10 +216,11 @@ export default class MapEditorForm {
       if (this.robotsRadio.checked) {
         while (this.forms.firstChild) this.forms.removeChild(this.forms.firstChild);
         this.forms.appendChild(this.robots.div);
-        this.buttonDelete.hidden = false;
-        this.buttonAdd.hidden = false;
-        this.buttonReverse.hidden = false;
-        this.buttonRandomize.hidden = true;
+        this.buttonDelete.style.display = "";
+        this.buttonAdd.style.display = "";
+        this.buttonReverse.style.display = "";
+        this.buttonRandomize.style.display = "none";
+        this.buttonInvert.style.display = "none";
       }
     };
     const robotsLabel = document.createElement("label");
@@ -239,20 +244,24 @@ export default class MapEditorForm {
     buttons.appendChild(this.buttonAdd);
     buttons.appendChild(this.buttonReverse);
     buttons.appendChild(this.buttonRandomize);
+    buttons.appendChild(this.buttonInvert);
 
     // Delete and Add/Update buttons
     this.buttonDelete.type = "button";
-    this.buttonDelete.className = "form-button";
+    this.buttonDelete.className = "form-button custom-button";
     this.buttonDelete.appendChild(document.createTextNode("Delete"));
     this.buttonAdd.type = "button";
-    this.buttonAdd.className = "form-button";
+    this.buttonAdd.className = "form-button custom-button";
     this.buttonAdd.appendChild(document.createTextNode("Add/Update"));
     this.buttonReverse.type = "button";
-    this.buttonReverse.className = "form-button";
+    this.buttonReverse.className = "form-button custom-button";
     this.buttonReverse.appendChild(document.createTextNode("Switch Team"));
     this.buttonRandomize.type = "button";
-    this.buttonRandomize.className = "form-button";
+    this.buttonRandomize.className = "form-button custom-button";
     this.buttonRandomize.appendChild(document.createTextNode("Randomize Tiles"));
+    this.buttonInvert.type = "button";
+    this.buttonInvert.className = "form-button custom-button";
+    this.buttonInvert.appendChild(document.createTextNode("Invert values"));
 
     return buttons;
   }
@@ -303,18 +312,46 @@ export default class MapEditorForm {
       if (this.getActiveForm() == this.tiles) {
         for(let x: number = 0; x < this.header.getWidth(); x++) {
           for(let y:number = 0; y < this.header.getHeight(); y++) {
-            this.passability[y*this.header.getWidth() + x] = Math.random() * 0.9 + 0.1;
-          }
-        }
-        for(var x: number = 0; x < this.header.getWidth(); x++) {
-          for(var y:number = 0; y < this.header.getHeight(); y++) {
-            const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
-            this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x];
+            this.setPassability(x, y, Math.random() * 0.9 + 0.1);
           }
         }
         this.render();
       }
     }
+
+    this.buttonInvert.onclick = () => {
+      if (this.getActiveForm() == this.tiles) {
+        for(let x: number = 0; x < this.header.getWidth(); x++) {
+          for(let y: number = 0; y < this.header.getHeight(); y++) {
+            this.passability[y*this.header.getWidth() + x] = 1 - this.getPassability(x,y);
+          }
+        }
+        this.render();
+      }
+    }
+
+    // this.buttonSmoothen.onclick = () => {
+    //   if (this.getActiveForm() == this.tiles) {
+    //     for(let x: number = 0; x < this.header.getWidth(); x++) {
+    //       for(let y: number = 0; y < this.header.getHeight(); y++) {
+    //         //let sum = 0, n = 0;
+    //         let high = this.getPassability(x, y);
+    //         let low = this.getPassability(x, y);
+    //         for (let x2 = Math.max(0,x-1); x2 <= Math.min(x+1, this.header.getWidth()-1); x2++) {
+    //           for (let y2 = Math.max(0,y-1); y2 <= Math.min(y+1, this.header.getWidth()-1); y2++) {
+    //            // if (Math.abs(x-x2) + Math.abs(y-y2) > 1) continue; // bad code
+    //            // sum += this.getPassability(x2, y2);
+    //             //n++;
+    //             high = Math.max(this.getPassability(x2, y2), high);
+    //             low = Math.min(this.getPassability(x2, y2), high);
+    //           }
+    //         } 
+    //         this.setPassability(x,y, (high+low)/2);
+    //       }
+    //     }
+    //     this.render();
+    //   }
+    // }
   }
 
   /**
@@ -376,6 +413,10 @@ export default class MapEditorForm {
   private initPassibility() {
     this.passability = new Array(this.header.getHeight() * this.header.getWidth());
     this.passability.fill(1);
+  }
+
+  private getPassability(x: number, y: number) {
+    return this.passability[y*this.header.getWidth() + x];
   }
 
   private setPassability(x: number, y: number, pass: number) {
