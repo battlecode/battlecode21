@@ -28,9 +28,7 @@ export default class ScaffoldCommunicator {
     }
 
     electron.remote.app.on('before-quit', function() {
-      this.procs.forEach(function(proc) {
-        proc.kill();
-      });
+      this.killProcs();
     });
   }
 
@@ -188,7 +186,14 @@ export default class ScaffoldCommunicator {
     });
     this.procs.push(proc);
   }
+
+  killProcs() {
+    this.procs.forEach(function(proc) {
+      proc.kill();
+    });
+  }
 }
+
 
 /**
  * Walk a directory and return all the files found.

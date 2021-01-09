@@ -157,11 +157,11 @@ export default class Sidebar {
     R - Reverse team<br>
     <br>
     <b class="blue">How to Play a Match</b><br>
-    <i>From the application:</i> Click <code>Runner</code> and follow the
-    instructions in the sidebar. Note that it may take a few seconds for
-    matches to be displayed. (<i>Currently, the runner has some memory leak
-    issues. Until they are fixed, please be wary of memory usage by the client
-    and Gradle Daemons in the background.</i>)<br>
+    <i>From the application:</i> Click <code>Runner</code>, select the bots and
+    your desired map, then press "Run Game". Note that it may take a few seconds for
+    matches to be displayed. To stop processing a match before it has finished,
+    press "Kill ongoing processes". Note that the part of the match that has already
+    loaded will remain in the client.<br>
     <br>
     <i>From the web client:</i> You can always upload a <code>.bc21</code> file by
     clicking the upload button in the <code>Queue</code> section.<br>
