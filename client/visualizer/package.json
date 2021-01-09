@@ -26,7 +26,7 @@
   "homepage": "https://github.com/battlecode/battlecode21#readme",
   "dependencies": {
     "battlecode-playback": "file:../playback",
-    "speedscope": "^1.5.2",
+    "speedscope": "^1.12.1",
     "victor": "^1.1.0"
   },
   "devDependencies": {

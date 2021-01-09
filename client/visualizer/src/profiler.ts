@@ -11,14 +11,19 @@ function applyCSS(css: string): void {
 
 function load(file: ProfilerFile, robot: number): void {
   const frames = file.frames.map(frame => ({ name: frame }));
-  const profiles = file.profiles.map(profile => ({
-    type: 'evented',
-    name: profile.name,
-    unit: 'none',
-    startValue: profile.events[0].at,
-    endValue: profile.events[profile.events.length - 1].at,
-    events: profile.events,
-  }));
+
+  const profiles = file.profiles.map(profile => {
+    const hasEvents = profile.events.length > 0;
+
+    return {
+      type: 'evented',
+      name: profile.name,
+      unit: 'none',
+      startValue: hasEvents ? profile.events[0].at : 0,
+      endValue: hasEvents ? profile.events[profile.events.length - 1].at : 0,
+      events: profile.events,
+    };
+  });
 
   const data = {
     $schema: 'https://www.speedscope.app/file-format-schema.json',

@@ -2,6 +2,7 @@ package battlecode.instrumenter;
 
 import battlecode.common.RobotController;
 import battlecode.common.Team;
+import battlecode.instrumenter.profiler.Profiler;
 import battlecode.instrumenter.stream.RoboPrintStream;
 import battlecode.instrumenter.stream.SilencedPrintStream;
 import battlecode.server.ErrorReporter;
@@ -109,7 +110,8 @@ public class SandboxedRobotPlayer {
                                 RobotController robotController,
                                 int seed,
                                 TeamClassLoaderFactory.Loader loader,
-                                OutputStream robotOut)
+                                OutputStream robotOut,
+                                Profiler profiler)
             throws InstrumentationException {
         this.robotController = robotController;
         this.seed = seed;
@@ -133,7 +135,7 @@ public class SandboxedRobotPlayer {
             setBytecodeLimitMethod = monitor.getMethod("setBytecodeLimit", int.class);
             getBytecodeNumMethod = monitor.getMethod("getBytecodeNum");
             pauseMethod = monitor.getMethod("pause");
-            initMethod = monitor.getMethod("init", Pauser.class, Killer.class, int.class);
+            initMethod = monitor.getMethod("init", Pauser.class, Killer.class, int.class, Profiler.class);
 
             // Note: loading this here also keeps any initialization we do in System
             // from inflicting its bytecode cost on the player.
@@ -173,7 +175,7 @@ public class SandboxedRobotPlayer {
         mainThread = new Thread(() -> {
             try {
                 // Init RobotMonitor
-                initMethod.invoke(null, pauser, killer, this.seed);
+                initMethod.invoke(null, pauser, killer, this.seed, profiler);
                 // Pause immediately
                 pauseMethod.invoke(null);
                 // Run the robot!
@@ -202,6 +204,12 @@ public class SandboxedRobotPlayer {
             } finally {
                 // Ensure that we know we're terminated.
                 this.terminated = true;
+
+                // Tell the profiler to close all open methods
+                // It cannot detect when the run(RobotController) method exits when a bot dies any other way
+                if (profiler != null) {
+                    profiler.exitOpenMethods();
+                }
 
                 // Unpause the main thread, which is waiting on the player thread.
                 synchronized (notifier) {

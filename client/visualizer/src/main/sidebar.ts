@@ -81,16 +81,22 @@ export default class Sidebar {
 
     const modePanel = document.createElement('table');
     modePanel.className = 'modepanel';
-    const modePanelRow = document.createElement('tr');
+
+    const modePanelRow1 = document.createElement('tr');
+    const modePanelRow2 = document.createElement('tr');
+
     this.modeButtons = new Map<Mode, HTMLButtonElement>();
-    modePanelRow.appendChild(this.modeButton(Mode.GAME, "Game"));
-    modePanelRow.appendChild(this.modeButton(Mode.LOGS, "Logs"));
-    modePanelRow.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
-    modePanelRow.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
-    // modePanelRow.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
-    modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
-    modePanelRow.appendChild(this.modeButton(Mode.HELP, "Help"));
-    modePanel.appendChild(modePanelRow);
+    modePanelRow1.appendChild(this.modeButton(Mode.GAME, "Game"));
+    modePanelRow1.appendChild(this.modeButton(Mode.LOGS, "Logs"));
+    modePanelRow1.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
+    modePanelRow1.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
+    modePanelRow2.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
+    modePanelRow2.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
+    modePanelRow2.appendChild(this.modeButton(Mode.HELP, "Help"));
+
+    modePanel.appendChild(modePanelRow1);
+    modePanel.appendChild(modePanelRow2);
+
     this.div.appendChild(modePanel);
 
     this.div.appendChild(this.innerDiv);
@@ -143,7 +149,7 @@ export default class Sidebar {
     <br>
     S - Add<br>
     D - Delete<br>
-    
+
     <br>
     <b class="blue">How to Play a Match</b><br>
     <i>From the application:</i> Click <code>Runner</code> and follow the
@@ -173,9 +179,9 @@ export default class Sidebar {
     Runner before running the game. Make sure that the runFromClient
     Gradle task sets bc.engine.enable-profiler to the value of the
     "profilerEnabled" property, as can be seen in the
-    <a href="https://github.com/battlecode/battlecode20-scaffold/blob/master/build.gradle" target="_blank">scaffold player</a>.
+    <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/build.gradle" target="_blank">scaffold player</a>.
     Make sure to add the "profilerEnabled" property to your
-    <a href="https://github.com/battlecode/battlecode20-scaffold/blob/master/gradle.properties" target="_blank">gradle.properties</a>
+    <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/gradle.properties" target="_blank">gradle.properties</a>
     file as well.
 
     Note that for games with a large number of units, it might be impossible

@@ -21,6 +21,7 @@ public class InstrumentingClassVisitor extends ClassVisitor implements Opcodes {
     private String className;
     private final boolean silenced;
     private final boolean debugMethodsEnabled;
+    private final boolean profilerEnabled;
 
     // Used to find other class files, which is occasionally necessary.
     private TeamClassLoaderFactory.Loader loader;
@@ -40,12 +41,14 @@ public class InstrumentingClassVisitor extends ClassVisitor implements Opcodes {
                                      final TeamClassLoaderFactory.Loader loader,
                                      boolean silenced,
                                      boolean checkDisallowed,
-                                     boolean debugMethodsEnabled) throws InstrumentationException {
+                                     boolean debugMethodsEnabled,
+                                     boolean profilerEnabled) throws InstrumentationException {
         super(Opcodes.ASM5, cv);
         this.loader = loader;
         this.silenced = silenced;
         this.checkDisallowed = checkDisallowed;
         this.debugMethodsEnabled = debugMethodsEnabled;
+        this.profilerEnabled = profilerEnabled;
     }
 
     /**
@@ -106,7 +109,8 @@ public class InstrumentingClassVisitor extends ClassVisitor implements Opcodes {
                 exceptions,
                 silenced,
                 checkDisallowed,
-                debugMethodsEnabled
+                debugMethodsEnabled,
+                profilerEnabled
         );
     }
 

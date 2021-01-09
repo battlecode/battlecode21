@@ -30,7 +30,7 @@ public class Verifier {
 
     public static boolean verify(String teamPackageName, String teamURL) {
         try {
-            TeamClassLoaderFactory.Loader loader = new TeamClassLoaderFactory(teamURL).createLoader();
+            TeamClassLoaderFactory.Loader loader = new TeamClassLoaderFactory(teamURL).createLoader(false);
 
             // Has teamPackageName/RobotPlayer.java
             loader.loadClass(teamPackageName + ".RobotPlayer");

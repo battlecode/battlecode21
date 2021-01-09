@@ -148,7 +148,7 @@ table TeamData {
     teamID: byte;
 }
 
-/// Profiler tables
+// Profiler tables
 
 /// These tables are set-up so that they match closely with speedscope's file format documented at
 /// https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
@@ -235,6 +235,8 @@ table MatchFooter {
     winner: byte;
     /// The number of rounds played.
     totalRounds: int;
+    /// Profiler data for team A and B if profiling is enabled.
+    profilerFiles: [ProfilerFile];
 }
 
 /// A single time-step in a Game.
