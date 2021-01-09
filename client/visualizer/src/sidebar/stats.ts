@@ -10,7 +10,8 @@ const hex: Object = {
 };
 
 export type StatBar = {
-  bar: HTMLDivElement,
+  votes: number,
+  bar: HTMLTableCellElement, 
   label: HTMLSpanElement
 };
 
@@ -31,8 +32,11 @@ export default class Stats {
 
   // Key is the team ID
   private robotTds: Object = {}; // Secondary key is robot type
-  private statBars: Map<number, { votes: StatBar }>;
+  private statBars: Map<number, { data: StatBar }>;
   private statsTableElement: HTMLTableElement;
+
+  // Added to variables allow for implementation of relative bars for setVotes function
+  private teamIDs: Array<number>;
 
   private relativeBarElement: HTMLElement;
   private relBars: HTMLDivElement[];
@@ -58,6 +62,7 @@ export default class Stats {
 
     let teamNames: Array<string> = ["?????", "?????"];
     let teamIDs: Array<number> = [1, 2];
+    this.teamIDs = teamIDs;
     this.statsTableElement = document.createElement("table");
     this.initializeGame(teamNames, teamIDs);
   }
@@ -113,39 +118,35 @@ export default class Stats {
 
   private statsTable(teamIDs: Array<number>): HTMLTableElement {
     const table = document.createElement("table");
-    const bars = document.createElement("tr");
     const counts = document.createElement("tr");
+    const graph = document.createElement("tr");
     table.id = "stats-table";
-    bars.id = "stats-bars";
+    graph.id = "stats-graph";
     table.setAttribute("align", "center");
 
     const title = document.createElement('td');
-    title.colSpan= 2;
+    title.colSpan = 2;
     const label = document.createElement('h3');
     label.innerText = 'Votes';
 
+    
     teamIDs.forEach((id: number) => {
-      const bar = document.createElement("td");
-      bar.height = "150";
-      bar.vAlign = "bottom";
-      // TODO: figure out if statbars.get(id) can actually be null??
-      bar.appendChild(this.statBars.get(id)!.votes.bar);
-      bars.appendChild(bar);
+      graph.appendChild(this.statBars.get(id)!.data.bar);
 
       const count = document.createElement("td");
       // TODO: figure out if statbars.get(id) can actually be null??
-      count.appendChild(this.statBars.get(id)!.votes.label);
+      count.appendChild(this.statBars.get(id)!.data.label);
       counts.appendChild(count);
     });
 
     title.appendChild(label);
     table.appendChild(title);
-    table.appendChild(bars);
+    table.appendChild(graph);
     table.appendChild(counts);
     return table;
   }
 
-  private relativeBar(teamIds: Array<number>): HTMLElement {
+  private relativeBar(teamIDs: Array<number>): HTMLElement {
     const div = document.createElement("div");
     div.setAttribute("align", "center");
     this.relBars = [];
@@ -154,7 +155,7 @@ export default class Stats {
     frame.style.width = "250px";
     frame.style.height = "30px";
 
-    teamIds.forEach((id: number) => {
+    teamIDs.forEach((id: number) => {
       const bar = document.createElement("div");
       bar.style.backgroundColor = hex[id];
       bar.style.height = frame.style.height;
@@ -177,7 +178,7 @@ export default class Stats {
       this.div.removeChild(this.div.firstChild);
     }
     this.robotTds = {};
-    this.statBars = new Map<number, { votes: StatBar }>();
+    this.statBars = new Map<number, { data: StatBar }>();
 
     if(this.conf.tournamentMode){
       // FOR TOURNAMENT
@@ -216,16 +217,20 @@ export default class Stats {
       this.robotTds[teamID] = initialRobotCount;
       
       // Create the stat bar for votes
-      let votes = document.createElement("div");
-      votes.className = "stat-bar";
-      votes.style.backgroundColor = hex[inGameID];
+      let barCell = document.createElement("td");
+      barCell.height = "20";
+      barCell.className = "stat-bar";
+      barCell.style.width = "50%";
+      barCell.style.backgroundColor = hex[inGameID];
+
       let votesSpan = document.createElement("span");
       votesSpan.innerHTML = "0";
 
       // Store the stat bars
       this.statBars.set(teamID, {
-        votes: {
-          bar: votes,
+        data: {
+          votes: 0,
+          bar: barCell, 
           label: votesSpan
         }
       });
@@ -244,11 +249,6 @@ export default class Stats {
     this.statsTableElement.remove();
     this.statsTableElement = this.statsTable(teamIDs);
     this.div.appendChild(this.statsTableElement);
-
-    // TODO relative bar
-    this.relativeBarElement = this.relativeBar(teamIDs);
-    // this.div.appendChild(this.relativeBarElement);
-    // console.log(this.relativeBarElement)
   }
 
   tourIndexJumpFun(e) {
@@ -271,18 +271,24 @@ export default class Stats {
    */
   setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
-    const statBar: StatBar = this.statBars.get(teamID)!.votes;
+    const statBar: StatBar = this.statBars.get(teamID)!.data;
+    statBar.votes = count;
     statBar.label.innerText = String(count);
-    const maxVotes = 1500;
-    statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
 
-    // TODO add reactions to relative bars
-    // TODO get total votes to get ratio
-    // this.relBars[teamID].width;
+    // Count total number of votes
+    var totalVotes = 0;
+    this.teamIDs.forEach((id: number) => {
+      totalVotes += this.statBars.get(id)!.data.votes;
+    });
 
-    // TODO winner gets star?
-    // if (this.images.star.parentNode === statBar.bar) {
-    //   this.images.star.remove();
-    // }
+    // Calculate percentages and display
+    this.teamIDs.forEach((id: number) => {
+      const teamBar = this.statBars.get(id)!.data;
+      if (totalVotes <= 0) {
+        teamBar.bar.style.width = "50%";
+      } else {
+        teamBar.bar.style.width = String(Math.round(teamBar.votes * 100 / totalVotes)) + "%";
+      }
+    });
   }
 }
