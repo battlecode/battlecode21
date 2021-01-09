@@ -134,7 +134,7 @@ export function defaults(supplied?: any): Config {
     matchFileURL: null,
     pollEvery: 500,
     tournamentMode: false,
-    interpolate: false,
+    interpolate: true,
     indicators: false,
     mode: Mode.QUEUE,
     splash: true,
