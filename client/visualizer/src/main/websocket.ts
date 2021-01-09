@@ -61,7 +61,7 @@ export default class WebSocketListener {
         console.error("Skipping end of game from websocket.");
       }
 
-      this.currentGame = new Game(this.conf.processLogs);
+      this.currentGame = new Game(this.conf);
       this.onGameReceived(this.currentGame);
       this.firstMatch = true;
       this.currentGame.applyEvent(event);

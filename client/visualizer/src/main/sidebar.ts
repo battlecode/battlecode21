@@ -116,6 +116,11 @@ export default class Sidebar {
   private initializeHelp(): HTMLDivElement {
     const innerHTML: string =
     `
+    <b class="red" style="font-size: 16px">Beware of too much logging!</b>
+    <br>
+    If your match has a significant amount of logging, please <b>turn off log processing with
+    the L key.</b><br>
+    <br>
     <b class="red">Issues?</b>
     <ol style="margin-left: -20px; margin-top: 0px;">
     <li>Refresh (Ctrl-R or Command-R).</li>
@@ -163,7 +168,7 @@ export default class Sidebar {
     The console displays all <code>System.out.println()</code> data up to the current round.
     You can filter teams by checking the boxes and robot IDs by clicking the
     robot. You can also change the maximum number of rounds displayed in the
-    input box. <b class="red">Beware of doing too much logging!</b> This slows down the client.
+    input box. Beware of doing too much logging! This slows down the client.
     (WARNING: If you want to, say, suddenly display 3000 rounds
     of data, pause the client first to prevent freezing.)<br>
     <br>

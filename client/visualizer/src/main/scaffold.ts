@@ -13,6 +13,7 @@ const GRADLE_WRAPPER = WINDOWS ? 'gradlew.bat' : 'gradlew';
  */
 export default class ScaffoldCommunicator {
   scaffoldPath: string;
+  procs: any[] = []; // pids of spawned child processes
 
   constructor(scaffoldPath: string) {
     if (!process.env.ELECTRON) throw new Error("Can't talk to scaffold in the browser!");
@@ -25,6 +26,12 @@ export default class ScaffoldCommunicator {
     if (!fs.existsSync(this.wrapperPath)) {
       throw new Error(`Can't find gradle wrapper: ${this.wrapperPath}`);
     }
+
+    electron.remote.app.on('before-quit', function() {
+      this.procs.forEach(function(proc) {
+        proc.kill();
+      });
+    });
   }
 
   get wrapperPath() {
@@ -175,6 +182,11 @@ export default class ScaffoldCommunicator {
     proc.on('error', (err) => {
       onErr(err);
     });
+    proc.on('pid-message', function(event, arg) {
+      console.log('Main:', arg);
+      this.pids.push(arg);
+    });
+    this.procs.push(proc);
   }
 }
 

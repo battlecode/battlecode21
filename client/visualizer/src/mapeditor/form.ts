@@ -323,7 +323,7 @@ export default class MapEditorForm {
       if (this.getActiveForm() == this.tiles) {
         for(let x: number = 0; x < this.header.getWidth(); x++) {
           for(let y: number = 0; y < this.header.getHeight(); y++) {
-            this.passability[y*this.header.getWidth() + x] = 1 - this.getPassability(x,y);
+            this.passability[y*this.header.getWidth() + x] = 1.1 - this.getPassability(x,y);
           }
         }
         this.render();
