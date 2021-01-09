@@ -1,6 +1,7 @@
 import StructOfArrays from './soa';
 import Metadata from './metadata';
-import { schema } from 'battlecode-schema';
+import { flatbuffers, schema } from 'battlecode-schema';
+import {playbackConfig} from './game';
 
 // necessary because victor doesn't use exports.default
 import Victor = require('victor');
@@ -73,6 +74,16 @@ export type IndicatorLinesSchema = {
   blue: Int32Array
 }
 
+export type Log = {
+  team: string, // 'A' | 'B'
+  robotType: string, // All loggable bodies with team
+  id: number,
+  round: number,
+  text: string
+};
+
+
+
 /**
  * A frozen image of the game world.
  *
@@ -141,6 +152,22 @@ export default class GameWorld {
    */
   meta: Metadata;
 
+  /**
+   * Whether to process logs.
+   */
+  config: playbackConfig;
+
+  /**
+   * Recent logs, bucketed by round.
+   */
+  logs: Log[][] = [];
+
+  /**
+   * The ith index of this.logs corresponds to round (i + this.logsShift).
+   */
+  logsShift: number = 1;
+
+
   // Cache fields
   // We pass these into flatbuffers functions to avoid allocations, 
   // but that's it, they don't hold any state
@@ -155,7 +182,7 @@ export default class GameWorld {
    */
   private abilityRobots: number[] = [];
 
-  constructor(meta: Metadata) {
+  constructor(meta: Metadata, config: playbackConfig) {
     this.meta = meta;
 
     this.empowered = new StructOfArrays({
@@ -242,6 +269,8 @@ export default class GameWorld {
     this._vecTableSlot1 = new schema.VecTable();
     this._vecTableSlot2 = new schema.VecTable();
     this._rgbTableSlot = new schema.RGBTable();
+
+    this.config = config;
   }
 
   loadFromMatchHeader(header: schema.MatchHeader) {
@@ -289,7 +318,7 @@ export default class GameWorld {
    * Create a copy of the world in its current state.
    */
   copy(): GameWorld {
-    const result = new GameWorld(this.meta);
+    const result = new GameWorld(this.meta, this.config);
     result.copyFrom(this);
     return result;
   }
@@ -310,6 +339,8 @@ export default class GameWorld {
     this.mapStats = deepcopy(source.mapStats);
     this.empowered.copyFrom(source.empowered);
     this.abilityRobots = Array.from(source.abilityRobots);
+    this.logs = Array.from(source.logs);
+    this.logsShift = source.logsShift;
   }
 
   /**
@@ -481,6 +512,16 @@ export default class GameWorld {
         bytecodesUsed: delta.bytecodesUsedArray()
       });
     }
+
+    // Process logs
+    if (this.config.processLogs) {
+      this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
+    }
+    while (this.logs.length >= 25) {
+      this.logs.shift();
+      this.logsShift++;
+    }
+  // console.log(delta.roundID(), this.logsShift, this.logs[0]);
   }
 
   private insertDiedBodies(delta: schema.Round) {
@@ -585,5 +626,76 @@ export default class GameWorld {
       ability: new Int8Array(bodies.robotIDsLength())
     });
   }
+
+  /**
+    * Parse logs for a round.
+    */
+  private parseLogs(round: number, logs: string) {
+    // TODO regex this properly
+    // Regex
+    let lines = logs.split(/\r?\n/);
+    let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SLANDERER|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
+
+    let roundLogs = new Array<Log>();
+
+    // Parse each line
+    let index: number = 0;
+    while (index < lines.length) {
+      let line = lines[index];
+      let matches = line.match(header);
+
+      // Ignore empty string
+      if (line === "") {
+        index += 1;
+        continue;
+      }
+
+      // The entire string and its 5 parenthesized substrings must be matched!
+      if (matches === null || (matches && matches.length != 6)) {
+        // throw new Error(`Wrong log format: ${line}`);
+        console.log(`Wrong log format: ${line}`);
+        console.log('Omitting logs');
+        return;
+      }
+
+      let shortenRobot = new Map();
+      shortenRobot.set("ENLIGHTENMENT_CENTER", "EC");
+      shortenRobot.set("POLITICIAN", "P");
+      shortenRobot.set("SLANDERER", "SL");
+      shortenRobot.set("MUCKRAKER", "MCKR");
+
+      // Get the matches
+      let team = matches[1];
+      let robotType = matches[2];
+      let id = parseInt(matches[3]);
+      let logRound = parseInt(matches[4]);
+      let text = new Array<string>();
+      let mText = "<span class='consolelogheader consolelogheader1'>[" + team + ":" + robotType + "#" + id + "@" + logRound + "]</span>";
+      let mText2 = "<span class='consolelogheader consolelogheader2'>[" + team + ":" + shortenRobot.get(robotType) + "#" + id + "@" + logRound + "]</span> ";
+      text.push(mText + mText2 + matches[5]);
+      index += 1;
+
+      // If there is additional non-header text in the following lines, add it
+      while (index < lines.length && !lines[index].match(header)) {
+        text.push(lines[index]);
+        index +=1;
+      }
+
+      if (logRound != round) {
+        console.warn(`Your computation got cut off while printing a log statement at round ${logRound}; the actual print happened at round ${round}`);
+      }
+
+      // Push the parsed log
+      roundLogs.push({
+        team: team,
+        robotType: robotType,
+        id: id,
+        round: logRound,
+        text: text.join('\n')
+      });
+    }
+    this.logs.push(roundLogs);
+  }
+
 
 }

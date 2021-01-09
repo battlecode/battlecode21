@@ -124,7 +124,7 @@ export enum Mode {
  */
 export function defaults(supplied?: any): Config {
   let conf: Config = {
-    gameVersion: "2021.1.0.3", //TODO: Change this on each release!
+    gameVersion: "2021.2.0.2", //TODO: Change this on each release!
     fullscreen: false,
     width: 600,
     height: 600,
@@ -134,7 +134,7 @@ export function defaults(supplied?: any): Config {
     matchFileURL: null,
     pollEvery: 500,
     tournamentMode: false,
-    interpolate: false,
+    interpolate: true,
     indicators: false,
     mode: Mode.QUEUE,
     splash: true,

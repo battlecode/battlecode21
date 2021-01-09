@@ -4,6 +4,10 @@ import { flatbuffers, schema } from 'battlecode-schema';
 import Match from './match';
 import {ungzip} from 'pako';
 
+export type playbackConfig = {
+  processLogs: boolean;
+}
+
 /**
  * Represents an entire game.
  * Contains a Match for every match in a game.
@@ -36,19 +40,16 @@ export default class Game {
   get meta() { return this._meta; }
   private _meta: Metadata | null;
 
-  /**
-   * Whether to process logs.
-   */
-  private readonly processLogs;
+  private config: playbackConfig;
 
   /**
    * Create a Game with nothing inside.
    */
-  constructor(processLogs: boolean = true) {
+  constructor(config: playbackConfig) {
     this._winner = null;
     this._matches = new Array();
     this._meta = null;
-    this.processLogs = processLogs;
+    this.config = config;
   }
 
   /**
@@ -80,7 +81,7 @@ export default class Game {
       case schema.Event.MatchHeader:
         const matchHeader = event.e(new schema.MatchHeader()) as schema.MatchHeader;
         if (gameStarted && (matchCount === 0 || lastMatchFinished)) {
-          this._matches.push(new Match(matchHeader, this._meta as Metadata, this.processLogs));
+          this._matches.push(new Match(matchHeader, this._meta as Metadata, this.config));
         } else {
           throw new Error("Can't create new game when last hasn't finished");
         }

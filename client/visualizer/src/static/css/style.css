@@ -104,7 +104,7 @@ form {
 
 #gamearea canvas {
     max-height: calc(100vh - 75px);
-    max-width: 95%;
+    max-width: 99.5%;
     margin-top:auto;
     margin-bottom:auto;
 }
@@ -211,6 +211,10 @@ input[type='file'] {
     margin-bottom: 6px;
 }
 
+#export {
+    background-color: rebeccapurple;
+}
+
 .checkbox {
     position: absolute;
     visibility: hidden;
@@ -237,8 +241,7 @@ label{
     border-radius: 10px;
 }
 
-input {
-    border: 2px solid rgb(0,123,255);
+input, select {
     padding: 5px;
     margin: 5px;
     display: inline-block;

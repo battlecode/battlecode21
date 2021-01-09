@@ -46,8 +46,8 @@ export default class Runner {
 
     this.games = [];
 
-    // If it's in dev, we're not using server
-    if (this.conf.websocketURL !== null && process.env.NODE_ENV !== 'development') {
+    // Only listen if run as an app.
+    if (this.conf.websocketURL !== null && process.env.ELECTRON) { //&& process.env.NODE_ENV !== 'development' <- useful to listen even in development.
       this.listener = new WebSocketListener(this.conf.websocketURL,
         this.conf.pollEvery,
         this.conf);
@@ -100,7 +100,7 @@ export default class Runner {
         }
         else {
           let lastGame = this.games.length
-          this.games[lastGame] = new Game();
+          this.games[lastGame] = new Game(this.conf);
 
           try {
             this.games[lastGame].loadFullGameRaw(resp);
@@ -234,7 +234,7 @@ export default class Runner {
 
   onGameLoaded(data: ArrayBuffer) {
     let lastGame = this.games.length
-    this.games[lastGame] = new Game(this.conf.processLogs);
+    this.games[lastGame] = new Game(this.conf);
     this.games[lastGame].loadFullGameRaw(data);
 
     this.startGame();
@@ -455,7 +455,7 @@ export default class Runner {
           // reset all games so as to save memory
           // because things can be rough otherwise
           this.games.pop();
-          this.games = [new Game(this.conf.processLogs)];
+          this.games = [new Game(this.conf)];
           this.games[0].loadFullGameRaw(data);
           this.setGame(0);
         });

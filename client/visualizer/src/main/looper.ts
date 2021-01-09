@@ -61,7 +61,6 @@ export default class Looper {
             teamIDs.push(meta.teams[team].teamID);
         }
         this.stats.initializeGame(teamNames, teamIDs);
-        this.console.setLogsRef(match.logs);
 
         // keep around to avoid reallocating
         this.nextStep = new NextStep();
@@ -84,10 +83,11 @@ export default class Looper {
             this.conf, meta as Metadata, onRobotSelected, onMouseover);
 
         // How fast the simulation should progress
-        this.goalUPS = this.controls.getUPS();
-        if (this.conf.tournamentMode) {
-            this.goalUPS = 0; // FOR TOURNAMENT
-        }
+      //  this.goalUPS = this.controls.getUPS();
+       // if (this.conf.tournamentMode) {
+        // Always pause on load. Mitigates funky behaviour like 100 rounds playing before any rendering occurs.
+        this.goalUPS = 0;
+       // }
 
         // A variety of stuff to track how fast the simulation is going
         this.rendersPerSecond = new TickCounter(.5, 100);
@@ -212,7 +212,8 @@ export default class Looper {
 
         // run simulation
         // this may look innocuous, but it's a large chunk of the run time
-        this.match.compute(5 /* ms */);
+        this.match.compute(30 /* ms */); // An ideal FPS is around 30 = 1000/30, so when compute takes its full time
+                                         // FPS is lowered significantly. But I think it's a worthwhile tradeoff.
 
         // update the info string in controls
         if (this.lastSelectedID !== undefined) {
@@ -235,6 +236,7 @@ export default class Looper {
             }
         }
 
+        this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
         this.console.seekRound(this.match.current.turn);
         this.lastTime = curTime;
         this.lastTurn = this.match.current.turn;
@@ -255,7 +257,7 @@ export default class Looper {
             let lerp = Math.min(this.interpGameTime - this.match.current.turn, 1);
 
             // @ts-ignore
-            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime, this.nextStep, lerp);
+            this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime, this.nextStep, this.isPaused() ? 0 : lerp);
         } else {
             //console.log('not interpolating!!');
             // interpGameTime might be incorrect if we haven't computed fast enough

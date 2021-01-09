@@ -72,7 +72,7 @@ After registering a domain name for the competition, set `THIS_URL` (in `setting
 
 ### Storage Buckets
 Go to "Storage" on GCP console. A bucket for submissions should have been created (if not, instructions are in the infrastructure readme.)
-Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year.
+Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year. Similarly, also run `gsutil cors set path/to/cors.json gs://bc21-replays`.
 More info is here: https://cloud.google.com/storage/docs/configuring-cors#gsutil
 
 ### Cloud Build Triggers

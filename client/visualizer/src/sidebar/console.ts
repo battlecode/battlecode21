@@ -29,7 +29,8 @@ export default class Console {
   // Options
   private readonly MIN_ROUNDS: number = 1;
   private readonly MAX_ROUNDS: number = 3000;
-  private readonly DEFAULT_MAX_ROUNDS: number = 15;
+  private readonly MAX_ROUNDS_SHOW: number = 25;
+  private readonly NUM_ROUNDS_SHOW: number = 15;
   private readonly conf: Config;
 
   // Used to check if there are more logs to pull from the match.
@@ -39,6 +40,7 @@ export default class Console {
   // more logs added behind our backs.
   // On the other hand, it may not have logs for a round at all.
   private logsRef: Array<Array<Log>> | null;
+  private logsShift: number;
 
   // Invariants:
   // - consoleDivs are the div objects displayed in the console
@@ -72,7 +74,7 @@ export default class Console {
 
     this.notLoggingDiv =  document.createElement("div");
     this.notLoggingDiv.className = "not-logging-div";
-    this.notLoggingDiv.textContent = "Not processing logs for new matches.";
+    this.notLoggingDiv.textContent = "Not processing logs.";
     this.notLoggingDiv.hidden = this.conf.processLogs;
 
     div.appendChild(this.notLoggingDiv);
@@ -101,7 +103,7 @@ export default class Console {
     div.appendChild(document.createElement("br"));
 
     // Add the round filter
-    div.appendChild(document.createTextNode("Max Number of Rounds:"));
+    div.appendChild(document.createTextNode(`Number of Rounds to Show (max ${this.MAX_ROUNDS_SHOW}):`));
     div.appendChild(this.lengthInput);
     div.appendChild(document.createElement("br"));
 
@@ -139,17 +141,17 @@ export default class Console {
   private getHTMLInput(): HTMLInputElement {
     const input = document.createElement("input");
     input.type = "text";
-    input.value = String(this.DEFAULT_MAX_ROUNDS);
+    input.value = String(this.NUM_ROUNDS_SHOW);
     input.onchange = () => {
       // Input validation, must be a number between 1 and 50,
       // Defaults to this.DEFAULT_MAX_ROUNDS otherwise.
       const value: number = parseInt(input.value);
       if (isNaN(value)) {
-        input.value = String(this.DEFAULT_MAX_ROUNDS);
+        input.value = String(this.NUM_ROUNDS_SHOW);
       } else if (value < this.MIN_ROUNDS) {
         input.value = String(this.MIN_ROUNDS);
-      } else if (value > this.MAX_ROUNDS) {
-        input.value = String(this.MAX_ROUNDS);
+      } else if (value > this.MAX_ROUNDS_SHOW) {
+        input.value = String(this.MAX_ROUNDS_SHOW);
       }
 
       // Then reapply the filter
@@ -175,8 +177,9 @@ export default class Console {
   /**
    * Set the logs we should be checking.
    */
-  setLogsRef(logsRef: Array<Array<Log>>): void {
+  setLogsRef(logsRef: Array<Array<Log>>, logsShift: number): void {
     this.logsRef = logsRef;
+    this.logsShift = logsShift;
   }
 
   /**
@@ -190,11 +193,14 @@ export default class Console {
     if (this.currentRound === previousRound) {
       // We are in the same round, don't to anything
       return;
-    } else if (this.currentRound === previousRound + 1) {
-      // We went forward a single round; just push and shift for efficiency
-      this.shiftRound();
-      this.pushRound(this.maxRound());
-    } else {
+    }
+    // now that logs are in gameworld, shifting logic is obsolete.
+    //  else if (this.currentRound === previousRound + 1) {
+    //   // We went forward a single round; just push and shift for efficiency
+    //   this.shiftRound();
+    //   this.pushRound(this.maxRound());
+    // } 
+    else {
       // Otherwise we need to reapply the entire filter
       this.applyFilter();
     }
@@ -240,8 +246,8 @@ export default class Console {
    */
   private pushRound(round: number): void {
     // If logs exist for this round
-    if (this.logsRef != null && this.logsRef[round] != undefined) {
-      const logs = this.logsRef[round];
+    if (this.logsRef != null && this.logsRef[round-this.logsShift] != undefined) {
+      const logs = this.logsRef[round-this.logsShift];
 
       // For each log in the round, add it to the console if it's good
       logs.forEach((log: Log) => {
@@ -328,8 +334,10 @@ export default class Console {
     this.consoleLogs = new Array();
 
     // Push all the logs from the defined rounds that match the filter
-    for (let round = this.minRound(); round <= this.maxRound(); round++) {
-      this.pushRound(round);
+    if (this.conf.processLogs) {
+      for (let round = this.minRound(); round <= this.maxRound(); round++) {
+        this.pushRound(round);
+      }
     }
   }
 

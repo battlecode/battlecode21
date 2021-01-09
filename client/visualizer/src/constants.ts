@@ -1,5 +1,5 @@
-import {schema} from 'battlecode-playback';
-import {Symmetry} from './mapeditor/index';
+import { schema } from 'battlecode-playback';
+import { Symmetry } from './mapeditor/index';
 
 // Body types
 export const ENLIGHTENMENT_CENTER = schema.BodyType.ENLIGHTENMENT_CENTER;
@@ -12,14 +12,7 @@ export const initialBodyTypeList: number[] = [ENLIGHTENMENT_CENTER];
 
 export const bodyTypePriority: number[] = []; // for guns, drones, etc. that should be drawn over other robots
 
-export const TILE_COLORS: Array<number>[] = [ // RGB
-  [214, 110, 16],
-  [167, 72, 8],
-  [135, 13, 13],
-  [105, 26, 26],
-  [88, 22, 22],
-  [60, 15, 15]
-];
+export const TILE_COLORS: Array<number>[] = [[119, 228, 88], [144, 230, 83], [166, 231, 79], [187, 232, 76], [206, 233, 76], [231, 207, 66], [245, 182, 72], [249, 158, 86], [219, 115, 109], [163, 90, 118], [99, 73, 103], [51, 52, 65]];
 // flashy colors
 // [0, 147, 83], // turquoise
 // [29, 201, 2], // green
@@ -31,7 +24,7 @@ export const TILE_COLORS: Array<number>[] = [ // RGB
 // Given passability, get index of tile to use.
 export const getLevel = (x: number): number => {
   const nLev = TILE_COLORS.length;
-  const floatLevel = ((1-x) - 0.1) / 0.9 * nLev;
+  const floatLevel = ((1 - x) - 0.1) / 0.9 * nLev;
   const level = Math.floor(floatLevel)
   return Math.min(nLev - 1, Math.max(0, level));
 }
@@ -79,7 +72,9 @@ export enum MapType {
   CUSTOM
 };
 export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
-     ["maptestsmall", MapType.DEFAULT]
+  ["maptestsmall", MapType.DEFAULT],
+  ["circle", MapType.DEFAULT],
+  ["quadrants", MapType.DEFAULT]
   // ["Maze", MapType.INTL_QUALIFYING],
   // ["Squares", MapType.INTL_QUALIFYING],
   // ["RealArt", MapType.INTL_QUALIFYING],
@@ -134,7 +129,7 @@ export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
 ]);
 
 export function bodyTypeToString(bodyType: schema.BodyType) {
-  switch(bodyType) {
+  switch (bodyType) {
     case ENLIGHTENMENT_CENTER:
       return "enlightenmentCenter";
     case POLITICIAN:
@@ -143,21 +138,21 @@ export function bodyTypeToString(bodyType: schema.BodyType) {
       return "slanderer";
     case MUCKRAKER:
       return "muckraker";
-    default:                throw new Error("invalid body type");
+    default: throw new Error("invalid body type");
   }
 }
 
 export function symmetryToString(symmetry: Symmetry) {
-  switch(symmetry) {
+  switch (symmetry) {
     case Symmetry.ROTATIONAL: return "Rotational";
     case Symmetry.HORIZONTAL: return "Horizontal";
-    case Symmetry.VERTICAL:   return "Vertical";
-    default:         throw new Error("invalid symmetry");
+    case Symmetry.VERTICAL: return "Vertical";
+    default: throw new Error("invalid symmetry");
   }
 }
 
 export function abilityToEffectString(effect: number): string | null {
-  switch(effect) {
+  switch (effect) {
     case 1:
       return "empower";
     case 2:

@@ -25,8 +25,6 @@ export default class SymmetryForm {
   private readonly SYMMETRY_OPTIONS: Symmetry[] = [
     Symmetry.ROTATIONAL, Symmetry.HORIZONTAL, Symmetry.VERTICAL
   ];
-  private readonly NEUTRAL_TEAM_ID = 0;
-  private readonly BLUE_TEAM_ID = 2;
 
   constructor(cb: () => void) {
 
@@ -60,10 +58,9 @@ export default class SymmetryForm {
    */
   private createForm(): HTMLFormElement {
     const form = document.createElement("form");
-    form.appendChild(document.createTextNode("Symmetry:"));
+    form.style.textAlign = 'left';
+    form.appendChild(document.createTextNode("Symmetry: "));
     form.appendChild(this.select);
-    form.appendChild(document.createElement("br"));
-    form.appendChild(document.createElement("br"));
     return form;
   }
 
@@ -96,8 +93,12 @@ export default class SymmetryForm {
     }
   };
 
+  flipTeamID(teamID: number) {
+    return teamID === 0 ? 0 : 3 - teamID;
+  }
+
   // Returns the symmetric location on the canvas
-  private transformLoc (loc: Victor, width: number, height: number): Victor {
+  transformLoc (loc: Victor, width: number, height: number): Victor {
     function reflect(x: number, mid: number): number {
       if (x > mid) {
         return mid - Math.abs(x - mid);
@@ -106,8 +107,8 @@ export default class SymmetryForm {
       }
     }
 
-    const midX = width / 2;
-    const midY = height / 2;
+    const midX = width / 2 - 0.5;
+    const midY = height / 2 - 0.5;
     switch(this.getSymmetry()) {
       case(Symmetry.ROTATIONAL):
       return new Victor(reflect(loc.x, midX), reflect(loc.y, midY));
@@ -128,20 +129,18 @@ export default class SymmetryForm {
     // no symmetric (neutral) body in 2021 game
 
     const symmetricBodies: Map<number, MapUnit> = new Map<number, MapUnit>();
-    // bodies.forEach((body: MapUnit, id: number) => {
-    //   if (!this.onSymmetricLine(body.loc, width, height)) {
-    //     const type = body.type;
-    //     const teamID = type === cst.COW ? this.NEUTRAL_TEAM_ID : this.BLUE_TEAM_ID;
-    //     if (type === cst.COW) {
-    //         symmetricBodies.set(id, {
-    //         loc: this.transformLoc(body.loc, width, height),
-    //         radius: body.radius,
-    //         type: type,
-    //         teamID: teamID
-    //       });
-    //     }
-    //   }
-    // });
+    bodies.forEach((body: MapUnit, id: number) => {
+      if (!this.onSymmetricLine(body.loc, width, height)) {
+        const type = body.type;
+        const teamID = body.teamID === undefined? 0 : body.teamID;
+        symmetricBodies.set(id, {
+          loc: this.transformLoc(body.loc, width, height),
+          radius: body.radius,
+          type: type,
+          teamID: this.flipTeamID(teamID)
+        });
+      }
+    });
 
     return symmetricBodies;
   }

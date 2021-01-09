@@ -5,20 +5,7 @@ import {GameWorld, schema} from 'battlecode-playback';
 import {AllImages} from '../../imageloader';
 import Victor = require('victor');
 
-import {GameMap} from '../index';
-
-export type MapUnit = {
-  loc: Victor,
-  radius: number,
-  type: schema.BodyType,
-  teamID?: number
-};
-
-export enum Symmetry {
-  ROTATIONAL,
-  HORIZONTAL,
-  VERTICAL
-};
+import {GameMap, MapUnit} from '../index';
 
 /**
  * Renders the world.
@@ -36,21 +23,26 @@ export default class MapRenderer {
   readonly onclickUnit: (id: number) => void;
   readonly onclickBlank: (loc: Victor) => void;
   readonly onMouseover: (x: number, y: number, passability: number) => void
+  readonly onDrag: (loc: Victor) => void
 
   // Other useful values
   readonly bgPattern: CanvasPattern;
   private width: number; // in world units
   private height: number; // in world units
 
+  private map: GameMap; //the current map
+
   constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config,
     onclickUnit: (id: number) => void, onclickBlank: (loc: Victor) => void,
-    onMouseover: (x: number, y: number, passability: number) => void) {
+    onMouseover: (x: number, y: number, passability: number) => void,
+    onDrag: (loc: Victor) => void) {
     this.canvas = canvas;
     this.conf = conf;
     this.imgs = imgs;
     this.onclickUnit = onclickUnit;
     this.onclickBlank = onclickBlank;
     this.onMouseover = onMouseover;
+    this.onDrag = onDrag;
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -59,7 +51,8 @@ export default class MapRenderer {
       this.ctx = ctx;
     }
 
-    this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles[0], 'repeat');
+    //this.bgPattern = <CanvasPattern>this.ctx.createPattern(imgs.tiles[0], 'repeat');
+    this.setEventListeners();
   }
 
   /**
@@ -69,8 +62,10 @@ export default class MapRenderer {
     const scale = this.canvas.width / map.width;
     this.width = map.width;
     this.height = map.height;
+    this.map = map;
 
     // setup correct rendering
+    this.ctx.restore();
     this.ctx.save();
     this.ctx.scale(scale, scale);
 
@@ -78,8 +73,6 @@ export default class MapRenderer {
     this.renderBodies(map);
 
     // restore default rendering
-    this.setEventListeners(map);
-    this.ctx.restore();
   }
 
   /**
@@ -96,19 +89,24 @@ export default class MapRenderer {
    * Draw the background
    */
   private renderBackground(map: GameMap): void {
-    this.ctx.save();
-    this.ctx.fillStyle = this.bgPattern;
-
-    const scale = 20;
-    this.ctx.scale(1/scale, 1/scale);
-
     for(let i = 0; i < this.width; i++){
       for(let j = 0; j < this.height; j++){
-        const swampLevel = cst.getLevel(map.passability[(map.height-j-1)*this.width + i]);
-        const tileImg = this.imgs.tiles[swampLevel];
-        this.ctx.drawImage(tileImg, i*scale, j*scale, scale, scale);
+        const passability = map.passability[(map.height-j-1)*this.width + i];
+        this.renderTile(i, j, passability);
       }
     }
+  }
+
+  private renderTile(i: number, j: number, passability: number) {
+    this.ctx.save();
+    const scale = 20;
+    this.ctx.scale(1/scale, 1/scale);
+    const swampLevel = cst.getLevel(passability);
+    const tileImg = this.imgs.tiles[swampLevel];
+    this.ctx.drawImage(tileImg, i*scale, j*scale, scale, scale);
+    this.ctx.strokeStyle = 'gray';
+    this.ctx.globalAlpha = 1;
+    this.ctx.strokeRect(i*scale, j*scale, scale, scale);
     this.ctx.restore();
   }
 
@@ -119,47 +117,56 @@ export default class MapRenderer {
 
     this.ctx.fillStyle = "#84bf4b";
     map.originalBodies.forEach((body: MapUnit) => {
-      const x = body.loc.x;
-      const y = this.flip(body.loc.y, map.height);
-      const radius = body.radius;
-      const type = body.type;
-      let img: HTMLImageElement;
-
-      const teamID = body.teamID || 0;
-      img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
-      this.drawImage(img, x, y, radius);
+      this.renderBody(body);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
 
     map.symmetricBodies.forEach((body: MapUnit) => {
-      const x = body.loc.x;
-      const y = this.flip(body.loc.y, map.height);
-      const radius = body.radius;
-      let img: HTMLImageElement;
-
-      img = this.imgs.robots[cst.bodyTypeToString(body.type)][2];
-      this.drawImage(img, x, y, radius);
+      this.renderBody(body);
       // this.drawGoodies(x, y, radius, body.containedBullets, body.containedBody);
     });
+  }
+
+  private renderBody(body: MapUnit) {
+    const x = body.loc.x;
+    const y = this.flip(body.loc.y, this.map.height);
+    const radius = body.radius;
+    let img: HTMLImageElement;
+
+    const teamID = body.teamID || 0;
+    img = this.imgs.robots[cst.bodyTypeToString(body.type)][teamID];
+    this.drawImage(img, x, y, radius);
   }
 
   /**
    * Sets the map editor display to contain of the information of the selected
    * tree, or on the selected coordinate if there is no tree.
    */
-  private setEventListeners(map: GameMap) {
+  private setEventListeners() {
+
+    let hoverPos: {x: number, y: number} | null = null;
+
+    const whilemousedown = () => {
+      if (hoverPos !== null) {
+        const {x,y} = hoverPos;
+        let loc : Victor = new Victor(x, y);
+        this.onDrag(loc);
+      }
+    };
+
+    var interval: number;
     this.canvas.onmousedown = (event: MouseEvent) => {
-      const {x,y} = this.getIntegerLocation(event, map);
+      const {x,y} = this.getIntegerLocation(event, this.map);
       let loc : Victor = new Victor(x, y);
 
       // Get the ID of the selected unit
       let selectedID;
-      map.originalBodies.forEach(function(body: MapUnit, id: number) {
+      this.map.originalBodies.forEach(function(body: MapUnit, id: number) {
         if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
       });
-      map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
+      this.map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
         if (loc.isEqualTo(body.loc)) {
           selectedID = id;
         }
@@ -170,11 +177,23 @@ export default class MapRenderer {
       } else {
         this.onclickBlank(loc);
       }
+
+      interval = window.setInterval(whilemousedown, 50);
+    };
+
+    this.canvas.onmouseup = () => {
+      clearInterval(interval);
     };
 
     this.canvas.onmousemove = (event) => {
-      const {x,y} = this.getIntegerLocation(event, map);
-      this.onMouseover(x, y, map.passability[(y)*this.width + x]);
+      const {x,y} = this.getIntegerLocation(event, this.map);
+      this.onMouseover(x, y, this.map.passability[(y)*this.width + x]);
+      hoverPos = {x: x, y: y};
+    };
+
+    this.canvas.onmouseout = (event) => {
+      hoverPos = null;
+      clearInterval(interval);
     };
   }
 
@@ -192,4 +211,3 @@ export default class MapRenderer {
     this.ctx.drawImage(img, x, y-radius*2, radius*2, radius*2);
   }
 }
-

@@ -94,9 +94,7 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
     # if map_ids is not specified, use some default way to select maps.
     if map_ids is None:
         # By default, pick 3 random maps (requires specifying maps in settings.py).
-        # map_ids = ','.join(get_random_maps(3))
-        # TODO At the moment, we only have one map. Change to a better method of selection later.
-        map_ids = 'maptestsmall,maptestsmall,maptestsmall'
+        map_ids = ','.join(get_random_maps(3))
 
     # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
     # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
@@ -143,7 +141,11 @@ def accept_scrimmage_helper(scrimmage_id):
     scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
 
     # save the scrimmage, again, to mark save
-    scrimmage.status = 'queued'
+    if red_submission_id is None or blue_submission_id is None:
+        scrimmage.status = 'error'
+        scrimmage.error_msg = 'Make sure your team and the team you requested have a submission.'
+    else:
+        scrimmage.status = 'queued'
     scrimmage.save()
 
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
@@ -606,7 +608,7 @@ class TeamViewSet(viewsets.GenericViewSet,
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status != 'error') else None,
+                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status == 'redwon' or scrimmage.status == 'bluewon') else None,
                                     'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
@@ -1041,6 +1043,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             if 'status' in request.data:
                 sc_status = request.data['status']
+                sc_error_msg = request.data['error_msg']
                 if sc_status == "redwon" or sc_status == "bluewon":
 
                     if 'winscore' in request.data and 'losescore' in request.data:
@@ -1096,10 +1099,10 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 elif sc_status == "error":
                     scrimmage.status = sc_status
-
+                    scrimmage.error_msg = sc_error_msg
                     scrimmage.save()
                     # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
-                    return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
+                    return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:

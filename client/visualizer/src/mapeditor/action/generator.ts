@@ -57,7 +57,7 @@ export default class MapGenerator {
    * Adds a robot body to the internal array
    */
   private static addBody(robotID: number, teamID: number, type: schema.BodyType, x: number, y: number, influence: number) {
-    this.bodiesArray.robotIDs.push(robotID);
+    this.bodiesArray.robotIDs.push(robotID); // ignored by engine
     this.bodiesArray.teamIDs.push(teamID);
     this.bodiesArray.types.push(type);
     this.bodiesArray.xs.push(x);

@@ -122,6 +122,11 @@ export default class Sidebar {
   private initializeHelp(): HTMLDivElement {
     const innerHTML: string =
     `
+    <b class="red" style="font-size: 16px">Beware of too much logging!</b>
+    <br>
+    If your match has a significant amount of logging, please <b>turn off log processing with
+    the L key.</b><br>
+    <br>
     <b class="red">Issues?</b>
     <ol style="margin-left: -20px; margin-top: 0px;">
     <li>Refresh (Ctrl-R or Command-R).</li>
@@ -149,7 +154,7 @@ export default class Sidebar {
     <br>
     S - Add<br>
     D - Delete<br>
-
+    R - Reverse team<br>
     <br>
     <b class="blue">How to Play a Match</b><br>
     <i>From the application:</i> Click <code>Runner</code> and follow the
@@ -168,7 +173,7 @@ export default class Sidebar {
     The console displays all <code>System.out.println()</code> data up to the current round.
     You can filter teams by checking the boxes and robot IDs by clicking the
     robot. You can also change the maximum number of rounds displayed in the
-    input box. <b class="red">Beware of doing too much logging!</b> This slows down the client.
+    input box. Beware of doing too much logging! This slows down the client.
     (WARNING: If you want to, say, suddenly display 3000 rounds
     of data, pause the client first to prevent freezing.)<br>
     <br>
@@ -193,10 +198,10 @@ export default class Sidebar {
     <br>
     To place enlightenment centers, enter the "change robots" mode, set the coordinates, and clicking
     "Add/Update" or "Delete." The coordinates can also be set by clicking the map. <i> (The map editor may be a bit glitchy
-    at the moment, as we iron out bugs. </i>) <br>
+    at the moment, as we iron out bugs.) </i> <br>
     <br>
-    To set tiles' passability values, enter the "change tiles" mode, and select a bottom-left and top-right corner of the set of tiles to target. Then, input the new passability value and press
-    "Add/Update".
+    To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
+    and then <b>hold and drag</b> your mouse across the map.
     <br>
     <!--Before exporting, click "Validate" to see if any changes need to be
     made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or

@@ -25,14 +25,17 @@ def main(version):
 
     # TODO should be adapted now that we use markdeep instead
     # fancy_specs()
+    client()
 
     deploy_frontend()
 
-    update_setup_py_version(version)
+    # These steps are used for a Python-based engine, eg Battlehack 2020.
+    # When running a Python game, these commands should be maintained and used, instead.
+    # update_setup_py_version(version)
 
-    publish_pypi()
+    # publish_pypi()
 
-    commit_tag_push(version)
+    # commit_tag_push(version)
 
 
 def generate_comparison_link():
@@ -127,6 +130,20 @@ def commit_tag_push(version):
     subprocess.call(f'git tag v{version}', shell=True)
     subprocess.call('git push', shell=True)
     subprocess.call('git push --tags', shell=True)
+
+def client():
+    """
+    Build client for web.
+    """
+    # TODO this should be in the npm script too, to get this to run during local development.
+    os.chdir("client/visualizer")
+    # TODO apparently need to run npm install first.
+    # This is okay in the deploy script. (we run npm install for the frontend folder too)
+    # However, for development, devs should run npm install in client dir. Can just drop a note about this in readme. (also note that if client ever looks out of date, do npm run install-all, npm run build again.)
+    # Easiest to do each of these builds thru npm run install-all, npm run build. in top client folder.
+    subprocess.call("npm run prod", shell=True)
+    subprocess.call("cp -r out ../../frontend/public", shell=True)
+    os.chdir("../../frontend")
 
 
 if __name__ == '__main__':

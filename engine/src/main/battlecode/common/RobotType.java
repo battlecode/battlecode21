@@ -5,7 +5,7 @@ package battlecode.common;
  */
 public enum RobotType {
 
-    // spawnSource, convictionRatio, actionCooldown, actionRadiusSquared, sensorRadiusSquared, detectionRadiusSquared, bytecodeLimit
+    // spawnSource, convictionRatio, actionCooldown, initialCooldown, actionRadiusSquared, sensorRadiusSquared, detectionRadiusSquared, bytecodeLimit
     /**
      * Enlightenment Centers produce various types of robots, as well as
      * passively generate influence and bid for votes each round. Can be
@@ -13,8 +13,8 @@ public enum RobotType {
      * 
      * @battlecode.doc.robottype
      */
-    ENLIGHTENMENT_CENTER    (null,  1,  2,  2,  40,  40,  12000),
-    //                       SS     CR  AC  AR  SR   DR   BL
+    ENLIGHTENMENT_CENTER    (null,  1,  2,  0,  2,  40,  40,  20000),
+    //                       SS     CR  AC  IC  AR  SR   DR   BL
     /**
      * Politicians Empower adjacent units, strengthening friendly robots, 
      * converting enemy Politicians and Enlightenment Centers, and destroying
@@ -22,8 +22,8 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  9,  25,  25,  6000),
-    //                       SS                     CR  AC  AR  SR   DR   BL
+    POLITICIAN              (ENLIGHTENMENT_CENTER,  1,  1,  10, 9,  25,  25,  15000),
+    //                       SS                     CR  AC  IC  AR  SR   DR   BL
     /**
      * Slanderers passively generate influence for their parent Enlightenment
      * Center each round. They are camoflauged as Politicians to enemy units.
@@ -31,16 +31,16 @@ public enum RobotType {
      *
      * @battlecode.doc.robottype
      */
-    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  2,  0,  20,  20,  3000),
-    //                       SS                     CR  AC  AR  SR   DR   BL
+    SLANDERER               (ENLIGHTENMENT_CENTER,  1,  2,  0,  0,  20,  20,  7500),
+    //                       SS                     CR  AC  IC  AR  SR   DR   BL
     /**
      * Muckrakers search the map for enemy Slanderers to Expose, which destroys
      * the Slanderer and gives a buff to their team.
      *
      * @battlecode.doc.robottype
      */
-    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  12,  30,  40,  9000),
-    //                       SS                     CR     AC     AR   SR   DR   BL
+    MUCKRAKER               (ENLIGHTENMENT_CENTER,  0.7f,  1.5f,  10, 12,  30,  40,  15000),
+    //                       SS                     CR     AC     IC  AR   SR   DR   BL
     ;
     
     /**
@@ -59,6 +59,11 @@ public enum RobotType {
      * action (Build/Move/Empower/Expose) again.
      */
     public final float actionCooldown;
+
+    /**
+     * Initial cooldown turns when a robot is built.
+     */
+    public final float initialCooldown;
 
     /**
      * Radius squared range of robots' abilities. For Politicians, this is
@@ -200,19 +205,22 @@ public enum RobotType {
                 return (int) Math.ceil(GameConstants.PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER * Math.sqrt(roundNum));
             case SLANDERER:
                 if (roundsAlive <= GameConstants.EMBEZZLE_NUM_ROUNDS)
-                    return (int) (GameConstants.PASSIVE_INFLUENCE_RATIO_SLANDERER * robotInfluence);
+                    return (int) (robotInfluence *
+                            (1.0 / GameConstants.EMBEZZLE_NUM_ROUNDS +
+                            GameConstants.EMBEZZLE_SCALE_FACTOR * Math.exp(-GameConstants.EMBEZZLE_DECAY_FACTOR * robotInfluence)));
                 return 0;
             default:
                 return 0;
         }
     }
 
-    RobotType(RobotType spawnSource, float convictionRatio, float actionCooldown,
+    RobotType(RobotType spawnSource, float convictionRatio, float actionCooldown, float initialCooldown,
               int actionRadiusSquared, int sensorRadiusSquared, int detectionRadiusSquared,
               int bytecodeLimit) {
         this.spawnSource            = spawnSource;
         this.convictionRatio        = convictionRatio;
         this.actionCooldown         = actionCooldown;
+        this.initialCooldown        = initialCooldown;
         this.actionRadiusSquared    = actionRadiusSquared;
         this.sensorRadiusSquared    = sensorRadiusSquared;
         this.detectionRadiusSquared = detectionRadiusSquared;
