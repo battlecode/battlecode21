@@ -1,5 +1,6 @@
 import { Match } from 'battlecode-playback';
 import { ProfilerFile } from 'battlecode-playback/out/match';
+import * as config from '../config';
 
 enum Team {
   A, B
@@ -11,12 +12,13 @@ export default class Profiler {
 
   private teamSelector: HTMLSelectElement;
   private robotSelector: HTMLSelectElement;
+  private notProfilingDiv: HTMLDivElement;
 
   private profilerFiles: ProfilerFile[];
   private currentTeamIndex: number = -1;
   private currentRobotIndex: number = -1;
 
-  constructor() {
+  constructor(private conf: config.Config) {
     this.div = this.createSidebarDiv();
     this.iframe = this.createIFrame();
   }
@@ -85,6 +87,12 @@ export default class Profiler {
         this.onRobotChange(parseInt(this.robotSelector.options[selectedIndex].value, 10));
       }
     };
+
+    this.notProfilingDiv =  document.createElement("div");
+    this.notProfilingDiv.className = "not-logging-div";
+    this.notProfilingDiv.textContent = "Profiling is disabled.";
+    this.notProfilingDiv.hidden = this.conf.doProfiling;
+    base.appendChild(this.notProfilingDiv);
 
     let p = document.createElement('p');
     p.innerText = 'If no teams are visible, make sure to run a game with profiling enabled by ticking the checkbox on the Runner tab or to load a replay of a game that had profiling enabled.';
@@ -164,14 +172,16 @@ export default class Profiler {
     const file = this.profilerFiles[this.currentTeamIndex];
     const robot = this.currentRobotIndex;
 
-    this.sendToIFrame('load', {
-      $schema: 'https://www.speedscope.app/file-format-schema.json',
-      activeProfileIndex: 0,
-      shared: {
-        frames: file.frames,
-      },
-      profiles: [file.profiles[robot]],
-    });
+    if (this.conf.doProfiling) {
+      this.sendToIFrame('load', {
+        $schema: 'https://www.speedscope.app/file-format-schema.json',
+        activeProfileIndex: 0,
+        shared: {
+          frames: file.frames,
+        },
+        profiles: [file.profiles[robot]],
+      });
+    }
   }
 
   private sendToIFrame(type: string, payload: any) {
@@ -179,5 +189,12 @@ export default class Profiler {
     if (frame !== null) {
       frame.postMessage({ type, payload }, '*');
     }
+  }
+
+  /**
+   * Sets indicator of whether logs are being processed.
+   */
+  setNotProfilingDiv() {
+    this.notProfilingDiv.hidden = this.conf.doProfiling;
   }
 }

@@ -550,7 +550,15 @@ export default class Runner {
           break;
         case 76: // 'l' - Toggle process logs
           this.conf.processLogs = !this.conf.processLogs;
-          this.console.setNotLoggingDiv(this.conf.processLogs);
+          this.console.setNotLoggingDiv();
+          break;
+        case 81: // 'q' - Toggle profiler
+          console.log(this.profiler);
+          if (this.profiler) {
+            this.conf.doProfiling = !this.conf.doProfiling;
+            this.profiler.setNotProfilingDiv();
+          }
+          break;
       }
     }
 

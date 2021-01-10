@@ -161,7 +161,7 @@ export default class Match {
     this._lastTurn = footer.totalRounds();
     this._winner = footer.winner();
 
-    if (this.config.useProfiler) {
+    if (this.config.doProfiling) {
       for (let i = 0, iMax = footer.profilerFilesLength(); i < iMax; i++) {
         const file = footer.profilerFiles(i);
 

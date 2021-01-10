@@ -68,7 +68,7 @@ export default class Sidebar {
       // set callback for running a game, which should trigger the update check
       this.updateUpdate();
     });
-    if (conf.useProfiler) this.profiler = new Profiler();
+    if (conf.useProfiler) this.profiler = new Profiler(conf);
     this.matchqueue = new MatchQueue(conf, images, runner);
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
@@ -106,7 +106,6 @@ export default class Sidebar {
     this.updateModeButtons();
     this.setSidebar();
   }
-
 
   /**
    * Sets a scaffold if a scaffold directory is found after everything is loaded
@@ -149,6 +148,7 @@ export default class Sidebar {
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
     L - Toggle whether to process logs.<br>
+    Q - Toggle whether to profile matches.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>
@@ -178,7 +178,8 @@ export default class Sidebar {
     of data, pause the client first to prevent freezing.)<br>
     <br>
     <b class="blue">How to Use the Profiler</b><br>
-    <i> The profiler is currently disabled.</i><br>
+    <i class="red"> Be cautious of memory issues when profiling large games. To disable profiling
+    on a profiled match file, press "Q".</i><br>
     The profiler can be used to find out which methods are using a lot of
     bytecodes. To use it, tick the "Profiler enabled" checkbox in the
     Runner before running the game. Make sure that the runFromClient

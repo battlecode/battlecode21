@@ -134,9 +134,6 @@ export default class Client {
       if (this.conf.mode == config.Mode.MAPEDITOR) {
         document.onkeydown = this.mapeditor.onkeydown;
       }
-      else if (this.conf.mode == config.Mode.PROFILER) {
-        document.onkeydown = null;
-      }
       else if (this.conf.mode != config.Mode.HELP) {
         document.onkeydown = this.runner.onkeydown;
       }

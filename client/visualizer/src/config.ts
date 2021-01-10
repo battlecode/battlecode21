@@ -101,14 +101,19 @@ export interface Config {
   shorterLogHeader: boolean;
 
   /**
-   * Whether we should process a match's logs by default.
+   * Whether we should process a match's logs.
    */
   processLogs: boolean;
 
   /**
-   * Whether to show the profiler.
+   * Whether to load the profiler.
    */
   useProfiler: boolean;
+
+  /**
+   * Whether to do profiling on profiled match files, assuming the profiler is loaded.
+   */
+  doProfiling: boolean;
 }
 
 /**
@@ -150,7 +155,8 @@ export function defaults(supplied?: any): Config {
     viewSwamp: true,
     shorterLogHeader: false,
     processLogs: true,
-    useProfiler: true
+    useProfiler: true,
+    doProfiling: true
   };
   return Object.assign(conf, supplied);
 }

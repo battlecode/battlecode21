@@ -125,7 +125,7 @@ export default class MatchRunner {
 
     const profilerLabel = document.createElement('label');
     profilerLabel.setAttribute('for', 'profiler-enabled');
-    profilerLabel.innerText = 'Profiler enabled (will be slower and more memory-intensive)';
+    profilerLabel.innerText = 'Profiler enabled (will be more memory-intensive)';
 
     div.appendChild(document.createElement("br"));
     // Team A selector
