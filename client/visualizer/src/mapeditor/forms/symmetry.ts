@@ -83,13 +83,15 @@ export default class SymmetryForm {
 
     // Whether or not loc lies on the point or line of symmetry
   private onSymmetricLine(loc: Victor, width: number, height: number): boolean {
+    const midX = width / 2 - 0.5;
+    const midY = height / 2 - 0.5;
     switch(this.getSymmetry()) {
       case(Symmetry.ROTATIONAL):
-      return loc.x === width / 2 && loc.y === height / 2;
+      return loc.x === midX && loc.y === midY;
       case(Symmetry.HORIZONTAL):
-      return loc.y === height / 2;
+      return loc.y === midY;
       case(Symmetry.VERTICAL):
-      return loc.x === width / 2;
+      return loc.x === midX;
     }
   };
 

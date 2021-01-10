@@ -45,6 +45,8 @@ export default class RobotForm {
     this.x = document.createElement("input");
     this.y = document.createElement("input");
     this.influence = document.createElement("input");
+    this.influence.value = String(cst.INITIAL_INFLUENCE);
+    this.influence.disabled = true;
 
     // Create the form
     this.loadInputs();
@@ -70,6 +72,9 @@ export default class RobotForm {
       option.value = String(team);
       option.appendChild(document.createTextNode(this.TEAMS[team]));
       this.team.appendChild(option);
+      if (this.TEAMS[team] === "Red") {
+        option.selected = true;
+      }
     }
   }
 
@@ -85,13 +90,16 @@ export default class RobotForm {
     const x: HTMLDivElement = document.createElement("div");
     const y: HTMLDivElement = document.createElement("div");
     const influence: HTMLDivElement = document.createElement("div");
-    form.appendChild(id);
+    //form.appendChild(id);
     form.appendChild(type);
     form.appendChild(team);
     form.appendChild(x);
     form.appendChild(y);
     form.appendChild(influence);
     form.appendChild(document.createElement("br"));
+
+    id.appendChild(document.createTextNode("ID: "));
+    id.appendChild(this.id);
 
     // Robot type
     type.appendChild(document.createTextNode("Type: "));
@@ -192,6 +200,8 @@ export default class RobotForm {
     if (body && id) {
       this.type.value = String(body.type);
       this.team.value = String(body.teamID);
+      this.influence.disabled = (this.getTeam() !== 0);
+      this.influence.value = String(body.influence);
     }
   }
 
@@ -206,7 +216,6 @@ export default class RobotForm {
     if (!this.isValid()) {
       return undefined;
     }
-
     return {
       loc: new Victor(this.getX(), this.getY()),
       radius: 0.5,
