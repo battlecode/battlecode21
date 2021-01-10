@@ -150,21 +150,24 @@ export default class ScaffoldCommunicator {
    * TODO what if the server hangs?
    */
   runMatch(teamA: string, teamB: string, maps: string[], enableProfiler: boolean,
+           onStart: (cmd: string) => void,
            onErr: (err: Error) => void, onExitNoError: () => void,
            onStdout: (data: string) => void, onStderr: (data: string) => void) {
+    const options = [
+      `runFromClient`,
+      `-x`,
+      `unpackClient`,
+      `-PteamA=${teamA}`,
+      `-PteamB=${teamB}`,
+      `-Pmaps=${maps.join(',')}`,
+      `-PprofilerEnabled=${enableProfiler}`,
+    ];
     const proc = child_process.spawn(
       this.wrapperPath,
-      [
-        `runFromClient`,
-        `-x`,
-        `unpackClient`,
-        `-PteamA=${teamA}`,
-        `-PteamB=${teamB}`,
-        `-Pmaps=${maps.join(',')}`,
-        `-PprofilerEnabled=${enableProfiler}`,
-      ],
+      options,
       {cwd: this.scaffoldPath}
     );
+    onStart(this.wrapperPath + " " + options.join("\n"));
     const decoder = new window['TextDecoder']();
     // @ts-ignore
     proc.stdout.on('data', (data) => onStdout(decoder.decode(data)));

@@ -304,6 +304,7 @@ export default class MatchRunner {
       this.getTeamB(),
       this.getMaps(),
       this.isProfilerEnabled(),
+      (cmd: string) => this.makeLog("Running " + cmd, 'specialLog'),
       (err) => {
         console.log(err.stack);
         this.isLoadingMatch = false;
@@ -312,19 +313,20 @@ export default class MatchRunner {
         this.isLoadingMatch = false;
       },
       (stdoutdata) => {
-        const logs = document.createElement('p');
-        logs.innerHTML = stdoutdata.split('\n').join('<br/>');
-        this.compileLogs.appendChild(logs);
-        this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
+        this.makeLog(stdoutdata);
       },
       (stderrdata) => {
-        const logs = document.createElement('p');
-        logs.innerHTML = stderrdata.split('\n').join('<br/>');
-        logs.className = 'errorLog';
-        this.compileLogs.appendChild(logs);
-        this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
+        this.makeLog(stderrdata, 'errorLog');
       }
     );
+  }
+
+  private makeLog(content: string, className?: string) {
+    const logs = document.createElement('p');
+    logs.innerHTML = content.split('\n').join('<br/>');
+    if (className) logs.className = className;
+    this.compileLogs.appendChild(logs);
+    this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
   }
 
   /**
