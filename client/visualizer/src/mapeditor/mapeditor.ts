@@ -71,8 +71,8 @@ export default class MapEditor {
       Select the initial map settings: name, width, height, and symmetry. <br>
       <br>
       To place enlightenment centers, enter the "change robots" mode, set the coordinates, set the initial influence of the
-      center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map. 
-      <i> (The map editor may be a bit glitchy at the moment, as we iron out bugs.) </i> <br>
+      center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map.
+      <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game! --><br>
       <br>
       To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
       and then <b>hold and drag</b> your mouse across the map.
