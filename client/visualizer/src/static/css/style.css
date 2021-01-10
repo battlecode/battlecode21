@@ -121,10 +121,17 @@ form {
     justify-content: center; /* Horizontal center alignment */
 }
 
+#gamearea:empty {
+    display: none;
+}
+
 #canvas-wrapper {
     width: 100%;
     height: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #export {
@@ -505,8 +512,6 @@ h4 {
     text-align: center;
     z-index: -1;
     overflow: hidden;
-    margin-top: -39px;
-    margin-left: -161px;
 }
 
 #stats-table {
