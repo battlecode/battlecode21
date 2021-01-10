@@ -17,8 +17,9 @@ import com.google.flatbuffers.*;
  */
 public final class ProfilerEvent extends Table {
   public static ProfilerEvent getRootAsProfilerEvent(ByteBuffer _bb) { return getRootAsProfilerEvent(_bb, new ProfilerEvent()); }
-  public static ProfilerEvent getRootAsProfilerEvent(ByteBuffer _bb, ProfilerEvent obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public ProfilerEvent __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static ProfilerEvent getRootAsProfilerEvent(ByteBuffer _bb, ProfilerEvent obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public ProfilerEvent __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * Whether this is an open event (true) or a close event (false).

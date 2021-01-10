@@ -13,8 +13,9 @@ import com.google.flatbuffers.*;
  */
 public final class SpawnedBodyTable extends Table {
   public static SpawnedBodyTable getRootAsSpawnedBodyTable(ByteBuffer _bb) { return getRootAsSpawnedBodyTable(_bb, new SpawnedBodyTable()); }
-  public static SpawnedBodyTable getRootAsSpawnedBodyTable(ByteBuffer _bb, SpawnedBodyTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public SpawnedBodyTable __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static SpawnedBodyTable getRootAsSpawnedBodyTable(ByteBuffer _bb, SpawnedBodyTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public SpawnedBodyTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The numeric ID of the new bodies.
@@ -26,23 +27,26 @@ public final class SpawnedBodyTable extends Table {
   public int robotIDs(int j) { int o = __offset(4); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int robotIDsLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer robotIDsAsByteBuffer() { return __vector_as_bytebuffer(4, 4); }
+  public ByteBuffer robotIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 4); }
   /**
    * The teams of the new bodies.
    */
   public byte teamIDs(int j) { int o = __offset(6); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
   public int teamIDsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer teamIDsAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer teamIDsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
   /**
    * The types of the new bodies.
    */
   public byte types(int j) { int o = __offset(8); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
   public int typesLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer typesAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public ByteBuffer typesInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 1); }
   /**
    * The locations of the bodies.
    */
   public VecTable locs() { return locs(new VecTable()); }
-  public VecTable locs(VecTable obj) { int o = __offset(10); return o != 0 ? obj.__init(__indirect(o + bb_pos), bb) : null; }
+  public VecTable locs(VecTable obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * the amount of influence paid to create these bodies
    * for initial Enlightenment Centers, this is the amount of influence
@@ -51,6 +55,7 @@ public final class SpawnedBodyTable extends Table {
   public int influences(int j) { int o = __offset(12); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
   public int influencesLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer influencesAsByteBuffer() { return __vector_as_bytebuffer(12, 4); }
+  public ByteBuffer influencesInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 12, 4); }
 
   public static int createSpawnedBodyTable(FlatBufferBuilder builder,
       int robotIDsOffset,
