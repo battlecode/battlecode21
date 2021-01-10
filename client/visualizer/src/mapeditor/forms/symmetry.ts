@@ -137,7 +137,8 @@ export default class SymmetryForm {
           loc: this.transformLoc(body.loc, width, height),
           radius: body.radius,
           type: type,
-          teamID: this.flipTeamID(teamID)
+          teamID: this.flipTeamID(teamID),
+          influence: body.influence
         });
       }
     });

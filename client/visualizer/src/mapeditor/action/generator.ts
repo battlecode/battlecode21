@@ -77,7 +77,7 @@ export default class MapGenerator {
         unit.type,
         unit.loc.x,
         unit.loc.y,
-        cst.INITIAL_INFLUENCE
+        unit.influence
       );
     });
   }
