@@ -45,6 +45,8 @@ export default class RobotForm {
     this.x = document.createElement("input");
     this.y = document.createElement("input");
     this.influence = document.createElement("input");
+    this.influence.value = String(cst.INITIAL_INFLUENCE);
+    this.influence.disabled = true;
 
     // Create the form
     this.loadInputs();
@@ -70,6 +72,9 @@ export default class RobotForm {
       option.value = String(team);
       option.appendChild(document.createTextNode(this.TEAMS[team]));
       this.team.appendChild(option);
+      if (this.TEAMS[team] === "Red") {
+        option.selected = true;
+      }
     }
   }
 
@@ -192,6 +197,8 @@ export default class RobotForm {
     if (body && id) {
       this.type.value = String(body.type);
       this.team.value = String(body.teamID);
+      this.influence.disabled = (this.getTeam() !== 0);
+      this.influence.value = String(body.influence);
     }
   }
 
@@ -206,7 +213,6 @@ export default class RobotForm {
     if (!this.isValid()) {
       return undefined;
     }
-
     return {
       loc: new Victor(this.getX(), this.getY()),
       radius: 0.5,
