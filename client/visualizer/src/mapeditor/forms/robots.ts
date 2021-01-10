@@ -16,11 +16,11 @@ export default class RobotForm {
   readonly team: HTMLSelectElement;
   readonly x: HTMLInputElement;
   readonly y: HTMLInputElement;
+  readonly influence: HTMLInputElement;
 
   // Callbacks on input change
   readonly width: () => number;
   readonly height: () => number;
-  readonly maxRadius: (x: number, y: number, ignoreID?: number) => number;
 
   // Constant
   private readonly ROBOT_TYPES: schema.BodyType[] = cst.initialBodyTypeList;
@@ -44,6 +44,7 @@ export default class RobotForm {
     this.team = document.createElement("select");
     this.x = document.createElement("input");
     this.y = document.createElement("input");
+    this.influence = document.createElement("input");
 
     // Create the form
     this.loadInputs();
@@ -83,11 +84,13 @@ export default class RobotForm {
     const team: HTMLDivElement = document.createElement("div");
     const x: HTMLDivElement = document.createElement("div");
     const y: HTMLDivElement = document.createElement("div");
+    const influence: HTMLDivElement = document.createElement("div");
     form.appendChild(id);
     form.appendChild(type);
     form.appendChild(team);
     form.appendChild(x);
     form.appendChild(y);
+    form.appendChild(influence);
     form.appendChild(document.createElement("br"));
 
     // Robot type
@@ -105,6 +108,10 @@ export default class RobotForm {
     // Y coordinate
     y.appendChild(document.createTextNode("Y: "));
     y.appendChild(this.y);
+
+    // Influence
+    influence.appendChild(document.createTextNode("I: "));
+    influence.appendChild(this.influence);
 
     return form;
   }
@@ -129,6 +136,22 @@ export default class RobotForm {
       value = Math.min(value, this.height());
       this.y.value = isNaN(value) ? "" : String(value);
     };
+
+    this.influence.onchange = () => {
+      let value: number = this.getInfluence();
+      value = Math.max(value, 50);
+      value = Math.min(value, 500);
+      this.influence.value = isNaN(value) ? "" : String(value);
+    }
+
+    this.team.onchange = () => {
+      if (this.getTeam() !== 0) {
+        this.influence.disabled = true;
+        this.influence.value = String(cst.INITIAL_INFLUENCE);
+      }
+      else this.influence.disabled = false;
+    }
+
   }
 
 
@@ -146,6 +169,10 @@ export default class RobotForm {
 
   private getY(): number {
     return parseInt(this.y.value);
+  }
+
+  private getInfluence(): number {
+    return parseInt(this.influence.value);
   }
 
   getID(): number | undefined {
@@ -171,8 +198,8 @@ export default class RobotForm {
   isValid(): boolean {
     const x = this.getX();
     const y = this.getY();
-
-    return !(isNaN(x) || isNaN(y));
+    const I = this.getInfluence();
+    return !(isNaN(x) || isNaN(y) || isNaN(I));
   }
 
   getUnit(id: number): MapUnit | undefined {
@@ -184,7 +211,8 @@ export default class RobotForm {
       loc: new Victor(this.getX(), this.getY()),
       radius: 0.5,
       type: this.getType(),
-      teamID: this.getTeam()
+      teamID: this.getTeam(),
+      influence: this.getInfluence()
     }
   }
 }
