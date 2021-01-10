@@ -195,9 +195,9 @@ export default class Sidebar {
     <b class="blue">How to Use the Map Editor</b><br>
     Select the initial map settings: name, width, height, symmetry (<i>symmetry is currently unavailable</i>). <br>
     <br>
-    To place enlightenment centers, enter the "change robots" mode, set the coordinates, and clicking
-    "Add/Update" or "Delete." The coordinates can also be set by clicking the map. <i> (The map editor may be a bit glitchy
-    at the moment, as we iron out bugs.) </i> <br>
+    To place enlightenment centers, enter the "change robots" mode, set the coordinates, set the initial influence of the
+    center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map. 
+    <i> (The map editor may be a bit glitchy at the moment, as we iron out bugs.) </i> <br>
     <br>
     To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
     and then <b>hold and drag</b> your mouse across the map.

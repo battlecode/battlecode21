@@ -12,7 +12,8 @@ export type MapUnit = {
   loc: Victor,
   type: schema.BodyType,
   radius: 0.5,
-  teamID?: number
+  teamID?: number,
+  influence: number
 };
 
 export type GameMap = {
