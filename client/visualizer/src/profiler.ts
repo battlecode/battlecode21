@@ -8,7 +8,6 @@ function applyCSS(css: string): void {
 }
 
 function load(data: any): void {
-  console.log(data);
   (window as any).speedscope.loadFileFromBase64('data.json', btoa(JSON.stringify(data)));
 }
 
