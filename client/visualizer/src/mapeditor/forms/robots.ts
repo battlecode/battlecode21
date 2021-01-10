@@ -90,13 +90,16 @@ export default class RobotForm {
     const x: HTMLDivElement = document.createElement("div");
     const y: HTMLDivElement = document.createElement("div");
     const influence: HTMLDivElement = document.createElement("div");
-    form.appendChild(id);
+    //form.appendChild(id);
     form.appendChild(type);
     form.appendChild(team);
     form.appendChild(x);
     form.appendChild(y);
     form.appendChild(influence);
     form.appendChild(document.createElement("br"));
+
+    id.appendChild(document.createTextNode("ID: "));
+    id.appendChild(this.id);
 
     // Robot type
     type.appendChild(document.createTextNode("Type: "));
