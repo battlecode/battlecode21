@@ -7,6 +7,7 @@ import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
 import {MapRenderer, HeaderForm, SymmetryForm, RobotForm, TileForm} from './index';
+import { SSL_OP_NO_QUERY_MTU } from 'constants';
 
 export type MapUnit = {
   loc: Victor,
@@ -460,9 +461,9 @@ export default class MapEditorForm {
    * Re-renders the canvas based on the parameters of the map editor.
    */
   render() {
-    const scale: number = 50; // arbitrary scaling factor
     const width: number = this.header.getWidth();
     const height: number = this.header.getHeight();
+    const scale: number = this.conf.upscale / Math.sqrt(width * height); // arbitrary scaling factor
     this.canvas.width = width * scale;
     this.canvas.height = height * scale;
     this.symmetricBodies = this.symmetry.getSymmetricBodies(this.originalBodies, width, height);

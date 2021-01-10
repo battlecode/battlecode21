@@ -5,6 +5,7 @@ import Client from '../app';
 import {GameWorld} from 'battlecode-playback';
 
 import {http} from '../main/electron-modules';
+import { SSL_OP_NO_QUERY_MTU } from 'constants';
 
 export default class GameArea {
 
@@ -49,10 +50,11 @@ export default class GameArea {
    * Sets canvas size to maximum dimensions while maintaining the aspect ratio
    */
   setCanvasDimensions(world: GameWorld): void {
-    const scale: number = this.conf.upscale; // scaling factor
-
-    this.canvas.width = scale;
-    this.canvas.height = world.minCorner.absDistanceY(world.maxCorner) / world.minCorner.absDistanceX(world.maxCorner) * scale;
+    const width = world.minCorner.absDistanceX(world.maxCorner);
+    const height = world.minCorner.absDistanceY(world.maxCorner);
+    const scale = this.conf.upscale / Math.sqrt(width * height);
+    this.canvas.width = width * scale;
+    this.canvas.height = height * scale;
   }
   
   /**
