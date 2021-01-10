@@ -243,7 +243,7 @@ def run_tournament(num_players, tournament_id, team_pk, maps, team_names):
 if __name__ == '__main__':
     # Command-line usage: ./tournament_server.py argv, where:
     # argv[1] = tournament_id
-    # argv[2] = file containing pk
+    # argv[2] = file containing package ids in the gcloud
     # argv[3] = file containing names
     # argv[4] = file containing map config
     # Team data should be ordered from first to last seed, one per line
