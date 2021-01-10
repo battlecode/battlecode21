@@ -28,7 +28,7 @@ export default class Sidebar {
   readonly mapeditor: MapEditor;
   readonly matchrunner: MatchRunner;
   readonly matchqueue: MatchQueue;
-  readonly profiler: Profiler;
+  readonly profiler?: Profiler;
   private readonly help: HTMLDivElement;
 
   // Options
@@ -68,8 +68,8 @@ export default class Sidebar {
       // set callback for running a game, which should trigger the update check
       this.updateUpdate();
     });
-    this.profiler = new Profiler();
-    this.matchqueue = new MatchQueue(conf, images, this.profiler, runner);
+    if (conf.useProfiler) this.profiler = new Profiler();
+    this.matchqueue = new MatchQueue(conf, images, runner);
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
     this.conf = conf;
@@ -90,7 +90,7 @@ export default class Sidebar {
     modePanelRow1.appendChild(this.modeButton(Mode.LOGS, "Logs"));
     modePanelRow1.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
     modePanelRow1.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
-    modePanelRow2.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
+    if (this.conf.useProfiler) modePanelRow2.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
     modePanelRow2.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
     modePanelRow2.appendChild(this.modeButton(Mode.HELP, "Help"));
 
@@ -343,7 +343,7 @@ export default class Sidebar {
         this.innerDiv.appendChild(this.mapeditor.div);
         break;
       case Mode.PROFILER:
-        this.innerDiv.append(this.profiler.div);
+        if (this.profiler) this.innerDiv.append(this.profiler.div);
         break;
     }
 

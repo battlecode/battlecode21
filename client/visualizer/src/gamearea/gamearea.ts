@@ -16,12 +16,12 @@ export default class GameArea {
   readonly splashDiv: HTMLDivElement;
   private readonly wrapper: HTMLDivElement;
   private readonly mapEditorCanvas: HTMLCanvasElement;
-  private readonly profilerIFrame: HTMLIFrameElement;
+  private readonly profilerIFrame?: HTMLIFrameElement;
 
   // Options
   private readonly conf: Config;
 
-  constructor(conf: Config, images: AllImages, mapEditorCanvas: HTMLCanvasElement, profilerIFrame: HTMLIFrameElement) {
+  constructor(conf: Config, images: AllImages, mapEditorCanvas: HTMLCanvasElement, profilerIFrame?: HTMLIFrameElement) {
     this.div = document.createElement("div");
     this.div.id = "gamearea";
     this.conf = conf;
@@ -133,7 +133,7 @@ export default class GameArea {
           this.wrapper.appendChild(this.mapEditorCanvas);
           break;
         case Mode.PROFILER:
-          this.wrapper.appendChild(this.profilerIFrame);
+          if (this.profilerIFrame) this.wrapper.appendChild(this.profilerIFrame);
           break;
         default:
           this.wrapper.appendChild(this.canvas); // TODO: Only append if a game is available in client.games

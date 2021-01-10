@@ -104,6 +104,11 @@ export interface Config {
    * Whether we should process a match's logs by default.
    */
   processLogs: boolean;
+
+  /**
+   * Whether to show the profiler.
+   */
+  useProfiler: boolean;
 }
 
 /**
@@ -144,7 +149,8 @@ export function defaults(supplied?: any): Config {
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
-    processLogs: true
+    processLogs: true,
+    useProfiler: true
   };
   return Object.assign(conf, supplied);
 }

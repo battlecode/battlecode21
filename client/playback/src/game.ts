@@ -6,6 +6,7 @@ import {ungzip} from 'pako';
 
 export type playbackConfig = {
   processLogs: boolean;
+  useProfiler: boolean;
 }
 
 /**

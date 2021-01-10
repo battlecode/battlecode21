@@ -2,7 +2,6 @@ import {Config} from '../config';
 import {AllImages} from '../imageloader';
 
 import {Game} from 'battlecode-playback';
-import { Profiler } from "./index";
 import Runner from '../runner';
 
 export default class MatchQueue {
@@ -16,18 +15,14 @@ export default class MatchQueue {
   // Options
   private readonly conf: Config;
 
-  // The profiler to initialize when switching matches
-  profiler: Profiler;
-
   private runner: Runner; 
 
   // Images
   private readonly images: AllImages;
 
-  constructor(conf: Config, images: AllImages, profiler: Profiler, runner: Runner) {
+  constructor(conf: Config, images: AllImages, runner: Runner) {
     this.conf = conf;
     this.images = images;
-    this.profiler = profiler;
     this.runner = runner;
     this.div = this.basediv();
   }
@@ -77,15 +72,6 @@ export default class MatchQueue {
   }
 
   refreshGameList(gameList: Array<Game>, activeGame: number, activeMatch: number) {
-    // Initialize the profiler with the active match
-    if (!this.conf.tournamentMode) { // disable the profiler in tournaments out of memory concerns
-      if (gameList[activeGame]) {	
-        this.profiler.load(gameList[activeGame].getMatch(activeMatch));	
-      } else {	
-        this.profiler.load(undefined);	
-      }
-    }
-
     // Remove all games from the list
     // TODO: this assumes there are exactly 3 HTML elements before the first match. that's bad
     while (this.div.childNodes[3]) {

@@ -125,7 +125,7 @@ export default class MatchRunner {
 
     const profilerLabel = document.createElement('label');
     profilerLabel.setAttribute('for', 'profiler-enabled');
-    profilerLabel.innerText = 'Profiler enabled (will be slower)';
+    profilerLabel.innerText = 'Profiler enabled (will be slower and more memory-intensive)';
 
     div.appendChild(document.createElement("br"));
     // Team A selector
@@ -146,7 +146,7 @@ export default class MatchRunner {
     const divProfiler = document.createElement("p");
     divProfiler.appendChild(this.profilerEnabled);
     divProfiler.appendChild(profilerLabel);
-    div.appendChild(divProfiler);
+    if (this.conf.useProfiler) div.appendChild(divProfiler);
 
     // Map selector
     div.appendChild(document.createTextNode("Select maps: "));

@@ -29,6 +29,7 @@ export default class Runner {
   private stats: Stats;
   private gamearea: GameArea; 
   private console: Console;
+  private profiler?: Profiler;
   looper: Looper | null;
 
   // Match logic
@@ -58,23 +59,16 @@ export default class Runner {
   * Marks the client as fully loaded.
   */
   ready(controls: Controls, stats: Stats, gamearea: GameArea, 
-       cconsole: Console, matchqueue: MatchQueue) {
+       cconsole: Console, matchqueue: MatchQueue, profiler?: Profiler) {
 
     this.controls = controls;
     this.stats = stats;
     this.gamearea = gamearea;
     this.console = cconsole;
     this.matchqueue = matchqueue;
+    this.profiler = profiler;
 
     this.gamearea.setCanvas();
-
-    let startGame = () => {
-      if (this.games.length === 1) {
-        // if only one game in queue, run its first match
-        this.setGame(0);
-      }
-      this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-    }
 
     let toMain = (msg) => {
       console.log(msg);
@@ -110,7 +104,7 @@ export default class Runner {
           }
 
           console.log('Successfully loaded provided match file');
-          startGame();
+          this.startGame();
         }
       };
 
@@ -153,8 +147,7 @@ export default class Runner {
         // What to do with the websocket's first match in a given game
         () => {
           // switch to running this match 
-          this.setGame(this.games.length - 1);
-          this.setMatch(0);
+          this.goToMatch(this.games.length - 1, 0);
           this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
         },
         // What to do with any other match
@@ -484,6 +477,10 @@ export default class Runner {
 
     this.looper = new Looper(match, meta, this.conf, this.imgs,
       this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
+
+    if (this.profiler) {
+      this.profiler.load(match);
+    }
   }
 
   readonly onkeydown = (event: KeyboardEvent) => {
