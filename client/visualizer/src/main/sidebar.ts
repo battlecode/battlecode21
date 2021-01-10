@@ -187,10 +187,9 @@ export default class Sidebar {
     <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/build.gradle" target="_blank">scaffold player</a>.
     Make sure to add the "profilerEnabled" property to your
     <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/gradle.properties" target="_blank">gradle.properties</a>
-    file as well.
-
-    Note that for games with a large number of units, it might be impossible
-    to run the profiler successfully (you might get an <code>OutOfMemoryError</code>).
+    file as well. A maximum of 10,000,000 events are recorded per team per
+    match if profiling is enabled to prevent the replay file from becoming
+    enormous.
     <br>
     <br>
     <b class="blue">How to Use the Map Editor</b><br>

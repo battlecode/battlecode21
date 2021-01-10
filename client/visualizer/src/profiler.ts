@@ -1,39 +1,13 @@
 // This script is loaded by speedscope in the iframe shown in the game area when the Profiler tab is visible
 // It listens for messages passed via window.postMessage
 
-import { ProfilerFile } from 'battlecode-playback/out/match';
-
 function applyCSS(css: string): void {
   const style = document.createElement('style');
   style.innerHTML = css;
   document.head.appendChild(style);
 }
 
-function load(file: ProfilerFile, robot: number): void {
-  const frames = file.frames.map(frame => ({ name: frame }));
-
-  const profiles = file.profiles.map(profile => {
-    const hasEvents = profile.events.length > 0;
-
-    return {
-      type: 'evented',
-      name: profile.name,
-      unit: 'none',
-      startValue: hasEvents ? profile.events[0].at : 0,
-      endValue: hasEvents ? profile.events[profile.events.length - 1].at : 0,
-      events: profile.events,
-    };
-  });
-
-  const data = {
-    $schema: 'https://www.speedscope.app/file-format-schema.json',
-    activeProfileIndex: robot,
-    shared: {
-      frames,
-    },
-    profiles,
-  };
-
+function load(data: any): void {
   (window as any).speedscope.loadFileFromBase64('data.json', btoa(JSON.stringify(data)));
 }
 
@@ -45,7 +19,7 @@ window.addEventListener('message', event => {
       applyCSS(data.payload);
       break;
     case 'load':
-      load(data.payload.file, data.payload.robot);
+      load(data.payload);
       break;
   }
 });

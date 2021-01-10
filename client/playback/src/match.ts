@@ -15,10 +15,9 @@ export type ProfilerProfile = {
 }
 
 export type ProfilerFile = {
-  frames: Array<string>,
-  profiles: Array<ProfilerProfile>
+  frames: Array<any>,
+  profiles: Array<any>
 }
-
 
 
 // Return a timestamp representing the _current time in ms, not necessarily from

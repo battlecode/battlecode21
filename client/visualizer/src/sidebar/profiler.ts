@@ -24,6 +24,25 @@ export default class Profiler {
   public load(match: Match | undefined): void {
     this.profilerFiles = match !== undefined ? (match.profilerFiles || []) : [];
 
+    this.profilerFiles = this.profilerFiles.map(file => {
+      const frames = file.frames.map(frame => ({ name: frame }));
+
+      const profiles = file.profiles.map(profile => {
+        const hasEvents = profile.events.length > 0;
+
+        return {
+          type: 'evented',
+          name: profile.name,
+          unit: 'none',
+          startValue: hasEvents ? profile.events[0].at : 0,
+          endValue: hasEvents ? profile.events[profile.events.length - 1].at : 0,
+          events: profile.events,
+        };
+      });
+
+      return { frames, profiles };
+    });
+
     this.clearSelect(this.teamSelector);
     this.clearSelect(this.robotSelector);
 
@@ -107,10 +126,7 @@ export default class Profiler {
       `);
 
       if (this.currentTeamIndex > -1 && this.currentRobotIndex > -1) {
-        this.sendToIFrame('load', {
-          file: this.profilerFiles[this.currentTeamIndex],
-          robot: this.currentRobotIndex,
-        });
+        this.onRobotChange(this.currentRobotIndex);
       }
     };
 
@@ -145,9 +161,16 @@ export default class Profiler {
   private onRobotChange(newRobotId: number): void {
     this.currentRobotIndex = newRobotId;
 
+    const file = this.profilerFiles[this.currentTeamIndex];
+    const robot = this.currentRobotIndex;
+
     this.sendToIFrame('load', {
-      file: this.profilerFiles[this.currentTeamIndex],
-      robot: this.currentRobotIndex,
+      $schema: 'https://www.speedscope.app/file-format-schema.json',
+      activeProfileIndex: 0,
+      shared: {
+        frames: file.frames,
+      },
+      profiles: [file.profiles[robot]],
     });
   }
 

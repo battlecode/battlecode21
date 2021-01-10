@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * The Profiler class profiles bytecode usage in a sandboxed robot player.
@@ -19,59 +18,68 @@ import java.util.function.Function;
  * for more information on speedscope's file format.
  */
 public class Profiler {
-  private String name;
+    private final ProfilerCollection collection;
+    private final String name;
 
-  private int bytecodeCounter = 0;
+    private int bytecodeCounter = 0;
 
-  private List<ProfilerEvent> events = new ArrayList<>();
-  private Function<String, Integer> frameIdProducer;
+    private final List<ProfilerEvent> events = new ArrayList<>();
+    private final Deque<Integer> openFrameIds = new ArrayDeque<>();
 
-  private Deque<Integer> openFrameIds = new ArrayDeque<>();
-
-  public Profiler(String name, Function<String, Integer> frameIdProducer) {
-    this.name = name;
-    this.frameIdProducer = frameIdProducer;
-  }
-
-  public void incrementBytecodes(int amount) {
-    try {
-      bytecodeCounter = Math.addExact(bytecodeCounter, amount);
-    } catch (ArithmeticException e) {
-      bytecodeCounter = Integer.MAX_VALUE;
-    }
-  }
-
-  public void enterMethod(String methodName) {
-    if (methodName.startsWith("instrumented.")) {
-      return;
+    public Profiler(ProfilerCollection collection, String name) {
+        this.collection = collection;
+        this.name = name;
     }
 
-    int frameId = frameIdProducer.apply(methodName);
-
-    events.add(new ProfilerEvent(ProfilerEventType.OPEN, bytecodeCounter, frameId));
-    openFrameIds.addFirst(frameId);
-  }
-
-  public void exitMethod(String methodName) {
-    if (methodName.startsWith("instrumented.")) {
-      return;
+    public void incrementBytecodes(int amount) {
+        try {
+            bytecodeCounter = Math.addExact(bytecodeCounter, amount);
+        } catch (ArithmeticException e) {
+            bytecodeCounter = Integer.MAX_VALUE;
+        }
     }
 
-    events.add(new ProfilerEvent(ProfilerEventType.CLOSE, bytecodeCounter, frameIdProducer.apply(methodName)));
-    openFrameIds.pop();
-  }
+    public void enterMethod(String methodName) {
+        if (!collection.isRecordingEvents()) {
+            return;
+        }
 
-  public void exitOpenMethods() {
-    while (!openFrameIds.isEmpty()) {
-      events.add(new ProfilerEvent(ProfilerEventType.CLOSE, bytecodeCounter, openFrameIds.pop()));
+        if (methodName.startsWith("instrumented.")) {
+            return;
+        }
+
+        collection.recordEvent();
+
+        int frameId = collection.getFrameId(methodName);
+
+        events.add(new ProfilerEvent(ProfilerEventType.OPEN, bytecodeCounter, frameId));
+        openFrameIds.addFirst(frameId);
     }
-  }
 
-  public String getName() {
-    return name;
-  }
+    public void exitMethod(String methodName) {
+        if (openFrameIds.isEmpty() && !collection.isRecordingEvents()) {
+            return;
+        }
 
-  public List<ProfilerEvent> getEvents() {
-    return events;
-  }
+        if (methodName.startsWith("instrumented.")) {
+            return;
+        }
+
+        events.add(new ProfilerEvent(ProfilerEventType.CLOSE, bytecodeCounter, collection.getFrameId(methodName)));
+        openFrameIds.pop();
+    }
+
+    public void exitOpenMethods() {
+        while (!openFrameIds.isEmpty()) {
+            events.add(new ProfilerEvent(ProfilerEventType.CLOSE, bytecodeCounter, openFrameIds.pop()));
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<ProfilerEvent> getEvents() {
+        return events;
+    }
 }
