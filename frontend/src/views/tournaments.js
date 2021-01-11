@@ -104,7 +104,7 @@ class Tournaments extends Component {
                                         This includes the Qualifying Tournament — you can participate even if you miss every other tournament (but your seed will be worse than the seed of everyone who participated in the Seeding Tournament).
                                     </p>
                                     <p>
-                                        Each match within a tournament will consist of 3 games on 3 different maps, and the team that wins the most games will advance.
+                                        Each match within a tournament will consist of at least 3 games, each on a different map, and the team that wins the most games will advance.
                                     </p>
                                 </div>
                             </div>
