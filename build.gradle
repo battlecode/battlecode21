@@ -223,7 +223,14 @@ task release_docs_zip(type: Zip, dependsOn: [':engine:javadoc']) {
 
 task release_sources(type: Jar, dependsOn: classes) {
   classifier = 'sources'
-  from sourceSets.main.allSource
+  from project(":engine").sourceSets.main.allSource
+
+  baseName = "battlecode-source"
+  if (project.hasProperty("release_version"))
+    version = project.property("release_version");
+  destinationDir = project.projectDir;
+
+  // from new File(project(":engine").sourceDir, "source")
 }
 
 task prodClient {
@@ -285,7 +292,8 @@ publishing {
       version project.findProperty('release_version') ?: 'NONSENSE'
 
       artifact release_main
-      
+    
+
       artifact release_docs {
         classifier 'javadoc'
       }
