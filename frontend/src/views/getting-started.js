@@ -282,7 +282,21 @@ class GettingStarted extends Component {
                                         Running the same gradle task from you IDE will also work.
                                     </p>
                                 </div>
-                            </div>   
+                            </div>
+                            <div className="card">
+                                <div className="header">
+                                    <h4 className="title">Client Tips</h4>
+                                </div>
+                                <div className="content">
+                                    <p>
+                                    If you're experiencing memory problems with the client, please try:
+                                    </p>
+                                    <ul style={{marginLeft: '-15px'}}>
+                                        <li>Making fewer logs and/or disabling log processsing in the client (toggled with "L").</li>
+                                        <li>Making .bc21 files with the engine directly and uploading them to the client's match queue, rather than using the client's runner. With this method, you can just use the web version at 2021.battlecode.org/visualizer.html rather than the desktop application. </li>
+                                        </ul>
+                                </div>
+                            </div>
                             <div className="card">
                                 <div className="header">
                                     <h4 className="title">Join the Community!</h4>

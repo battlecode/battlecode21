@@ -502,13 +502,22 @@ class Api {
 
   static getAllTeamScrimmages(callback) {
     $.get(`${URL}/api/${LEAGUE}/scrimmage/`, (data, succcess) => {
-      callback(data.results);
+      callback(data);
     });
   }
 
-  static getScrimmageHistory(callback) {
+  /* for some reason the data format from getAllTeamScrimmages and getTeamScrimmages
+   are different; has to do with pagination but not sure how to make the same
+  */
+  static getTeamScrimmages(callback, page) {
+    $.get(`${URL}/api/${LEAGUE}/scrimmage/?page=${page}`, (data, succcess) => {
+      callback(data.results, data.count);
+    });
+  }
+
+  static getScrimmageHistory(callback, page) {
     const my_id = parseInt(Cookies.get('team_id'), 10);
-    this.getAllTeamScrimmages((s) => {
+    this.getTeamScrimmages((s, count) => {
       const requests = [];
       for (let i = 0; i < s.length; i++) {
         const on_red = s[i].red_team === Cookies.get('team_name');
@@ -538,8 +547,11 @@ class Api {
         s[i].color = on_red ? 'Red' : 'Blue';
 
         requests.push(s[i]);
-      } callback(requests);
-    });
+      }
+      // scrimLimit for pagination
+      const scrimLimit = parseInt(count / PAGE_LIMIT, 10) + !!(count % PAGE_LIMIT);
+      callback({scrimmages: requests, scrimLimit});
+    }, page);
   }
 
 
@@ -580,10 +592,15 @@ class Api {
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
-      "est_date_str": '8 PM EDT on April 22, 2020',
-      "seconds_until": (Date.parse(new Date('April 22, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Battlehack 2020 Tournament"
+      "est_date_str": '7 PM ET on January 11, 2021',
+      "seconds_until": (Date.parse(new Date('January 11, 2021 19:00:00-5:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "Sprint Tournament 1"
     });
+    // callback({
+    //   "est_date_str": '8 PM EDT on April 22, 2020',
+    //   "seconds_until": (Date.parse(new Date('April 22, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
+    //   "tournament_name": "Battlehack 2020 Tournament"
+    // });
     // callback({
     //   "est_date_str": '7 PM EST on January 23, 2020',
     //   "seconds_until": (Date.parse(new Date('January 23, 2020 19:00:00')) - Date.parse(new Date())) / 1000,

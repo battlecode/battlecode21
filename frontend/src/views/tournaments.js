@@ -51,10 +51,10 @@ class Tournaments extends Component {
                                     <p>
                                         <ul>
                                             <li>
-                                                <b>Sprint Tournament: 1/12.</b> One week after spec release, you're given a chance to win small prizes in this tournament. The goal is to get an idea of the meta-game, and a chance to test your bot prototypes.
+                                                <b>Sprint Tournament 1: 1/12.</b> One week after spec release, you're given a chance to win small prizes in this tournament. The goal is to get an idea of the meta-game, and a chance to test your bot prototypes.
                                             </li>
                                             <li>
-                                                <b>Seeding Tournament: 1/19.</b> One week after the Sprint Tournament, this tournament determines your positioning in the Qualifying Tournament.
+                                                <b>Sprint Tournament 2: 1/19.</b> One week after the Sprint Tournament 1, you're given another chance to win small prizes, test the metagame, and make changes.
                                             </li>
                                             <li>
                                                 <b>International Qualifying Tournament: 1/26.</b>                                           This tournament determines the <i>4 international teams</i> that will qualify for the Final Tournament.
@@ -94,10 +94,17 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        In response to competitor feedback, we have changed the format of the competition.
-                                        Teams are split into four divisions. Round Robin tournaments are held within each of these divisions.
-                                        From each division, the four teams with the highest win-ratio move on the the next round.
-                                        These top 16 will face eachother in another round-robin tournament.
+                                        Scrimmage rankings will be used to determine seeds for the Sprint Tournaments. For all other tournaments, results from the previous tournament will be used to seed teams (where ties will be broken by the scrimmage ranking right before the tournament).
+                                    </p>
+                                    <p>
+                                        Tournaments will be in a <a href='https://en.wikipedia.org/wiki/Double-elimination_tournament'>double elimination</a> format, with the exception of both Sprint Tournaments, which are single elimination. The Final Tournament will start with a blank slate (any losses from the Qualifying Tournament are reset).
+                                    </p>
+                                    <p>
+                                        Even if you miss earlier tournaments, you can participate in later tournaments (except the Final Tournament).
+                                        This includes the Qualifying Tournament — you can participate even if you miss every other tournament (your seed will be determined by your scrimmage rank).
+                                    </p>
+                                    <p>
+                                        Each match within a tournament will consist of at least 3 games, each on a different map, and the team that wins the most games will advance.
                                     </p>
                                 </div>
                             </div>
