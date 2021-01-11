@@ -94,10 +94,17 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        In response to competitor feedback, we have changed the format of the competition.
-                                        Teams are split into four divisions. Round Robin tournaments are held within each of these divisions.
-                                        From each division, the four teams with the highest win-ratio move on the the next round.
-                                        These top 16 will face eachother in another round-robin tournament.
+                                        Scrimmage rankings will be used to determine seeds for the Sprint and Seeding Tournaments. For all other tournaments, results from the previous tournament will be used to seed teams (where ties will be broken by the scrimmage ranking right before the tournament).
+                                    </p>
+                                    <p>
+                                        Tournaments will be in a <a href='https://en.wikipedia.org/wiki/Double-elimination_tournament'>double elimination</a> format, with the exception of the Sprint Tournament, which is single elimination. The Final Tournament will start with a blank slate (any losses from the Qualifying Tournament are reset).
+                                    </p>
+                                    <p>
+                                        Even if you miss earlier tournaments, you can participate in later tournaments (except the Final Tournament).
+                                        This includes the Qualifying Tournament — you can participate even if you miss every other tournament (but your seed will be worse than the seed of everyone who participated in the Seeding Tournament).
+                                    </p>
+                                    <p>
+                                        Each match within a tournament will consist of 3 games on 3 different maps, and the team that wins the most games will advance.
                                     </p>
                                 </div>
                             </div>
