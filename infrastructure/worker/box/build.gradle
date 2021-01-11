@@ -125,6 +125,7 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.server.map-path=maps',
         '-Dbc.server.robot-player-to-system-out=false',
         '-Dbc.server.robot-player-replay-file-per-team-limit-bytes=1048576',
+        '-Dbc.engine.show-indicators=false',
         '-Dbc.game.team-a='+project.property('teamA'),
         '-Dbc.game.team-b='+project.property('teamB'),
         '-Dbc.game.team-a.url='+project.property('classLocationA'),
