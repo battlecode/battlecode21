@@ -230,6 +230,11 @@ class GCloudUploadDownload():
 class SearchResultsPagination(PageNumberPagination):
     page_size = 10
 
+    def get_page_size(self, request):
+        if 'page' in request.query_params:
+            return self.page_size
+        return None
+
 
 class PartialUpdateModelMixin(mixins.UpdateModelMixin):
     def update(self, request, partial=False, league_id=None, pk=None):
@@ -907,6 +912,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     that requested the scrimmage.
     """
     queryset = Scrimmage.objects.all().order_by('-requested_at')
+    pagination_class = SearchResultsPagination
     serializer_class = ScrimmageSerializer
     permission_classes = (SubmissionsEnabledOrSafeMethodsOrIsSuperuser, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
@@ -926,7 +932,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1)) 
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1))
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
