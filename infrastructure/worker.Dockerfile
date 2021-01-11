@@ -22,7 +22,7 @@ RUN pip3 install --upgrade \
     google-cloud-storage 
 
 # # Initialise box and game dependencies
-# COPY box box/
-# RUN cd box && ./gradlew --no-daemon build && rm -rf build src
+COPY box box/
+RUN cd box && ./gradlew --no-daemon build && rm -rf build src
 
-# COPY app/config.py app/subscription.py app/util.py app/gcloud-key.json app/
+COPY app/config.py app/subscription.py app/util.py app/gcloud-key.json app/

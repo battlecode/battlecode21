@@ -16,10 +16,10 @@ repositories {
     mavenCentral()
     maven {
 
-        url "https://maven.pkg.github.com/battlecode/battlecode20"
+        url "https://maven.pkg.github.com/battlecode/battlecode21"
         credentials {
             username = project.findProperty("gpr.user")
-            password = new URL("https://2020.battlecode.org/access.txt").text.trim()
+            password = new URL("https://2021.battlecode.org/access.txt").text.trim()
         }
     }
     // Use the JCenter repo to resolve Scala dependencies.
@@ -65,13 +65,13 @@ if (!project.hasProperty("classLocationB")) {
     ext.classLocationB = sourceSets.main.output.classesDirs.getAsPath()
 }
 if (!project.hasProperty("replay")) {
-    ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc20'
+    ext.replay = 'matches/' + project.property('teamA') + '-vs-' + project.property('teamB') + '-on-' + project.property('maps') + '.bc21'
 }
 
 // The dependencies of this project.
 dependencies {
     // The Battlecode engine.
-    implementation group: 'org.battlecode', name: 'battlecode', version: versions.battlecode
+    implementation group: 'org.battlecode', name: 'battlecode21', version: versions.battlecode
 
     // Scala!
     implementation 'org.scala-lang:scala-library:2.11.7'
@@ -92,7 +92,7 @@ task update {
     group 'battlecode'
     doLast {
         //overwrites stored version number
-        new File(projectDir, "version.txt").text = new URL("https://2020.battlecode.org/version.txt").text
+        new File(projectDir, "version.txt").text = new URL("https://2021.battlecode.org/version.txt").text
 
         //overwrites cached version number
         versions.battlecode = new File(projectDir, "version.txt").text
@@ -125,6 +125,7 @@ task run(type: JavaExec, dependsOn: 'build') {
         '-Dbc.server.map-path=maps',
         '-Dbc.server.robot-player-to-system-out=false',
         '-Dbc.server.robot-player-replay-file-per-team-limit-bytes=1048576',
+        '-Dbc.engine.show-indicators=false',
         '-Dbc.game.team-a='+project.property('teamA'),
         '-Dbc.game.team-b='+project.property('teamB'),
         '-Dbc.game.team-a.url='+project.property('classLocationA'),
@@ -163,13 +164,13 @@ task listMaps {
 
     doLast {
         sourceSets.main.compileClasspath.each {
-            if (it.toString().contains('battlecode-2020')) {
+            if (it.toString().contains('battlecode-2021')) {
                 FileCollection fc = zipTree(it)
                 fc += fileTree(new File(project.projectDir, 'maps'))
                 fc.each {
                     String fn = it.getName()
-                    if (fn.endsWith('.map20')) {
-                        println 'MAP: '+fn.substring(0, fn.indexOf('.map20'))
+                    if (fn.endsWith('.map21')) {
+                        println 'MAP: '+fn.substring(0, fn.indexOf('.map21'))
                     }
                 }
             }

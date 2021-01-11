@@ -1,0 +1,22 @@
+{
+    "Round 1 (Winners)": [
+        "maptestsmall",
+        "quadrants"
+    ],
+    "Round 1 (Losers)": [
+        "maptestsmall",
+        "quadrants"
+    ],
+    "Round 2 (Winners)": [
+        "circle"
+    ],
+    "Round 2 (Losers A)": [
+        "circle"
+    ],
+    "Round 3": [
+        "circle"
+    ],
+    "Round 4 (if needed)": [
+        "circle"
+    ]
+}

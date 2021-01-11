@@ -69,6 +69,11 @@ In GCloud > Compute Engine > Instance templates:
   export GOOGLE_APPLICATION_CREDENTIALS=worker/app/gcloud-key.json
   ./pub.py battlecode18 bc20-compile
   ```
+  (in windows powershell)
+  ```
+  $env:GOOGLE_APPLICATION_CREDENTIALS="worker/app/gcloud-key.json"
+  ./pub.py battlecode18 bc20-compile
+  ```
 - To run docker images on the gcloud servers:
   push the images to the container registry (see above)
   Set up instance templates in gcloud:
