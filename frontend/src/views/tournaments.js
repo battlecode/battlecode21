@@ -51,10 +51,10 @@ class Tournaments extends Component {
                                     <p>
                                         <ul>
                                             <li>
-                                                <b>Sprint Tournament: 1/12.</b> One week after spec release, you're given a chance to win small prizes in this tournament. The goal is to get an idea of the meta-game, and a chance to test your bot prototypes.
+                                                <b>Sprint Tournament 1: 1/12.</b> One week after spec release, you're given a chance to win small prizes in this tournament. The goal is to get an idea of the meta-game, and a chance to test your bot prototypes.
                                             </li>
                                             <li>
-                                                <b>Seeding Tournament: 1/19.</b> One week after the Sprint Tournament, this tournament determines your positioning in the Qualifying Tournament.
+                                                <b>Sprint Tournament 2: 1/19.</b> One week after the Sprint Tournament 1, you're given another chance to win small prizes, test the metagame, and make changes.
                                             </li>
                                             <li>
                                                 <b>International Qualifying Tournament: 1/26.</b>                                           This tournament determines the <i>4 international teams</i> that will qualify for the Final Tournament.
