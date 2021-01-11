@@ -146,7 +146,7 @@ public strictfp class Server implements Runnable {
                 return;
             }
 
-            GameMaker gameMaker = new GameMaker(currentGame, netServer);
+            GameMaker gameMaker = new GameMaker(currentGame, netServer, options.getBoolean("bc.engine.show-indicators"));
             gameMaker.makeGameHeader();
 
             debug("Running: "+currentGame);
