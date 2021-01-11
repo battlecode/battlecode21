@@ -1,4 +1,4 @@
 FROM bc21-worker
 
 COPY app/compile_server.py app/
-CMD /app/compile_server.py
+CMD python3 /app/compile_server.py
