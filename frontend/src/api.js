@@ -351,7 +351,7 @@ class Api {
   static joinTeam(secret_key, team_name, callback) {
     $.get(`${URL}/api/${LEAGUE}/team/?search=${encodeURIComponent(team_name)}`, (team_data, team_success) => {
       let found_result = null
-      team_data.results.forEach(result => {
+      team_data.forEach(result => {
         if (result.name === team_name) {
           found_result = result
         }
