@@ -170,6 +170,7 @@ export default class Looper {
         this.clearScreen();
         this.goalUPS = 0;
         this.controls.pause();
+        this.controls.removeInfoString();
     }
 
     private loop(curTime) {
@@ -231,9 +232,16 @@ export default class Looper {
                 let type = bodies.type[index];
                 let bytecodes = bodies.bytecodesUsed[index];
                 let flag = bodies.flag[index];
+                let parent = bodies.parent[index];
+                let bid = bodies.bid[index];
 
-                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes, flag);
+                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes, flag, 
+                bid !== 0 ? bid : undefined, parent !== 0 ? parent : undefined);
             }
+        }
+
+        if (this.lastSelectedID === undefined) {
+            this.controls.removeInfoString();
         }
 
         this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
@@ -274,6 +282,12 @@ export default class Looper {
      * team in the current game world.
      */
     private updateStats(world: GameWorld, meta: Metadata) {
+        var totalInfluence = 0;
+        for (let team in meta.teams) {
+            let teamID = meta.teams[team].teamID;
+            let teamStats = world.teamStats.get(teamID) as TeamStats;
+            totalInfluence += teamStats.influence;
+        }
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
@@ -285,6 +299,7 @@ export default class Looper {
 
             // Set votes
             this.stats.setVotes(teamID, teamStats.votes);
+            this.stats.setInfluence(teamID, teamStats.influence, totalInfluence);
         }
     }
 

@@ -177,6 +177,38 @@ input[type='file'] {
     outline: none;
 }
 
+.influence-bar {
+    height: 30px;
+    line-height: 30px;
+    color: white;
+    min-width: fit-content;
+}
+
+.info {
+    font-size: 11px;
+    line-height: 20px;
+    position: relative;
+    top: -5px;
+}
+
+.timeline {
+    position: relative;
+    top: 4px;
+}
+
+.info-name {
+    padding-left: 1px;
+}
+
+.info-num {
+    font-family: Monospace;
+    border-radius: 8px;
+    background-color: #333;
+    color: #46ff00;
+    padding: 3px;
+    margin: 0px 1px;
+}
+
 #gamearea {
     width: 100%;
     height: 100%;
@@ -249,7 +281,7 @@ input, select {
 
 #baseDiv {
     width: 100%;
-    height: 55px;
+    height: 65px;
     margin-left: 335px;
     position: fixed;
     z-index: 0.5;
@@ -263,7 +295,7 @@ input, select {
 
 #timelineCanvas {
     height: 32px;
-    width: 400px;
+    width: 300px;
     background-color: #999;
     display: inline-block;
 }

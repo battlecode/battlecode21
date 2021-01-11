@@ -31,7 +31,9 @@ export type BodiesSchema = {
   conviction: Int32Array;
   flag: Int32Array;
   bytecodesUsed: Int32Array, // TODO: is this needed?
-  ability: Int8Array
+  ability: Int8Array,
+  bid: Int32Array,
+  parent: Int32Array
 };
 
 // NOTE: consider changing MapStats to schema to use SOA for better performance, if it has large data
@@ -52,7 +54,9 @@ export type TeamStats = {
   // An array of numbers corresponding to team stats, which map to RobotTypes
   // Corresponds to robot type (including NONE. length 5)
   robots: [number, number, number, number, number],
-  votes: number
+  votes: number,
+  influence: number,
+  conviction: number
 };
 
 export type IndicatorDotsSchema = {
@@ -209,7 +213,9 @@ export default class GameWorld {
       conviction: new Int32Array(0),
       flag: new Int32Array(0),
       bytecodesUsed: new Int32Array(0),
-      ability: new Int8Array(0)
+      ability: new Int8Array(0),
+      bid: new Int32Array(0),
+      parent: new Int32Array(0)
     }, 'id');
 
 
@@ -225,7 +231,9 @@ export default class GameWorld {
             0, // MUCKRAKER
             0, // NONE
           ],
-          votes: 0
+          votes: 0,
+          influence: 0,
+          conviction: 0
         });
     }
 
@@ -441,10 +449,12 @@ export default class GameWorld {
           /// Builds a unit (enlightent center).
           /// Target: spawned unit
           case schema.Action.SPAWN_UNIT:
+            this.bodies.alter({id: target, parent: robotID});
             break;
           /// Places a bid (enlightent center).
           /// Target: bid placed
           case schema.Action.PLACE_BID:
+            this.bodies.alter({id: robotID, bid: target});
             break;
           /// A robot can change team after being empowered
           /// Target: teamID
@@ -454,14 +464,29 @@ export default class GameWorld {
           /// A robot's influence changes.
           /// Target: delta value
           case schema.Action.CHANGE_INFLUENCE:
-            const old_influence = this.bodies.lookup(robotID).influence; 
+            var old_influence = this.bodies.lookup(robotID).influence;
+            var type = this.bodies.lookup(robotID).type;
             this.bodies.alter({ id: robotID, influence: old_influence + target});
+            
+            if (type == schema.BodyType.ENLIGHTENMENT_CENTER) {
+              var team = this.bodies.lookup(robotID).team; 
+              var statObj = this.teamStats.get(team);
+              if(!statObj) {continue;} // In case this is a neutral bot
+              statObj.influence += target;
+              this.teamStats.set(team, statObj);
+            }
             break;
           /// A robot's conviction changes.
           /// Target: delta value, i.e. red 5 -> blue 3 is -2
           case schema.Action.CHANGE_CONVICTION:
-            const old_conviction = this.bodies.lookup(robotID).conviction; 
+            var old_conviction = this.bodies.lookup(robotID).conviction; 
             this.bodies.alter({ id: robotID, conviction: old_conviction + target});
+
+            var team = this.bodies.lookup(robotID).team; 
+            var statObj = this.teamStats.get(team);
+            if(!statObj) {continue;} // In case this is a neutral bot
+            statObj.conviction += target;
+            this.teamStats.set(team, statObj);
             break;
     
           case schema.Action.DIE_EXCEPTION:
@@ -486,6 +511,11 @@ export default class GameWorld {
           var statObj = this.teamStats.get(team);
           if(!statObj) {continue;} // In case this is a neutral bot
           statObj.robots[type] -= 1;
+          if (type == schema.BodyType.ENLIGHTENMENT_CENTER) {
+            let influence = this.bodies.arrays.influence[index];
+            console.log(influence);
+            statObj.influence -= influence; // cancel extra negative influence
+          }
           this.teamStats.set(team, statObj);
       }
 
@@ -595,15 +625,18 @@ export default class GameWorld {
     var teams = bodies.teamIDsArray();
     var types = bodies.typesArray();
     var influences = bodies.influencesArray();
+    var convictions: Int32Array = influences.map((influence, i) => Math.ceil(influence * this.meta.types[types[i]].convictionRatio)); //new Int32Array(bodies.robotIDsLength());
 
     // Update spawn stats
     for(let i = 0; i < bodies.robotIDsLength(); i++) {
       if(teams[i] == 0) continue;
       var statObj = this.teamStats.get(teams[i]);
       statObj.robots[types[i]] += 1;
+      if (types[i] == schema.BodyType.ENLIGHTENMENT_CENTER) statObj.influence += influences[i];
+      statObj.conviction += convictions[i];
       this.teamStats.set(teams[i], statObj);
     }
-
+    
     const locs = bodies.locs(this._vecTableSlot1);
     // Note: this allocates 6 objects with each call.
     // (One for the container, one for each TypedArray.)
@@ -613,7 +646,6 @@ export default class GameWorld {
     // let this slide for now.
     
     // Initialize convictions
-    var convictions: Int32Array = influences.map((influence, i) => Math.ceil(influence * this.meta.types[types[i]].convictionRatio)); //new Int32Array(bodies.robotIDsLength());
 
     // Insert bodies
     this.bodies.insertBulk({
@@ -626,7 +658,9 @@ export default class GameWorld {
       y: locs.ysArray(),
       flag: new Int32Array(bodies.robotIDsLength()),
       bytecodesUsed: new Int32Array(bodies.robotIDsLength()),
-      ability: new Int8Array(bodies.robotIDsLength())
+      ability: new Int8Array(bodies.robotIDsLength()),
+      bid: new Int32Array(bodies.robotIDsLength()),
+      parent: new Int32Array(bodies.robotIDsLength()),
     });
   }
 
