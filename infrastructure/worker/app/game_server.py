@@ -100,14 +100,17 @@ def game_worker(gameinfo):
 
     try:
         # Obtain player executables
-        try:
-            os.mkdir(classdir)
-            with open(os.path.join(classdir, 'player1.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
-            with open(os.path.join(classdir, 'player2.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
-        except:
-            game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
+        for i in range(10):
+            try:
+                os.mkdir(classdir)
+                with open(os.path.join(classdir, 'player1.zip'), 'wb') as file_obj:
+                    bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
+                with open(os.path.join(classdir, 'player2.zip'), 'wb') as file_obj:
+                    bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
+
+                break
+            except:
+                game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
 
         # Decompress zip archives of player classes
         try:
