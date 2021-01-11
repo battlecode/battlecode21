@@ -948,7 +948,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
             # ranked = request.data['ranked'] == 'True'
-            ranked = True
+            # Scrimmages created by regular challenges should not be ranked, to prevent ladder manipulation.
+            ranked = False
 
             # Validate teams
             team = self.kwargs['team']
