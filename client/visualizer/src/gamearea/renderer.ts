@@ -193,13 +193,17 @@ export default class Renderer {
     priorityIndices.forEach((i) => renderBot(i));
 
     // Render empowered bodies
-
     const empowered = world.empowered;
+    const empowered_id = world.empowered.arrays.id;
     const empowered_x = world.empowered.arrays.x;
     const empowered_y = world.empowered.arrays.y;
+    const empowered_team = world.empowered.arrays.team;
 
     for (let i = 0; i < empowered.length; i++) {
-      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
+      const robotID = empowered_id[i];
+      const index = bodies.index(robotID);
+      const effectName = empowered_team[i] == 1 ? "empower_red" : "empower_blue";
+      drawEffect(effectName, realXs[index], realYs[index]);
     }
 
     this.setInfoStringEvent(world, xs, ys);
