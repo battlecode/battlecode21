@@ -240,11 +240,10 @@ class Submissions extends Component {
                         <h4 className="title">Submit Code</h4>
                     </div>
                     <div className="content">
-                        {/* <p>
-                            <b>The final submission deadline is 7 pm EST on Wednesday 1/29 (which is s o o n).</b> This applies to the Final, Newbie and High School tournaments. Submit your code using the button below. For peace of mind, submit 15 minutes before and make sure it compiles and shows up 
-                            under "Latest Submissions."
+                        <p>
+                            <b>The submission deadline for Sprint Tour 1 is 7 pm ET on Monday 1/11.</b> Submit your code using the button below. For peace of mind, submit 15 minutes before and make sure it compiles and shows up under "Latest Submissions."
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
-                        </p> */}
+                        </p>
                         <p>
                             Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
                         </p><p>
