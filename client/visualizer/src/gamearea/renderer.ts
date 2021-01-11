@@ -19,11 +19,11 @@ export default class Renderer {
   // For rendering robot information on click
   private lastSelectedID: number;
   // position of mouse cursor hovering
-  private hoverPos: {x: number, y: number} | null;
+  private hoverPos: {x: number, y: number} | null = null;
 
   constructor(readonly canvas: HTMLCanvasElement, readonly imgs: AllImages, private conf: config.Config, readonly metadata: Metadata,
     readonly onRobotSelected: (id: number) => void,
-    readonly onMouseover: (x: number, y: number, passability: number) => void) {
+    readonly onMouseover: (x: number, y: number, xrel: number, yrel: number, passability: number) => void) {
 
     let ctx = canvas.getContext("2d");
     if (ctx === null) {
@@ -99,17 +99,12 @@ export default class Renderer {
 
       this.ctx.globalAlpha = 1;
 
-      // equally divde 0.1 - 1
-      const getLevel = (x: number): number => {
-        const nLev = cst.TILE_COLORS.length;
-        const floatLevel = (x - 0.1) / 0.9 * nLev;
-        return Math.min(nLev - 1, Math.floor(floatLevel));
-      }
-
-      const swampLevel = getLevel(map.passability[idxVal]);
+      // Fetch and draw tile image
+      const swampLevel = cst.getLevel(map.passability[idxVal]);
       const tileImg = this.imgs.tiles[swampLevel];
       this.ctx.drawImage(tileImg, cx, cy, scale, scale);
 
+      // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;
@@ -168,19 +163,21 @@ export default class Renderer {
     // Render the robots
     // render images with priority last to have them be on top of other units.
 
+    const drawEffect = (effect: string, x: number, y: number) => {
+      const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
+      const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
+      const effectImg = effectImgs[whichImg];
+      this.drawBot(effectImg, x, y);
+    }
+
     const renderBot = (i: number) => {
       const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
       this.drawBot(img, realXs[i], realYs[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
-      // draw effec
+      // draw effect
       let effect: string | null = cst.abilityToEffectString(abilities[i]);
-      if (effect !== null) {
-        const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
-        const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
-        const effectImg = effectImgs[whichImg];
-        this.drawBot(effectImg, realXs[i], realYs[i]);
-      }
+      if (effect !== null) drawEffect(effect, realXs[i], realYs[i]);
     }
 
     let priorityIndices: number[] = [];
@@ -195,14 +192,15 @@ export default class Renderer {
 
     priorityIndices.forEach((i) => renderBot(i));
 
-    // Render died bodies
+    // Render empowered bodies
 
-    const died = world.diedBodies;
-    const diedImg: HTMLImageElement = this.imgs.effects["death"];
-    for (let i = 0; i < died.length; i++) {
-      this.drawBot(diedImg, died.arrays.x[i], this.flip(died.arrays.y[i], minY, maxY));
+    const empowered = world.empowered;
+    const empowered_x = world.empowered.arrays.x;
+    const empowered_y = world.empowered.arrays.y;
+
+    for (let i = 0; i < empowered.length; i++) {
+      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
-
 
     this.setInfoStringEvent(world, xs, ys);
   }
@@ -236,7 +234,7 @@ export default class Renderer {
     // handle bots with no radius here, if necessary
     if (this.conf.seeActionRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].actionRadiusSquared, cst.ACTION_RADIUS_COLOR);
-    } 
+    }
 
     if (this.conf.seeSensorRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].sensorRadiusSquared, cst.SENSOR_RADIUS_COLOR);
@@ -244,7 +242,7 @@ export default class Renderer {
 
     if (this.conf.seeDetectionRadius || single) {
       this.drawBotRadius(x, y, this.metadata.types[type].detectionRadiusSquared, cst.SENSOR_RADIUS_COLOR);
-    } 
+    }
   }
 
   /**
@@ -311,9 +309,11 @@ export default class Renderer {
 
       // Set the location of the mouseover
       const {x,y} = this.getIntegerLocation(event, world);
-      const idx = world.mapStats.getIdx(x, y);
-      onMouseover(x, y, world.mapStats.passability[idx]);
-      this.hoverPos = {x: x, y: y};
+      const xrel = x - world.minCorner.x;
+      const yrel = y - world.minCorner.y;
+      const idx = world.mapStats.getIdx(xrel, yrel);
+      onMouseover(x, y, xrel, yrel, world.mapStats.passability[idx]);
+      this.hoverPos = {x: xrel, y: yrel};
     };
 
     this.canvas.onmouseout = (event) => {
@@ -349,6 +349,8 @@ export default class Renderer {
     const dotsBlue = dots.arrays.blue;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y - 1;
+
+    console.log(dots.length);
 
     for (let i = 0; i < dots.length; i++) {
       if (dotsID[i] === this.lastSelectedID) {

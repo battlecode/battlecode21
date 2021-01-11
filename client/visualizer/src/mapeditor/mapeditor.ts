@@ -9,7 +9,7 @@ import Victor = require('victor');
 import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap} from './index';
 
 /**
- * Allows the user to download a .map17 file representing the map generated
+ * Allows the user to download a .map21 file representing the map generated
  * in the map editor.
  */
 export default class MapEditor {
@@ -47,26 +47,47 @@ export default class MapEditor {
     div.appendChild(document.createElement("br"));
     div.appendChild(this.form.div);
 
-    div.appendChild(this.validateButton());
+    //div.appendChild(this.validateButton());
     // TODO
     // div.appendChild(this.removeInvalidButton());
     div.appendChild(this.resetButton());
     div.appendChild(document.createElement("br"));
-    div.appendChild(document.createElement("br"));
 
     div.appendChild(this.exportButton());
     div.appendChild(document.createElement("br"));
+    div.appendChild(document.createElement("hr"));
 
     const helpDiv = document.createElement("div");
     helpDiv.style.textAlign = "left";
+    div.appendChild(document.createElement("br"));
     div.appendChild(helpDiv);
 
-    // helpDiv.innerHTML = `Help text is not yet written :p`;
-    // `<i><br>Tip: "S"=quick add, "D"=quick delete.<br><br>
-    //   Note: In tournaments, a starting map consists only of neutral trees and
-    //   ${cst.MIN_NUMBER_OF_ARCHONS} to ${cst.MAX_NUMBER_OF_ARCHONS} archons per
-    //   team. The validator only checks for overlapping and off-map units.<br><br>
-    //   Note: The map editor currently does not support bullet trees.</i>`;
+    helpDiv.innerHTML = `<b class="blue">Keyboard Shortcuts (Map Editor)</b><br>
+      S - Add<br>
+      D - Delete<br>
+      R - Reverse team<br>
+      <br>
+      <b class="blue">How to Use the Map Editor</b><br>
+      Select the initial map settings: name, width, height, and symmetry. <br>
+      <br>
+      To place enlightenment centers, enter the "change robots" mode, set the coordinates, set the initial influence of the
+      center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map.
+      <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game! --><br>
+      <br>
+      To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
+      and then <b>hold and drag</b> your mouse across the map.
+      <br>
+      <!--Before exporting, click "Validate" to see if any changes need to be
+      made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or
+      overlapping units. -->
+      <br>
+      When you are happy with your map, click "Export".
+      If you are directed to save your map, save it in the
+      <code>/battlecode-scaffold-2021/maps</code> directory of your scaffold.
+      (Note: the name of your <code>.map21</code> file must be the same as the name of your
+      map.)
+      <br>
+      Exported file name must be the same as the map name chosen above. For instance, <code>DefaultMap.bc21</code>.`;
 
     return div;
   }
@@ -74,25 +95,21 @@ export default class MapEditor {
   /**
    * Quick add and delete units in the map editor
    */
-  onkeydown(): (event: KeyboardEvent) => void {
-    return (event: KeyboardEvent) => {
-      var input = (<Element>document.activeElement).nodeName == "INPUT";
-      if(!input) {
-        console.error(event.keyCode);
-        switch (event.keyCode) {
-          case 67: // "c" - Toggle Circle Bots
-            this.conf.circleBots = !this.conf.circleBots;
-            this.form.render();
-            break;
-          case 83: // "s" - Set (Add/Update)c
-            this.form.buttonAdd.click();
-            break;
-          case 68: // "d" - Delete
-            this.form.buttonDelete.click();
-            break;
-        }
+  readonly onkeydown = (event: KeyboardEvent) => {
+    var input = (<Element>document.activeElement).nodeName == "INPUT";
+    if(!input) {
+      switch (event.keyCode) {
+        case 83: // "s" - Set (Add/Update)c
+          this.form.buttonAdd.click();
+          break;
+        case 68: // "d" - Delete
+          this.form.buttonDelete.click();
+          break;
+        case 82: // "r" - Reverse team
+          this.form.buttonReverse.click();
+          break;
       }
-    };
+    }
   }
 
   private isValid(): boolean {
@@ -110,7 +127,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.type = "button";
     button.className = 'form-button';
-    button.appendChild(document.createTextNode("Validate"));
+    button.appendChild(document.createTextNode("Validate Map"));
     button.onclick = () => {
       if (this.isValid()) {
         alert("Congratulations! Your map is valid. :)")
@@ -144,14 +161,10 @@ export default class MapEditor {
   private resetButton(): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = 'form-button';
-    button.appendChild(document.createTextNode("RESET"));
+    button.className = 'form-button custom-button';
+    button.appendChild(document.createTextNode("Reset Map"));
     button.onclick = () => {
-      let youAreSure = confirm(
-        "WARNING: you will lose all your data. Click OK to continue anyway.");
-      if (youAreSure) {
-        this.form.reset();
-      }
+      this.form.reset();
     };
     return button;
   }
@@ -160,7 +173,8 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.id = "export";
     button.type = "button";
-    button.appendChild(document.createTextNode("EXPORT!"));
+    button.innerText = "Export!";
+    button.className = 'form-button custom-button';
 
     button.onclick = () => {
       if (!this.isValid()) return;

@@ -11,16 +11,17 @@ import sys, os, shutil, logging, requests
 from google.cloud import storage
 
 
-def compile_report_result(submissionid, result, reason=None):
+
+def compile_report_result(submissionid, result, reason=''):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
-        response = requests.patch(
-            url=api_compile_update(submissionid), # https://2021.battlecode.org/api/0/submission/0/compilation_update/
-            data={  'compilation_status': result #, 'reason': reason
-            },
-            headers={'Authorization': 'Bearer {}'.format(auth_token)}
-        )
+        response = requests.patch(url=api_compile_update(submissionid), data={
+            # Error message field not implemented yet
+            'compilation_status': result #, 'error_msg': reason
+        }, headers={
+            'Authorization': 'Bearer {}'.format(auth_token)
+        })
         response.raise_for_status()
     except Exception as e:
         logging.critical('Could not report result to API endpoint', exc_info=e)

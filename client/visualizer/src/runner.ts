@@ -46,12 +46,11 @@ export default class Runner {
 
     this.games = [];
 
-    // If it's in dev, we're not using server
-    if (this.conf.websocketURL !== null && process.env.NODE_ENV !== 'development') {
-      this.listener = new WebSocketListener(
-        this.conf.websocketURL,
-        this.conf.pollEvery
-      );
+    // Only listen if run as an app.
+    if (this.conf.websocketURL !== null && process.env.ELECTRON) { //&& process.env.NODE_ENV !== 'development' <- useful to listen even in development.
+      this.listener = new WebSocketListener(this.conf.websocketURL,
+        this.conf.pollEvery,
+        this.conf);
     }
   }
 
@@ -101,7 +100,7 @@ export default class Runner {
         }
         else {
           let lastGame = this.games.length
-          this.games[lastGame] = new Game();
+          this.games[lastGame] = new Game(this.conf);
 
           try {
             this.games[lastGame].loadFullGameRaw(resp);
@@ -143,77 +142,6 @@ export default class Runner {
     //     });
     //   }
     // }
-        // set key options
-    document.onkeydown = (event) => {
-      // TODO: figure out what this is???
-      if (document.activeElement == null) {
-        throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-      }
-
-      let input = document.activeElement.nodeName == "INPUT";
-      if (!input) {
-        // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-        const keyCode = event.keyCode;
-        console.log(`Key pressed: ${keyCode} (${String.fromCharCode(keyCode)})`);
-        switch (keyCode) {
-          case 80: // "p" - Pause/Unpause
-            this.controls.pause();
-            break;
-          case 79: // "o" - Stop
-            this.controls.stop();
-            break;
-          case 69: // 'e' - go to end
-            this.controls.end();
-            break;
-          case 37: // "LEFT" - Step Backward
-            this.controls.stepBackward();
-            break;
-          case 39: // "RIGHT" - Step Forward
-            this.controls.stepForward();
-            break;
-          case 38: // "UP" - Faster
-            this.controls.doubleUPS();
-            break;
-          case 40: // "DOWN" - Slower
-            this.controls.halveUPS();
-            break;
-          case 82: // "r" - reverse UPS
-            this.controls.reverseUPS();
-            break;
-          case 86: // "v" - Toggle Indicator Dots and Lines
-            this.conf.indicators = !this.conf.indicators;
-            break;
-          case 66: // "b" - Toggle Interpolation
-            this.conf.interpolate = !this.conf.interpolate;
-            break;
-          case 78: // "n" - Toggle action radius
-            this.conf.seeActionRadius = !this.conf.seeActionRadius;
-            break;
-          case 77: // "m" - Toggle sensor radius
-            this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
-          break;
-          case 188: // "," - Toggle detection radius
-          this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
-            break;
-          case 71: // "g" - Toogle grid view
-            this.conf.showGrid = !this.conf.showGrid;
-            break;
-          case 72: // "h" - Toggle short log header
-            this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
-            this.console.updateLogHeader();
-            break;
-          case 65: // "a" - previous tournament Match
-            this.previousTournamentThing();
-            this.updateTournamentState();
-            break;
-          case 68: // 'd' - next tournament match
-            this.nextTournamentThing();
-            this.updateTournamentState();
-            break;
-        }
-      }
-
-    };
 
     if (this.listener != null) {
       this.listener.start(
@@ -306,7 +234,7 @@ export default class Runner {
 
   onGameLoaded(data: ArrayBuffer) {
     let lastGame = this.games.length
-    this.games[lastGame] = new Game();
+    this.games[lastGame] = new Game(this.conf);
     this.games[lastGame].loadFullGameRaw(data);
 
     this.startGame();
@@ -527,7 +455,7 @@ export default class Runner {
           // reset all games so as to save memory
           // because things can be rough otherwise
           this.games.pop();
-          this.games = [new Game()];
+          this.games = [new Game(this.conf)];
           this.games[0].loadFullGameRaw(data);
           this.setGame(0);
         });
@@ -557,6 +485,79 @@ export default class Runner {
     this.looper = new Looper(match, meta, this.conf, this.imgs,
       this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
   }
+
+  readonly onkeydown = (event: KeyboardEvent) => {
+    // TODO: figure out what this is???
+    if (document.activeElement == null) {
+      throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
+    }
+
+    let input = document.activeElement.nodeName == "INPUT";
+    if (!input) {
+      // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
+      const keyCode = event.keyCode;
+      switch (keyCode) {
+        case 80: // "p" - Pause/Unpause
+          this.controls.pause();
+          break;
+        case 79: // "o" - Stop
+          this.controls.stop();
+          break;
+        case 69: // 'e' - go to end
+          this.controls.end();
+          break;
+        case 37: // "LEFT" - Step Backward
+          this.controls.stepBackward();
+          break;
+        case 39: // "RIGHT" - Step Forward
+          this.controls.stepForward();
+          break;
+        case 38: // "UP" - Faster
+          this.controls.doubleUPS();
+          break;
+        case 40: // "DOWN" - Slower
+          this.controls.halveUPS();
+          break;
+        case 82: // "r" - reverse UPS
+          this.controls.reverseUPS();
+          break;
+        case 86: // "v" - Toggle Indicator Dots and Lines
+          this.conf.indicators = !this.conf.indicators;
+          break;
+        case 66: // "b" - Toggle Interpolation
+          this.conf.interpolate = !this.conf.interpolate;
+          break;
+        case 78: // "n" - Toggle action radius
+          this.conf.seeActionRadius = !this.conf.seeActionRadius;
+          break;
+        case 77: // "m" - Toggle sensor radius
+          this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
+        break;
+        case 188: // "," - Toggle detection radius
+        this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
+          break;
+        case 71: // "g" - Toogle grid view
+          this.conf.showGrid = !this.conf.showGrid;
+          break;
+        case 72: // "h" - Toggle short log header
+          this.conf.shorterLogHeader = !this.conf.shorterLogHeader;
+          this.console.updateLogHeader();
+          break;
+        case 65: // "a" - previous tournament Match
+          this.previousTournamentThing();
+          this.updateTournamentState();
+          break;
+        case 68: // 'd' - next tournament match
+          this.nextTournamentThing();
+          this.updateTournamentState();
+          break;
+        case 76: // 'l' - Toggle process logs
+          this.conf.processLogs = !this.conf.processLogs;
+          this.console.setNotLoggingDiv(this.conf.processLogs);
+      }
+    }
+
+  };
 }
 
 export enum TournamentState {

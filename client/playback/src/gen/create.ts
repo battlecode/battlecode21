@@ -531,6 +531,8 @@ function createWanderGame(turns: number, unitCount: number, doActions: boolean =
             case schema.BodyType.MUCKRAKER:
               action = schema.Action.EXPOSE;
               break;
+            case schema.BodyType.SLANDERER:
+              action = schema.Action.EMBEZZLE;
             default:
               break;
         }

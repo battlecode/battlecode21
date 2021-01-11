@@ -15,8 +15,11 @@ then
 	# 	esac
 	# done
 	echo "Proceding with deploy!"
+	mkdir public/specs
+	cp ../specs public -r
         npm install
 	npm run build
+	rm public/specs -r
 	cd build
 	gsutil -m rm gs://battlecode21-frontend/**
 	gsutil -m cp -r * gs://battlecode21-frontend

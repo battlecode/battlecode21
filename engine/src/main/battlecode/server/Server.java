@@ -146,7 +146,7 @@ public strictfp class Server implements Runnable {
                 return;
             }
 
-            GameMaker gameMaker = new GameMaker(currentGame, netServer);
+            GameMaker gameMaker = new GameMaker(currentGame, netServer, options.getBoolean("bc.engine.show-indicators"));
             gameMaker.makeGameHeader();
 
             debug("Running: "+currentGame);
@@ -291,6 +291,10 @@ public strictfp class Server implements Runnable {
         teamProvider.registerControlProvider(
                 Team.B,
                 new PlayerControlProvider(game.getTeamBPackage(), game.getTeamBURL(), gameMaker.getMatchMaker().getOut())
+        );
+        teamProvider.registerControlProvider(
+            Team.NEUTRAL,
+            new NullControlProvider()
         );
         return teamProvider;
     }

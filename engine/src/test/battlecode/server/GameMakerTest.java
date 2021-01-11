@@ -38,14 +38,14 @@ public class GameMakerTest {
 
     @Test(expected=RuntimeException.class)
     public void testStateExceptions() {
-        GameMaker gm = new GameMaker(info, null);
+        GameMaker gm = new GameMaker(info, null, true);
 
         gm.makeGameFooter(Team.A);
     }
 
     @Test(expected=RuntimeException.class)
     public void testMatchStateExceptions() {
-        GameMaker gm = new GameMaker(info, null);
+        GameMaker gm = new GameMaker(info, null, true);
         gm.makeGameHeader();
         gm.getMatchMaker().makeMatchFooter(Team.A, 23);
     }
@@ -53,7 +53,7 @@ public class GameMakerTest {
     // @Test
     // public void fullReasonableGame() throws Exception {
     //     NetServer mockServer = Mockito.mock(NetServer.class);
-    //     GameMaker gm = new GameMaker(info, mockServer);
+    //     GameMaker gm = new GameMaker(info, mockServer, true);
 
     //     gm.makeGameHeader();
     //     GameMaker.MatchMaker mm = gm.getMatchMaker();

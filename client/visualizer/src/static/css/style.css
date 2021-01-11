@@ -104,7 +104,7 @@ form {
 
 #gamearea canvas {
     max-height: calc(100vh - 75px);
-    max-width: calc(100vw - 345px);
+    max-width: 99.5%;
     margin-top:auto;
     margin-bottom:auto;
 }
@@ -129,7 +129,7 @@ form {
 }
 
 #export {
-    font-size: 24px;
+    font-size: 16px;
     width: 90%;
 }
 
@@ -164,6 +164,10 @@ input[type='file'] {
 .upload-button-div {
     text-align: center;
     width: 100%;
+}
+
+.not-logging-div {
+    color: red;
 }
 
 .custom-button:active, button:target {
@@ -207,6 +211,10 @@ input[type='file'] {
     margin-bottom: 6px;
 }
 
+#export {
+    background-color: rebeccapurple;
+}
+
 .checkbox {
     position: absolute;
     visibility: hidden;
@@ -233,8 +241,7 @@ label{
     border-radius: 10px;
 }
 
-input {
-    border: 2px solid rgb(0,123,255);
+input, select {
     padding: 5px;
     margin: 5px;
     display: inline-block;
@@ -519,4 +526,8 @@ h4 {
 #star {
     margin-top: 1em;
     width: 40px;
+}
+
+#change-tiles input {
+    width: 30%;
 }

@@ -3,6 +3,7 @@ import Api from '../api';
 import Floater from 'react-floater';
 
 import ScrimmageRequestor from '../components/scrimmageRequestor';
+import PaginationControl from "../components/paginationControl";
 
 class ScrimmageRequest extends Component {
 
@@ -64,24 +65,32 @@ class ScrimmageRequests extends Component {
 class ScrimmageHistory extends Component {
 
     state = {
+        scrimPage: 1,
+        scrimLimit: 0,
         scrimmages: [],
     };
 
 
-    refresh = () => {
+    refresh = (page) => {
         Api.getScrimmageHistory(function(s) {
-            this.setState({ scrimmages: s });
-        }.bind(this));
+            this.setState({...s, scrimPage: page});
+        }.bind(this), page);
     }
 
     componentDidMount() {
-        this.refresh();
+        this.refresh(this.state.scrimPage);
     }
 
     playReplay(e) {
         e.preventDefault();
         var url = e.target.href;
         window.open(url, "replay_window", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=750");
+    }
+
+    getScrimPage = (page) => {
+        if (page !== this.state.scrimPage && page >= 0 && page <= this.state.scrimLimit) {
+            this.refresh(page);
+        }
     }
 
     render() {
@@ -113,7 +122,9 @@ class ScrimmageHistory extends Component {
                                             { s.status } 
                                             <Floater content={
                                                 <div>
-                                                <p>Our server has run into an error running this scrimmage. Don't worry, we're working on resolving it!</p></div> } showCloseButton={true}>
+                                                    <p>Our server has run into an error running this scrimmage. Don't worry, we're working on resolving it!</p>
+                                                    <p>Error: {s.error_msg}</p>
+                                                </div> } showCloseButton={true}>
                                                  <i className="pe-7s-info pe-fw" />
                                             </Floater>
                                         </td>)
@@ -126,7 +137,7 @@ class ScrimmageHistory extends Component {
                                             <td>{ s.score }</td>
                                             <td>{ s.team }</td>
                                             <td>{ s.ranked ? "Ranked" : "Unranked"}</td>
-                                            { s.replay?<td><a href={`${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.txt`} target="_blank">Watch</a></td>:<td>N/A</td> }
+                                            { s.replay?<td><a href={`/visualizer.html?${process.env.REACT_APP_REPLAY_URL}/replays/${s.replay}.bc21`} target="_blank">Watch</a></td>:<td>N/A</td> }
                                         </tr>
                                     )
                                 }) }
@@ -134,6 +145,11 @@ class ScrimmageHistory extends Component {
                         </table>
                     </div>
                 </div>
+                <PaginationControl
+                    page={this.state.scrimPage}
+                    pageLimit={this.state.scrimLimit}
+                    onPageClick={(page) => this.getScrimPage(page)}
+                />
             </div>
         )
     }
@@ -143,7 +159,7 @@ class Scrimmaging extends Component {
 
     refresh = () => {
         this.requests.refresh();
-        this.history.refresh();
+        this.history.refresh(1);
     }
 
     render() {

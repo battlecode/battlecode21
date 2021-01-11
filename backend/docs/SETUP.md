@@ -58,7 +58,7 @@ Next, we need to register a superuser account (for use by the infra). Run the ba
 Also, have this superuser create and join a team (this is necessary for some permissions).
 Then, go back to your Postgres editor. In `api_user`, find the user you just created. Change `is_superuser` and `is_staff` to true. Finally, pass the username and password of this account to the infrastructure team.
 
-Then stop the old database (on its main page, press "stop").
+Then stop the old database (on its main page, press "stop"). **Don't delete it!** It's free to keep a stopped database, and handy to have around for future development.
 
 ## Deployment Setup
 
@@ -72,7 +72,7 @@ After registering a domain name for the competition, set `THIS_URL` (in `setting
 
 ### Storage Buckets
 Go to "Storage" on GCP console. A bucket for submissions should have been created (if not, instructions are in the infrastructure readme.)
-Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year.
+Set up the CORS policy, which allows us to upload to the bucket on external websites. Find `docs/cors,json`; in there, update the domain URLs listed. Then, run `gsutil cors set path/to/cors.json gs://bc21-submissions` (updating the bucket name) to whatever it is this year. Similarly, also run `gsutil cors set path/to/cors.json gs://bc21-replays`.
 More info is here: https://cloud.google.com/storage/docs/configuring-cors#gsutil
 
 ### Cloud Build Triggers

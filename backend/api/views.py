@@ -30,6 +30,9 @@ RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
 
 # NOTE: throughout our codebase, we sometimes refer to a pubsub as a "queue", adding a message to a pubsub as "queueing" something, etc. Technically this is not true: the pubsub gives no guarantee at all of a true queue or FIFO order. However, this detail of pubsub order is generally nonconsequential, and when it does matter, we have workarounds for non-FIFO-order cases.
 
+# Some helper methods that don't belong in any one class,
+# and shouldn't be directly callable through the api.
+
 # Methods for publishing a message to a pubsub.
 # Note that data must be a bytestring.
 # Adapted from https://github.com/googleapis/python-pubsub/blob/master/samples/snippets/quickstart/pub.py
@@ -62,15 +65,102 @@ def pub(project_id, topic_name, data, num_retries=5):
         else:
             break
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids=None):
+# TODO at some point, these two methods should be moved into the scrim class. 
+# by not adding decorators, we can create a method which has no url -- essentially a private helper method.
+# moving into scrim class would make more sense conceptually / for organization.
+def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league, map_ids):
+    # Don't use status as a var name, to avoid some http status enum
+    scrim_status = 'created'
+    # String used to associate to a replay file/link.
+    # Sufficiently random, to ensure privacy (so that others can't guess the link and find a replay).
+    replay = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
 
-    print('attempting publication to scrimmage pub/sub')
+    # get team submission ids and names, with careful attention to tour matches
+    red_team_sub = TeamSubmission.objects.get(pk=red_team_id) 
+    blue_team_sub = TeamSubmission.objects.get(pk=blue_team_id) 
+    if is_tour_match:
+        tour = Tournament.objects.get(pk=int(tournament_id))
+        column_name = tour.teamsubmission_column_name
+        red_submission_id = getattr(red_team_sub, column_name)
+        blue_submission_id = getattr(blue_team_sub, column_name)
+    else:
+        red_submission_id = red_team_sub.last_1_id
+        blue_submission_id = blue_team_sub.last_1_id
+    red_team_name = Team.objects.get(pk=red_team_id).name
+    blue_team_name = Team.objects.get(pk=blue_team_id).name
+
+    # no need to set blue rating, red rating for ranked matches -- this is actually done when the outcome is set
+
+    # if map_ids is not specified, use some default way to select maps.
+    if map_ids is None:
+        # By default, pick 3 random maps (requires specifying maps in settings.py).
+        map_ids = ','.join(get_random_maps(3))
+
+    # TODO we save red_team_id, etc by passing the red_team name to the serializer; the serializer queries the db, and find the corresponding team, and gets its team ID. This is really inefficient (since we already have IDs to start); also, if we have dupe team names, this query fails.
+    # We should change this, although not sure how best. (Perhaps as easy as removing SlugRelatedFields in serializers, and then passing in IDs.)
+    data = {
+        'league': league,
+        'red_team': red_team_name,
+        'blue_team': blue_team_name,
+        'red_submission_id': red_submission_id,
+        'blue_submission_id': blue_submission_id,
+        'ranked': ranked,
+        'requested_by': requested_by,
+        'tournament_id': tournament_id,
+        'replay': replay,
+        'map_ids': map_ids,
+    }
+
+    serializer = ScrimmageSerializer(data=data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    scrimmage = serializer.save()
+
+    # If applicable, immediately accept scrimmage, rather than wait for the other team to accept.
+    if accept:
+        result = accept_scrimmage_helper(scrimmage.id)
+    else:
+        scrimmage.status = 'pending'
+        scrimmage.save()
+        result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
+    return result
+
+def accept_scrimmage_helper(scrimmage_id):
+    scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
+    # put onto pubsub
+    # TODO if called through create_scrimmage_helper, then a lot of these queries are performed twice in succession, once in each method. Could use optimization.
+    # for example, pass data from create_scrimmage_helper into accept_scrimmage_helper, as an argument, and get your values from there.
+    red_team_id = scrimmage.red_team.id
+    blue_team_id = scrimmage.blue_team.id
+    red_submission_id = scrimmage.red_submission_id
+    blue_submission_id = scrimmage.blue_submission_id
+    red_team_name = Team.objects.get(pk=red_team_id).name
+    blue_team_name = Team.objects.get(pk=blue_team_id).name
+    replay = scrimmage.replay
+    map_ids = scrimmage.map_ids
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
+
+    # save the scrimmage, again, to mark save
+    if red_submission_id is None or blue_submission_id is None:
+        scrimmage.status = 'error'
+        scrimmage.error_msg = 'Make sure your team and the team you requested have a submission.'
+    else:
+        scrimmage.status = 'queued'
+    scrimmage.save()
+
+    return Response({'message': scrimmage.id}, status.HTTP_200_OK)
+
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids):
+
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams do not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     if red_submission_id is None:
         return Response({'message': 'Red team does not have a submission.'}, status.HTTP_400_BAD_REQUEST)
     if blue_submission_id is None:
         return Response({'message': 'Blue team does not have a submission.'}, status.HTTP_400_BAD_REQUEST)
+    # gametype is intended to always be scrimmage:
+    # the infra uses gametype to figure out the url it should report results to, and we only have a set of urls for scrimmage.
+    # TODO change gametype here to actually be meaningful, and in the infra, always send to url of 'scrimmage'
     scrimmage_server_data = {
         'gametype': 'scrimmage',
         'gameid': str(scrimmage_id),
@@ -78,11 +168,13 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'player2': str(blue_submission_id),
         'name1': str(red_team_name),
         'name2': str(blue_team_name),
+        'maps': str(map_ids),
         'replay': scrimmage_replay
     }
-    if not map_ids is None:
-        scrimmage_server_data['maps'] = map_ids
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
+    # In testing, it's helpful to comment out the actual pubsub call, and print what would be added instead, so you can see it.
+    # Make sure to revert this before pushing to master and deploying!
+    # print(data_bytestring)
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
 def get_random_maps(num):
@@ -137,6 +229,11 @@ class GCloudUploadDownload():
 
 class SearchResultsPagination(PageNumberPagination):
     page_size = 10
+
+    def get_page_size(self, request):
+        if 'page' in request.query_params:
+            return self.page_size
+        return None
 
 
 class PartialUpdateModelMixin(mixins.UpdateModelMixin):
@@ -275,81 +372,42 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def enqueue(self, request):
-        is_admin = User.objects.all().get(username=request.user).is_superuser
+        user = User.objects.all().get(username=request.user)
+        is_admin = user.is_superuser
         if is_admin:
+            # TODO multiple accesses to request.data are annyoing; replace w setting to a stingle var, data
             match_type = request.data.get("type")
             if match_type == "scrimmage" or match_type == "tour_scrimmage":
-                team_1 = Team.objects.get(pk=request.data.get("player1"))
-                team_2 = Team.objects.get(pk=request.data.get("player2"))
-                team_sub_1 = TeamSubmission.objects.get(pk=team_1.id)
-                team_sub_2 = TeamSubmission.objects.get(pk=team_2.id)
-                sub_1 = team_sub_1.last_1_id
-                sub_2 = team_sub_2.last_1_id
-                if match_type == "tour_scrimmage":
-                    tour = Tournament.objects.get(pk=int(request.data.get("tournament_id")))
-                    column_name = tour.teamsubmission_column_name
-                    sub_1 = getattr(team_sub_1, column_name)
-                    sub_2 = getattr(team_sub_2, column_name)
-                scrimmage = {
-                    'league': 0,
-                    'red_team': team_1.name,
-                    'blue_team': team_2.name,
-                    'requested_by': team_1.id,
-                    'ranked': True,
-                    'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
-                    'status': 'queued'
-                }
-                map_ids = None
-                if match_type == "tour_scrimmage":
-                    tour_id = int(request.data.get("tournament_id"))
-                    scrimmage['tournament_id'] = tour_id
-                    map_ids = request.data.get("map_ids")
+                team_1_id = request.data.get("player1")
+                team_2_id = request.data.get("player2")
 
-                ScrimSerial = ScrimmageSerializer(data=scrimmage)
-                if not ScrimSerial.is_valid():
-                    return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-                scrim = ScrimSerial.save()
-                print("team names are", team_1.name, team_2.name)
-                # scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay, map_ids)
-                scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
-                # print("team names are", team_1.name, team_2.name)
-                return Response({'message': scrim.id}, status.HTTP_200_OK)
+                is_tour_match = (match_type == "tour_scrimmage")
+
+                if is_tour_match:
+                    # Tour matches are unranked.
+                    ranked = False
+                    tournament_id = int(request.data.get("tournament_id"))
+                    # In a tour, we use specific maps for each round.
+                    # Infra handles picking the maps, and sends it through the request.
+                    map_ids = request.data.get("map_ids")
+                else:
+                    # For now regular matches created automatically are ranked; subjject to change.
+                    ranked = True
+                    # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
+                    tournament_id = -1
+                    # Use default map selection
+                    map_ids = None
+                
+                # TODO admin_team has to be requeried every time. Easier to run this once (like as a setting, kinda).
+                admin_team = Team.objects.get(users__username=user.username)
+                requested_by = admin_team.id
+
+                league = 0
+
+                result = create_scrimmage_helper(team_1_id, team_2_id, ranked, requested_by, is_tour_match, tournament_id, True, league, map_ids)
+                return result
             else:
                 return Response({'message': 'unsupported match type'}, status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
-
-    # Kept only for reverse-compatibility with infrastructure, no longer needed
-    def actually_generate_matches(self, request):
-        scrimmage_list = self.scrimmage_list(request).data['matches']
-        for scrim in scrimmage_list:
-            team_1 = Team.objects.get(pk=scrim["player1"])
-            team_2 = Team.objects.get(pk=scrim["player2"])
-            sub_1 = TeamSubmission.objects.get(pk=team_1.id).last_1_id
-            sub_2 = TeamSubmission.objects.get(pk=team_2.id).last_1_id
-            scrimmage = {
-                'league': 0,
-                'red_team': team_1.name,
-                'blue_team': team_2.name,
-                'requested_by': team_1.id,
-                'ranked': True,
-                'replay': binascii.b2a_hex(os.urandom(15)).decode('utf-8'),
-                'status': 'queued'
-            }
-
-            ScrimSerial = ScrimmageSerializer(data=scrimmage)
-            if not ScrimSerial.is_valid():
-                return Response(ScrimSerial.errors, status.HTTP_400_BAD_REQUEST)
-            scrim = ScrimSerial.save()
-            scrimmage_pub_sub_call(sub_1, sub_2, team_1.name, team_2.name, scrim.id, scrim.replay)
-
-    # Kept only for reverse-compatibility with infrastructure, no longer needed
-    @action(detail=False, methods=['post'])
-    def generate_matches(self, request):
-        is_admin = User.objects.all().get(username=request.user).is_superuser
-        if is_admin:
-            threading.Thread(target=self.actually_generate_matches, args=(request,)).start()
-            return Response({'message': 'matches are being generated!'}, status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
@@ -548,14 +606,14 @@ class TeamViewSet(viewsets.GenericViewSet,
         return_data = []
 
         # loop through all scrimmages involving this team
-        # only add ranked scriammges, and scrimmages with no tournament ID
+        # only add ranked, non-tournament scrimmages
         # add entry to result array defining whether or not this team won and time of scrimmage
         for scrimmage in scrimmages:
-            if (scrimmage.ranked and scrimmage.tournament_id is None):
+            if (scrimmage.ranked and scrimmage.tournament_id == -1):
                 won_as_red = (scrimmage.status == 'redwon' and scrimmage.red_team_id == team_id)
                 won_as_blue = (scrimmage.status == 'bluewon' and scrimmage.blue_team_id == team_id)
                 team_mu = scrimmage.red_mu if scrimmage.red_team_id == team_id else scrimmage.blue_mu 
-                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status != 'error') else None,
+                return_data.append({'won': (won_as_red or won_as_blue) if (scrimmage.status == 'redwon' or scrimmage.status == 'bluewon') else None,
                                     'date': scrimmage.updated_at, 'mu': team_mu})
 
         return Response(return_data, status.HTTP_200_OK)
@@ -854,6 +912,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     that requested the scrimmage.
     """
     queryset = Scrimmage.objects.all().order_by('-requested_at')
+    pagination_class = SearchResultsPagination
     serializer_class = ScrimmageSerializer
     permission_classes = (SubmissionsEnabledOrSafeMethodsOrIsSuperuser, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
@@ -873,7 +932,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=None)) 
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1))
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -895,7 +954,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
             # ranked = request.data['ranked'] == 'True'
-            ranked = True
+            # Scrimmages created by regular challenges should not be ranked, to prevent ladder manipulation.
+            ranked = False
 
             # Validate teams
             team = self.kwargs['team']
@@ -910,34 +970,23 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if that_team is None:
                 return Response({'message': 'Requested team does not exist'}, status.HTTP_404_NOT_FOUND)
 
-            replay_string = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
-            data = {
-                'league': league_id,
-                'red_team': red_team.name,
-                'blue_team': blue_team.name,
-                'ranked': ranked,
-                'requested_by': this_team.id,
-                'replay': replay_string,
-            }
+            requested_by = this_team.id
+            is_tour_match = False
+            # tournament_id of -1 indicates a normal scrimmage match (a non-tour match).
+            tournament_id = -1
 
             # Check auto accept
             if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
-                data['status'] = 'queued'
+                accept = True
+            else:
+                accept = False
 
-            serializer = self.get_serializer(data=data)
-            if not serializer.is_valid():
-                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-            scrimmage = serializer.save()
+            # Use default map selection
+            map_ids = None
 
-            # check the ID
-            # if auto accept, then create scrimmage
-            if (ranked and that_team.auto_accept_ranked) or (not ranked and that_team.auto_accept_unranked):
-                red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-                blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-                red_team_name = Team.objects.get(pk=scrimmage.red_team_id).name
-                blue_team_name = Team.objects.get(pk=scrimmage.blue_team_id).name
-                scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-            return Response(serializer.data, status.HTTP_201_CREATED)
+            result = create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_tour_match, tournament_id, accept, league_id, map_ids)
+
+            return result
         except Exception as e:
             error = {'message': ','.join(e.args) if len(e.args) > 0 else 'Unknown Error'}
             return Response(error, status.HTTP_400_BAD_REQUEST)
@@ -951,16 +1000,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-            scrimmage.status = 'queued'
-            scrimmage.save()
-            red_submission_id = TeamSubmission.objects.get(pk=scrimmage.red_team_id).last_1_id
-            blue_submission_id = TeamSubmission.objects.get(pk=scrimmage.blue_team_id).last_1_id
-            red_team_name = scrimmage.red_team.name
-            blue_team_name = scrimmage.blue_team.name
-            scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, scrimmage.replay)
-
-            serializer = self.get_serializer(scrimmage)
-            return Response(serializer.data, status.HTTP_200_OK)
+            result = accept_scrimmage_helper(scrimmage.id)
+            return result
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
@@ -1009,6 +1050,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
             if 'status' in request.data:
                 sc_status = request.data['status']
+                sc_error_msg = request.data['error_msg']
                 if sc_status == "redwon" or sc_status == "bluewon":
 
                     if 'winscore' in request.data and 'losescore' in request.data:
@@ -1025,7 +1067,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.losescore = sc_losescore
 
                     # if tournament, then return here
-                    if scrimmage.tournament_id is not None:
+                    if scrimmage.tournament_id != -1:
                         scrimmage.save()
                         return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
 
@@ -1064,10 +1106,10 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     return Response({'status': sc_status, 'winscore': sc_winscore, 'losescore': sc_losescore}, status.HTTP_200_OK)
                 elif sc_status == "error":
                     scrimmage.status = sc_status
-
+                    scrimmage.error_msg = sc_error_msg
                     scrimmage.save()
                     # Return 200, because the scrimmage runner should be informed that it successfully sent the error status to the backend
-                    return Response({'status': sc_status, 'winscore': None, 'losescore': None}, status.HTTP_200_OK)
+                    return Response({'status': sc_status}, status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Set scrimmage to pending/queued/cancelled with accept/reject/cancel api calls'}, status.HTTP_400_BAD_REQUEST)
             else:

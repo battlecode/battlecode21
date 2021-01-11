@@ -40,15 +40,10 @@ export default class Sidebar {
   // Update texts
   private updateText: HTMLDivElement;
 
-  // onkeydown event that uses the controls depending on the game mode
-  private readonly onkeydownControls: (event: KeyboardEvent) => void;
-
   // Callback to update the game area when changing modes
   cb: () => void;
 
-  // onkeydownControls is an onkeydown event that uses the controls depending on the game mode
-  constructor(conf: Config, images: AllImages, runner: Runner,
-    onkeydownControls: (event: KeyboardEvent) => void) {
+  constructor(conf: Config, images: AllImages, runner: Runner) {
     // Initialize fields
     this.div = document.createElement("div");
     this.innerDiv = document.createElement("div");
@@ -78,7 +73,6 @@ export default class Sidebar {
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
     this.conf = conf;
-    this.onkeydownControls = onkeydownControls;
 
     // Initialize div structure
     this.loadStyles();
@@ -122,13 +116,18 @@ export default class Sidebar {
   private initializeHelp(): HTMLDivElement {
     const innerHTML: string =
     `
+    <b class="red" style="font-size: 16px">Beware of too much logging!</b>
+    <br>
+    If your match has a significant amount of logging, please <b>turn off log processing with
+    the L key.</b><br>
+    <br>
     <b class="red">Issues?</b>
     <ol style="margin-left: -20px; margin-top: 0px;">
     <li>Refresh (Ctrl-R or Command-R).</li>
     <li>Search <a href="https://discordapp.com/channels/386965718572466197/401552673523892227">Discord</a>.</li>
     <li>Ask on <a href="https://discordapp.com/channels/386965718572466197/401552673523892227">Discord</a> (attach a screenshot of console output using F12).</li>
     </ol>
-    <b class="blue">Keyboard Shortcuts</b><br>
+    <b class="blue">Keyboard Shortcuts (Game)</b><br>
     LEFT - Step Back One Turn<br>
     RIGHT - Step Forward One Turn<br>
     UP - Double Playback Speed<br>
@@ -143,27 +142,38 @@ export default class Sidebar {
     , - Toggle Detection Radius<br>
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
+    L - Toggle whether to process logs.<br>
+    <br>
+    <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
+    <br>
+    S - Add<br>
+    D - Delete<br>
+    R - Reverse team<br>
     
     <br>
-    <b class="red">How to Play a Match</b><br>
-    <i>From the application:</i> Click <b>'Runner'</b> and follow the
-    instructions in the sidebar. Note that it may take a few seconds for
-    matches to be displayed.<br>
-    <i>From the web client:</i> If you are not running the client as a
-    stand-alone application, you can always upload a <b>.bc21</b> file by
-    clicking upload button in the <b>'Queue'</b> section.<br>
+    <b class="blue">How to Play a Match</b><br>
+    <i>From the application:</i> Click <code>Runner</code>, select the bots and
+    your desired map, then press "Run Game". Note that it may take a few seconds for
+    matches to be displayed. To stop processing a match before it has finished,
+    press "Kill ongoing processes". Note that the part of the match that has already
+    loaded will remain in the client.<br>
     <br>
-    Use the control buttons in <b>'Queue'</b> and the top of the screen to
-    navigate the match.<br>
+    <i>From the web client:</i> You can always upload a <code>.bc21</code> file by
+    clicking the upload button in the <code>Queue</code> section.<br>
+    <br>
+    Use the control buttons at the top of the screen to
+    navigate the match. Click on different matches in the <code>Queue</code> section to switch between them.<br>
     <br>
     <b class="blue">How to Use the Console</b><br>
-    The console displays all System.out.println() data up to the current round.
+    The console displays all <code>System.out.println()</code> data up to the current round.
     You can filter teams by checking the boxes and robot IDs by clicking the
     robot. You can also change the maximum number of rounds displayed in the
-    input box. (WARNING: If you want to, say, suddenly display 3000 rounds
-    of data on round 2999, pause the client first to prevent freezing.)<br>
+    input box. Beware of doing too much logging! This slows down the client.
+    (WARNING: If you want to, say, suddenly display 3000 rounds
+    of data, pause the client first to prevent freezing.)<br>
     <br>
-    <b class="red">How to Use the Profiler</b><br>
+    <b class="blue">How to Use the Profiler</b><br>
+    <i> The profiler is currently disabled.</i><br>
     The profiler can be used to find out which methods are using a lot of
     bytecodes. To use it, tick the "Profiler enabled" checkbox in the
     Runner before running the game. Make sure that the runFromClient
@@ -178,25 +188,25 @@ export default class Sidebar {
     to run the profiler successfully (you might get an <code>OutOfMemoryError</code>).
     <br>
     <br>
-    <!---
     <b class="blue">How to Use the Map Editor</b><br>
-    Select the initial map settings: name, width, height, symmetry. Add trees
-    and archons by setting the coordinates and radius, and clicking
-    <b>"Add/Update."</b> The coordinates can also be set by clicking the map.
-    The radius will automatically adjust to the maximum valid radius if the
-    input is too large, and an archon always has radius 2. If the radius is 0,
-    no unit of that type can be placed there.<br>
+    Select the initial map settings: name, width, height, symmetry (<i>symmetry is currently unavailable</i>). <br>
     <br>
-    Modify or delete existing units by clicking on them, making changes, then
-    clicking <b>“Add/Update."</b><br>
+    To place enlightenment centers, enter the "change robots" mode, set the coordinates, set the initial influence of the
+    center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map.
+    <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game!--><br>
     <br>
-    Before exporting, click <b>"Validate"</b> to see if any changes need to be
+    To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
+    and then <b>hold and drag</b> your mouse across the map.
+    <br>
+    <!--Before exporting, click "Validate" to see if any changes need to be
     made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or
-    overlapping units. When you are happy with your map, click <b>“EXPORT!”</b>.
+    overlapping units. -->
+    <br>
+    When you are happy with your map, click "Export".
     If you are directed to save your map, save it in the
-    <b>/battlecode-scaffold-2017-master/maps</b> directory of your scaffold.
-    (Note: the name of your .map17 file must be the same as the name of your
-    map.)-->`;
+    <code>/battlecode-scaffold-2021/maps</code> directory of your scaffold.
+    (Note: the name of your <code>.map21</code> file must be the same as the name of your
+    map.)`;
 
     const div = document.createElement("div");
     div.id = "helpDiv";

@@ -11,7 +11,8 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason="None"):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=''):
+
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()

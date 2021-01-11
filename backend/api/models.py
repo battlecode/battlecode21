@@ -81,7 +81,10 @@ class Tournament(models.Model):
     name        = models.TextField()
     style       = models.TextField(choices=TOURNAMENT_STYLE_CHOICES)
     date_time   = models.DateTimeField()
-    divisions   = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), blank=True, default=list)
+    # Allow for divisions to be anything.
+    # This could be dangerous, but I don't think we use divsions in our code anywhere else.
+    # divisions   = fields.ArrayField(models.TextField(choices=TOURNAMENT_DIVISION_CHOICES), blank=True, default=list)
+    divisions   = models.TextField(blank=True)
     stream_link = models.TextField(blank=True)
     hidden      = models.BooleanField(default=True)
     bracket_link = models.TextField(blank=True)
@@ -153,6 +156,7 @@ class Submission(models.Model):
     submitted_at         = models.DateTimeField(auto_now_add=True)
     link                 = models.TextField(null=True)
     compilation_status   = models.IntegerField(default=0) #0 = in progress, 1 = succeeded, 2 = failed, 3 = server failed
+    error_msg            = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.id is not None:
@@ -189,6 +193,7 @@ class TeamSubmission(models.Model):
 
 class Scrimmage(models.Model):
     SCRIMMAGE_STATUS_CHOICES = (
+        ('created', 'Created'),
         ('pending', 'Pending'),
         ('queued', 'Queued'),
         ('running', 'Running'),
@@ -204,9 +209,12 @@ class Scrimmage(models.Model):
     red_team  = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='red_team')
     blue_team = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='blue_team')
     ranked    = models.BooleanField(default=False)
+    map_ids    = models.TextField(null=True)
+
 
     # Match-running (completed by match runner)
-    status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='pending')
+    status    = models.TextField(choices=SCRIMMAGE_STATUS_CHOICES, default='created')
+    error_msg = models.TextField(null=True, blank=True)
     winscore  = models.IntegerField(null=True)
     losescore = models.IntegerField(null=True)
     replay    = models.TextField(blank=True)
@@ -214,6 +222,8 @@ class Scrimmage(models.Model):
     # Metadata
     red_mu       = models.IntegerField(null=True)
     blue_mu      = models.IntegerField(null=True)
+    red_submission_id  = models.IntegerField(null=True)
+    blue_submission_id = models.IntegerField(null=True)
     requested_by = models.ForeignKey(Team, null=True, on_delete=models.PROTECT, related_name='requested_by')
     requested_at = models.DateTimeField(auto_now_add=True)
     started_at   = models.DateTimeField(null=True)

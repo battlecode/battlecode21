@@ -76,12 +76,6 @@ export interface Config {
   seeDetectionRadius: boolean;
 
   /**
-   * Whether or not to draw a circle under each robot
-   */
-  circleBots: boolean; //TODO: is this needed?
-
-
-  /**
    * The mode of the game
    */
   mode: Mode;
@@ -105,6 +99,11 @@ export interface Config {
    * Whether logs should show shorter header
    */
   shorterLogHeader: boolean;
+
+  /**
+   * Whether we should process a match's logs by default.
+   */
+  processLogs: boolean;
 }
 
 /**
@@ -125,27 +124,27 @@ export enum Mode {
  */
 export function defaults(supplied?: any): Config {
   let conf: Config = {
-    gameVersion: "2021.1.1.1", //TODO: Change this on each release!
+    gameVersion: "2021.2.1.0", //TODO: Change this on each release!
     fullscreen: false,
     width: 600,
     height: 600,
-    upscale: 1500,
+    upscale: 1800,
     defaultTPS: 20,
     websocketURL: null,
     matchFileURL: null,
     pollEvery: 500,
     tournamentMode: false,
-    interpolate: false,
+    interpolate: true,
     indicators: false,
     mode: Mode.QUEUE,
     splash: true,
     seeActionRadius: false,
     seeSensorRadius: false,
     seeDetectionRadius: false,
-    circleBots: false,
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
+    processLogs: true
   };
   return Object.assign(conf, supplied);
 }

@@ -95,6 +95,23 @@ public strictfp interface RobotController {
      */
     MapLocation getLocation();
 
+    /**
+     * Returns this robot's current influence.
+     *
+     * @return this robot's current influence.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getInfluence();
+
+    /**
+     * Returns this robot's current conviction.
+     *
+     * @return this robot's current conviction.
+     *
+     * @battlecode.doc.costlymethod
+     */
+    int getConviction();
 
     // ***********************************
     // ****** GENERAL SENSOR METHODS *****
@@ -461,6 +478,19 @@ public strictfp interface RobotController {
     boolean canExpose(MapLocation loc);
 
     /**
+     * Tests whether the robot can expose a given robot ID.
+     * Checks that the robot is a muckraker, that the target robot is within
+     * action radius of the muckraker, that the target robot is an enemy
+     * slanderer, and that there are no cooldown turns remaining.
+     *
+     * @param id the robot ID being exposed
+     * @return whether it is possible to expose that robot on that round
+     *
+     * @battlecode.doc.costlymethod
+     */
+    boolean canExpose(int id);
+
+    /**
      * Exposes a slanderer at a given location.
      * The slanderer will be destroyed, and all attempts to empower by friendly
      * Politicians will be temporarily buffed by a multiplicative factor.
@@ -470,6 +500,17 @@ public strictfp interface RobotController {
      * @battlecode.doc.costlymethod
      */
     void expose(MapLocation loc) throws GameActionException;
+
+    /**
+     * Exposes a slanderer with given id.
+     * The slanderer will be destroyed, and all attempts to empower by friendly
+     * Politicians will be temporarily buffed by a multiplicative factor.
+     *
+     * @throws GameActionException if conditions for exposing are not all satisfied 
+     *
+     * @battlecode.doc.costlymethod
+     */
+    void expose(int id) throws GameActionException;
 
 
     // **************************************

@@ -1,14 +1,7 @@
 import Metadata from './metadata';
 import GameWorld from './gameworld';
 import { flatbuffers, schema } from 'battlecode-schema'
-
-export type Log = {
-  team: string, // 'A' | 'B'
-  robotType: string, // All loggable bodies with team
-  id: number,
-  round: number,
-  text: string
-};
+import {playbackConfig} from './game';
 
 export type ProfilerEvent = {
   type: string,
@@ -25,6 +18,8 @@ export type ProfilerFile = {
   frames: Array<string>,
   profiles: Array<ProfilerProfile>
 }
+
+
 
 // Return a timestamp representing the _current time in ms, not necessarily from
 // any particular epoch.
@@ -67,11 +62,6 @@ export default class Match {
    * [0] is not stored.
    */
   readonly deltas: Array<schema.Round>;
-
-  /**
-   * The logs of this match, bucketed by round.
-   */
-  readonly logs: Array<Array<Log>>;
 
   /**
    * The profiler files belong to this match.
@@ -128,23 +118,26 @@ export default class Match {
    */
   readonly maxTurn: number;
 
+  private config: playbackConfig;
+
+
   /**
    * Create a Timeline.
    */
-  constructor(header: schema.MatchHeader, meta: Metadata) {
-    this._current = new GameWorld(meta);
+  constructor(header: schema.MatchHeader, meta: Metadata, config: playbackConfig) {
+    this._current = new GameWorld(meta, config);
     this._current.loadFromMatchHeader(header);
     this._farthest = this._current;
     this.snapshots = [];
     this.snapshotEvery = 64;
     this.snapshots.push(this._current.copy());
     this.deltas = new Array(1);
-    this.logs = new Array(1);
     this.profilerFiles = [];
     this.maxTurn = header.maxRounds();
     this._lastTurn = null;
     this._seekTo = 0;
     this._winner = null;
+    this.config = config;
   }
 
   /**
@@ -155,82 +148,8 @@ export default class Match {
       throw new Error(`Can't store Round ${delta.roundID()}. Next Round should be Round ${this.deltas.length}`);
     }
     this.deltas.push(delta);
-
-    if(delta.logs()){
-      this.parseLogs(delta.roundID(), <string> delta.logs(flatbuffers.Encoding.UTF16_STRING));
-    }
   }
 
-  /**
-   * Parse logs for a round.
-   */
-  parseLogs(round: number, logs: string) {
-    // TODO regex this properly
-
-    // Regex
-    let lines = logs.split(/\r?\n/);
-    let header = /^\[(A|B):(ENLIGHTENMENT_CENTER|POLITICIAN|SLANDERER|MUCKRAKER)#(\d+)@(\d+)\] (.*)/;
-
-    let roundLogs = new Array<Log>();
-
-    // Parse each line
-    let index: number = 0;
-    while (index < lines.length) {
-      let line = lines[index];
-      let matches = line.match(header);
-
-      // Ignore empty string
-      if (line === "") {
-        index += 1;
-        continue;
-      }
-
-      // The entire string and its 5 parenthesized substrings must be matched!
-      if (matches === null || (matches && matches.length != 6)) {
-        // throw new Error(`Wrong log format: ${line}`);
-        console.log(`Wrong log format: ${line}`);
-        console.log('Omitting logs');
-        return;
-      }
-
-      let shortenRobot = new Map();
-      shortenRobot.set("ENLIGHTENMENT_CENTER", "EC");
-      shortenRobot.set("POLITICIAN", "P");
-      shortenRobot.set("SLANDERER", "SL");
-      shortenRobot.set("MUCKRAKER", "MCKR");
-
-      // Get the matches
-      let team = matches[1];
-      let robotType = matches[2];
-      let id = parseInt(matches[3]);
-      let logRound = parseInt(matches[4]);
-      let text = new Array<string>();
-      let mText = "<span class='consolelogheader consolelogheader1'>[" + team + ":" + robotType + "#" + id + "@" + logRound + "]</span>";
-      let mText2 = "<span class='consolelogheader consolelogheader2'>[" + team + ":" + shortenRobot.get(robotType) + "#" + id + "@" + logRound + "]</span> ";
-      text.push(mText + mText2 + matches[5]);
-      index += 1;
-
-      // If there is additional non-header text in the following lines, add it
-      while (index < lines.length && !lines[index].match(header)) {
-        text.push(lines[index]);
-        index +=1;
-      }
-
-      if (logRound != round) {
-        console.warn(`Your computation got cut off while printing a log statement at round ${logRound}; the actual print happened at round ${round}`);
-      }
-
-      // Push the parsed log
-      roundLogs.push({
-        team: team,
-        robotType: robotType,
-        id: id,
-        round: logRound,
-        text: text.join('\n')
-      });
-    }
-    this.logs.push(roundLogs);
-  }
 
   /**
    * Finish the timeline.

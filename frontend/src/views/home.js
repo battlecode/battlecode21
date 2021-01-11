@@ -103,7 +103,7 @@ class InstrCard extends UpdateCard {
             <p>
             </p>
                     <p>
-                        👀 The competition has not been released yet. Feel free to register a team and watch for our release on January 4, 2021!
+                        The competition is now running! Check out the <a href="/getting-started">Getting Started</a> page for instructions on how to get started.
                     </p>
                 </div>
             </div>
@@ -135,7 +135,7 @@ class LinksCard extends Component {
                                 <a href="https://discordapp.com/channels/386965718572466197/650084292982079539">Discord</a> (<a href="https://discord.gg/N86mxkH">invite</a>)
                             </li>
                             <li>
-                                <a href='https://github.com/battlecode/battlehack20'>GitHub</a>
+                                <a href='https://github.com/battlecode/battlecode21'>GitHub</a>
                             </li>
                             <li>
                                 <a href='https://twitch.tv/mitbattlecode'>Twitch</a>

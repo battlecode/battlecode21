@@ -60,8 +60,12 @@ public strictfp class GameWorld {
         controlProvider.matchStarted(this);
 
         // Add the robots contained in the LiveMap to this world.
-        for (RobotInfo robot : this.gameMap.getInitialBodies()) {
-            spawnRobot(null, robot.ID, robot.type, robot.location, robot.team, robot.influence);
+        RobotInfo[] initialBodies = this.gameMap.getInitialBodies();
+        for (int i = 0; i < initialBodies.length; i++) {
+            RobotInfo robot = initialBodies[i];
+            MapLocation newLocation = robot.location.translate(gm.getOrigin().x, gm.getOrigin().y);
+            int newID = spawnRobot(null, robot.type, newLocation, robot.team, robot.influence);
+            initialBodies[i] = new RobotInfo(newID, robot.team, robot.type, robot.influence, robot.conviction, newLocation); // update with non-deterministic ID and offset location
         }
 
         // Write match header at beginning of match
@@ -196,37 +200,37 @@ public strictfp class GameWorld {
     // ***********************************
 
     public InternalRobot getRobot(MapLocation loc) {
-        return this.robots[loc.x][loc.y];
+        return this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y];
     }
 
     public void moveRobot(MapLocation start, MapLocation end) {
-        addRobot(end, this.robots[start.x][start.y]);
+        addRobot(end, getRobot(start));
         removeRobot(start);
     }
 
     public void addRobot(MapLocation loc, InternalRobot robot) {
-        this.robots[loc.x][loc.y] = robot;
+        this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y] = robot;
     }
 
     public void removeRobot(MapLocation loc) {
-        this.robots[loc.x][loc.y] = null;
+        this.robots[loc.x - this.gameMap.getOrigin().x][loc.y - this.gameMap.getOrigin().y] = null;
     }
 
     public InternalRobot[] getAllRobotsWithinRadiusSquared(MapLocation center, int radiusSquared) {
         ArrayList<InternalRobot> returnRobots = new ArrayList<InternalRobot>();
         for (MapLocation newLocation : getAllLocationsWithinRadiusSquared(center, radiusSquared))
-            if (this.robots[newLocation.x][newLocation.y] != null)
-                returnRobots.add(this.robots[newLocation.x][newLocation.y]);
+            if (getRobot(newLocation) != null)
+                returnRobots.add(getRobot(newLocation));
         return returnRobots.toArray(new InternalRobot[returnRobots.size()]);
     }
 
     public MapLocation[] getAllLocationsWithinRadiusSquared(MapLocation center, int radiusSquared) {
         ArrayList<MapLocation> returnLocations = new ArrayList<MapLocation>();
         int ceiledRadius = (int) Math.ceil(Math.sqrt(radiusSquared)) + 1; // add +1 just to be safe
-        int minX = Math.max(center.x - ceiledRadius, 0);
-        int minY = Math.max(center.y - ceiledRadius, 0);
-        int maxX = Math.min(center.x + ceiledRadius, this.gameMap.getWidth() - 1);
-        int maxY = Math.min(center.y + ceiledRadius, this.gameMap.getHeight() - 1);
+        int minX = Math.max(center.x - ceiledRadius, this.gameMap.getOrigin().x);
+        int minY = Math.max(center.y - ceiledRadius, this.gameMap.getOrigin().y);
+        int maxX = Math.min(center.x + ceiledRadius, this.gameMap.getOrigin().x + this.gameMap.getWidth() - 1);
+        int maxY = Math.min(center.y + ceiledRadius, this.gameMap.getOrigin().y + this.gameMap.getHeight() - 1);
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 MapLocation newLocation = new MapLocation(x, y);
@@ -358,14 +362,16 @@ public strictfp class GameWorld {
 
         // Process end of each robot's round
         objectInfo.eachRobot((robot) -> {
-            int bid = robot.getBid();
-            int teamIdx = robot.getTeam().ordinal();
-            if (bid > highestBids[teamIdx] || highestBidders[teamIdx] == null ||
-                (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
-                highestBids[teamIdx] = bid;
-                highestBidders[teamIdx] = robot;
+            if (robot.getTeam().isPlayer() && robot.getType().canBid()) {
+                int bid = robot.getBid();
+                int teamIdx = robot.getTeam().ordinal();
+                if (bid > highestBids[teamIdx] || highestBidders[teamIdx] == null ||
+                    (bid == highestBids[teamIdx] && robot.compareTo(highestBidders[teamIdx]) < 0)) {
+                    highestBids[teamIdx] = bid;
+                    highestBidders[teamIdx] = robot;
+                }
+                robot.resetBid();
             }
-            robot.resetBid();
             robot.processEndOfRound();
             return true;
         });

@@ -44,6 +44,7 @@ export default class MatchRunner {
   private runMatch: HTMLButtonElement;
   private refreshButton: HTMLButtonElement;
   private runMatchWithoutViewing: HTMLButtonElement;
+  private killProcs: HTMLButtonElement;
 
   constructor(conf: Config, cb: () => void, runCb: () => void) {
     this.conf = conf;
@@ -116,6 +117,7 @@ export default class MatchRunner {
     this.selectAllMaps = document.createElement("button");
     this.deselectAllMaps = document.createElement("button");
     this.runMatchWithoutViewing = document.createElement("button");
+    this.killProcs = document.createElement("button");
 
     this.profilerEnabled = document.createElement("input");
     this.profilerEnabled.type = 'checkbox';
@@ -209,6 +211,14 @@ export default class MatchRunner {
     this.compileLogs.id = "compileLogs";
     this.compileLogs.innerHTML = "Compile messages..."
     div.appendChild(this.compileLogs);
+
+    // Kill procs button
+    this.killProcs.type = "button";
+    this.killProcs.appendChild(document.createTextNode("Kill ongoing processes"));
+    this.killProcs.className = 'custom-button';
+    this.killProcs.onclick = () => this.scaffold.killProcs();
+    div.appendChild(this.killProcs);
+    div.appendChild(document.createElement("br"));
 
     return div;
   }
