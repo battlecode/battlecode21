@@ -592,10 +592,15 @@ class Api {
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
-      "est_date_str": '8 PM EDT on April 22, 2020',
-      "seconds_until": (Date.parse(new Date('April 22, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Battlehack 2020 Tournament"
+      "est_date_str": '7 PM ET on January 11, 2021',
+      "seconds_until": (Date.parse(new Date('January 11, 2021 19:00:00-5:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "Sprint Tournament 1"
     });
+    // callback({
+    //   "est_date_str": '8 PM EDT on April 22, 2020',
+    //   "seconds_until": (Date.parse(new Date('April 22, 2020 20:00:00-4:00')) - Date.parse(new Date())) / 1000,
+    //   "tournament_name": "Battlehack 2020 Tournament"
+    // });
     // callback({
     //   "est_date_str": '7 PM EST on January 23, 2020',
     //   "seconds_until": (Date.parse(new Date('January 23, 2020 19:00:00')) - Date.parse(new Date())) / 1000,
