@@ -72,7 +72,6 @@ class ScrimmageHistory extends Component {
 
 
     refresh = (page) => {
-        console.log("refreshing");
         Api.getScrimmageHistory(function(s) {
             this.setState({...s, scrimPage: page});
         }.bind(this), page);
@@ -91,7 +90,6 @@ class ScrimmageHistory extends Component {
     getScrimPage = (page) => {
         if (page !== this.state.scrimPage && page >= 0 && page <= this.state.scrimLimit) {
             this.refresh(page);
-            this.setState()
         }
     }
 

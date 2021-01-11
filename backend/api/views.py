@@ -237,8 +237,6 @@ class SearchResultsPagination(PageNumberPagination):
             return self.page_size
         return None
 
-        return self.page_size
-
 
 class PartialUpdateModelMixin(mixins.UpdateModelMixin):
     def update(self, request, partial=False, league_id=None, pk=None):
