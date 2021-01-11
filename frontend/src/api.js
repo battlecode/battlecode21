@@ -268,7 +268,6 @@ class Api {
     } // we should not require valid login for this. 
     $.get(teamUrl, (teamData) => {
       const teamLimit = parseInt(teamData.count / PAGE_LIMIT, 10) + !!(teamData.count % PAGE_LIMIT);
-      console.log(teamData);
       callback({
         query,
         teams: teamData.results,
