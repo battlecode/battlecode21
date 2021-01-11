@@ -101,7 +101,7 @@ class Tournaments extends Component {
                                     </p>
                                     <p>
                                         Even if you miss earlier tournaments, you can participate in later tournaments (except the Final Tournament).
-                                        This includes the Qualifying Tournament — you can participate even if you miss every other tournament (but your seed will be worse than the seed of everyone who participated in the Seeding Tournament).
+                                        This includes the Qualifying Tournament — you can participate even if you miss every other tournament (your seed will be determined by your scrimmage rank).
                                     </p>
                                     <p>
                                         Each match within a tournament will consist of at least 3 games, each on a different map, and the team that wins the most games will advance.
