@@ -180,7 +180,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
         arr[i + 0] = data.data[i+0];
         arr[i + 1] = data.data[i+1];
         arr[i + 2] = data.data[i+2];
-        arr[i + 3] = data.data[i+3] / 1.5;
+        arr[i + 3] = data.data[i+3] / 1.2;
       }
       const result = new ImageData(arr, data.width);
       return result;
