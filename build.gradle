@@ -222,6 +222,7 @@ task release_docs_zip(type: Zip, dependsOn: [':engine:javadoc']) {
 }
 
 task release_sources(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
   from sourceSets.main.allSource
 }
 
