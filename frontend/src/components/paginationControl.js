@@ -4,7 +4,7 @@ class PaginationControl extends Component {
     render() {
         const { props } = this;
 
-        if (!props.pageLimit || props.pageLimit<= 1) { 
+        if (!props.pageLimit || props.pageLimit<= 1) {
             return null;
         };
 

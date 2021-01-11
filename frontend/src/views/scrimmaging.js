@@ -3,6 +3,7 @@ import Api from '../api';
 import Floater from 'react-floater';
 
 import ScrimmageRequestor from '../components/scrimmageRequestor';
+import PaginationControl from "../components/paginationControl";
 
 class ScrimmageRequest extends Component {
 
@@ -64,24 +65,34 @@ class ScrimmageRequests extends Component {
 class ScrimmageHistory extends Component {
 
     state = {
+        scrimPage: 1,
+        scrimLimit: 0,
         scrimmages: [],
     };
 
 
-    refresh = () => {
+    refresh = (page) => {
+        console.log("refreshing");
         Api.getScrimmageHistory(function(s) {
-            this.setState({ scrimmages: s });
-        }.bind(this));
+            this.setState({...s, scrimPage: page});
+        }.bind(this), page);
     }
 
     componentDidMount() {
-        this.refresh();
+        this.refresh(this.state.scrimPage);
     }
 
     playReplay(e) {
         e.preventDefault();
         var url = e.target.href;
         window.open(url, "replay_window", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=750");
+    }
+
+    getScrimPage = (page) => {
+        if (page !== this.state.scrimPage && page >= 0 && page <= this.state.scrimLimit) {
+            this.refresh(page);
+            this.setState()
+        }
     }
 
     render() {
@@ -136,6 +147,11 @@ class ScrimmageHistory extends Component {
                         </table>
                     </div>
                 </div>
+                <PaginationControl
+                    page={this.state.scrimPage}
+                    pageLimit={this.state.scrimLimit}
+                    onPageClick={(page) => this.getScrimPage(page)}
+                />
             </div>
         )
     }
