@@ -205,4 +205,4 @@ def game_worker(gameinfo):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=True)
