@@ -159,7 +159,7 @@ class Scrimmaging extends Component {
 
     refresh = () => {
         this.requests.refresh();
-        this.history.refresh();
+        this.history.refresh(1);
     }
 
     render() {
