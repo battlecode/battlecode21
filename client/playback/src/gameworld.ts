@@ -18,6 +18,7 @@ export type EmpowerSchema = {
   id: Int32Array,
   x: Int32Array,
   y: Int32Array
+  team: Int8Array
 }
 
 export type BodiesSchema = {
@@ -189,6 +190,7 @@ export default class GameWorld {
       id: new Int32Array(0),
       x: new Int32Array(0),
       y: new Int32Array(0),
+      team: new Int8Array(0)
     }, 'id');
 
     this.diedBodies = new StructOfArrays({
@@ -398,9 +400,10 @@ export default class GameWorld {
           /// Target: none
           case schema.Action.EMPOWER:
             //this.bodies.alter({ id: robotID, ability: 1});
-            const x = this.bodies.lookup(robotID).x;
-            const y = this.bodies.lookup(robotID).y;
-            this.empowered.insert({'id': robotID, 'x': x, 'y': y});
+            var x = this.bodies.lookup(robotID).x;
+            var y = this.bodies.lookup(robotID).y;
+            var team = this.bodies.lookup(robotID).team;
+            this.empowered.insert({'id': robotID, 'x': x, 'y': y, 'team': team});
             this.abilityRobots.push(robotID);
             break;
           /// Slanderers passively generate influence for the
@@ -413,8 +416,8 @@ export default class GameWorld {
           /// Slanderers turn into Politicians.
           /// Target: none
           case schema.Action.CAMOUFLAGE:
-            const team = this.bodies.lookup(robotID).team;
-            const type = this.bodies.lookup(robotID).type;
+            var team = this.bodies.lookup(robotID).team;
+            var type = this.bodies.lookup(robotID).type;
             if (type !== schema.BodyType.SLANDERER) {
               throw new Error("non-slanderer camouflaged");
             }

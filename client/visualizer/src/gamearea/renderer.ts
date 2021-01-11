@@ -197,9 +197,10 @@ export default class Renderer {
     const empowered = world.empowered;
     const empowered_x = world.empowered.arrays.x;
     const empowered_y = world.empowered.arrays.y;
+    const empowered_team = world.empowered.arrays.team;
 
     for (let i = 0; i < empowered.length; i++) {
-      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
+      drawEffect(empowered_team[i] == 1 ? "empower_red" : "empower_blue", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
 
     this.setInfoStringEvent(world, xs, ys);
