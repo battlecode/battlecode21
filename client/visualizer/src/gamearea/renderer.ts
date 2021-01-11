@@ -200,10 +200,7 @@ export default class Renderer {
     const empowered_team = world.empowered.arrays.team;
 
     for (let i = 0; i < empowered.length; i++) {
-      const robotID = empowered_id[i];
-      const index = bodies.index(robotID);
-      const effectName = empowered_team[i] == 1 ? "empower_red" : "empower_blue";
-      drawEffect(effectName, realXs[index], realYs[index]);
+      drawEffect(empowered_team[i] == 1 ? "empower_red" : "empower_blue", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
 
     this.setInfoStringEvent(world, xs, ys);

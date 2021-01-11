@@ -82,7 +82,8 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
     effects: {
       death: null,
       embezzle: [],
-      empower: [],
+      empower_red: [],
+      empower_blue: [],
       expose: [],
       camouflage_red: [],
       camouflage_blue: []
@@ -134,7 +135,7 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
         arr[i + 0] = colors[0] / factor;
         arr[i + 1] = colors[1] / factor;
         arr[i + 2] = colors[2] / factor;
-        arr[i + 3] = 255;
+        arr[i + 3] = 240;
       }
       const result = new ImageData(arr, data.height);
       return result;
@@ -177,14 +178,39 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
     const makeTransparent = (data: ImageData): ImageData => {
       const arr = new Uint8ClampedArray(data.data.length);
       for(let i=0; i<arr.length; i+=4){
-        arr[i + 0] = data.data[i+0];
-        arr[i + 1] = data.data[i+1];
-        arr[i + 2] = data.data[i+2];
-        arr[i + 3] = data.data[i+3] / 1.2;
+        arr[i + 0] = data.data[i + 0];
+        arr[i + 1] = data.data[i + 1];
+        arr[i + 2] = data.data[i + 2];
+        arr[i + 3] = data.data[i + 3] / 1.4;
       }
       const result = new ImageData(arr, data.width);
       return result;
     }
+
+    const makeRed = (data: ImageData): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        arr[i + 0] = 255;
+        arr[i + 1] = 0;
+        arr[i + 2] = 0;
+        arr[i + 3] = data.data[i + 3];
+      }
+      const result = new ImageData(arr, data.width);
+      return result;
+    }
+
+    const makeBlue = (data: ImageData): ImageData => {
+      const arr = new Uint8ClampedArray(data.data.length);
+      for(let i=0; i<arr.length; i+=4){
+        arr[i + 0] = 0;
+        arr[i + 1] = 0;
+        arr[i + 2] = 255;
+        arr[i + 3] = data.data[i + 3];
+      }
+      const result = new ImageData(arr, data.width);
+      return result;
+    }
+
     for(let i=0; i<2; i++){
       const base: Image = new Image();
       base.src = require(dirname + `effects/empower/polit_empower_empty_${i+1}.png`).default;
@@ -192,8 +218,12 @@ export function loadAll(config: Config, callback: (arg0: AllImages) => void) {
       base.onload = () => {
         const data: ImageData = htmlToData(base);
         const trans: ImageData = makeTransparent(data);
-        const path: String = dataToSrc(trans);
-        loadImage(result.effects.empower, i, "", path.slice(0, path.length-4));
+        const red: ImageData = makeRed(trans);
+        const blue: ImageData = makeBlue(trans);
+        const path_red: String = dataToSrc(red);
+        const path_blue: String = dataToSrc(blue);
+        loadImage(result.effects.empower_red, i, "", path_red.slice(0, path_red.length-4));
+        loadImage(result.effects.empower_blue, i, "", path_blue.slice(0, path_blue.length-4));
       }
     }
   }
