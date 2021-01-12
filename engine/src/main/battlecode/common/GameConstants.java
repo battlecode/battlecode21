@@ -76,6 +76,9 @@ public class GameConstants {
     /** The passive influence ratio for Enlightenment Centers. To multiply by sqrt(roundNum). */
     public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2f;
 
+    /** Maximum allowable robot influence. */
+    public static final int ROBOT_INFLUENCE_LIMIT = 100000000;
+
     /** The minimum allowable flag value. */
     public static final int MIN_FLAG_VALUE = 0;
 

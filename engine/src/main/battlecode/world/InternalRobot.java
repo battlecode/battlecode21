@@ -27,7 +27,6 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private RobotType type;
     private MapLocation location;
     private int influence;
-    private final int influenceCap;
     private int conviction;
     private int convictionCap;
     private int flag;
@@ -66,9 +65,8 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.type = type;
         this.location = loc;
         this.influence = influence;
-        this.influenceCap = 100000000;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
-        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? this.influenceCap : this.conviction;
+        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? GameConstants.ROBOT_INFLUENCE_LIMIT : this.conviction;
         this.flag = 0;
         this.bid = 0;
 
@@ -120,10 +118,6 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
 
     public int getInfluence() {
         return influence;
-    }
-
-    public int getInfluenceCap() {
-        return influenceCap;
     }
 
     public int getConviction() {
@@ -295,8 +289,8 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     public void addInfluenceAndConviction(int influenceAmount) {
         int oldInfluence = this.influence;
         this.influence += influenceAmount;
-        if (this.influence > this.influenceCap) {
-            this.influence = this.influenceCap;
+        if (this.influence > GameConstants.ROBOT_INFLUENCE_LIMIT) {
+            this.influence = GameConstants.ROBOT_INFLUENCE_LIMIT;
         }
         this.conviction = this.influence;
         if (this.influence != oldInfluence) {
@@ -391,7 +385,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 numBotsWithExtraConviction--;
             }
             // HACK[jerry]: this is the maximum amount the unit can be affected by
-            conv = Math.min(conv, bot.getInfluenceCap() * 2);
+            conv = Math.min(conv, GameConstants.ROBOT_INFLUENCE_LIMIT * 2);
             bot.empowered(this, (int) conv, this.team);
         }
 
