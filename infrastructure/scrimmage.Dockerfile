@@ -6,4 +6,4 @@ RUN pip3 install --upgrade \
     requests
 
 COPY config.py util.py scrimmage.py app/
-CMD /app/scrimmage.py
+CMD python3 /app/scrimmage.py

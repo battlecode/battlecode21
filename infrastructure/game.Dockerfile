@@ -2,4 +2,4 @@ FROM bc21-worker
 
 COPY app/game_server.py app/
 # COPY maps box/maps/
-CMD /app/game_server.py
+CMD python3 /app/game_server.py
