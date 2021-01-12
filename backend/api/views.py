@@ -202,7 +202,7 @@ class GCloudUploadDownload():
             return blob
 
     @staticmethod
-    def signed_upload_url(file_path, bucket):
+    def signed_upload_url(file_path, bucket, origin=settings.THIS_URL):
         """
         returns a pre-signed url for uploading the submission with given id to google cloud
         this URL can be used with a PUT request to upload data; no authentication needed.
@@ -213,7 +213,7 @@ class GCloudUploadDownload():
         # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
         # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
         # https://googleapis.dev/python/storage/latest/blobs.html
-        return blob.create_resumable_upload_session(origin=settings.THIS_URL)
+        return blob.create_resumable_upload_session(origin=origin)
 
     @staticmethod
     def signed_download_url(file_path, bucket):
