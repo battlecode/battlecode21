@@ -66,7 +66,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
-        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
+        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? 1e8 : this.conviction;
         this.flag = 0;
         this.bid = 0;
 
