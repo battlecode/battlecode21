@@ -202,7 +202,7 @@ class GCloudUploadDownload():
             return blob
 
     @staticmethod
-    def signed_upload_url(file_path, bucket):
+    def signed_upload_url(file_path, bucket, origin):
         """
         returns a pre-signed url for uploading the submission with given id to google cloud
         this URL can be used with a PUT request to upload data; no authentication needed.
@@ -213,7 +213,7 @@ class GCloudUploadDownload():
         # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
         # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
         # https://googleapis.dev/python/storage/latest/blobs.html
-        return blob.create_resumable_upload_session(origin=settings.THIS_URL)
+        return blob.create_resumable_upload_session(origin=origin)
 
     @staticmethod
     def signed_download_url(file_path, bucket):
@@ -271,7 +271,8 @@ class UserViewSet(viewsets.GenericViewSet,
 
     @action(detail=True, methods=['get'])
     def resume_upload(self, request, pk=None):
-        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET)
+        origin = request.headers['Origin']        
+        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET, origin)
         user = self.queryset.get(pk=pk)
         user.verified = True
         user.save()
@@ -715,7 +716,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             team.score = settings.ELO_START
             team.save()
 
-        upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
+        origin = request.headers['Origin']        
+        upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET, origin)
 
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
