@@ -82,6 +82,11 @@ export default class Runner {
       // window.location.assign('/visualizer.html');
     }
 
+    if (this.conf.tournamentMode) {
+      this.conf.processLogs = false; // in tournament mode, don't process logs by default
+      this.console.setNotLoggingDiv(this.conf.processLogs);
+    }
+
     if (this.conf.matchFileURL) {
       // Load a match file
       console.log(`Loading provided match file: ${this.conf.matchFileURL}`);
