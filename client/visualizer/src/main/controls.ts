@@ -435,9 +435,10 @@ export default class Controls {
     infoString += `<span class="info-name">Location:</span> <span class="info-num">(${x}, ${y})</span><br>`;
     infoString += `<span class="info-name">Influence:</span> <span class="info-num">${influence}</span> | `;
     infoString += `<span class="info-name">Conviction:</span> <span class="info-num">${conviction}</span><br>`;
+    infoString += `<span class="info-name">Flag:</span> <span class="info-num">${flag}</span> | `;    
     infoString += `<span class="info-name">Bytecodes Used:</span> <span class="info-num">${bytecodes}</span>`;
     if (bid !== undefined) infoString += ` | <span class="info-name">Bid:</span> <span class="info-num">${bid}</span>`;
-    if (parent !== undefined) infoString += ` | <span class="info-name">Parent ID:</span> <span class="info-num">${parent}</span>`;
+    if (parent !== undefined) infoString += ` | <span class="info-name">Parent:</span> <span class="info-num">${parent}</span>`;
     
     // (${bodyType})<br>
      // Location: (${x}, ${y})<br>
