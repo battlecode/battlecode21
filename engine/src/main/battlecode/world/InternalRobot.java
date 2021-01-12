@@ -122,6 +122,10 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         return influence;
     }
 
+    public int getInfluenceCap() {
+        return influenceCap;
+    }
+
     public int getConviction() {
         return conviction;
     }
@@ -368,25 +372,26 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         if (numBots == 0)
             return;
         
-        int convictionToGive = (int) (this.conviction * this.gameWorld.getTeamInfo().getBuff(this.team));
+        long convictionToGive = (long) (this.conviction * this.gameWorld.getTeamInfo().getBuff(this.team));
         convictionToGive -= GameConstants.EMPOWER_TAX;
         if (convictionToGive <= 0)
             return;
         
-        int convictionPerBot = convictionToGive / numBots;
-        int numBotsWithExtraConviction = convictionToGive % numBots;
+        long convictionPerBot = convictionToGive / numBots;
+        long numBotsWithExtraConviction = convictionToGive % numBots;
 
         Arrays.sort(robots);
         for (InternalRobot bot : robots) {
             // check if this robot
             if (bot.equals(this))
                 continue;
-            int conv = convictionPerBot;
+            long conv = convictionPerBot;
             if (numBotsWithExtraConviction > 0) {
                 conv++;
                 numBotsWithExtraConviction--;
             }
-            bot.empowered(this, conv, this.team);
+            conv = Math.min(conv, bot.getInfluenceCap() * 2);
+            bot.empowered(this, (int) conv, this.team);
         }
 
         // create new bots
