@@ -246,10 +246,17 @@ class Submissions extends Component {
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p>
                         <p>
-                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
-                        </p><p>
-                        Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
-
+                            Create a <code>zip</code> file of your robot player, and submit it below. The submission format should be a zip file containing a single folder (which is your package name), which should contain RobotPlayer.java and any other code you have written, for example:
+                            <pre><code>
+                                submission.zip --> examplefuncsplayer --> RobotPlayer.java, FooBar.java
+                            </code></pre>
+                            Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
+                        </p>
+                        <p>
+                            Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
+                        </p>
+                        <p>
+                            If your bot does not compile, <i>see the "Compiling Tips" section at the bottom of this page.</i>
                         </p>
                         {file_button}
                         {file_button_2}
@@ -478,6 +485,21 @@ class Submissions extends Component {
         }
     }
 
+    renderCompilingTips() {
+        return (
+            <div className="card">
+            <div className="header">
+                <h4 className="title">Compiling Tips</h4>
+            </div>
+            <div className="content">
+            <p className="text-center category">
+            Comig soon...<br/><br/>
+            </p>
+            </div>
+            </div>
+        )
+    }
+    
     render() {
         return (
             <div className="content">
@@ -509,6 +531,7 @@ class Submissions extends Component {
                                     { this.renderHelperTourTable() }
                                 </div>
                             </div>
+                            { this.renderCompilingTips() }
                         </div>
                     </div>
                 </div>
