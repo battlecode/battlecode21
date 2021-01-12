@@ -16,7 +16,7 @@
 
 **Battlecode: Campaign**
   *The formal specification of the Battlecode 2021 game.*
-  Current version: 2021.2.1.0
+  Current version: 2021.2.2.0
 
 Welcome to Battlecode 2021: Campaign.
 This is a high-level overview of this year's game.
@@ -108,6 +108,8 @@ The core resource is **influence**.
 Wielding influence enables you to amass a larger and more powerful army of robots.
 Influence is not a global resource: your team's influence is distributed among your Enlightenment Centers,
 and is generated passively both by the Enlightenment Centers and by specific robot types.
+
+Each robot has a hard limit of $10^8$ influence: any influence in excessive of this will be permanently lost.
 
 ## Overview: Votes
 
@@ -471,6 +473,9 @@ If something is unclear, direct your questions to our [Discord](https://discord.
 We'll update this spec as the competition progresses.
 
 # Changelog
+
+- Version 2021.2.2.0 (1/12/21)
+    - Limit maximum robot influence to $10^8$, and supply `GameConstants.ROBOT_INFLUENCE_LIMIT`.
 
 - Version 2021.2.1.2 (1/11/21)
     - Client
