@@ -6,6 +6,10 @@ Basically, everything that isn't directly running the matches themselves. (setup
 
 TODO
 
+## Match Running
+
+Infrastructure likely knows how to do this!
+
 ## Afterward
 
 ### Installation
