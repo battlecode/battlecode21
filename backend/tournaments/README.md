@@ -8,4 +8,6 @@ TODO
 
 ## Afterward
 
-TODO
+### Installation
+
+Install pychal, link here -- https://pypi.org/project/pychal/. Also, grab the Challonge API key, link here: https://challonge.com/settings/developer. Set this as `CHALLONGE_API_KEY` in `dev_settings_sensitive.py`.
