@@ -4,7 +4,13 @@ Basically, everything that isn't directly running the matches themselves. (setup
 
 ## Beforehand
 
-TODO
+TODO:
+freeze submissions (allow for grace period)
+Allow teams to submit extra submissions, through Discord
+To handle these: (insert what Quinn and I just did -- notes in Slack)
+
+Once all these submissions are processed:
+Run some SQL, etc. (find notes in slack, and in tournament.sql)
 
 ## Match Running
 
