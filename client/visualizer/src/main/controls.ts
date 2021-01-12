@@ -84,8 +84,10 @@ export default class Controls {
 
     // create the timeline
     let timeline = document.createElement("td");
+    timeline.className = "timeline";
+    timeline.vAlign = "top";
     if (this.conf.tournamentMode) {
-      timeline.style.width = '400px';
+      timeline.style.width = '300px';
     }
     timeline.appendChild(this.timeline());
     if (this.conf.tournamentMode) {
@@ -138,8 +140,8 @@ export default class Controls {
 
     // create the info string display
     let infoString = document.createElement("td");
-    infoString.vAlign = "top";
-    infoString.style.fontSize = "11px";
+    infoString.vAlign = "middle";
+    infoString.className = "info";
     this.infoString = infoString;
 
     table.appendChild(tr);
@@ -212,7 +214,7 @@ export default class Controls {
   private timeline() {
     let canvas = document.createElement("canvas");
     canvas.id = "timelineCanvas";
-    canvas.width = 400;
+    canvas.width = 300;
     canvas.height = 1;
     this.ctx = canvas.getContext("2d");
     this.ctx.fillStyle = "white";
@@ -427,13 +429,26 @@ export default class Controls {
    * Bytecodes Used: bytecodes"
    */
   // TODO fix this (different stats)
-  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes: number, flag: number): void {
+  setInfoString(id, x: number, y: number, influence: number, conviction: number, bodyType: string, bytecodes: number, flag: number, bid?: number, parent?: number): void {
     // console.log(carryDirt);
-    let infoString = `Robot ID ${id} (${bodyType})<br>
-      Location: (${x}, ${y})<br>
-      Influence: ${influence}, Conviction: ${conviction} <br>
-      Bytecodes Used: ${bytecodes}, Flag ${flag}`;
+    let infoString = `<span class="info-name">ID:</span> <span class="info-num">${id}</span> | `;
+    infoString += `<span class="info-name">Location:</span> <span class="info-num">(${x}, ${y})</span><br>`;
+    infoString += `<span class="info-name">Influence:</span> <span class="info-num">${influence}</span> | `;
+    infoString += `<span class="info-name">Conviction:</span> <span class="info-num">${conviction}</span><br>`;
+    infoString += `<span class="info-name">Flag:</span> <span class="info-num">${flag}</span> | `;    
+    infoString += `<span class="info-name">Bytecodes Used:</span> <span class="info-num">${bytecodes}</span>`;
+    if (bid !== undefined) infoString += ` | <span class="info-name">Bid:</span> <span class="info-num">${bid}</span>`;
+    if (parent !== undefined) infoString += ` | <span class="info-name">Parent:</span> <span class="info-num">${parent}</span>`;
+    
+    // (${bodyType})<br>
+     // Location: (${x}, ${y})<br>
+      //Influence: ${influence}, Conviction: ${conviction} <br>
+      //Bytecodes Used: ${bytecodes}, Flag ${flag}`;
 
       this.infoString.innerHTML = infoString;
+  }
+
+  removeInfoString() {
+    this.infoString.innerHTML = "";
   }
 }

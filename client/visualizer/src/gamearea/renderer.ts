@@ -193,8 +193,8 @@ export default class Renderer {
     priorityIndices.forEach((i) => renderBot(i));
 
     // Render empowered bodies
-
     const empowered = world.empowered;
+    const empowered_id = world.empowered.arrays.id;
     const empowered_x = world.empowered.arrays.x;
     const empowered_y = world.empowered.arrays.y;
     const empowered_team = world.empowered.arrays.team;
