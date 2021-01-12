@@ -27,6 +27,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
     private RobotType type;
     private MapLocation location;
     private int influence;
+    private final int influenceCap;
     private int conviction;
     private int convictionCap;
     private int flag;
@@ -65,8 +66,9 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.type = type;
         this.location = loc;
         this.influence = influence;
+        this.influenceCap = 100000000;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
-        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? 1e8 : this.conviction;
+        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? this.influenceCap : this.conviction;
         this.flag = 0;
         this.bid = 0;
 
@@ -287,12 +289,18 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param influenceAmount the amount to change influence by (can be negative)
      */
     public void addInfluenceAndConviction(int influenceAmount) {
+        int oldInfluence = this.influence;
         this.influence += influenceAmount;
+        if (this.influence > this.influenceCap) {
+            this.influence = this.influenceCap;
+        }
         this.conviction = this.influence;
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, influenceAmount);
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, influenceAmount);
+        if (this.influence != oldInfluence) {
+            this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, this.influence - oldInfluence);
+            this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, this.influence - oldInfluence);
+        }
     }
-    
+
     /**
      * Sets the action cooldown given the number of turns.
      * 
