@@ -246,10 +246,16 @@ class Submissions extends Component {
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p>
                         <p>
-                            Create a <code>zip</code> file of your robot player. The <code>zip</code> file can only contain 1 player package, and needs to have a <code>RobotPlayer.java</code> file. Submit the <code>zip</code> file below. Ensure that you're not importing any packages not included in the <code>zip</code> file, or your code won't compile.
-                        </p><p>
-                        Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
-
+                            Create a <code>zip</code> file of your robot player, and submit it below. The submission format should be a zip file containing a single folder (which is your package name), which should contain RobotPlayer.java and any other code you have written, for example:
+                            <pre><code>
+                                submission.zip --> examplefuncsplayer --> RobotPlayer.java, FooBar.java
+                            </code></pre>
+                        </p>
+                        <p>
+                            Please <b><i>stay on this page until the card below indicates success.</i></b> To double-check that your code has been submitted, you can download at "Latest Submissions".
+                        </p>
+                        <p>
+                            If your bot does not compile, <b>see the "Compiling Tips" section at the bottom of this page.</b>
                         </p>
                         {file_button}
                         {file_button_2}
@@ -478,6 +484,31 @@ class Submissions extends Component {
         }
     }
 
+    renderCompilingTips() {
+        return (
+            <div className="card">
+            <div className="header">
+                <h4 className="title">Compiling Tips</h4>
+            </div>
+                <div className="content">
+                    <p>
+                        <ul>
+                            <li>
+                                Submission format: Check that your zip contains exactly one directory, and your code is inside that directory.
+                            </li>
+                            <li>
+                                Non-ASCII characters: Ensure your code is completely ASCII. In the past we have had compile errors due to comments containing diacritic characters (áéíóú).
+                            </li>
+                            <li>
+                                Make sure you only import from your own bot, and from java. packages. In particular, do not use javax, javafx, and watch out for importing from other versions of your bot (which may work locally, but will not work on our servers as you can only submit one folder).
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        )
+    }
+    
     render() {
         return (
             <div className="content">
@@ -509,6 +540,7 @@ class Submissions extends Component {
                                     { this.renderHelperTourTable() }
                                 </div>
                             </div>
+                            { this.renderCompilingTips() }
                         </div>
                     </div>
                 </div>
