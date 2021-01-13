@@ -33,11 +33,27 @@ ALLOWED_HOSTS = ['*']
 THIS_URL = 'https://2021.battlecode.org'
 
 # TODO: update this every time we update maps
-# TODO once we have more maps, update the default map selection (see views.py)
 SERVER_MAPS = [
   "maptestsmall",
   "circle",
-  "quadrants"
+  "quadrants",
+  "Andromeda.map21",
+  "Arena.map21",
+  "Bog.map21",
+  "Branches.map21",
+  "Chevron.map21",
+  "Corridor.map21",
+  "Cow.map21",
+  "CrossStitch.map21",
+  "CrownJewels.map21",
+  "ExesAndOhs.map21",
+  "FiveOfHearts.map21",
+  "Gridlock.map21",
+  "Illusion.map21",
+  "NotAPuzzle.map21",
+  "Rainbow.map21",
+  "SlowMusic.map21",
+  "Snowflake.map21"
 ]
 
 # this is the constant used in the ELO calculation

@@ -93,5 +93,5 @@ public class GameConstants {
     public static final int GAME_DEFAULT_SEED = 6370;
 
     /** The maximum number of rounds in a game.  **/
-    public static final int GAME_MAX_NUMBER_OF_ROUNDS = 3000;
+    public static final int GAME_MAX_NUMBER_OF_ROUNDS = 1500;
 }
