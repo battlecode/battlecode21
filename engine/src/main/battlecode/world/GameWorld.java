@@ -353,7 +353,7 @@ public strictfp class GameWorld {
     }
 
     public boolean timeLimitReached() {
-        return currentRound >= this.gameMap.getRounds() - 1;
+        return currentRound >= this.gameMap.getRounds();
     }
 
     public void processEndOfRound() {
