@@ -13,19 +13,21 @@ import com.google.flatbuffers.*;
  */
 public final class ProfilerProfile extends Table {
   public static ProfilerProfile getRootAsProfilerProfile(ByteBuffer _bb) { return getRootAsProfilerProfile(_bb, new ProfilerProfile()); }
-  public static ProfilerProfile getRootAsProfilerProfile(ByteBuffer _bb, ProfilerProfile obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public ProfilerProfile __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static ProfilerProfile getRootAsProfilerProfile(ByteBuffer _bb, ProfilerProfile obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public ProfilerProfile __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The display-friendly name of the profile.
    */
   public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
   /**
    * The events that occurred in the profile.
    */
   public ProfilerEvent events(int j) { return events(new ProfilerEvent(), j); }
-  public ProfilerEvent events(ProfilerEvent obj, int j) { int o = __offset(6); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
+  public ProfilerEvent events(ProfilerEvent obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int eventsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
 
   public static int createProfilerProfile(FlatBufferBuilder builder,

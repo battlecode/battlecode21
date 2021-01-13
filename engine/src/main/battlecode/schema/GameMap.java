@@ -13,14 +13,16 @@ import com.google.flatbuffers.*;
  */
 public final class GameMap extends Table {
   public static GameMap getRootAsGameMap(ByteBuffer _bb) { return getRootAsGameMap(_bb, new GameMap()); }
-  public static GameMap getRootAsGameMap(ByteBuffer _bb, GameMap obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__init(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public GameMap __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; return this; }
+  public static GameMap getRootAsGameMap(ByteBuffer _bb, GameMap obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; vtable_start = bb_pos - bb.getInt(bb_pos); vtable_size = bb.getShort(vtable_start); }
+  public GameMap __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   /**
    * The name of a map.
    */
   public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
   /**
    * The bottom corner of the map.
    */
@@ -35,7 +37,7 @@ public final class GameMap extends Table {
    * The bodies on the map.
    */
   public SpawnedBodyTable bodies() { return bodies(new SpawnedBodyTable()); }
-  public SpawnedBodyTable bodies(SpawnedBodyTable obj) { int o = __offset(10); return o != 0 ? obj.__init(__indirect(o + bb_pos), bb) : null; }
+  public SpawnedBodyTable bodies(SpawnedBodyTable obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   /**
    * The random seed of the map.
    */
@@ -46,6 +48,7 @@ public final class GameMap extends Table {
   public double passability(int j) { int o = __offset(14); return o != 0 ? bb.getDouble(__vector(o) + j * 8) : 0; }
   public int passabilityLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer passabilityAsByteBuffer() { return __vector_as_bytebuffer(14, 8); }
+  public ByteBuffer passabilityInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 8); }
 
   public static void startGameMap(FlatBufferBuilder builder) { builder.startObject(6); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
