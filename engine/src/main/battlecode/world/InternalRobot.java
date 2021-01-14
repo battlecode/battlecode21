@@ -394,7 +394,14 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
             RobotInfo info = toCreate.get(i);
             int id = this.gameWorld.spawnRobot(toCreateParents.get(i), info.getType(), info.getLocation(), this.team, info.getInfluence());
             InternalRobot newBot = this.gameWorld.getObjectInfo().getRobotByID(id);
-            newBot.addConviction(info.getConviction() - newBot.getConviction());
+            if (newBot.type != RobotType.ENLIGHTENMENT_CENTER) {
+                // Shouldn't be called on an enlightenment center, because if spawned center's influence exceeds limit this would send a redundant change conviction action.
+                newBot.addConviction(info.getConviction() - newBot.getConviction());
+            }
+            else {
+                // Resets influence and conviction to cap for enlightenment centers. Already done by reset bid, but nicer to do it here.
+                newBot.addInfluenceAndConviction(0);
+            }
             this.gameWorld.getMatchMaker().addAction(info.getID(), Action.CHANGE_TEAM, id);
         }
     }
