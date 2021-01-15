@@ -259,8 +259,8 @@ public strictfp interface RobotController {
 
     /**
      * Returns all robots of a given team that can be sensed within a certain
-     * radius of a specified location. The objects are returned in order of
-     * increasing distance from the specified center.
+     * radius of a specified location. The objects are returned in no particular
+     * order.
      *
      * @param center center of the given search radius
      * @param radiusSquared return robots this distance away from the center of
@@ -302,8 +302,8 @@ public strictfp interface RobotController {
 
     /**
      * Returns all robots of a given team that can be detected within a certain
-     * radius of a specified location. The objects are returned in order of
-     * increasing distance from the specified center.
+     * radius of a specified location. The objects are returned in no particular
+     * order.
      *
      * @param center center of the given search radius
      * @param radiusSquared return robots this distance away from the center of
