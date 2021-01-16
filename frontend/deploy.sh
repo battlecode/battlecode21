@@ -40,9 +40,9 @@ then
 	cp out ../../frontend/public -r
 	cd ../../frontend
 
-
     npm install
 	npm run build
+
 	rm -r public/specs
 	rm public/javadoc -r
 	rm public/out -r
