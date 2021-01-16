@@ -485,6 +485,7 @@ export default class MapEditorForm {
   }
 
   getMapJSON(): string {
+    // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
     const map = this.getMap();
     function replacer(key, value) {
       const originalObject = this[key];
@@ -501,6 +502,7 @@ export default class MapEditorForm {
   }
 
   setMap(mapJSON) {
+    // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
     function reviver(key, value) {
       if(typeof value === 'object' && value !== null) {
         if (value.dataType === 'Map') {
