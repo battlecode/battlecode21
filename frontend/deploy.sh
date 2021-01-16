@@ -25,6 +25,7 @@ then
 	./gradlew release_docs_zip -Prelease_version=$2
 	mv battlecode-javadoc-$2.zip javadoc.zip
 	unzip javadoc.zip -d javadoc
+	rm javadoc.zip
 	mkdir frontend/public/javadoc
 	mv javadoc frontend/public
 	cd frontend
