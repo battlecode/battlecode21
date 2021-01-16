@@ -18,6 +18,17 @@ then
 	rm public/specs -r
 	mkdir public/specs
 	cp -r ../specs public
+
+	rm public/javadoc -r
+	cd ..
+	# Assumes version as second arg to deploy script
+	./gradlew release_docs_zip -Prelease_version=$2
+	mv battlecode-javadoc-$2.zip javadoc.zip
+	unzip javadoc.zip -d javadoc
+	mkdir frontend/public/javadoc
+	mv javadoc frontend/public
+	cd frontend
+
         npm install
 	npm run build
 	rm -r public/specs
