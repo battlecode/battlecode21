@@ -29,6 +29,18 @@ then
 	mv javadoc frontend/public
 	cd frontend
 
+	rm public/out -r
+	cd ../client
+	npm install
+	cd playback
+	npm run build
+	cd ../visualizer
+	npm run prod
+	mkdir ../../frontend/public/out
+	cp out ../../frontend/public -r
+	cd ../../frontend
+
+
     npm install
 	npm run build
 	rm -r public/specs
