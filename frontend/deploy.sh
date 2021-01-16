@@ -44,6 +44,8 @@ then
     npm install
 	npm run build
 	rm -r public/specs
+	rm public/javadoc -r
+	rm public/out -r
 	cd build
 	gsutil -m rm gs://battlecode21-frontend/**
 	gsutil -m cp -r * gs://battlecode21-frontend
