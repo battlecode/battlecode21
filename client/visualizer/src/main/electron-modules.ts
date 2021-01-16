@@ -19,6 +19,7 @@ if (!process.env.ELECTRON) {
   define('path', [], () => null);
   define('child_process', [], () => null);
   define('http', [], () => null);
+  define('clipboard', [], () => null);
 }
 
 // in electron, actually imports

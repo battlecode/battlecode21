@@ -286,7 +286,7 @@ export default class Looper {
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
-            totalInfluence += teamStats.influence;
+            totalInfluence += teamStats.influence.reduce((a, b) => a + b);
         }
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
@@ -295,11 +295,15 @@ export default class Looper {
             // Update each robot count
             this.stats.robots.forEach((type: schema.BodyType) => {
                 this.stats.setRobotCount(teamID, type, teamStats.robots[type]);
+                this.stats.setRobotConviction(teamID, type, teamStats.conviction[type]);
+                this.stats.setRobotInfluence(teamID, type, teamStats.influence[type]);
             });
 
             // Set votes
             this.stats.setVotes(teamID, teamStats.votes);
-            this.stats.setInfluence(teamID, teamStats.influence, totalInfluence);
+            this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b), 
+                totalInfluence);
+            this.stats.setBuffs(teamID, teamStats.numBuffs);
         }
     }
 

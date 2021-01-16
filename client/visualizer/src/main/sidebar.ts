@@ -135,7 +135,8 @@ export default class Sidebar {
     P - Pause/Unpause<br>
     O - Stop (Go to Start)<br>
     E - Go to End<br>
-    V - Toggle Indicator Dots/Lines<br>
+    V - Toggle Indicator Dots/Lines for Selected Robot<br>
+    C - Toggle All Indicator Dots/Lines<br>
     G - Toggle Grid<br>
     N - Toggle Action Radius<br>
     M - Toggle Sensor Radius<br>

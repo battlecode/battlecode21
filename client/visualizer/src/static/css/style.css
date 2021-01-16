@@ -103,7 +103,7 @@ form {
 }
 
 #gamearea canvas {
-    max-height: calc(100vh - 75px);
+    max-height: calc(100vh - 79px);
     max-width: 99.5%;
     margin-top:auto;
     margin-bottom:auto;
@@ -125,7 +125,8 @@ form {
     margin-top: -75px;
     min-width: 569px;
     text-align: center;
-    margin-right: 295px;
+    margin-right: 325px;
+    margin-left: 10px;
 }
 
 #export {
@@ -551,8 +552,14 @@ h4 {
     padding: .2em;
 }
 
+#buffs-table {
+    border-collapse: collapse;
+}
+
 .stat-bar {
     height: 100%;
+    max-width: 50%;
+    margin: auto;
 }
 
 #star {

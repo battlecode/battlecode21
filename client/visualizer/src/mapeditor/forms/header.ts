@@ -126,10 +126,22 @@ export default class HeaderForm {
   }
 
   getWidth(): number {
-    return parseFloat(this.width.value);
+    return parseInt(this.width.value);
   }
 
   getHeight(): number {
-    return parseFloat(this.height.value);
+    return parseInt(this.height.value);
+  }
+
+  setName(name) {
+    this.name.value = name;
+  }
+
+  setWidth(width) {
+    this.width.value = width;
+  }
+
+  setHeight(height) {
+    this.height.value = height;
   }
 }
