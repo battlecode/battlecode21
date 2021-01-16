@@ -452,7 +452,7 @@ public final strictfp class RobotControllerImpl implements RobotController {
 
         this.robot.addCooldownTurns(); // not needed but here for the sake of consistency
         this.robot.empower(radiusSquared);
-        gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, -1);
+        gameWorld.getMatchMaker().addAction(getID(), Action.EMPOWER, radiusSquared);
 
         // self-destruct
         gameWorld.destroyRobot(this.robot.getID());

@@ -14,7 +14,7 @@ public final class Action {
   private Action() { }
   /**
    * Politicians self-destruct and affect nearby bodies.
-   * Target: none
+   * Target: radius squared
    */
   public static final byte EMPOWER = 0;
   /**

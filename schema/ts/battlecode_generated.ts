@@ -46,7 +46,7 @@ export namespace battlecode.schema{
 export enum Action{
   /**
    * Politicians self-destruct and affect nearby bodies.
-   * Target: none
+   * Target: radius squared
    */
   EMPOWER= 0,
 
@@ -2718,10 +2718,37 @@ bytecodesUsedArray():Int32Array|null {
 };
 
 /**
+ * Amount of influence contributing to the teams' buffs. Added at end for backwards compatability.
+ *
+ * @param number index
+ * @returns number
+ */
+teamNumBuffs(index: number):number|null {
+  var offset = this.bb!.__offset(this.bb_pos, 46);
+  return offset ? this.bb!.readInt32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
+};
+
+/**
+ * @returns number
+ */
+teamNumBuffsLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 46);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns Int32Array
+ */
+teamNumBuffsArray():Int32Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 46);
+  return offset ? new Int32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+};
+
+/**
  * @param flatbuffers.Builder builder
  */
 static startRound(builder:flatbuffers.Builder) {
-  builder.startObject(21);
+  builder.startObject(22);
 };
 
 /**
@@ -3146,6 +3173,35 @@ static startBytecodesUsedVector(builder:flatbuffers.Builder, numElems:number) {
 
 /**
  * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset teamNumBuffsOffset
+ */
+static addTeamNumBuffs(builder:flatbuffers.Builder, teamNumBuffsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(21, teamNumBuffsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<number> data
+ * @returns flatbuffers.Offset
+ */
+static createTeamNumBuffsVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addInt32(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startTeamNumBuffsVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
  * @returns flatbuffers.Offset
  */
 static endRound(builder:flatbuffers.Builder):flatbuffers.Offset {
@@ -3153,7 +3209,7 @@ static endRound(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset, teamVotesOffset:flatbuffers.Offset, teamBidderIDsOffset:flatbuffers.Offset, movedIDsOffset:flatbuffers.Offset, movedLocsOffset:flatbuffers.Offset, spawnedBodiesOffset:flatbuffers.Offset, diedIDsOffset:flatbuffers.Offset, actionIDsOffset:flatbuffers.Offset, actionsOffset:flatbuffers.Offset, actionTargetsOffset:flatbuffers.Offset, indicatorDotIDsOffset:flatbuffers.Offset, indicatorDotLocsOffset:flatbuffers.Offset, indicatorDotRGBsOffset:flatbuffers.Offset, indicatorLineIDsOffset:flatbuffers.Offset, indicatorLineStartLocsOffset:flatbuffers.Offset, indicatorLineEndLocsOffset:flatbuffers.Offset, indicatorLineRGBsOffset:flatbuffers.Offset, logsOffset:flatbuffers.Offset, roundID:number, bytecodeIDsOffset:flatbuffers.Offset, bytecodesUsedOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset, teamVotesOffset:flatbuffers.Offset, teamBidderIDsOffset:flatbuffers.Offset, movedIDsOffset:flatbuffers.Offset, movedLocsOffset:flatbuffers.Offset, spawnedBodiesOffset:flatbuffers.Offset, diedIDsOffset:flatbuffers.Offset, actionIDsOffset:flatbuffers.Offset, actionsOffset:flatbuffers.Offset, actionTargetsOffset:flatbuffers.Offset, indicatorDotIDsOffset:flatbuffers.Offset, indicatorDotLocsOffset:flatbuffers.Offset, indicatorDotRGBsOffset:flatbuffers.Offset, indicatorLineIDsOffset:flatbuffers.Offset, indicatorLineStartLocsOffset:flatbuffers.Offset, indicatorLineEndLocsOffset:flatbuffers.Offset, indicatorLineRGBsOffset:flatbuffers.Offset, logsOffset:flatbuffers.Offset, roundID:number, bytecodeIDsOffset:flatbuffers.Offset, bytecodesUsedOffset:flatbuffers.Offset, teamNumBuffsOffset:flatbuffers.Offset):flatbuffers.Offset {
   Round.startRound(builder);
   Round.addTeamIDs(builder, teamIDsOffset);
   Round.addTeamVotes(builder, teamVotesOffset);
@@ -3176,6 +3232,7 @@ static createRound(builder:flatbuffers.Builder, teamIDsOffset:flatbuffers.Offset
   Round.addRoundID(builder, roundID);
   Round.addBytecodeIDs(builder, bytecodeIDsOffset);
   Round.addBytecodesUsed(builder, bytecodesUsedOffset);
+  Round.addTeamNumBuffs(builder, teamNumBuffsOffset);
   return Round.endRound(builder);
 }
 }

@@ -337,6 +337,7 @@ public strictfp class GameMaker {
         private TIntArrayList teamIDs;
         private TIntArrayList teamVotes;
         private TIntArrayList teamBidderIDs;
+        private TIntArrayList teamNumBuffs;
 
         // Indicator dots with locations and RGB values
         private TIntArrayList indicatorDotIDs;
@@ -380,6 +381,7 @@ public strictfp class GameMaker {
             this.teamIDs = new TIntArrayList();
             this.teamVotes = new TIntArrayList();
             this.teamBidderIDs = new TIntArrayList();
+            this.teamNumBuffs = new TIntArrayList();
             this.indicatorDotIDs = new TIntArrayList();
             this.indicatorDotLocsX = new TIntArrayList();
             this.indicatorDotLocsY = new TIntArrayList();
@@ -453,6 +455,7 @@ public strictfp class GameMaker {
                 int teamIDsP = Round.createTeamIDsVector(builder, teamIDs.toArray());
                 int teamVotesP = Round.createTeamVotesVector(builder, teamVotes.toArray());
                 int teamBidderIDsP = Round.createTeamBidderIDsVector(builder, teamBidderIDs.toArray());
+                int teamNumBuffsP = Round.createTeamNumBuffsVector(builder, teamNumBuffs.toArray());
 
                 // The bodies that moved
                 int movedIDsP = Round.createMovedIDsVector(builder, movedIDs.toArray());
@@ -487,6 +490,7 @@ public strictfp class GameMaker {
                 Round.addTeamIDs(builder, teamIDsP);
                 Round.addTeamVotes(builder, teamVotesP);
                 Round.addTeamBidderIDs(builder, teamBidderIDsP);
+                Round.addTeamNumBuffs(builder, teamNumBuffsP);
                 Round.addMovedIDs(builder, movedIDsP);
                 Round.addMovedLocs(builder, movedLocsP);
                 Round.addSpawnedBodies(builder, spawnedBodiesP);
@@ -535,10 +539,11 @@ public strictfp class GameMaker {
             actionTargets.add(targetID);
         }
 
-        public void addTeamVote(Team team, int vote, int bidderID) {
+        public void addTeamInfo(Team team, int vote, int bidderID, int numBuffs) {
             teamIDs.add(TeamMapping.id(team));
             teamVotes.add(vote);
             teamBidderIDs.add(bidderID);
+            teamNumBuffs.add(numBuffs);
         }
 
         public void addIndicatorDot(int id, MapLocation loc, int red, int green, int blue) {
@@ -598,6 +603,7 @@ public strictfp class GameMaker {
             teamIDs.clear();
             teamVotes.clear();
             teamBidderIDs.clear();
+            teamNumBuffs.clear();
             indicatorDotIDs.clear();
             indicatorDotLocsX.clear();
             indicatorDotLocsY.clear();

@@ -402,16 +402,16 @@ public strictfp class GameWorld {
             }
         }
 
-        // Send teamVotes and teamBidderIDs to matchmaker
-        for (int i = 0; i < 2; i++)
-            this.matchMaker.addTeamVote(Team.values()[i], teamVotes[i], teamBidderIDs[i]);
-
         // Add buffs from expose
         int nextRound = currentRound + 1;
         for (int i = 0; i < 2; i++) {
             this.teamInfo.addBuffs(nextRound, Team.values()[i], this.buffsToAdd[i]);
             this.buffsToAdd[i] = 0; // reset
         }
+
+        // Send team info (votes, bidder IDs, and num buffs) to matchmaker
+        for (int i = 0; i < 2; i++)
+            this.matchMaker.addTeamInfo(Team.values()[i], teamVotes[i], teamBidderIDs[i], this.teamInfo.getNumBuffs(Team.values()[i], nextRound));
 
         // Check for end of match
         setWinnerIfAnnihilated();
