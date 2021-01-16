@@ -15,6 +15,7 @@ then
 	# 	esac
 	# done
 	echo "Proceding with deploy!"
+	rm public/specs -r
 	mkdir public/specs
 	cp -r ../specs public
         npm install
