@@ -29,7 +29,7 @@ public final class MatchFooter extends Table {
    * Profiler data for team A and B if profiling is enabled.
    */
   public ProfilerFile profilerFiles(int j) { return profilerFiles(new ProfilerFile(), j); }
-  public ProfilerFile profilerFiles(ProfilerFile obj, int j) { int o = __offset(8); return o != 0 ? obj.__init(__indirect(__vector(o) + j * 4), bb) : null; }
+  public ProfilerFile profilerFiles(ProfilerFile obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int profilerFilesLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
 
   public static int createMatchFooter(FlatBufferBuilder builder,

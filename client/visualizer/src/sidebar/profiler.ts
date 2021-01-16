@@ -23,8 +23,21 @@ export default class Profiler {
     this.iframe = this.createIFrame();
   }
 
+  public reset() {
+    this.clearSelect(this.teamSelector);
+    this.clearSelect(this.robotSelector);
+
+    this.currentTeamIndex = -1;
+    this.currentRobotIndex = -1;
+    const win = this.iframe.contentWindow;
+    if (win !== null) {
+      win.location.reload();
+    }
+  }
+
   public load(match: Match | undefined): void {
     this.profilerFiles = match !== undefined ? (match.profilerFiles || []) : [];
+    console.log(this.profilerFiles);
 
     this.profilerFiles = this.profilerFiles.map(file => {
       const frames = file.frames.map(frame => ({ name: frame }));
@@ -45,21 +58,7 @@ export default class Profiler {
       return { frames, profiles };
     });
 
-    this.clearSelect(this.teamSelector);
-    this.clearSelect(this.robotSelector);
-
-    this.currentTeamIndex = -1;
-    this.currentRobotIndex = -1;
-
-    if (this.profilerFiles.length == 0) {
-      // Reload the iframe to prevent old data from being displayed
-      const win = this.iframe.contentWindow;
-      if (win !== null) {
-        win.location.reload();
-      }
-
-      return;
-    }
+    this.reset();
 
     this.addSelectOption(this.teamSelector, 'Team A (red)', '0');
     this.addSelectOption(this.teamSelector, 'Team B (blue)', '1');
@@ -95,7 +94,9 @@ export default class Profiler {
     base.appendChild(this.notProfilingDiv);
 
     let p = document.createElement('p');
-    p.innerText = 'If no teams are visible, make sure to run a game with profiling enabled by ticking the checkbox on the Runner tab or to load a replay of a game that had profiling enabled.';
+    p.innerText = `If no teams are visible, make sure to run a game with profiling enabled by ticking the checkbox on the Runner tab or to load a replay of a game that had profiling enabled. \
+                   The match must completely load before profiling is visible.
+                  `;
     base.appendChild(p);
 
     base.appendChild(this.createSidebarFormItem('Team', this.teamSelector));
@@ -157,6 +158,8 @@ export default class Profiler {
 
     this.clearSelect(this.robotSelector);
 
+   // if (!this.profilerFiles[teamIndex]) return;
+
     for (let i = 0; i < this.profilerFiles[teamIndex].profiles.length; i++) {
       const profile = this.profilerFiles[teamIndex].profiles[i];
 
@@ -168,6 +171,8 @@ export default class Profiler {
 
   private onRobotChange(newRobotId: number): void {
     this.currentRobotIndex = newRobotId;
+
+   // if (!this.profilerFiles[this.currentTeamIndex]) return;
 
     const file = this.profilerFiles[this.currentTeamIndex];
     const robot = this.currentRobotIndex;

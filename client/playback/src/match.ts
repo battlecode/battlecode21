@@ -190,9 +190,8 @@ export default class Match {
             events,
           });
         }
-
         this.profilerFiles.push({ frames, profiles });
-    }
+      }
     }
   }
 
