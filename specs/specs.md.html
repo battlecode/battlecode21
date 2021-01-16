@@ -16,7 +16,7 @@
 
 **Battlecode: Campaign**
   *The formal specification of the Battlecode 2021 game.*
-  Current version: 2021.2.3.0
+  Current version: 2021.2.4.0
 
 Welcome to Battlecode 2021: Campaign.
 This is a high-level overview of this year's game.
@@ -473,6 +473,15 @@ If something is unclear, direct your questions to our [Discord](https://discord.
 We'll update this spec as the competition progresses.
 
 # Changelog
+
+- Version 2021.2.4.0 (1/16/21)
+    - Interface change:
+        - `senseNearbyRobots` and `detectNearbyRobots` no longer give any guarantees on return order.
+    - Map update:
+        - All map neutral ECs are now legal.
+        - Exclude map Cow from scrimmages as it is too large (you can keep it for testing if you want).
+    - Bug fix:
+        - Fix issue where EC conviction and influence become unequal after big flip.
 
 - Version 2021.2.3.0 (1/13/21)
     - Reduce number of rounds per game (3000 -> 1500)

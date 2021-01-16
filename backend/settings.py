@@ -43,7 +43,6 @@ SERVER_MAPS = [
   "Branches",
   "Chevron",
   "Corridor",
-  "Cow",
   "CrossStitch",
   "CrownJewels",
   "ExesAndOhs",
