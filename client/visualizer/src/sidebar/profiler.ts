@@ -1,5 +1,6 @@
 import { Match } from 'battlecode-playback';
 import { ProfilerFile } from 'battlecode-playback/out/match';
+import * as config from '../config';
 
 enum Team {
   A, B
@@ -11,34 +12,53 @@ export default class Profiler {
 
   private teamSelector: HTMLSelectElement;
   private robotSelector: HTMLSelectElement;
+  private notProfilingDiv: HTMLDivElement;
 
   private profilerFiles: ProfilerFile[];
   private currentTeamIndex: number = -1;
   private currentRobotIndex: number = -1;
 
-  constructor() {
+  constructor(private conf: config.Config) {
     this.div = this.createSidebarDiv();
     this.iframe = this.createIFrame();
   }
 
-  public load(match: Match | undefined): void {
-    this.profilerFiles = match !== undefined ? (match.profilerFiles || []) : [];
-
+  public reset() {
     this.clearSelect(this.teamSelector);
     this.clearSelect(this.robotSelector);
 
     this.currentTeamIndex = -1;
     this.currentRobotIndex = -1;
-
-    if (this.profilerFiles.length == 0) {
-      // Reload the iframe to prevent old data from being displayed
-      const win = this.iframe.contentWindow;
-      if (win !== null) {
-        win.location.reload();
-      }
-
-      return;
+    const win = this.iframe.contentWindow;
+    if (win !== null) {
+      win.location.reload();
     }
+  }
+
+  public load(match: Match | undefined): void {
+    this.profilerFiles = match !== undefined ? (match.profilerFiles || []) : [];
+    console.log(this.profilerFiles);
+
+    this.profilerFiles = this.profilerFiles.map(file => {
+      const frames = file.frames.map(frame => ({ name: frame }));
+
+      const profiles = file.profiles.map(profile => {
+        const hasEvents = profile.events.length > 0;
+
+        return {
+          type: 'evented',
+          name: profile.name,
+          unit: 'none',
+          startValue: hasEvents ? profile.events[0].at : 0,
+          endValue: hasEvents ? profile.events[profile.events.length - 1].at : 0,
+          events: profile.events,
+        };
+      });
+
+      return { frames, profiles };
+    });
+
+    this.reset();
 
     this.addSelectOption(this.teamSelector, 'Team A (red)', '0');
     this.addSelectOption(this.teamSelector, 'Team B (blue)', '1');
@@ -67,8 +87,16 @@ export default class Profiler {
       }
     };
 
+    this.notProfilingDiv =  document.createElement("div");
+    this.notProfilingDiv.className = "not-logging-div";
+    this.notProfilingDiv.textContent = "Profiling is disabled.";
+    this.notProfilingDiv.hidden = this.conf.doProfiling;
+    base.appendChild(this.notProfilingDiv);
+
     let p = document.createElement('p');
-    p.innerText = 'If no teams are visible, make sure to run a game with profiling enabled by ticking the checkbox on the Runner tab or to load a replay of a game that had profiling enabled.';
+    p.innerText = `If no teams are visible, make sure to run a game with profiling enabled by ticking the checkbox on the Runner tab or to load a replay of a game that had profiling enabled. \
+                   The match must completely load before profiling is visible.
+                  `;
     base.appendChild(p);
 
     base.appendChild(this.createSidebarFormItem('Team', this.teamSelector));
@@ -107,10 +135,7 @@ export default class Profiler {
       `);
 
       if (this.currentTeamIndex > -1 && this.currentRobotIndex > -1) {
-        this.sendToIFrame('load', {
-          file: this.profilerFiles[this.currentTeamIndex],
-          robot: this.currentRobotIndex,
-        });
+        this.onRobotChange(this.currentRobotIndex);
       }
     };
 
@@ -133,6 +158,8 @@ export default class Profiler {
 
     this.clearSelect(this.robotSelector);
 
+   // if (!this.profilerFiles[teamIndex]) return;
+
     for (let i = 0; i < this.profilerFiles[teamIndex].profiles.length; i++) {
       const profile = this.profilerFiles[teamIndex].profiles[i];
 
@@ -145,10 +172,21 @@ export default class Profiler {
   private onRobotChange(newRobotId: number): void {
     this.currentRobotIndex = newRobotId;
 
-    this.sendToIFrame('load', {
-      file: this.profilerFiles[this.currentTeamIndex],
-      robot: this.currentRobotIndex,
-    });
+   // if (!this.profilerFiles[this.currentTeamIndex]) return;
+
+    const file = this.profilerFiles[this.currentTeamIndex];
+    const robot = this.currentRobotIndex;
+
+    if (this.conf.doProfiling) {
+      this.sendToIFrame('load', {
+        $schema: 'https://www.speedscope.app/file-format-schema.json',
+        activeProfileIndex: 0,
+        shared: {
+          frames: file.frames,
+        },
+        profiles: [file.profiles[robot]],
+      });
+    }
   }
 
   private sendToIFrame(type: string, payload: any) {
@@ -156,5 +194,12 @@ export default class Profiler {
     if (frame !== null) {
       frame.postMessage({ type, payload }, '*');
     }
+  }
+
+  /**
+   * Sets indicator of whether logs are being processed.
+   */
+  setNotProfilingDiv() {
+    this.notProfilingDiv.hidden = this.conf.doProfiling;
   }
 }

@@ -32,6 +32,7 @@ export default class Looper {
     private updatesPerSecond: TickCounter;
     private lastSelectedID: number | undefined;
     private renderer: Renderer;
+    private loadedProfiler: boolean;
 
     private console: Console;
 
@@ -39,7 +40,7 @@ export default class Looper {
         private conf: config.Config, private imgs: imageloader.AllImages,
         private controls: Controls, private stats: Stats,
         private gamearea: GameArea, cconsole: Console,
-        private matchqueue: MatchQueue) {
+        private matchqueue: MatchQueue, private profiler?: Profiler) {
         
         this.console = cconsole;
 
@@ -102,6 +103,11 @@ export default class Looper {
         this.externalSeek = false;
 
         this.controls.updatePlayPauseButton(this.isPaused());
+        
+        if (this.profiler)
+           this.profiler.reset();
+
+        this.loadedProfiler = false;
 
         this.loopID = window.requestAnimationFrame((curTime) => this.loop.call(this, curTime));
 
@@ -271,6 +277,11 @@ export default class Looper {
             // interpGameTime might be incorrect if we haven't computed fast enough
             // @ts-ignore
             this.renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner, curTime);
+        }
+
+        if (this.profiler && this.match.profilerFiles.length && !this.loadedProfiler) {
+            this.profiler.load(this.match);
+            this.loadedProfiler = true;
         }
 
         this.updateStats(this.match.current, this.meta);

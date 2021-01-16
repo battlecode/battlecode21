@@ -31,6 +31,7 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
     private final String className;    // the class to which this method belongs
     private final boolean checkDisallowed;
     private final boolean debugMethodsEnabled;
+    private final boolean profilerEnabled;
 
     // used to load other class files
     private final TeamClassLoaderFactory.Loader loader;
@@ -64,7 +65,8 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
                                       final String[] exceptions,
                                       boolean silenced,
                                       boolean checkDisallowed,
-                                      boolean debugMethodsEnabled) {
+                                      boolean debugMethodsEnabled,
+                                      boolean profilerEnabled) {
         super(ASM5, access, methodName, methodDesc, signature, exceptions);
         this.methodWriter = mv;
 
@@ -72,6 +74,7 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
         this.className = className;
         this.checkDisallowed = checkDisallowed;
         this.debugMethodsEnabled = debugMethodsEnabled;
+        this.profilerEnabled = profilerEnabled;
     }
 
     protected String classReference(String name) {
@@ -141,8 +144,8 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
                     endOfBasicBlock(node);
                     break;
                 case INT_INSN:
-		    visitIntInsnNode((IntInsnNode) node);
-		    break;
+                    visitIntInsnNode((IntInsnNode) node);
+                    break;
                 case IINC_INSN:
                     bytecodeCtr++;
                     break;
@@ -152,6 +155,11 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
         instructions.insert(startLabel);
 
         boolean anyTryCatch = tryCatchBlocks.size() > 0;
+
+        if (profilerEnabled) {
+            // must be called before addDebugHandler() so debug methods are profiled properly
+            addEnterMethodHandler();
+        }
 
         if (debugMethodsEnabled && name.startsWith(DEBUG_PREFIX) && desc.endsWith("V")) {
             addDebugHandler();
@@ -183,6 +191,44 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
                 n.getType() == AbstractInsnNode.LABEL)
             n = n.getNext();
         return n;
+    }
+
+    private void addEnterMethodHandler() {
+        if (!profilerEnabled) {
+            return;
+        }
+
+        // call "enterMethod" at the beginning of the method
+        instructions.insertBefore(
+            nextInstruction(instructions.getFirst()),
+            new MethodInsnNode(
+                INVOKESTATIC,
+                "battlecode/instrumenter/inject/RobotMonitor",
+                "enterMethod",
+                "(" + Type.getDescriptor(String.class) + ")V",
+                false
+            )
+        );
+        instructions.insertBefore(
+            nextInstruction(instructions.getFirst()),
+            new LdcInsnNode(className.replaceAll("/", ".") + "." + name)
+        );
+    }
+
+    private void addExitMethodHandler(AbstractInsnNode n) {
+        if (!profilerEnabled) {
+            return;
+        }
+
+        // call "exitMethod" at every exit point of a method (return, implicit return and throw)
+        instructions.insertBefore(n, new LdcInsnNode(className.replaceAll("/", ".") + "." + name));
+        instructions.insertBefore(n, new MethodInsnNode(
+            INVOKESTATIC,
+            "battlecode/instrumenter/inject/RobotMonitor",
+            "exitMethod",
+            "(" + Type.getDescriptor(String.class) + ")V",
+            false
+        ));
     }
 
     @SuppressWarnings("unchecked")
@@ -262,6 +308,7 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
             case ARETURN:
             case RETURN:
                 endOfBasicBlock(n);
+                addExitMethodHandler(n);
                 if (name.startsWith("debug_") && desc.endsWith("V")) {
                     instructions.insertBefore(n, new MethodInsnNode(
                             INVOKESTATIC,
@@ -273,6 +320,7 @@ public class InstrumentingMethodVisitor extends MethodNode implements Opcodes {
                 break;
             case ATHROW:
                 endOfBasicBlock(n);
+                addExitMethodHandler(n);
                 break;
             case MONITORENTER:
             case MONITOREXIT:

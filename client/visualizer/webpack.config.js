@@ -58,7 +58,6 @@ module.exports = function(env) {
       mode: "development",
       devtool: 'source-map',
       plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         new webpack.LoaderOptionsPlugin({
           minimize: false,
           debug: true

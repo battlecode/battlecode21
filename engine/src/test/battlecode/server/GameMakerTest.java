@@ -10,6 +10,7 @@ import battlecode.schema.GameWrapper;
 import battlecode.util.TeamMapping;
 import battlecode.world.TestMapBuilder;
 
+import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,7 +48,7 @@ public class GameMakerTest {
     public void testMatchStateExceptions() {
         GameMaker gm = new GameMaker(info, null, true);
         gm.makeGameHeader();
-        gm.getMatchMaker().makeMatchFooter(Team.A, 23);
+        gm.getMatchMaker().makeMatchFooter(Team.A, 23, new ArrayList<>());
     }
     
     // @Test
@@ -65,7 +66,7 @@ public class GameMakerTest {
     //     mm.makeRound(0);
     //     mm.addDied(0);
     //     mm.makeRound(1);
-    //     mm.makeMatchFooter(Team.B, 2);
+    //     mm.makeMatchFooter(Team.B, 2, new ArrayList<>());
 
     //     GameMaker.MatchMaker mm2 = gm.getMatchMaker();
     //     mm2.makeMatchHeader(new TestMapBuilder("argentina", 55, 3, 58, 50, 1337, 50)
@@ -73,7 +74,7 @@ public class GameMakerTest {
     //             .addEnlightenmentCenter(1, Team.B, GameConstants.INITIAL_ENLIGHTENMENT_CENTER_INFLUENCE, new MapLocation(25, 25))
     //             .build());
     //     mm2.makeRound(0);
-    //     mm2.makeMatchFooter(Team.A, 1);
+    //     mm2.makeMatchFooter(Team.A, 1, new ArrayList<>());
     //     gm.makeGameFooter(Team.A);
 
     //     byte[] gameBytes = ungzip(gm.toBytes());

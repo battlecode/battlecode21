@@ -28,7 +28,7 @@ export default class Sidebar {
   readonly mapeditor: MapEditor;
   readonly matchrunner: MatchRunner;
   readonly matchqueue: MatchQueue;
-  readonly profiler: Profiler;
+  readonly profiler?: Profiler;
   private readonly help: HTMLDivElement;
 
   // Options
@@ -68,8 +68,8 @@ export default class Sidebar {
       // set callback for running a game, which should trigger the update check
       this.updateUpdate();
     });
-    this.profiler = new Profiler();
-    this.matchqueue = new MatchQueue(conf, images, this.profiler, runner);
+    if (conf.useProfiler) this.profiler = new Profiler(conf);
+    this.matchqueue = new MatchQueue(conf, images, runner);
     this.stats = new Stats(conf, images, runner);
     this.help = this.initializeHelp();
     this.conf = conf;
@@ -81,16 +81,22 @@ export default class Sidebar {
 
     const modePanel = document.createElement('table');
     modePanel.className = 'modepanel';
-    const modePanelRow = document.createElement('tr');
+
+    const modePanelRow1 = document.createElement('tr');
+    const modePanelRow2 = document.createElement('tr');
+
     this.modeButtons = new Map<Mode, HTMLButtonElement>();
-    modePanelRow.appendChild(this.modeButton(Mode.GAME, "Game"));
-    modePanelRow.appendChild(this.modeButton(Mode.LOGS, "Logs"));
-    modePanelRow.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
-    modePanelRow.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
-    // modePanelRow.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
-    modePanelRow.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
-    modePanelRow.appendChild(this.modeButton(Mode.HELP, "Help"));
-    modePanel.appendChild(modePanelRow);
+    modePanelRow1.appendChild(this.modeButton(Mode.GAME, "Game"));
+    modePanelRow1.appendChild(this.modeButton(Mode.LOGS, "Logs"));
+    modePanelRow1.appendChild(this.modeButton(Mode.QUEUE, "Queue"));
+    modePanelRow1.appendChild(this.modeButton(Mode.RUNNER, "Runner"));
+    if (this.conf.useProfiler) modePanelRow2.appendChild(this.modeButton(Mode.PROFILER, "Profiler"));
+    modePanelRow2.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
+    modePanelRow2.appendChild(this.modeButton(Mode.HELP, "Help"));
+
+    modePanel.appendChild(modePanelRow1);
+    modePanel.appendChild(modePanelRow2);
+
     this.div.appendChild(modePanel);
 
     this.div.appendChild(this.innerDiv);
@@ -100,7 +106,6 @@ export default class Sidebar {
     this.updateModeButtons();
     this.setSidebar();
   }
-
 
   /**
    * Sets a scaffold if a scaffold directory is found after everything is loaded
@@ -144,13 +149,13 @@ export default class Sidebar {
     H - Toggle Shorter Log Headers<br>
     B - Toggle Interpolation<br>
     L - Toggle whether to process logs.<br>
+    Q - Toggle whether to profile matches.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>
     S - Add<br>
     D - Delete<br>
     R - Reverse team<br>
-    
     <br>
     <b class="blue">How to Play a Match</b><br>
     <i>From the application:</i> Click <code>Runner</code>, select the bots and
@@ -174,19 +179,19 @@ export default class Sidebar {
     of data, pause the client first to prevent freezing.)<br>
     <br>
     <b class="blue">How to Use the Profiler</b><br>
-    <i> The profiler is currently disabled.</i><br>
+    <i class="red"> Be cautious of memory issues when profiling large games. To disable profiling
+    on a profiled match file, press "Q".</i><br>
     The profiler can be used to find out which methods are using a lot of
     bytecodes. To use it, tick the "Profiler enabled" checkbox in the
     Runner before running the game. Make sure that the runFromClient
     Gradle task sets bc.engine.enable-profiler to the value of the
     "profilerEnabled" property, as can be seen in the
-    <a href="https://github.com/battlecode/battlecode20-scaffold/blob/master/build.gradle" target="_blank">scaffold player</a>.
+    <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/build.gradle" target="_blank">scaffold player</a>.
     Make sure to add the "profilerEnabled" property to your
-    <a href="https://github.com/battlecode/battlecode20-scaffold/blob/master/gradle.properties" target="_blank">gradle.properties</a>
-    file as well.
-
-    Note that for games with a large number of units, it might be impossible
-    to run the profiler successfully (you might get an <code>OutOfMemoryError</code>).
+    <a href="https://github.com/battlecode/battlecode21-scaffold/blob/master/gradle.properties" target="_blank">gradle.properties</a>
+    file as well. A maximum of 10,000,000 events are recorded per team per
+    match if profiling is enabled to prevent the replay file from becoming
+    enormous.
     <br>
     <br>
     <b class="blue">How to Use the Map Editor</b><br>
@@ -343,7 +348,7 @@ export default class Sidebar {
         this.innerDiv.appendChild(this.mapeditor.div);
         break;
       case Mode.PROFILER:
-        this.innerDiv.append(this.profiler.div);
+        if (this.profiler) this.innerDiv.append(this.profiler.div);
         break;
     }
 

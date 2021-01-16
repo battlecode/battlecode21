@@ -156,8 +156,8 @@ public final class TeamClassLoaderFactory {
      * Create a loader for a new robot.
      * @return
      */
-    public Loader createLoader() {
-        return new Loader();
+    public Loader createLoader(boolean profilerEnabled) {
+        return new Loader(profilerEnabled);
     }
 
     /**
@@ -365,11 +365,16 @@ public final class TeamClassLoaderFactory {
         private final Map<String, Class<?>> loadedCache;
 
         /**
+         * Whether bytecode profiling is enabled or not.
+         */
+        private final boolean profilerEnabled;
+
+        /**
          * Create a loader.
          *
          * @throws InstrumentationException if we fail to create a loader for some reason.
          */
-        private Loader() throws InstrumentationException {
+        private Loader(boolean profilerEnabled) throws InstrumentationException {
 
             // use our classloader as a parent, rather than the default
             // system classloader
@@ -391,6 +396,7 @@ public final class TeamClassLoaderFactory {
             }*/
 
             this.loadedCache = new HashMap<>();
+            this.profilerEnabled = profilerEnabled;
         }
 
         public TeamClassLoaderFactory getFactory() {
@@ -522,7 +528,8 @@ public final class TeamClassLoaderFactory {
                     this,
                     false,
                     checkDisallowed,
-                    debugMethodsEnabled
+                    debugMethodsEnabled,
+                    profilerEnabled
             );
             reader.accept(cv, 0);        //passing false lets debug info be included in the transformation, so players get line numbers in stack traces
             return cw.toByteArray();

@@ -125,7 +125,7 @@ export default class MatchRunner {
 
     const profilerLabel = document.createElement('label');
     profilerLabel.setAttribute('for', 'profiler-enabled');
-    profilerLabel.innerText = 'Profiler enabled (will be slower)';
+    profilerLabel.innerText = 'Profiler enabled (will be more memory-intensive)';
 
     div.appendChild(document.createElement("br"));
     // Team A selector
@@ -146,7 +146,7 @@ export default class MatchRunner {
     const divProfiler = document.createElement("p");
     divProfiler.appendChild(this.profilerEnabled);
     divProfiler.appendChild(profilerLabel);
-    div.appendChild(divProfiler);
+    if (this.conf.useProfiler) div.appendChild(divProfiler);
 
     // Map selector
     div.appendChild(document.createTextNode("Select maps: "));
@@ -304,6 +304,7 @@ export default class MatchRunner {
       this.getTeamB(),
       this.getMaps(),
       this.isProfilerEnabled(),
+      (cmd: string) => this.makeLog("Running " + cmd, 'specialLog'),
       (err) => {
         console.log(err.stack);
         this.isLoadingMatch = false;
@@ -312,19 +313,20 @@ export default class MatchRunner {
         this.isLoadingMatch = false;
       },
       (stdoutdata) => {
-        const logs = document.createElement('p');
-        logs.innerHTML = stdoutdata.split('\n').join('<br/>');
-        this.compileLogs.appendChild(logs);
-        this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
+        this.makeLog(stdoutdata);
       },
       (stderrdata) => {
-        const logs = document.createElement('p');
-        logs.innerHTML = stderrdata.split('\n').join('<br/>');
-        logs.className = 'errorLog';
-        this.compileLogs.appendChild(logs);
-        this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
+        this.makeLog(stderrdata, 'errorLog');
       }
     );
+  }
+
+  private makeLog(content: string, className?: string) {
+    const logs = document.createElement('p');
+    logs.innerHTML = content.split('\n').join('<br/>');
+    if (className) logs.className = className;
+    this.compileLogs.appendChild(logs);
+    this.compileLogs.scrollTop = this.compileLogs.scrollHeight;
   }
 
   /**

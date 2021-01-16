@@ -9,7 +9,6 @@ import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 /**
- * Profiler tables
  * These tables are set-up so that they match closely with speedscope's file format documented at
  * https://github.com/jlfwong/speedscope/wiki/Importing-from-custom-sources.
  * The client uses speedscope to show the recorded data in an interactive interface.

@@ -58,7 +58,7 @@ export default class Client {
   mapeditor: MapEditor;
   gamearea: GameArea; // Inner game area
   console: Console; // Console to display logs
-  profiler: Profiler;
+  profiler?: Profiler;
   matchqueue: MatchQueue; // Match queue  
 
   runner: Runner;
@@ -81,7 +81,7 @@ export default class Client {
       this.root.appendChild(this.loadSidebar());
       this.root.appendChild(this.loadGameArea());
       this.loadScaffold();
-      this.runner.ready(this.controls, this.stats, this.gamearea, this.console, this.matchqueue);
+      this.runner.ready(this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler);
     });
   }
 
@@ -125,7 +125,7 @@ export default class Client {
    * Loads canvas to display game world.
    */
   private loadGameArea() {
-    this.gamearea = new GameArea(this.conf, this.imgs, this.mapeditor.canvas, this.profiler.iframe);
+    this.gamearea = new GameArea(this.conf, this.imgs, this.mapeditor.canvas, this.profiler ? this.profiler.iframe : undefined);
     // Handles all non-sidebar changes (gamearea, controls, and key stroke processing) on mode switch.
     // TODO: refactor.
     document.onkeydown = (e) => this.runner.onkeydown(e); // default keydown
@@ -134,9 +134,6 @@ export default class Client {
       this.controls.setControls();
       if (this.conf.mode == config.Mode.MAPEDITOR) {
         document.onkeydown = (e) => this.mapeditor.onkeydown(e);
-      }
-      else if (this.conf.mode == config.Mode.PROFILER) {
-        document.onkeydown = null;
       }
       else if (this.conf.mode != config.Mode.HELP) {
         document.onkeydown = (e) => this.runner.onkeydown(e);

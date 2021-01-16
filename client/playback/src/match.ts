@@ -15,10 +15,9 @@ export type ProfilerProfile = {
 }
 
 export type ProfilerFile = {
-  frames: Array<string>,
-  profiles: Array<ProfilerProfile>
+  frames: Array<any>,
+  profiles: Array<any>
 }
-
 
 
 // Return a timestamp representing the _current time in ms, not necessarily from
@@ -49,7 +48,7 @@ export default class Match {
    * Snapshots of the game world.
    * [0] is round 0 (the one stored in the GameMap), [1] is round
    * snapshotEvery * 1, [2] is round snapshotEvery * 2, etc.
-   * 
+   *
    * By this, we can quickly navigate to arbitrary time
    * Saving game world for all round will use too much memory
    */
@@ -162,37 +161,38 @@ export default class Match {
     this._lastTurn = footer.totalRounds();
     this._winner = footer.winner();
 
-    // for (let i = 0, iMax = footer.profilerFilesLength(); i < iMax; i++) {
-    //   const file = footer.profilerFiles(i);
+    if (this.config.doProfiling) {
+      for (let i = 0, iMax = footer.profilerFilesLength(); i < iMax; i++) {
+        const file = footer.profilerFiles(i);
 
-    //   const frames: string[] = [];
-    //   for (let j = 0, jMax = file.framesLength(); j < jMax; j++) {
-    //     frames.push(file.frames(j));
-    //   }
+        const frames: string[] = [];
+        for (let j = 0, jMax = file.framesLength(); j < jMax; j++) {
+          frames.push(file.frames(j));
+        }
 
-    //   const profiles: ProfilerProfile[] = [];
-    //   for (let j = 0, jMax = file.profilesLength(); j < jMax; j++) {
-    //     const profile = file.profiles(j);
+        const profiles: ProfilerProfile[] = [];
+        for (let j = 0, jMax = file.profilesLength(); j < jMax; j++) {
+          const profile = file.profiles(j);
 
-    //     const events: ProfilerEvent[] = [];
-    //     for (let k = 0, kMax = profile.eventsLength(); k < kMax; k++) {
-    //       const event = profile.events(k);
+          const events: ProfilerEvent[] = [];
+          for (let k = 0, kMax = profile.eventsLength(); k < kMax; k++) {
+            const event = profile.events(k);
 
-    //       events.push({
-    //         type: event.isOpen() ? 'O' : 'C',
-    //         at: event.at(),
-    //         frame: event.frame(),
-    //       });
-    //     }
+            events.push({
+              type: event.isOpen() ? 'O' : 'C',
+              at: event.at(),
+              frame: event.frame(),
+            });
+          }
 
-    //     profiles.push({
-    //       name: profile.name(),
-    //       events,
-    //     });
-    //   }
-
-    //   this.profilerFiles.push({ frames, profiles });
-    // }
+          profiles.push({
+            name: profile.name(),
+            events,
+          });
+        }
+        this.profilerFiles.push({ frames, profiles });
+      }
+    }
   }
 
   /**

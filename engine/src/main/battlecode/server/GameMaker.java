@@ -4,6 +4,9 @@ import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotType;
 import battlecode.common.Team;
+import battlecode.instrumenter.profiler.Profiler;
+import battlecode.instrumenter.profiler.ProfilerCollection;
+import battlecode.instrumenter.profiler.ProfilerEventType;
 import battlecode.schema.*;
 import battlecode.util.FlatHelpers;
 import battlecode.util.TeamMapping;
@@ -13,6 +16,7 @@ import gnu.trove.list.array.TByteArrayList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TCharArrayList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -416,11 +420,51 @@ public strictfp class GameMaker {
             clearData();
         }
 
-        public void makeMatchFooter(Team winTeam, int totalRounds) {
+        public void makeMatchFooter(Team winTeam, int totalRounds, List<ProfilerCollection> profilerCollections) {
             changeState(State.IN_MATCH, State.IN_GAME);
 
-            createEvent((builder) -> EventWrapper.createEventWrapper(builder, Event.MatchFooter,
-                    MatchFooter.createMatchFooter(builder, TeamMapping.id(winTeam), totalRounds)));
+            createEvent((builder) -> {
+                TIntArrayList profilerFiles = new TIntArrayList();
+
+                for (ProfilerCollection profilerCollection : profilerCollections) {
+                    TIntArrayList frames = new TIntArrayList();
+                    TIntArrayList profiles = new TIntArrayList();
+
+                    for (String frame : profilerCollection.getFrames()) {
+                        frames.add(builder.createString(frame));
+                    }
+
+                    for (Profiler profiler : profilerCollection.getProfilers()) {
+                        TIntArrayList events = new TIntArrayList();
+
+                        for (battlecode.instrumenter.profiler.ProfilerEvent event : profiler.getEvents()) {
+                            ProfilerEvent.startProfilerEvent(builder);
+                            ProfilerEvent.addIsOpen(builder, event.getType() == ProfilerEventType.OPEN);
+                            ProfilerEvent.addAt(builder, event.getAt());
+                            ProfilerEvent.addFrame(builder, event.getFrameId());
+                            events.add(ProfilerEvent.endProfilerEvent(builder));
+                        }
+
+                        int nameOffset = builder.createString(profiler.getName());
+                        int eventsOffset = ProfilerProfile.createEventsVector(builder, events.toArray());
+
+                        ProfilerProfile.startProfilerProfile(builder);
+                        ProfilerProfile.addName(builder, nameOffset);
+                        ProfilerProfile.addEvents(builder, eventsOffset);
+                        profiles.add(ProfilerProfile.endProfilerProfile(builder));
+                    }
+
+                    int framesOffset = ProfilerFile.createFramesVector(builder, frames.toArray());
+                    int profilesOffset = ProfilerFile.createProfilesVector(builder, profiles.toArray());
+
+                    profilerFiles.add(ProfilerFile.createProfilerFile(builder, framesOffset, profilesOffset));
+                }
+
+                int profilerFilesOffset = MatchFooter.createProfilerFilesVector(builder, profilerFiles.toArray());
+
+                return EventWrapper.createEventWrapper(builder, Event.MatchFooter,
+                    MatchFooter.createMatchFooter(builder, TeamMapping.id(winTeam), totalRounds, profilerFilesOffset));
+            });
 
             matchFooters.add(events.size() - 1);
         }

@@ -36,5 +36,6 @@ necessary updates.
 * `instrumenter`: handles instrumenting player code so that it is isolated, deterministic, and counts bytecodes.
   * `instrumenter/bytecode`: the actual bytecode-modification code.
   * `instrumenter/inject`: classes we replace various parts of java.lang with. Also contains RobotMonitor, which counts bytecodes.
+  * `instrumenter/profiler`: contains the bytecode profiler.
 * `server`: contains the main class that starts up the engine.
 * `serial`: contains some information that gets sent to the client as part of every match, such as who won.

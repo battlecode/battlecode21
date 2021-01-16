@@ -217,8 +217,8 @@ export default class Console {
   /**
    * Sets indicator of whether logs are being processed.
    */
-  setNotLoggingDiv(processLogs: boolean) {
-    this.notLoggingDiv.hidden = processLogs;
+  setNotLoggingDiv() {
+    this.notLoggingDiv.hidden = this.conf.processLogs;
   }
 
   /**
