@@ -74,7 +74,7 @@ export default class Console {
 
     this.notLoggingDiv =  document.createElement("div");
     this.notLoggingDiv.className = "not-logging-div";
-    this.notLoggingDiv.textContent = "Not processing logs.";
+    this.notLoggingDiv.textContent = "Not processing logs (toggle with L).";
     this.notLoggingDiv.hidden = this.conf.processLogs;
 
     div.appendChild(this.notLoggingDiv);

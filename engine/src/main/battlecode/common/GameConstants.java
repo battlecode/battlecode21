@@ -76,6 +76,9 @@ public class GameConstants {
     /** The passive influence ratio for Enlightenment Centers. To multiply by sqrt(roundNum). */
     public static final float PASSIVE_INFLUENCE_RATIO_ENLIGHTENMENT_CENTER = 0.2f;
 
+    /** Maximum allowable robot influence. */
+    public static final int ROBOT_INFLUENCE_LIMIT = 100000000;
+
     /** The minimum allowable flag value. */
     public static final int MIN_FLAG_VALUE = 0;
 
@@ -90,5 +93,5 @@ public class GameConstants {
     public static final int GAME_DEFAULT_SEED = 6370;
 
     /** The maximum number of rounds in a game.  **/
-    public static final int GAME_MAX_NUMBER_OF_ROUNDS = 3000;
+    public static final int GAME_MAX_NUMBER_OF_ROUNDS = 1500;
 }

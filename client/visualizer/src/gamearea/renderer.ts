@@ -193,13 +193,14 @@ export default class Renderer {
     priorityIndices.forEach((i) => renderBot(i));
 
     // Render empowered bodies
-
     const empowered = world.empowered;
+    const empowered_id = world.empowered.arrays.id;
     const empowered_x = world.empowered.arrays.x;
     const empowered_y = world.empowered.arrays.y;
+    const empowered_team = world.empowered.arrays.team;
 
     for (let i = 0; i < empowered.length; i++) {
-      drawEffect("empower", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
+      drawEffect(empowered_team[i] == 1 ? "empower_red" : "empower_blue", empowered_x[i], this.flip(empowered_y[i], minY, maxY));
     }
 
     this.setInfoStringEvent(world, xs, ys);
@@ -333,7 +334,7 @@ export default class Renderer {
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {
-    if (!this.conf.indicators) {
+    if (!this.conf.indicators && !this.conf.allIndicators) {
       return;
     }
 
@@ -353,7 +354,7 @@ export default class Renderer {
     console.log(dots.length);
 
     for (let i = 0; i < dots.length; i++) {
-      if (dotsID[i] === this.lastSelectedID) {
+      if (dotsID[i] === this.lastSelectedID || this.conf.allIndicators) {
         const red = dotsRed[i];
         const green = dotsGreen[i];
         const blue = dotsBlue[i];

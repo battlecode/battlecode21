@@ -169,6 +169,13 @@ public final class Round extends Table {
   public int bytecodesUsedLength() { int o = __offset(44); return o != 0 ? __vector_len(o) : 0; }
   public ByteBuffer bytecodesUsedAsByteBuffer() { return __vector_as_bytebuffer(44, 4); }
   public ByteBuffer bytecodesUsedInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 44, 4); }
+  /**
+   * Amount of influence contributing to the teams' buffs. Added at end for backwards compatability.
+   */
+  public int teamNumBuffs(int j) { int o = __offset(46); return o != 0 ? bb.getInt(__vector(o) + j * 4) : 0; }
+  public int teamNumBuffsLength() { int o = __offset(46); return o != 0 ? __vector_len(o) : 0; }
+  public ByteBuffer teamNumBuffsAsByteBuffer() { return __vector_as_bytebuffer(46, 4); }
+  public ByteBuffer teamNumBuffsInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 46, 4); }
 
   public static int createRound(FlatBufferBuilder builder,
       int teamIDsOffset,
@@ -191,8 +198,10 @@ public final class Round extends Table {
       int logsOffset,
       int roundID,
       int bytecodeIDsOffset,
-      int bytecodesUsedOffset) {
-    builder.startObject(21);
+      int bytecodesUsedOffset,
+      int teamNumBuffsOffset) {
+    builder.startObject(22);
+    Round.addTeamNumBuffs(builder, teamNumBuffsOffset);
     Round.addBytecodesUsed(builder, bytecodesUsedOffset);
     Round.addBytecodeIDs(builder, bytecodeIDsOffset);
     Round.addRoundID(builder, roundID);
@@ -217,7 +226,7 @@ public final class Round extends Table {
     return Round.endRound(builder);
   }
 
-  public static void startRound(FlatBufferBuilder builder) { builder.startObject(21); }
+  public static void startRound(FlatBufferBuilder builder) { builder.startObject(22); }
   public static void addTeamIDs(FlatBufferBuilder builder, int teamIDsOffset) { builder.addOffset(0, teamIDsOffset, 0); }
   public static int createTeamIDsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startTeamIDsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
@@ -263,6 +272,9 @@ public final class Round extends Table {
   public static void addBytecodesUsed(FlatBufferBuilder builder, int bytecodesUsedOffset) { builder.addOffset(20, bytecodesUsedOffset, 0); }
   public static int createBytecodesUsedVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
   public static void startBytecodesUsedVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addTeamNumBuffs(FlatBufferBuilder builder, int teamNumBuffsOffset) { builder.addOffset(21, teamNumBuffsOffset, 0); }
+  public static int createTeamNumBuffsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]); return builder.endVector(); }
+  public static void startTeamNumBuffsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endRound(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

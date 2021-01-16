@@ -11,13 +11,14 @@ import sys, os, shutil, logging, requests
 from google.cloud import storage
 
 
-def compile_report_result(submissionid, result, errormsg=''):
+
+def compile_report_result(submissionid, result, reason=''):
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_compile_update(submissionid), data={
-            'compilation_status': result,
-            'error_msg': errormsg
+            # Error message field not implemented yet
+            'compilation_status': result #, 'error_msg': reason
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
@@ -29,8 +30,18 @@ def compile_report_result(submissionid, result, errormsg=''):
 def compile_log_error(submissionid, reason):
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    compile_report_result(submissionid, COMPILE_ERROR, reason)
+    compile_report_result(submissionid, COMPILE_ERROR, reason=reason)
     sys.exit(1)
+
+def compile_log_fail(submissionid, reason):
+    """Reports a compilation failure to the backend"""
+    logging.error(reason)
+    compile_report_result(submissionid, COMPILE_FAIL, reason=reason)
+
+def compile_log_success(submissionid):
+    """Reports a server-side success to the backend"""
+    logging.info('Compilation succeeded')
+    compile_report_result(submissionid, COMPILE_SUCCESS)
 
 def compile_worker(submissionid):
     """
@@ -68,6 +79,8 @@ def compile_worker(submissionid):
         except:
             compile_log_error(submissionid, 'Could not retrieve source file from bucket')
 
+
+
         # Decompress submission archive
         result = util.monitor_command(
             ['unzip', 'source.zip', '-d', sourcedir],
@@ -90,7 +103,7 @@ def compile_worker(submissionid):
             packages = os.listdir(classdir)
         except:
             # No classes were generated after compiling
-            compile_report_result(submissionid, COMPILE_FAILED)
+            compile_log_fail(submissionid, 'No classes generated')
         else:
             if result[0] == 0 and len(packages) == 1:
                 # Compress compiled classes
@@ -106,13 +119,11 @@ def compile_worker(submissionid):
                             bucket.blob(os.path.join(submissionid, 'player.zip')).upload_from_file(file_obj)
                     except:
                         compile_log_error(submissionid, 'Could not send executable to bucket')
-                    logging.info('Compilation succeeded')
-                    compile_report_result(submissionid, COMPILE_SUCCESS)
+                    compile_log_success(submissionid)
                 else:
                     compile_log_error(submissionid, 'Could not compress compiled classes')
             else:
-                logging.info('Compilation failed')
-                compile_report_result(submissionid, COMPILE_FAILED)
+                compile_log_fail(submissionid, 'Compilation process failed, or no classes generated')
     finally:
         # Clean up working directory
         try:

@@ -16,7 +16,7 @@
 
 **Battlecode: Campaign**
   *The formal specification of the Battlecode 2021 game.*
-  Current version: 2021.2.0.3
+  Current version: 2021.2.4.1
 
 Welcome to Battlecode 2021: Campaign.
 This is a high-level overview of this year's game.
@@ -55,7 +55,7 @@ In **Battlecode: Campaign**, you will write code to control your team of robots,
 and lead your party to victory.
 
 In each Campaign battle, your robots will face an opponent party of robots on the game map.
-The game is turn-based, taking place over 3000 rounds:
+The game is turn-based, taking place over 1500 rounds:
 in every round, each robot takes one turn, in order of creation.
 Each robot receives limited computation time per turn,
 as described in the [Bytecode Limits](#bytecodelimits) section.
@@ -108,6 +108,8 @@ The core resource is **influence**.
 Wielding influence enables you to amass a larger and more powerful army of robots.
 Influence is not a global resource: your team's influence is distributed among your Enlightenment Centers,
 and is generated passively both by the Enlightenment Centers and by specific robot types.
+
+Each robot has a hard limit of $10^8$ influence: any influence in excessive of this will be permanently lost.
 
 ## Overview: Votes
 
@@ -471,6 +473,37 @@ If something is unclear, direct your questions to our [Discord](https://discord.
 We'll update this spec as the competition progresses.
 
 # Changelog
+
+- Version 2021.2.4.1 (1/16/21)
+    - Track more info in client
+
+- Version 2021.2.4.0 (1/16/21)
+    - Interface change:
+        - `senseNearbyRobots` and `detectNearbyRobots` no longer give any guarantees on return order.
+    - Map update:
+        - All map neutral ECs are now legal.
+        - Exclude map Cow from scrimmages as it is too large (you can keep it for testing if you want).
+    - Bug fix:
+        - Fix issue where EC conviction and influence become unequal after big flip.
+
+- Version 2021.2.3.0 (1/13/21)
+    - Reduce number of rounds per game (3000 -> 1500)
+    - Upload maps from Sprint Tournament 1
+
+- Version 2021.2.2.0 (1/12/21)
+    - Limit maximum robot influence to $10^8$, and supply `GameConstants.ROBOT_INFLUENCE_LIMIT`.
+
+- Version 2021.2.1.2 (1/11/21)
+    - Client
+      - Track more information
+      - Small visual changes
+
+- Version 2021.2.1.1 (1/11/21)
+    - Properly include the engine sources with the deployment
+
+- Version 2021.2.1.0 (1/11/21)
+    - Add command-line option to disable all indicator dots.
+      Can be achieved by adding `-Dbc.engine.show-indicators=false` to the `build.gradle` file.
 
 - Version 2021.2.0.3 (1/10/21)
     - Client

@@ -11,15 +11,16 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None, errormsg=''):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=''):
+
     """Sends the result of the run to the API endpoint"""
     try:
         auth_token = util.get_api_auth_token()
         response = requests.patch(url=api_game_update(gametype, gameid), data={
             'status': result,
-            'error_msg': errormsg,
             'winscore': winscore,
-            'losescore': losescore
+            'losescore': losescore,
+            'error_msg': reason
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
         })
@@ -28,11 +29,15 @@ def game_report_result(gametype, gameid, result, winscore=None, losescore=None, 
         logging.critical('Could not report result to API endpoint', exc_info=e)
         sys.exit(1)
 
-def game_log_error(gametype, gameid, reason):
+def game_log_error(gametype, gameid, reason): #For when the game fails and it is our fault
     """Reports a server-side error to the backend and terminates with failure"""
     logging.error(reason)
-    game_report_result(gametype, gameid, GAME_ERROR, errormsg=reason)
+    game_report_result(gametype, gameid, GAME_ERROR, reason=reason)
     sys.exit(1)
+
+def game_log_fail(gametype, gameid, reason): #For when the game fails and its not our fault
+    logging.error(reason)
+    game_report_result(gametype, gameid, GAME_ERROR, reason=reason)
 
 def game_worker(gameinfo):
     """
@@ -84,8 +89,10 @@ def game_worker(gameinfo):
             teamname2 = gameinfo['name2']
         else:
             teamname2 = player2
-    except:
+    except Exception as ex:
         game_log_error(gametype, gameid, 'Game information in incorrect format')
+        
+
 
     rootdir  = os.path.join('/', 'box')
     classdir = os.path.join(rootdir, 'classes')
@@ -93,14 +100,21 @@ def game_worker(gameinfo):
 
     try:
         # Obtain player executables
-        try:
-            os.mkdir(classdir)
-            with open(os.path.join(classdir, 'player1.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
-            with open(os.path.join(classdir, 'player2.zip'), 'wb') as file_obj:
-                bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
-        except:
-            game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
+        attempts = 10
+        for i in range(attempts):
+            try:
+                os.mkdir(classdir)
+                with open(os.path.join(classdir, 'player1.zip'), 'wb') as file_obj:
+                    bucket.get_blob(os.path.join(player1, 'player.zip')).download_to_file(file_obj)
+                with open(os.path.join(classdir, 'player2.zip'), 'wb') as file_obj:
+                    bucket.get_blob(os.path.join(player2, 'player.zip')).download_to_file(file_obj)
+
+                break # exit loop and continue on our merry way
+            except:
+                if i >= attempts-1: #Tried {attempts} times, give up
+                    game_log_error(gametype, gameid, 'Could not retrieve submissions from bucket')
+                else: #Try again
+                    logging.warn('Could not retrieve submissions from bucket, retrying...')
 
         # Decompress zip archives of player classes
         try:
@@ -145,7 +159,7 @@ def game_worker(gameinfo):
                 '-PpackageNameA={}'.format(package1),
                 '-PpackageNameB={}'.format(package2),
                 '-Pmaps={}'.format(maps),
-                '-Preplay=replay.bc20'
+                '-Preplay=replay.bc21'
             ],
             cwd=rootdir,
             timeout=TIMEOUT_GAME)
@@ -156,8 +170,8 @@ def game_worker(gameinfo):
         # Upload replay file
         bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
         try:
-            with open(os.path.join(rootdir, 'replay.bc20'), 'rb') as file_obj:
-                bucket.blob(os.path.join('replays', '{}.bc20'.format(replay))).upload_from_file(file_obj)
+            with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
+                bucket.blob(os.path.join('replays', '{}.bc21'.format(replay))).upload_from_file(file_obj)
         except:
             game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
@@ -193,10 +207,10 @@ def game_worker(gameinfo):
         try:
             shutil.rmtree(classdir)
             shutil.rmtree(builddir)
-            os.remove(os.path.join(rootdir, 'replay.bc20'))
+            os.remove(os.path.join(rootdir, 'replay.bc21'))
         except:
             logging.warning('Could not clean up game execution directory')
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=True)

@@ -80,7 +80,7 @@ table GameMap {
 /// the actions were performed.
 enum Action : byte {
     /// Politicians self-destruct and affect nearby bodies.
-    /// Target: none
+    /// Target: radius squared
     EMPOWER,
     /// Slanderers passively generate influence for the
     /// Enlightenment Center that created them.
@@ -315,6 +315,9 @@ table Round {
     bytecodeIDs: [int];
     /// The bytecodes used by the player bodies.
     bytecodesUsed: [int];
+
+    /// Amount of influence contributing to the teams' buffs. Added at end for backwards compatability.
+    teamNumBuffs: [int];
 }
 
 /// Necessary due to flatbuffers requiring unions to be wrapped in tables.

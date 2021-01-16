@@ -128,14 +128,15 @@ export default class Client {
     this.gamearea = new GameArea(this.conf, this.imgs, this.mapeditor.canvas, this.profiler ? this.profiler.iframe : undefined);
     // Handles all non-sidebar changes (gamearea, controls, and key stroke processing) on mode switch.
     // TODO: refactor.
+    document.onkeydown = (e) => this.runner.onkeydown(e); // default keydown
     this.sidebar.cb = () => {
       this.gamearea.setCanvas();
       this.controls.setControls();
       if (this.conf.mode == config.Mode.MAPEDITOR) {
-        document.onkeydown = this.mapeditor.onkeydown;
+        document.onkeydown = (e) => this.mapeditor.onkeydown(e);
       }
       else if (this.conf.mode != config.Mode.HELP) {
-        document.onkeydown = this.runner.onkeydown;
+        document.onkeydown = (e) => this.runner.onkeydown(e);
       }
       else {
         // Canvas can be anything in help mode

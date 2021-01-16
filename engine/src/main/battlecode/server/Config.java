@@ -59,6 +59,7 @@ public class Config {
         defaults.setProperty("bc.engine.silence-d", "false");
         defaults.setProperty("bc.engine.debug-methods", "false");
         defaults.setProperty("bc.engine.enable-profiler", "false");
+        defaults.setProperty("bc.engine.show-indicators", "true");
 
         defaults.setProperty("bc.game.team-a", "team000");
         defaults.setProperty("bc.game.team-b", "team000");

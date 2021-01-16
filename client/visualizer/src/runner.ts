@@ -76,6 +76,11 @@ export default class Runner {
       // window.location.assign('/visualizer.html');
     }
 
+    if (this.conf.tournamentMode) {
+      this.conf.processLogs = false; // in tournament mode, don't process logs by default
+      this.console.setNotLoggingDiv(this.conf.processLogs);
+    }
+
     if (this.conf.matchFileURL) {
       // Load a match file
       console.log(`Loading provided match file: ${this.conf.matchFileURL}`);
@@ -520,6 +525,9 @@ export default class Runner {
           break;
         case 86: // "v" - Toggle Indicator Dots and Lines
           this.conf.indicators = !this.conf.indicators;
+          break;
+        case 67: // "c" - Toggle All Indicator Dots and Lines
+          this.conf.allIndicators = !this.conf.allIndicators;
           break;
         case 66: // "b" - Toggle Interpolation
           this.conf.interpolate = !this.conf.interpolate;

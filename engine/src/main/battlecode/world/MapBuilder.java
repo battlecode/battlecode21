@@ -183,6 +183,8 @@ public class MapBuilder {
         for (RobotInfo r : bodies) {
             assert robots[locationToIndex(r.location.x, r.location.y)] == null;
             robots[locationToIndex(r.location.x, r.location.y)] = r;
+            if (r.influence < 50 || r.influence > 500) // this really should be a GameConstant, but oh well
+                throw new RuntimeException("Influence not in [50, 500]");
         }
 
 
@@ -200,6 +202,16 @@ public class MapBuilder {
         }
         if (noTeamARobots) {
             throw new RuntimeException("Map must have starting robots of each team");
+        }
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                MapLocation current = new MapLocation(x, y);
+                // This should also be a GameConstant, but I'm speed-coding this and we can fix this later
+                if (passabilityArray[locationToIndex(current.x, current.y)] < 0.1 || passabilityArray[locationToIndex(current.x, current.y)] > 1.0) {
+                    throw new RuntimeException("Map passability not between 0.1 and 1.0");
+                }
+            }
         }
 
         // assert passability and Enlightenment Center symmetry

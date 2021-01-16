@@ -56,9 +56,14 @@ export interface Config {
   interpolate: boolean;
 
   /**
-   * Whether or not to display indicator dots and lines
+   * Whether or not to display indicator dots and lines for clicked robot.
    */
   indicators: boolean;
+
+  /**
+   * Whether or not to display all indicator lines.
+   */
+  allIndicators: boolean;
 
   /**
    * Whether or not to display the action radius.
@@ -134,7 +139,7 @@ export enum Mode {
  */
 export function defaults(supplied?: any): Config {
   let conf: Config = {
-    gameVersion: "2021.2.0.3", //TODO: Change this on each release!
+    gameVersion: "2021.2.4.1", //TODO: Change this on each release!
     fullscreen: false,
     width: 600,
     height: 600,
@@ -146,6 +151,7 @@ export function defaults(supplied?: any): Config {
     tournamentMode: false,
     interpolate: true,
     indicators: false,
+    allIndicators: false,
     mode: Mode.QUEUE,
     splash: true,
     seeActionRadius: false,
@@ -154,7 +160,7 @@ export function defaults(supplied?: any): Config {
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
-    processLogs: true,
+    processLogs: false,
     useProfiler: true,
     doProfiling: true
   };

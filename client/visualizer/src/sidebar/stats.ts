@@ -1,7 +1,7 @@
-import {Config} from '../config';
+import { Config } from '../config';
 import * as cst from '../constants';
-import {AllImages} from '../imageloader';
-import {schema} from 'battlecode-playback';
+import { AllImages } from '../imageloader';
+import { schema } from 'battlecode-playback';
 import Runner from '../runner';
 
 const hex: Object = {
@@ -9,10 +9,15 @@ const hex: Object = {
   2: "#4f7ee6"
 };
 
-export type StatBar = {
+type VoteBar = {
   bar: HTMLDivElement,
   label: HTMLSpanElement
 };
+
+type BuffDisplay = {
+  numBuffs: HTMLSpanElement,
+  buff: HTMLSpanElement
+}
 
 /**
 * Loads game stats: team name, votes, robot count
@@ -30,12 +35,14 @@ export default class Stats {
   private readonly tourIndexJump: HTMLInputElement;
 
   // Key is the team ID
-  private robotTds: Object = {}; // Secondary key is robot type
-  private statBars: Map<number, { votes: StatBar }>;
-  private statsTableElement: HTMLTableElement;
+  private robotTds: Map<number, Map<string, Map<number, HTMLTableCellElement>>> = new Map();
 
-  private relativeBarElement: HTMLElement;
-  private relBars: HTMLDivElement[];
+  private voteBars: VoteBar[];
+  private maxVotes: number;
+
+  private relativeBars: HTMLDivElement[];
+
+  private buffDisplays: BuffDisplay[];
 
   private robotConsole: HTMLDivElement;
 
@@ -58,7 +65,6 @@ export default class Stats {
 
     let teamNames: Array<string> = ["?????", "?????"];
     let teamIDs: Array<number> = [1, 2];
-    this.statsTableElement = document.createElement("table");
     this.initializeGame(teamNames, teamIDs);
   }
 
@@ -85,9 +91,18 @@ export default class Stats {
 
     // Create the table row with the robot images
     let robotImages: HTMLTableRowElement = document.createElement("tr");
-    
+    robotImages.appendChild(document.createElement("td")); // blank header
+
     // Create the table row with the robot counts
-    let robotCounts: HTMLTableRowElement = document.createElement("tr");
+    let robotCounts = {};
+
+    for (let value in this.robotTds[teamID]) {
+      robotCounts[value] = document.createElement("tr");
+      const title = document.createElement("td");
+      if (value === "conviction") title.innerHTML = "<b>C</b>";
+      if (value === "influence") title.innerHTML = "<b>I</b>";
+      robotCounts[value].appendChild(title);
+    }
 
     for (let robot of this.robots) {
       let robotName: string = cst.bodyTypeToString(robot);
@@ -99,19 +114,39 @@ export default class Stats {
       img.style.height = "64px";
 
       tdRobot.appendChild(img);
-
       robotImages.appendChild(tdRobot);
 
-      let tdCount: HTMLTableCellElement = this.robotTds[teamID][robot];
-      robotCounts.appendChild(tdCount);
+      for (let value in this.robotTds[teamID]) {
+        let tdCount: HTMLTableCellElement = this.robotTds[teamID][value][robot];
+        robotCounts[value].appendChild(tdCount);
+      }
     }
     table.appendChild(robotImages);
-    table.appendChild(robotCounts);
+    for (let value in this.robotTds[teamID]) {
+      table.appendChild(robotCounts[value]);
+    }
 
     return table;
   }
 
-  private statsTable(teamIDs: Array<number>): HTMLTableElement {
+  private initVoteBars(teamIDs: Array<number>) {
+    const voteBars: VoteBar[] = [];
+    teamIDs.forEach((teamID: number) => {
+      let votes = document.createElement("div");
+      votes.className = "stat-bar";
+      votes.style.backgroundColor = hex[teamID];
+      let votesSpan = document.createElement("span");
+      votesSpan.innerHTML = "0";
+      // Store the stat bars
+      voteBars[teamID] = {
+        bar: votes,
+        label: votesSpan
+      };
+    });
+    return voteBars;
+  }
+
+  private getVoteBarElement(teamIDs: Array<number>): HTMLTableElement {
     const table = document.createElement("table");
     const bars = document.createElement("tr");
     const counts = document.createElement("tr");
@@ -120,21 +155,19 @@ export default class Stats {
     table.setAttribute("align", "center");
 
     const title = document.createElement('td');
-    title.colSpan= 2;
+    title.colSpan = 2;
     const label = document.createElement('h3');
     label.innerText = 'Votes';
 
     teamIDs.forEach((id: number) => {
       const bar = document.createElement("td");
-      bar.height = "150";
+      bar.height = "120";
       bar.vAlign = "bottom";
-      // TODO: figure out if statbars.get(id) can actually be null??
-      bar.appendChild(this.statBars.get(id)!.votes.bar);
+      bar.appendChild(this.voteBars[id].bar);
       bars.appendChild(bar);
 
       const count = document.createElement("td");
-      // TODO: figure out if statbars.get(id) can actually be null??
-      count.appendChild(this.statBars.get(id)!.votes.label);
+      count.appendChild(this.voteBars[id].label);
       counts.appendChild(count);
     });
 
@@ -145,41 +178,142 @@ export default class Stats {
     return table;
   }
 
-  private relativeBar(teamIds: Array<number>): HTMLElement {
+  private initRelativeBars(teamIDs: Array<number>) {
+    const relativeBars: HTMLDivElement[] = [];
+    teamIDs.forEach((id: number) => {
+      const bar = document.createElement("div");
+      bar.style.backgroundColor = hex[id];
+      bar.style.width = `50%`;
+      bar.className = "influence-bar";
+      bar.innerText = "0";
+
+      relativeBars[id] = bar;
+    });
+    return relativeBars;
+  }
+
+  private getRelativeBarsElement(teamIDs: Array<number>): HTMLElement {
     const div = document.createElement("div");
     div.setAttribute("align", "center");
-    this.relBars = [];
+
+    const label = document.createElement('h3');
+    label.innerText = 'Total Influence';
 
     const frame = document.createElement("div");
     frame.style.width = "250px";
-    frame.style.height = "30px";
 
-    teamIds.forEach((id: number) => {
-      const bar = document.createElement("div");
-      bar.style.backgroundColor = hex[id];
-      bar.style.height = frame.style.height;
-      bar.style.width = `${100*id}px`;
-
-      this.relBars[id] = bar;
-      frame.appendChild(bar);
+    teamIDs.forEach((id: number) => {
+      frame.appendChild(this.relativeBars[id]);
     });
 
+    div.appendChild(label);
     div.appendChild(frame);
     return div;
   }
 
+  private initBuffDisplays(teamIDs: Array<number>) {
+    const buffDisplays: BuffDisplay[] = [];
+    teamIDs.forEach((id: number) => {
+      const numBuffs = document.createElement("sup");
+      const buff = document.createElement("span");
+      numBuffs.style.color = hex[id];
+      buff.style.color = hex[id];
+      buff.style.fontWeight = "bold";
+      numBuffs.textContent = "0";
+      buff.textContent = "1.00";
+      buffDisplays[id] = {numBuffs: numBuffs, buff: buff};
+    });
+    return buffDisplays;
+  }
+
+  private getBuffDisplaysElement(teamIDs: Array<number>): HTMLElement {
+    const table = document.createElement("table");
+    table.id = "buffs-table";
+    table.style.width = "100%";
+
+    const title = document.createElement('td');
+    title.colSpan = 2;
+    const label = document.createElement('h3');
+    label.innerText = 'Buffs';
+
+    const row = document.createElement("tr");
+
+    teamIDs.forEach((id: number) => {
+      const cell = document.createElement("td");
+      cell.appendChild(document.createTextNode("1.001"));
+      cell.appendChild(this.buffDisplays[id].numBuffs);
+      cell.appendChild(document.createTextNode(" = "));
+      cell.appendChild(this.buffDisplays[id].buff);
+      row.appendChild(cell);
+    });
+
+    title.appendChild(label);
+    table.appendChild(title);
+    table.appendChild(row);
+
+    return table;
+  }
+
+  // private drawBuffsGraph(ctx: CanvasRenderingContext2D, upto: number) {
+  //   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  //   // draw axes
+  //   ctx.save();
+  //   ctx.strokeStyle = "#000000";
+  //   ctx.lineWidth = 0.02;
+  //   ctx.moveTo(0, 1);
+  //   ctx.lineTo(0, 0);
+  //   ctx.stroke();
+  //   ctx.moveTo(0, 1);
+  //   ctx.lineTo(1, 1);
+  //   ctx.stroke();
+
+  //   const xscale = 1 / upto;
+  //   const yscale = 1 / cst.buffFactor(upto);
+
+  //   for (let i = 0; i <= upto; i++) {
+  //     ctx.moveTo(i * xscale, 1 - cst.buffFactor(i) * yscale);
+  //     ctx.lineTo(i * xscale, 1 - cst.buffFactor(i + 1) * yscale);
+  //   }
+  //   ctx.stroke();
+
+  //   ctx.restore();
+  // }
+
+  // private plotBuff(ctx: CanvasRenderingContext2D, upto: number, buff1: number, buff2: number) {
+  //   const xscale = 1 / upto;
+  //   const yscale = 1 / cst.buffFactor(upto);
+
+  //   ctx.save();
+
+  //   ctx.fillStyle = hex[1];
+  //   ctx.font = "0.1px Comic Sans MS";
+  //   //  ctx.moveTo(buff1*xscale, cst.buffFactor(buff1)*yscale);
+  //   ctx.fillText("R", buff1 * xscale, 1 - cst.buffFactor(buff1) * yscale + 0.08);
+  //   // ctx.arc(buff1*xscale, cst.buffFactor(buff1)*yscale, 0.02, 0, 2*Math.PI);
+  //   // ctx.fill();
+
+  //   ctx.fillStyle = hex[2];
+  //   ctx.fillText("B", buff2 * xscale, 1 - cst.buffFactor(buff2) * yscale - 0.04);
+
+  //   ctx.moveTo(buff2 * xscale, cst.buffFactor(buff2) * yscale - 0.05);
+  //   // ctx.arc(buff1*xscale, cst.buffFactor(buff2)*yscale - 0.05, 0.02, 0, 2*Math.PI);
+  //   // ctx.fill();
+  //   ctx.restore();
+  // }
+
   /**
    * Clear the current stats bar and reinitialize it with the given teams.
    */
-  initializeGame(teamNames: Array<string>, teamIDs: Array<number>){
+  initializeGame(teamNames: Array<string>, teamIDs: Array<number>) {
     // Remove the previous match info
     while (this.div.firstChild) {
       this.div.removeChild(this.div.firstChild);
     }
-    this.robotTds = {};
-    this.statBars = new Map<number, { votes: StatBar }>();
+    this.voteBars = [];
+    this.relativeBars = [];
+    this.maxVotes = 1500;
 
-    if(this.conf.tournamentMode){
+    if (this.conf.tournamentMode) {
       // FOR TOURNAMENT
       let uploadButton = this.runner.getUploadButton();
       let tempdiv = document.createElement("div");
@@ -193,7 +327,7 @@ export default class Stats {
       this.tourIndexJump.onchange = (e) => { this.tourIndexJumpFun(e) };
       this.div.appendChild(this.tourIndexJump);
     }
-    
+
     // Populate with new info
     // Add a section to the stats bar for each team in the match
     for (var index = 0; index < teamIDs.length; index++) {
@@ -201,34 +335,21 @@ export default class Stats {
       let teamID = teamIDs[index];
       let teamName = teamNames[index];
       let inGameID = index + 1; // teams start at index 1
+      this.robotTds[teamID] = new Map();
 
       // A div element containing all stats information about this team
       let teamDiv = document.createElement("div");
 
       // Create td elements for the robot counts and store them in robotTds
       // so we can update these robot counts later; maps robot type to count
-      let initialRobotCount: Object = {};
-      for (let robot of this.robots) {
-        let td: HTMLTableCellElement = document.createElement("td");
-        td.innerHTML = "0";
-        initialRobotCount[robot] = td;
-      }
-      this.robotTds[teamID] = initialRobotCount;
-      
-      // Create the stat bar for votes
-      let votes = document.createElement("div");
-      votes.className = "stat-bar";
-      votes.style.backgroundColor = hex[inGameID];
-      let votesSpan = document.createElement("span");
-      votesSpan.innerHTML = "0";
-
-      // Store the stat bars
-      this.statBars.set(teamID, {
-        votes: {
-          bar: votes,
-          label: votesSpan
+      for (let value of ["count", "conviction", "influence"]) {
+        this.robotTds[teamID][value] = new Map<number, HTMLTableCellElement>();
+        for (let robot of this.robots) {
+          let td: HTMLTableCellElement = document.createElement("td");
+          td.innerHTML = "0";
+          this.robotTds[teamID][value][robot] = td;
         }
-      });
+      }
 
       // Add the team name banner and the robot count table
       teamDiv.appendChild(this.teamHeaderNode(teamName, inGameID));
@@ -240,21 +361,28 @@ export default class Stats {
 
     this.div.appendChild(document.createElement("hr"));
 
-    // Add stats table
-    this.statsTableElement.remove();
-    this.statsTableElement = this.statsTable(teamIDs);
-    this.div.appendChild(this.statsTableElement);
-
     // TODO relative bar
-    this.relativeBarElement = this.relativeBar(teamIDs);
     // this.div.appendChild(this.relativeBarElement);
     // console.log(this.relativeBarElement)
+
+    // Add stats table
+    this.voteBars = this.initVoteBars(teamIDs);
+    const voteBarsElement = this.getVoteBarElement(teamIDs);
+    this.div.appendChild(voteBarsElement);
+
+    this.relativeBars = this.initRelativeBars(teamIDs);
+    const relativeBarsElement = this.getRelativeBarsElement(teamIDs);
+    this.div.appendChild(relativeBarsElement);
+
+    this.buffDisplays = this.initBuffDisplays(teamIDs);
+    const buffDivsElement = this.getBuffDisplaysElement(teamIDs);
+    this.div.appendChild(buffDivsElement);
   }
 
   tourIndexJumpFun(e) {
-    if (e.keyCode === 13){
-        var h = +this.tourIndexJump.value.trim().toLowerCase();
-        this.runner.seekTournament(h-1);
+    if (e.keyCode === 13) {
+      var h = +this.tourIndexJump.value.trim().toLowerCase();
+      this.runner.seekTournament(h - 1);
     }
   }
 
@@ -262,8 +390,24 @@ export default class Stats {
    * Change the robot count on the stats bar
    */
   setRobotCount(teamID: number, robotType: schema.BodyType, count: number) {
-    let td: HTMLTableCellElement = this.robotTds[teamID][robotType];
+    let td: HTMLTableCellElement = this.robotTds[teamID]["count"][robotType];
     td.innerHTML = String(count);
+  }
+
+  /**
+   * Change the robot conviction on the stats bar
+   */
+  setRobotConviction(teamID: number, robotType: schema.BodyType, conviction: number) {
+    let td: HTMLTableCellElement = this.robotTds[teamID]["conviction"][robotType];
+    td.innerHTML = String(conviction);
+  }
+
+  /**
+   * Change the robot influence on the stats bar
+   */
+  setRobotInfluence(teamID: number, robotType: schema.BodyType, influence: number) {
+    let td: HTMLTableCellElement = this.robotTds[teamID]["influence"][robotType];
+    td.innerHTML = String(influence);
   }
 
   /**
@@ -271,10 +415,10 @@ export default class Stats {
    */
   setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
-    const statBar: StatBar = this.statBars.get(teamID)!.votes;
+    const statBar: VoteBar = this.voteBars[teamID];
     statBar.label.innerText = String(count);
-    const maxVotes = 1500;
-    statBar.bar.style.height =`${Math.min(100 * count / maxVotes, 100)}%`;
+    this.maxVotes = Math.max(this.maxVotes, count);
+    statBar.bar.style.height = `${Math.min(100 * count / this.maxVotes, 100)}%`;
 
     // TODO add reactions to relative bars
     // TODO get total votes to get ratio
@@ -284,5 +428,17 @@ export default class Stats {
     // if (this.images.star.parentNode === statBar.bar) {
     //   this.images.star.remove();
     // }
+  }
+
+  setTeamInfluence(teamID: number, influence: number, totalInfluence: number) {
+    const relBar: HTMLDivElement = this.relativeBars[teamID];
+    relBar.innerText = String(influence);
+    if (totalInfluence == 0) relBar.style.width = '50%';
+    else relBar.style.width = String(Math.round(influence * 100 / totalInfluence)) + "%";
+  }
+
+  setBuffs(teamID: number, numBuffs: number) {
+    this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
+    this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(2));
   }
 }

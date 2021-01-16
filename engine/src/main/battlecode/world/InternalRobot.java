@@ -66,7 +66,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         this.location = loc;
         this.influence = influence;
         this.conviction = (int) Math.ceil(this.type.convictionRatio * this.influence);
-        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? Integer.MAX_VALUE : this.conviction;
+        this.convictionCap = type == RobotType.ENLIGHTENMENT_CENTER ? GameConstants.ROBOT_INFLUENCE_LIMIT : this.conviction;
         this.flag = 0;
         this.bid = 0;
 
@@ -287,12 +287,18 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param influenceAmount the amount to change influence by (can be negative)
      */
     public void addInfluenceAndConviction(int influenceAmount) {
+        int oldInfluence = this.influence;
         this.influence += influenceAmount;
+        if (this.influence > GameConstants.ROBOT_INFLUENCE_LIMIT) {
+            this.influence = GameConstants.ROBOT_INFLUENCE_LIMIT;
+        }
         this.conviction = this.influence;
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, influenceAmount);
-        this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, influenceAmount);
+        if (this.influence != oldInfluence) {
+            this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_INFLUENCE, this.influence - oldInfluence);
+            this.gameWorld.getMatchMaker().addAction(getID(), Action.CHANGE_CONVICTION, this.influence - oldInfluence);
+        }
     }
-    
+
     /**
      * Sets the action cooldown given the number of turns.
      * 
@@ -360,25 +366,27 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         if (numBots == 0)
             return;
         
-        int convictionToGive = (int) (this.conviction * this.gameWorld.getTeamInfo().getBuff(this.team));
+        long convictionToGive = (long) (((long) this.conviction) * this.gameWorld.getTeamInfo().getBuff(this.team));
         convictionToGive -= GameConstants.EMPOWER_TAX;
         if (convictionToGive <= 0)
             return;
         
-        int convictionPerBot = convictionToGive / numBots;
-        int numBotsWithExtraConviction = convictionToGive % numBots;
+        long convictionPerBot = convictionToGive / numBots;
+        long numBotsWithExtraConviction = convictionToGive % numBots;
 
         Arrays.sort(robots);
         for (InternalRobot bot : robots) {
             // check if this robot
             if (bot.equals(this))
                 continue;
-            int conv = convictionPerBot;
+            long conv = convictionPerBot;
             if (numBotsWithExtraConviction > 0) {
                 conv++;
                 numBotsWithExtraConviction--;
             }
-            bot.empowered(this, conv, this.team);
+            // HACK[jerry]: this is the maximum amount the unit can be affected by
+            conv = Math.min(conv, GameConstants.ROBOT_INFLUENCE_LIMIT * 2);
+            bot.empowered(this, (int) conv, this.team);
         }
 
         // create new bots
@@ -386,7 +394,14 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
             RobotInfo info = toCreate.get(i);
             int id = this.gameWorld.spawnRobot(toCreateParents.get(i), info.getType(), info.getLocation(), this.team, info.getInfluence());
             InternalRobot newBot = this.gameWorld.getObjectInfo().getRobotByID(id);
-            newBot.addConviction(info.getConviction() - newBot.getConviction());
+            if (newBot.type != RobotType.ENLIGHTENMENT_CENTER) {
+                // Shouldn't be called on an enlightenment center, because if spawned center's influence exceeds limit this would send a redundant change conviction action.
+                newBot.addConviction(info.getConviction() - newBot.getConviction());
+            }
+            else {
+                // Resets influence and conviction to cap for enlightenment centers. Already done by reset bid, but nicer to do it here.
+                newBot.addInfluenceAndConviction(0);
+            }
             this.gameWorld.getMatchMaker().addAction(info.getID(), Action.CHANGE_TEAM, id);
         }
     }

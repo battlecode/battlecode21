@@ -24,7 +24,9 @@ def subscribe(subscription_name, worker, give_up=False):
             if message != None:
                 try:
                     with lock:
-                        client.modify_ack_deadline(subscription_path, [message.ack_id], ack_deadline_seconds=SUB_ACK_DEADLINE)
+                        client.modify_ack_deadline(subscription=subscription_path,
+                                                    ack_ids=[message.ack_id],
+                                                    ack_deadline_seconds=SUB_ACK_DEADLINE)
                         logging.debug('Reset ack deadline for {} for {}s'.format(message.message.data.decode(), SUB_ACK_DEADLINE))
                     time.sleep(SUB_SLEEP_TIME)
                 except Exception as e:
@@ -36,7 +38,7 @@ def subscribe(subscription_name, worker, give_up=False):
     logging.info('Listening for jobs')
     try:
         while not shutdown_requested:
-            response = client.pull(subscription_path, max_messages=1, return_immediately=True)
+            response = client.pull(request= {'subscription': subscription_path, 'max_messages':1})
 
             if not response.received_messages:
                 logging.info('Job queue is empty')
@@ -57,14 +59,14 @@ def subscribe(subscription_name, worker, give_up=False):
             if process.exitcode == 0:
                 # Success; acknowledge and return
                 try:
-                    client.acknowledge(subscription_path, [message.ack_id])
+                    client.acknowledge(subscription=subscription_path, ack_ids=[message.ack_id])
                     logging.info('Ending and acknowledged: {}'.format(message.message.data.decode()))
                 except Exception as e:
                     logging.error('Could not end and acknowledge: {}'.format(message.message.data.decode()), exc_info=e)
-            elif give_up and (int(time.time()) - message.message.publish_time.seconds) > 600:
+            elif give_up and (time.time() - message.message.publish_time.timestamp()) >600:
                 # Failure; give up and acknowledge
                 try:
-                    client.acknowledge(subscription_path, [message.ack_id])
+                    client.acknowledge(subscription=subscription_path, ack_ids=[message.ack_id])
                     logging.error('Failed but acknowledged: {}'.format(message.message.data.decode()))
                 except Exception as e:
                     logging.error('Failed but could not acknowledge: {}'.format(message.message.data.decode()), exc_info=e)

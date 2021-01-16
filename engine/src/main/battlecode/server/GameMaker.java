@@ -103,10 +103,16 @@ public strictfp class GameMaker {
     private final MatchMaker matchMaker;
 
     /**
+     * Whether to serialize indicator dots and lines into the flatbuffer.
+     */
+    private final boolean showIndicators;
+
+    /**
      * @param gameInfo the mapping of teams to bytes
      * @param packetSink the NetServer to send packets to
+     * @param showIndicators whether to write indicator dots and lines to replay
      */
-    public GameMaker(final GameInfo gameInfo, final NetServer packetSink){
+    public GameMaker(final GameInfo gameInfo, final NetServer packetSink, final boolean showIndicators) {
         this.state = State.GAME_HEADER;
 
         this.gameInfo = gameInfo;
@@ -123,6 +129,8 @@ public strictfp class GameMaker {
         this.matchFooters = new TIntArrayList();
 
         this.matchMaker = new MatchMaker();
+
+        this.showIndicators = showIndicators;
     }
 
     /**
@@ -333,6 +341,7 @@ public strictfp class GameMaker {
         private TIntArrayList teamIDs;
         private TIntArrayList teamVotes;
         private TIntArrayList teamBidderIDs;
+        private TIntArrayList teamNumBuffs;
 
         // Indicator dots with locations and RGB values
         private TIntArrayList indicatorDotIDs;
@@ -376,6 +385,7 @@ public strictfp class GameMaker {
             this.teamIDs = new TIntArrayList();
             this.teamVotes = new TIntArrayList();
             this.teamBidderIDs = new TIntArrayList();
+            this.teamNumBuffs = new TIntArrayList();
             this.indicatorDotIDs = new TIntArrayList();
             this.indicatorDotLocsX = new TIntArrayList();
             this.indicatorDotLocsY = new TIntArrayList();
@@ -489,6 +499,7 @@ public strictfp class GameMaker {
                 int teamIDsP = Round.createTeamIDsVector(builder, teamIDs.toArray());
                 int teamVotesP = Round.createTeamVotesVector(builder, teamVotes.toArray());
                 int teamBidderIDsP = Round.createTeamBidderIDsVector(builder, teamBidderIDs.toArray());
+                int teamNumBuffsP = Round.createTeamNumBuffsVector(builder, teamNumBuffs.toArray());
 
                 // The bodies that moved
                 int movedIDsP = Round.createMovedIDsVector(builder, movedIDs.toArray());
@@ -523,6 +534,7 @@ public strictfp class GameMaker {
                 Round.addTeamIDs(builder, teamIDsP);
                 Round.addTeamVotes(builder, teamVotesP);
                 Round.addTeamBidderIDs(builder, teamBidderIDsP);
+                Round.addTeamNumBuffs(builder, teamNumBuffsP);
                 Round.addMovedIDs(builder, movedIDsP);
                 Round.addMovedLocs(builder, movedLocsP);
                 Round.addSpawnedBodies(builder, spawnedBodiesP);
@@ -571,13 +583,17 @@ public strictfp class GameMaker {
             actionTargets.add(targetID);
         }
 
-        public void addTeamVote(Team team, int vote, int bidderID) {
+        public void addTeamInfo(Team team, int vote, int bidderID, int numBuffs) {
             teamIDs.add(TeamMapping.id(team));
             teamVotes.add(vote);
             teamBidderIDs.add(bidderID);
+            teamNumBuffs.add(numBuffs);
         }
 
         public void addIndicatorDot(int id, MapLocation loc, int red, int green, int blue) {
+            if (!showIndicators) {
+                return;
+            }
             indicatorDotIDs.add(id);
             indicatorDotLocsX.add(loc.x);
             indicatorDotLocsY.add(loc.y);
@@ -587,6 +603,9 @@ public strictfp class GameMaker {
         }
 
         public void addIndicatorLine(int id, MapLocation startLoc, MapLocation endLoc, int red, int green, int blue) {
+            if (!showIndicators) {
+                return;
+            }
             indicatorLineIDs.add(id);
             indicatorLineStartLocsX.add(startLoc.x);
             indicatorLineStartLocsY.add(startLoc.y);
@@ -628,6 +647,7 @@ public strictfp class GameMaker {
             teamIDs.clear();
             teamVotes.clear();
             teamBidderIDs.clear();
+            teamNumBuffs.clear();
             indicatorDotIDs.clear();
             indicatorDotLocsX.clear();
             indicatorDotLocsY.clear();

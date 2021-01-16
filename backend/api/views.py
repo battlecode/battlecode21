@@ -202,7 +202,7 @@ class GCloudUploadDownload():
             return blob
 
     @staticmethod
-    def signed_upload_url(file_path, bucket):
+    def signed_upload_url(file_path, bucket, origin):
         """
         returns a pre-signed url for uploading the submission with given id to google cloud
         this URL can be used with a PUT request to upload data; no authentication needed.
@@ -213,7 +213,7 @@ class GCloudUploadDownload():
         # https://stackoverflow.com/questions/25688608/xmlhttprequest-cors-to-google-cloud-storage-only-working-in-preflight-request
         # https://stackoverflow.com/questions/46971451/cors-request-made-despite-error-in-console
         # https://googleapis.dev/python/storage/latest/blobs.html
-        return blob.create_resumable_upload_session(origin=settings.THIS_URL)
+        return blob.create_resumable_upload_session(origin=origin)
 
     @staticmethod
     def signed_download_url(file_path, bucket):
@@ -229,6 +229,11 @@ class GCloudUploadDownload():
 
 class SearchResultsPagination(PageNumberPagination):
     page_size = 10
+
+    def get_page_size(self, request):
+        if 'page' in request.query_params:
+            return self.page_size
+        return None
 
 
 class PartialUpdateModelMixin(mixins.UpdateModelMixin):
@@ -266,7 +271,8 @@ class UserViewSet(viewsets.GenericViewSet,
 
     @action(detail=True, methods=['get'])
     def resume_upload(self, request, pk=None):
-        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET)
+        origin = request.headers['Origin']        
+        upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET, origin)
         user = self.queryset.get(pk=pk)
         user.verified = True
         user.save()
@@ -333,7 +339,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             ratings.sort()
 
             # Partition into blocks, and round robin in each block
-            IDEAL_BLOCK_SIZE = 5
+            IDEAL_BLOCK_SIZE = 4
             block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
             num_blocks = len(block_sizes)
             for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
@@ -355,10 +361,12 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             # where the offset is randomly determined between 5 and 15
             scatter_step = random.randint(5,15)
             for i in range(len(ratings)-scatter_step):
-                scrim_list.append({
-                    "player1": ratings[i][2].id,
-                    "player2": ratings[i+scatter_step][2].id
-                })
+                # Each team only gets one pair
+                if (i % (2*scatter_step)) < scatter_step:
+                    scrim_list.append({
+                        "player1": ratings[i][2].id,
+                        "player2": ratings[i+scatter_step][2].id
+                    })
 
 
             return Response({'matches': scrim_list}, status.HTTP_200_OK)
@@ -710,7 +718,8 @@ class SubmissionViewSet(viewsets.GenericViewSet,
             team.score = settings.ELO_START
             team.save()
 
-        upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET)
+        origin = request.headers['Origin']        
+        upload_url = GCloudUploadDownload.signed_upload_url(SUBMISSION_FILENAME(serializer.data['id']), GCLOUD_SUB_BUCKET, origin)
 
         return Response({'upload_url': upload_url, 'submission_id': submission.id}, status.HTTP_201_CREATED)
 
@@ -907,6 +916,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
     that requested the scrimmage.
     """
     queryset = Scrimmage.objects.all().order_by('-requested_at')
+    pagination_class = SearchResultsPagination
     serializer_class = ScrimmageSerializer
     permission_classes = (SubmissionsEnabledOrSafeMethodsOrIsSuperuser, IsAuthenticatedOnTeam, IsStaffOrGameReleased)
 
@@ -926,7 +936,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         team = self.kwargs['team']
-        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1)) 
+        return super().get_queryset().filter((Q(red_team=team) | Q(blue_team=team)) & Q(tournament_id=-1))
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -948,7 +958,8 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             red_team_id = int(request.data['red_team'])
             blue_team_id = int(request.data['blue_team'])
             # ranked = request.data['ranked'] == 'True'
-            ranked = True
+            # Scrimmages created by regular challenges should not be ranked, to prevent ladder manipulation.
+            ranked = False
 
             # Validate teams
             team = self.kwargs['team']

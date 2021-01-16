@@ -13,22 +13,23 @@
     <script type="text/javascript" src="/out/app.js" charset="utf-8"></script>
 	<script type="text/javascript">
 
-		match_url = window.location.search.substr(1);
-
-		console.log(!match_url ? `No provided URL` : `Provided URL : ${match_url}`)
-		
-		if (match_url === "") {
-			window.battleClient = window.battlecode.mount(
-				document.getElementById('client')
-			);
-		} else {
-			window.battleClient = window.battlecode.mount(
-				document.getElementById('client'),
-				{
-					matchFileURL: match_url,
-				}
-			);
-		}
+			match_url = window.location.search.substr(1);
+            tournamentMode = match_url.includes("tournamentMode");
+            if (tournamentMode) {
+                if (window.location.search.substr(1).split("&").length > 1) {
+                    match_url = window.location.search.substr(1).split("&")[1];
+                }
+                else {
+                    match_url = "";
+                }
+            }
+            window.battleClient = window.battlecode.mount(
+                document.getElementById('client'),
+                {
+                    matchFileURL: match_url,
+                    tournamentMode: tournamentMode
+                }
+            );
 			
     </script>
 	
