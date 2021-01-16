@@ -484,6 +484,43 @@ export default class MapEditorForm {
     };
   }
 
+  getMapJSON(): string {
+    const map = this.getMap();
+    function replacer(key, value) {
+      const originalObject = this[key];
+      if(originalObject instanceof Map) {
+        return {
+          dataType: 'Map',
+          value: Array.from(originalObject.entries()), // or with spread: value: [...originalObject]
+        };
+      } else {
+        return value;
+      }
+    }
+    return JSON.stringify(map, replacer);
+  }
+
+  setMap(mapJSON) {
+    function reviver(key, value) {
+      if(typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+          return new Map(value.value);
+        }
+      }
+      return value;
+    }
+    const map = JSON.parse(mapJSON, reviver);
+    this.header.setName(map.name);
+    this.header.setWidth(map.width);
+    this.header.setHeight(map.height);
+
+    this.originalBodies = map.originalBodies;
+    this.symmetricBodies = map.symmetricBodies;
+
+    this.passability = map.passability;
+    this.render();
+  }
+
   reset(): void {
     this.lastID = 1;
     this.originalBodies = new Map<number, MapUnit>();

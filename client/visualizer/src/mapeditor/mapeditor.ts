@@ -2,11 +2,13 @@ import {Config} from '../config';
 import * as cst from '../constants';
 import {AllImages} from '../imageloader';
 import ScaffoldCommunicator from '../main/scaffold';
+import {electron} from '../main/electron-modules';
 
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
 import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap} from './index';
+import { env } from 'process';
 
 /**
  * Allows the user to download a .map21 file representing the map generated
@@ -35,7 +37,6 @@ export default class MapEditor {
     this.images = images;
     this.conf = conf;
     this.div = this.basediv();
-
   }
 
   private basediv(): HTMLDivElement {
@@ -51,6 +52,9 @@ export default class MapEditor {
     // TODO
     // div.appendChild(this.removeInvalidButton());
     div.appendChild(this.resetButton());
+    div.appendChild(document.createElement("br"));
+    div.appendChild(this.getMapJSONButton());
+    div.appendChild(this.pasteMapJSONButton());
     div.appendChild(document.createElement("br"));
 
     div.appendChild(this.exportButton());
@@ -165,6 +169,40 @@ export default class MapEditor {
     button.appendChild(document.createTextNode("Reset Map"));
     button.onclick = () => {
       this.form.reset();
+    };
+    return button;
+  }
+
+  private getMapJSONButton(): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = 'form-button custom-button';
+    button.appendChild(document.createTextNode(process.env.ELECTRON ? "Copy Map JSON to Clipboard" : "Get Map JSON"));
+    button.onclick = () => {
+      // from https://stackoverflow.com/questions/17591559/how-to-copy-text-of-alert-box
+      if (!process.env.ELECTRON) {
+        const newWin = window.open();
+        if (newWin) {
+          newWin.document.write(this.form.getMapJSON());
+          newWin.document.close();
+        }
+      }
+      else {
+       // prompt("Copy to clipboard: Ctrl+C, Enter", this.form.getMapJSON());
+       electron.clipboard.writeText(this.form.getMapJSON());
+      }
+    };
+    return button;
+  }
+
+  private pasteMapJSONButton(): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = 'form-button custom-button';
+    button.appendChild(document.createTextNode(process.env.ELECTRON ? "Input Map JSON from Clipboard" : "Input Map JSON"));
+    button.onclick = () => {
+      if (!process.env.ELECTRON) this.form.setMap(prompt("Paste Map JSON: Ctrl+V, Enter"));
+      else this.form.setMap(electron.clipboard.readText());
     };
     return button;
   }
