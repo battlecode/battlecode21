@@ -29,7 +29,7 @@ then
 	mv javadoc frontend/public
 	cd frontend
 
-        npm install
+    npm install
 	npm run build
 	rm -r public/specs
 	cd build
