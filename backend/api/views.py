@@ -339,7 +339,7 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             ratings.sort()
 
             # Partition into blocks, and round robin in each block
-            IDEAL_BLOCK_SIZE = 5
+            IDEAL_BLOCK_SIZE = 4
             block_sizes = [IDEAL_BLOCK_SIZE] * (len(ratings) // IDEAL_BLOCK_SIZE)
             num_blocks = len(block_sizes)
             for i in range(len(ratings) % IDEAL_BLOCK_SIZE):
@@ -361,10 +361,12 @@ class MatchmakingViewSet(viewsets.GenericViewSet):
             # where the offset is randomly determined between 5 and 15
             scatter_step = random.randint(5,15)
             for i in range(len(ratings)-scatter_step):
-                scrim_list.append({
-                    "player1": ratings[i][2].id,
-                    "player2": ratings[i+scatter_step][2].id
-                })
+                # Each team only gets one pair
+                if (i % (2*scatter_step)) < scatter_step:
+                    scrim_list.append({
+                        "player1": ratings[i][2].id,
+                        "player2": ratings[i+scatter_step][2].id
+                    })
 
 
             return Response({'matches': scrim_list}, status.HTTP_200_OK)
