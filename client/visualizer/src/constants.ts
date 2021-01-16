@@ -29,6 +29,15 @@ export const getLevel = (x: number): number => {
   return Math.min(nLev - 1, Math.max(0, level));
 }
 
+export const passiveInfluenceRate = (round: number): number => {
+  //return Math.floor((1/50 + 0.03 * Math.exp(-0.001 * x)) * x); this one's for slanderers
+  return Math.ceil(0.2 * Math.sqrt(round));
+}
+
+export const buffFactor = (numBuffs: number): number => {
+  return Math.pow(1.001, numBuffs);
+}
+
 export const ACTION_RADIUS_COLOR = "#46ff00";
 export const SENSOR_RADIUS_COLOR = "#0000ff";
 

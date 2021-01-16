@@ -529,6 +529,9 @@ export default class Runner {
         case 86: // "v" - Toggle Indicator Dots and Lines
           this.conf.indicators = !this.conf.indicators;
           break;
+        case 67: // "c" - Toggle All Indicator Dots and Lines
+          this.conf.allIndicators = !this.conf.allIndicators;
+          break;
         case 66: // "b" - Toggle Interpolation
           this.conf.interpolate = !this.conf.interpolate;
           break;

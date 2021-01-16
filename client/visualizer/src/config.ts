@@ -56,9 +56,14 @@ export interface Config {
   interpolate: boolean;
 
   /**
-   * Whether or not to display indicator dots and lines
+   * Whether or not to display indicator dots and lines for clicked robot.
    */
   indicators: boolean;
+
+  /**
+   * Whether or not to display all indicator lines.
+   */
+  allIndicators: boolean;
 
   /**
    * Whether or not to display the action radius.
@@ -136,6 +141,7 @@ export function defaults(supplied?: any): Config {
     tournamentMode: false,
     interpolate: true,
     indicators: false,
+    allIndicators: false,
     mode: Mode.QUEUE,
     splash: true,
     seeActionRadius: false,
@@ -144,7 +150,7 @@ export function defaults(supplied?: any): Config {
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
-    processLogs: true
+    processLogs: false
   };
   return Object.assign(conf, supplied);
 }

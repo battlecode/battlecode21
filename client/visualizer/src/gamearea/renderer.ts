@@ -334,7 +334,7 @@ export default class Renderer {
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {
-    if (!this.conf.indicators) {
+    if (!this.conf.indicators && !this.conf.allIndicators) {
       return;
     }
 
@@ -354,7 +354,7 @@ export default class Renderer {
     console.log(dots.length);
 
     for (let i = 0; i < dots.length; i++) {
-      if (dotsID[i] === this.lastSelectedID) {
+      if (dotsID[i] === this.lastSelectedID || this.conf.allIndicators) {
         const red = dotsRed[i];
         const green = dotsGreen[i];
         const blue = dotsBlue[i];
