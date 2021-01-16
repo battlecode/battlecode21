@@ -29,6 +29,8 @@ then
 	mkdir frontend/public/javadoc
 	mv javadoc frontend/public
 	cd frontend
+	# Gets generated somewhere in the javadoc process; is better not to have, to ensure that a different bucket (the battleaccess bucket) always holds this.
+	rm public/version.txt
 
 	rm public/out -r
 	cd ../client
