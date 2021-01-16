@@ -190,24 +190,27 @@ export default class Sidebar {
     <br>
     <br>
     <b class="blue">How to Use the Map Editor</b><br>
-    Select the initial map settings: name, width, height, symmetry (<i>symmetry is currently unavailable</i>). <br>
+    Select the initial map settings: name, width, height, and symmetry. <br>
     <br>
     To place enlightenment centers, enter the "change robots" mode, set the coordinates, set the initial influence of the
     center (abbreviated as "I"), and click "Add/Update" or "Delete." The coordinates can also be set by clicking the map.
-    <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game!--><br>
+    <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game! --><br>
     <br>
     To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
-    and then <b>hold and drag</b> your mouse across the map.
+    and then <b>hold and drag</b> your mouse across the map. <br>
+    <br>
+    To save an intermediary version of your map, copy the map JSON. You can input this JSON later to retrieve your map in the map editor for further editing. <br>
     <br>
     <!--Before exporting, click "Validate" to see if any changes need to be
     made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or
     overlapping units. -->
-    <br>
     When you are happy with your map, click "Export".
     If you are directed to save your map, save it in the
     <code>/battlecode-scaffold-2021/maps</code> directory of your scaffold.
     (Note: the name of your <code>.map21</code> file must be the same as the name of your
-    map.)`;
+    map.) <br>
+    <br>
+    Exported file name must be the same as the map name chosen above. For instance, <code>DefaultMap.bc21</code>.`;
 
     const div = document.createElement("div");
     div.id = "helpDiv";

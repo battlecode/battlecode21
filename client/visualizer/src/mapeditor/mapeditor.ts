@@ -79,17 +79,18 @@ export default class MapEditor {
       <!--The "ID" of a robot is a unique identifier for a pair of symmetric robots. It is not the ID the robot will have in the game! --><br>
       <br>
       To set tiles' passability values, enter the "change tiles" mode, select the passability value, brush size, and brush style,
-      and then <b>hold and drag</b> your mouse across the map.
+      and then <b>hold and drag</b> your mouse across the map. <br>
+      <br>
+      To save an intermediary version of your map, copy the map JSON. You can input this JSON later to retrieve your map in the map editor for further editing. <br>
       <br>
       <!--Before exporting, click "Validate" to see if any changes need to be
       made, and <b>"Remove Invalid Units"</b> to automatically remove off-map or
       overlapping units. -->
-      <br>
       When you are happy with your map, click "Export".
       If you are directed to save your map, save it in the
       <code>/battlecode-scaffold-2021/maps</code> directory of your scaffold.
       (Note: the name of your <code>.map21</code> file must be the same as the name of your
-      map.)
+      map.) <br>
       <br>
       Exported file name must be the same as the map name chosen above. For instance, <code>DefaultMap.bc21</code>.`;
 
