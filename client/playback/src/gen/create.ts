@@ -579,7 +579,7 @@ function createVotesGame(turns: number) {
 
   for (let i = 1; i < turns+1; i++) {
     const bb_teamIDs = schema.Round.createTeamIDsVector(builder, [1, 2]);
-    const bb_teamVPs = schema.Round.createTeamVotesVector(builder, [0, (Math.random() > 0.5 ? 1 : 1)]);
+    const bb_teamVPs = schema.Round.createTeamVotesVector(builder, [1, (Math.random() > 0.5 ? 0 : 1)]);
     schema.Round.startRound(builder);
     schema.Round.addRoundID(builder, i);
     schema.Round.addTeamIDs(builder, bb_teamIDs);
