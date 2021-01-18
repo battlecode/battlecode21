@@ -160,7 +160,7 @@ def game_worker(gameinfo):
         else:
             maps = [maps]
 
-        for m in maps:
+        for maps_arg in maps:
             # Execute game
             result = util.monitor_command(
                 ['./gradlew', 'run',
@@ -170,7 +170,7 @@ def game_worker(gameinfo):
                     '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
                     '-PpackageNameA={}'.format(package1),
                     '-PpackageNameB={}'.format(package2),
-                    '-Pmaps={}'.format(m),
+                    '-Pmaps={}'.format(maps_arg),
                     '-Preplay=replay.bc21'
                 ],
                 cwd=rootdir,
@@ -202,7 +202,7 @@ def game_worker(gameinfo):
                         elif game_winner == 'B':
                             wins[1] += 1
                 # We should have as many game wins as games played
-                assert (wins[0] + wins[1] == len(maps.split(',')))
+                assert (wins[0] + wins[1] == len(maps_arg.split(',')))
                 logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
             except:
                 game_log_error(gametype, gameid, 'Could not determine winner')
