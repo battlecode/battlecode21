@@ -12,19 +12,19 @@ import java.util.Map;
  */
 public class ProfilerCollection {
     /**
-     * We record a maximum of 10,000,000 events per team per match.
-     * This equals a rough maximum of 250MB of profiling data per match,
+     * We record a maximum of 2,000,000 events per team per match.
+     * This equals a rough maximum of 50MB of profiling data per match,
      * which should prevent the client from hanging when opening a replay
      * of a match in which profiling was enabled.
      */
-    private static final int MAX_EVENTS_TO_RECORD = 10_000_000;
+    private static final int MAX_EVENTS_TO_RECORD = 2_000_000;
 
     private List<Profiler> profilers = new ArrayList<>();
 
     private List<String> frames = new ArrayList<>();
     private Map<String, Integer> frameIds = new HashMap<>();
 
-    public int recordedEvents = 0;
+    private int recordedEvents = 0;
 
     public Profiler createProfiler(int robotId, RobotType robotType) {
         // The name has to be display-friendly
