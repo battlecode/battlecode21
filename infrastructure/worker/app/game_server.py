@@ -156,7 +156,8 @@ def game_worker(gameinfo):
         # Prep maps
         # We want the maps as a list, so we can iterate.
         # For tournament mode, we want to split up map list into separate parts so we can run on each map individually;
-        # for regular mode, we don't (we want to pass the map list in as a string of comma-separated maps)
+        # For regular mode, we want to pass the map list in as a string of comma-separated maps,
+        # but we wrap it in a list so we can "iterate" still while retaining old behavior.
         if tourmode:
             maps = maps.split(',')
         else:
