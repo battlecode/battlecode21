@@ -83,6 +83,7 @@ def game_worker(gameinfo):
         tourmode = False
         if 'tourmode' in gameinfo and gameinfo['tourmode'] == 'True':
             tourmode = True
+        print("Tour mode:", tourmode)
 
         # For reverse-compatibility
         if 'name1' in gameinfo:
@@ -163,6 +164,9 @@ def game_worker(gameinfo):
         else:
             maps = [maps]
 
+        # Initialize win count, to count for each game
+        wins_overall = [0, 0]
+
         # For tour mode, game_number represents which game (of a match) we're in;
         # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
         # (since all the maps get played in the the same engine run)
@@ -218,12 +222,18 @@ def game_worker(gameinfo):
             except:
                 game_log_error(gametype, gameid, 'Could not determine winner')
             else:
-                if wins[0] > wins[1]:
-                    game_report_result(gametype, gameid, GAME_REDWON, wins[0], wins[1])
-                elif wins[1] > wins[0]:
-                    game_report_result(gametype, gameid, GAME_BLUEWON, wins[1], wins[0])
-                else:
-                    game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
+                # Tally up these wins
+                wins_overall[0] += wins[0]
+                wins_overall[1] += wins[1]
+
+        # Find the overall winner
+        logging.info('Match ended. Result {}:{}'.format(wins_overall[0], wins_overall[1]))
+        if wins_overall[0] > wins_overall[1]:
+            game_report_result(gametype, gameid, GAME_REDWON, wins_overall[0], wins_overall[1])
+        elif wins_overall[1] > wins_overall[0]:
+            game_report_result(gametype, gameid, GAME_BLUEWON, wins_overall[1], wins_overall[0])
+        else:
+            game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
     finally:
         # Clean up working directory
