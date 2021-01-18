@@ -77,8 +77,12 @@ export default class SymmetryForm {
   /**
    * The symmetry of the map currently selected
    */
-  private getSymmetry(): Symmetry {
+  getSymmetry(): Symmetry {
     return parseInt(this.select.options[this.select.selectedIndex].value);
+  }
+
+  setSymmetry(symmetry) {
+    this.select.options[this.select.selectedIndex].value = symmetry;
   }
 
     // Whether or not loc lies on the point or line of symmetry

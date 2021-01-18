@@ -23,7 +23,8 @@ export type GameMap = {
   height: number,
   originalBodies: Map<number, MapUnit>
   symmetricBodies: Map<number, MapUnit>,
-  passability: number[]
+  passability: number[],
+  symmetry: number
 };
 
 /**
@@ -66,6 +67,10 @@ export default class MapEditorForm {
   private originalBodies: Map<number, MapUnit>;
   private symmetricBodies: Map<number, MapUnit>;
   private passability: number[];
+
+  randomMode: boolean = false; // if true, all squares are randomly painted.
+  randomHigh: number = 1;
+  randomLow: number = 0.1;
 
   constructor(conf: Config, imgs: AllImages, canvas: HTMLCanvasElement) {
     // Store the parameters
@@ -422,6 +427,7 @@ export default class MapEditorForm {
   }
 
   private setPassability(x: number, y: number, pass: number) {
+    if (this.randomMode) pass = this.randomLow + (this.randomHigh - this.randomLow) * Math.random();
     const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
     this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x] = pass;
   }
@@ -480,7 +486,8 @@ export default class MapEditorForm {
       height: this.header.getHeight(),
       originalBodies: this.originalBodies,
       symmetricBodies: this.symmetricBodies,
-      passability: this.passability
+      passability: this.passability,
+      symmetry: this.symmetry.getSymmetry()
     };
   }
 
@@ -518,7 +525,7 @@ export default class MapEditorForm {
 
     this.originalBodies = map.originalBodies;
     this.symmetricBodies = map.symmetricBodies;
-
+    this.symmetry.setSymmetry(map.symmetry);
     this.passability = map.passability;
     this.render();
   }
