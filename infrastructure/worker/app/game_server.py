@@ -230,8 +230,14 @@ def game_worker(gameinfo):
                 game_log_error(gametype, gameid, 'Could not determine winner')
             else:
                 # Tally up these wins
-                wins_overall[0] += wins[0]
-                wins_overall[1] += wins[1]
+                # wins_overall is in order [player1, player2]
+                # wins is in order [teamA, teamB]
+                if teamA_is_player1:
+                    wins_overall[0] += wins[0]
+                    wins_overall[1] += wins[1]
+                else:
+                    wins_overall[0] += wins[1]
+                    wins_overall[1] += wins[0]
 
         # Find the overall winner
         logging.info('Match ended. Result {}:{}'.format(wins_overall[0], wins_overall[1]))
