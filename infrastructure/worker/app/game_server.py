@@ -80,7 +80,9 @@ def game_worker(gameinfo):
         player2  = gameinfo['player2']
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
-        tourmode = gameinfo['tourmode']
+        tourmode = False
+        if 'tourmode' in gameinfo and gameinfo['tourmode'] == 'True':
+            tourmode = True
 
         # For reverse-compatibility
         if 'name1' in gameinfo:
