@@ -171,13 +171,13 @@ def game_worker(gameinfo):
         # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
         # (since all the maps get played in the the same engine run)
         for game_number in range (0, len(maps)):
-            # Prep game arguments
-            teamA_arg = teamname1
-            teamB_arg = teamname2
-            classLocationA_arg = os.path.join(classdir, 'player1')
-            classLocationB_arg = os.path.join(classdir, 'player2')
-            packageNameA_arg = package1
-            packageNameB_arg = package2
+            # Prep game arguments, making sure to switch teams each game.
+            # If game_number is even, then team A in the engine is player1, etc.
+            teamA_is_player1 = (game_number%2==0)
+            player1_info = (teamname1, os.path.join(classdir, 'player1'), package1)
+            player2_info = (teamname2, os.path.join(classdir, 'player2'), package2)
+            (teamA_arg, classLocationA_arg, packageNameA_arg) = player1_info if teamA_is_player1 else player2_info
+            (teamB_arg, classLocationB_arg, packageNameB_arg) = player2_info if teamA_is_player1 else player1_info
             maps_arg = maps[game_number]
             # Execute game
             result = util.monitor_command(
