@@ -187,10 +187,14 @@ def game_worker(gameinfo):
                 game_log_error(gametype, gameid, 'Game execution had non-zero return code')
 
             # Upload replay file
+            # In tour mode, we create the replay link by appending the match number to the replay hex
+            replay_id = replay
+            if tourmode:
+                replay_id += '-' + str(game_number)
             bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
             try:
                 with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
-                    bucket.blob(os.path.join('replays', '{}.bc21'.format(replay))).upload_from_file(file_obj)
+                    bucket.blob(os.path.join('replays', '{}.bc21'.format(replay_id))).upload_from_file(file_obj)
             except:
                 game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
