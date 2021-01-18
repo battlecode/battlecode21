@@ -171,16 +171,23 @@ def game_worker(gameinfo):
         # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
         # (since all the maps get played in the the same engine run)
         for game_number in range (0, len(maps)):
+            # Prep game arguments
+            teamA_arg = teamname1
+            teamB_arg = teamname2
+            classLocationA_arg = os.path.join(classdir, 'player1')
+            classLocationB_arg = os.path.join(classdir, 'player2')
+            packageNameA_arg = package1
+            packageNameB_arg = package2
             maps_arg = maps[game_number]
             # Execute game
             result = util.monitor_command(
                 ['./gradlew', 'run',
-                    '-PteamA={}'.format(teamname1),
-                    '-PteamB={}'.format(teamname2),
-                    '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
-                    '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
-                    '-PpackageNameA={}'.format(package1),
-                    '-PpackageNameB={}'.format(package2),
+                    '-PteamA={}'.format(teamA_arg),
+                    '-PteamB={}'.format(teamB_arg),
+                    '-PclassLocationA={}'.format(classLocationA_arg),
+                    '-PclassLocationB={}'.format(classLocationB_arg),
+                    '-PpackageNameA={}'.format(packageNameA_arg),
+                    '-PpackageNameB={}'.format(packageNameB_arg),
                     '-Pmaps={}'.format(maps_arg),
                     '-Preplay=replay.bc21'
                 ],
