@@ -85,6 +85,12 @@ class Tournaments extends Component {
                                     <h4 className="title">Tournament Results</h4>
                                 </div>
                                 <div className="content">
+                                    <p>Congratulations to the winners!</p>
+                                    <ul>
+                                        <li>
+                                            <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
