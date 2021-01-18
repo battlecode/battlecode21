@@ -88,7 +88,7 @@ class Tournaments extends Component {
                                     <p>Congratulations to the winners!</p>
                                     <ul>
                                         <li>
-                                            <a href="https://challonge.com/rajiqb0b"><b>Sprint Tournament 1:</b></a> Super Cow Powers (tscmoo)
+                                            <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
                                         </li>
                                     </ul>
                                 </div>
