@@ -1,3 +1,5 @@
+# TODO check presence of 2nd argument (version number)
+
 if [ "$1" == "deploy" ]
 then
 	echo "WARNING: Do you really want to deploy with the game? This SHOULD NEVER BE DONE before the game is released to the world, since this means that the game specs and the visualizer become public."
@@ -15,6 +17,10 @@ then
 	# 	esac
 	# done
 	echo "Proceding with deploy!"
+
+	# TODO check git status
+	# (on master, up-to-date)
+
 	rm public/specs -r
 	mkdir public/specs
 	cp -r ../specs public
