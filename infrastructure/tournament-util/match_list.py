@@ -9,14 +9,24 @@ for match in replays:
     if match is not None:
         for game in match:
             if game[3] == 1:
-                winner = 'redwon'
+                # winner = 'redwon'
+                winner = game[0]
             elif game[3] == 2:
-                winner = 'bluewon'
+                # winner = 'bluewon'
+                winner = game[1]
             else:
                 raise ValueError('Invalid winner: {}'.format(game[3]))
-            print ('{} -vs- {} | {} {} replay {}'.format(
-                game[0].rjust(40), # Red team
-                game[1].ljust(40), # Blue team
-                game[2].ljust(30), # Map name
-                winner.ljust(8),    # Winner status
-                game[4]))          # Replay id
+            # print ('{} -vs- {}'.format(
+                # game[0], # Red team
+                # game[1])) # Blue team
+            # print('winner: {}'.format(
+                # winner))
+            # replay_link = 'https://2021.battlecode.org/visualizer.html?tournamentMode&https://2021.battlecode.org/replays/' + game[4] + '.bc21'
+            replay_link = game[4]
+            print(replay_link)
+            # blank line to separate games
+            # print()
+        # more blank lines to separate matches
+        # print()
+        print()
+    
