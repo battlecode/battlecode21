@@ -23,7 +23,7 @@ import os, tempfile, datetime, argparse, time, json, random, binascii, threading
 GCLOUD_PROJECT = "battlecode18"
 GCLOUD_SUB_BUCKET = "bc21-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile'
-GCLOUD_SUB_SCRIMMAGE_NAME = 'bc21-game'
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bc21-game-test'
 GCLOUD_RES_BUCKET = "bc21-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"

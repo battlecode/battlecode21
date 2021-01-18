@@ -14,7 +14,7 @@ response = requests.post(domain + 'auth/token/', data=data)
 token = json.loads(response.text)['access']
 
 data = {
-  'type': 'scrimmage',
+  'type': 'tour_scrimmage',
   'tournament_id': '0',
   'player1': '1744',
   'player2': '1810',
