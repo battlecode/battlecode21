@@ -51,7 +51,7 @@ def game_worker(gameinfo):
         name2:    string, team name of the blue player
         maps:     string, comma separated list of maps
         replay:   string, a unique identifier for the name of the replay
-        tourmode: string, "True" to use an expiremental tournament mode
+        tourmode: string, "True" to use an experimental tournament mode
 
     Filesystem structure:
     /box/
