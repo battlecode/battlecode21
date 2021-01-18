@@ -163,7 +163,11 @@ def game_worker(gameinfo):
         else:
             maps = [maps]
 
-        for maps_arg in maps:
+        # For tour mode, game_number represents which game (of a match) we're in;
+        # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
+        # (since all the maps get played in the the same engine run)
+        for game_number in range (0, len(maps)):
+            maps_arg = maps[game_number]
             # Execute game
             result = util.monitor_command(
                 ['./gradlew', 'run',
