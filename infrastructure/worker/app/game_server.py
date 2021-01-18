@@ -51,6 +51,7 @@ def game_worker(gameinfo):
         name2:    string, team name of the blue player
         maps:     string, comma separated list of maps
         replay:   string, a unique identifier for the name of the replay
+        tourmode: string, "True" to use an expiremental tournament mode
 
     Filesystem structure:
     /box/
@@ -79,6 +80,7 @@ def game_worker(gameinfo):
         player2  = gameinfo['player2']
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
+        tourmode = gameinfo['tourmode']
 
         # For reverse-compatibility
         if 'name1' in gameinfo:
