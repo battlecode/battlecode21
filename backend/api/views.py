@@ -1072,6 +1072,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.winscore = sc_winscore
                     scrimmage.losescore = sc_losescore
 
+                    if 'new_replay' in request.data:
+                        sc_new_replay = request.data['new_replay']
+                        if sc_new_replay is not None:
+                            scrimmage.replay = sc_new_replay
+
                     # if tournament, then return here
                     if scrimmage.tournament_id != -1:
                         scrimmage.save()

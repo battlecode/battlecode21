@@ -11,7 +11,7 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=''):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, new_replay=None, reason=''):
 
     """Sends the result of the run to the API endpoint"""
     try:
@@ -20,6 +20,7 @@ def game_report_result(gametype, gameid, result, winscore=None, losescore=None, 
             'status': result,
             'winscore': winscore,
             'losescore': losescore,
+            'new_replay': new_replay,
             'error_msg': reason
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
@@ -51,7 +52,7 @@ def game_worker(gameinfo):
         name2:    string, team name of the blue player
         maps:     string, comma separated list of maps
         replay:   string, a unique identifier for the name of the replay
-        tourmode: string, "True" to use an experimental tournament mode
+        tourmode: string, "True" to use an experimental tournament mode which alternates team sides for each match, and saves replays as a comma-separated list of replay ids for each game
 
     Filesystem structure:
     /box/
@@ -167,6 +168,9 @@ def game_worker(gameinfo):
         # Initialize win count, to count for each game
         wins_overall = [0, 0]
 
+        # Initialize a list of all the replay ids, in case we have to use multiple replay links for the same match
+        replay_ids = []
+
         # For tour mode, game_number represents which game (of a match) we're in;
         # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
         # (since all the maps get played in the the same engine run)
@@ -202,6 +206,7 @@ def game_worker(gameinfo):
             replay_id = replay
             if tourmode:
                 replay_id += '-' + str(game_number)
+            replay_ids.append(replay_id)
             bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
             try:
                 with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
@@ -241,10 +246,11 @@ def game_worker(gameinfo):
 
         # Find the overall winner
         logging.info('Match ended. Result {}:{}'.format(wins_overall[0], wins_overall[1]))
+        replay_ids_string = ','.join(replay_ids)
         if wins_overall[0] > wins_overall[1]:
-            game_report_result(gametype, gameid, GAME_REDWON, wins_overall[0], wins_overall[1])
+            game_report_result(gametype, gameid, GAME_REDWON, wins_overall[0], wins_overall[1], replay_ids_string)
         elif wins_overall[1] > wins_overall[0]:
-            game_report_result(gametype, gameid, GAME_BLUEWON, wins_overall[1], wins_overall[0])
+            game_report_result(gametype, gameid, GAME_BLUEWON, wins_overall[1], wins_overall[0], replay_ids_string)
         else:
             game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
