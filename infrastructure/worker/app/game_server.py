@@ -151,58 +151,68 @@ def game_worker(gameinfo):
         # Update distribution
         util.pull_distribution(rootdir, lambda: game_log_error(gametype, gameid, 'Could not pull distribution'))
 
-        # Execute game
-        result = util.monitor_command(
-            ['./gradlew', 'run',
-                '-PteamA={}'.format(teamname1),
-                '-PteamB={}'.format(teamname2),
-                '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
-                '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
-                '-PpackageNameA={}'.format(package1),
-                '-PpackageNameB={}'.format(package2),
-                '-Pmaps={}'.format(maps),
-                '-Preplay=replay.bc21'
-            ],
-            cwd=rootdir,
-            timeout=TIMEOUT_GAME)
-
-        if result[0] != 0:
-            game_log_error(gametype, gameid, 'Game execution had non-zero return code')
-
-        # Upload replay file
-        bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
-        try:
-            with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
-                bucket.blob(os.path.join('replays', '{}.bc21'.format(replay))).upload_from_file(file_obj)
-        except:
-            game_log_error(gametype, gameid, 'Could not send replay file to bucket')
-
-        # Interpret game result
-        server_output = result[1].split('\n')
-
-        wins = [0, 0]
-        try:
-            # Read the winner of each game from the engine
-            for line in server_output:
-                if re.fullmatch(GAME_WINNER, line):
-                    game_winner = line[line.rfind('wins')-3]
-                    assert (game_winner == 'A' or game_winner == 'B')
-                    if game_winner == 'A':
-                        wins[0] += 1
-                    elif game_winner == 'B':
-                        wins[1] += 1
-            # We should have as many game wins as games played
-            assert (wins[0] + wins[1] == len(maps.split(',')))
-            logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
-        except:
-            game_log_error(gametype, gameid, 'Could not determine winner')
+        # Prep maps
+        # We want the maps as a list, so we can iterate.
+        # For tournament mode, we want to split up map list into separate parts so we can run on each map individually;
+        # for regular mode, we don't (we want to pass the map list in as a string of comma-separated maps)
+        if tourmode:
+            maps = maps.split(',')
         else:
-            if wins[0] > wins[1]:
-                game_report_result(gametype, gameid, GAME_REDWON, wins[0], wins[1])
-            elif wins[1] > wins[0]:
-                game_report_result(gametype, gameid, GAME_BLUEWON, wins[1], wins[0])
+            maps = [maps]
+
+        for m in maps:
+            # Execute game
+            result = util.monitor_command(
+                ['./gradlew', 'run',
+                    '-PteamA={}'.format(teamname1),
+                    '-PteamB={}'.format(teamname2),
+                    '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
+                    '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
+                    '-PpackageNameA={}'.format(package1),
+                    '-PpackageNameB={}'.format(package2),
+                    '-Pmaps={}'.format(m),
+                    '-Preplay=replay.bc21'
+                ],
+                cwd=rootdir,
+                timeout=TIMEOUT_GAME)
+
+            if result[0] != 0:
+                game_log_error(gametype, gameid, 'Game execution had non-zero return code')
+
+            # Upload replay file
+            bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
+            try:
+                with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
+                    bucket.blob(os.path.join('replays', '{}.bc21'.format(replay))).upload_from_file(file_obj)
+            except:
+                game_log_error(gametype, gameid, 'Could not send replay file to bucket')
+
+            # Interpret game result
+            server_output = result[1].split('\n')
+
+            wins = [0, 0]
+            try:
+                # Read the winner of each game from the engine
+                for line in server_output:
+                    if re.fullmatch(GAME_WINNER, line):
+                        game_winner = line[line.rfind('wins')-3]
+                        assert (game_winner == 'A' or game_winner == 'B')
+                        if game_winner == 'A':
+                            wins[0] += 1
+                        elif game_winner == 'B':
+                            wins[1] += 1
+                # We should have as many game wins as games played
+                assert (wins[0] + wins[1] == len(maps.split(',')))
+                logging.info('Game ended. Result {}:{}'.format(wins[0], wins[1]))
+            except:
+                game_log_error(gametype, gameid, 'Could not determine winner')
             else:
-                game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
+                if wins[0] > wins[1]:
+                    game_report_result(gametype, gameid, GAME_REDWON, wins[0], wins[1])
+                elif wins[1] > wins[0]:
+                    game_report_result(gametype, gameid, GAME_BLUEWON, wins[1], wins[0])
+                else:
+                    game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
 
     finally:
         # Clean up working directory
