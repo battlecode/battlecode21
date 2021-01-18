@@ -138,7 +138,8 @@ def accept_scrimmage_helper(scrimmage_id):
     blue_team_name = Team.objects.get(pk=blue_team_id).name
     replay = scrimmage.replay
     map_ids = scrimmage.map_ids
-    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
+    tourmode = (scrimmage.tournament_id != -1)
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids, tourmode)
 
     # save the scrimmage, again, to mark save
     if red_submission_id is None or blue_submission_id is None:
@@ -150,7 +151,7 @@ def accept_scrimmage_helper(scrimmage_id):
 
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids, tourmode):
 
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams do not have a submission.'}, status.HTTP_400_BAD_REQUEST)
@@ -169,12 +170,13 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'name1': str(red_team_name),
         'name2': str(blue_team_name),
         'maps': str(map_ids),
-        'replay': scrimmage_replay
+        'replay': scrimmage_replay,
+        'tourmode': str(tourmode)
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     # In testing, it's helpful to comment out the actual pubsub call, and print what would be added instead, so you can see it.
     # Make sure to revert this before pushing to master and deploying!
-    # print(data_bytestring)
+    print(data_bytestring)
     pub(GCLOUD_PROJECT, GCLOUD_SUB_SCRIMMAGE_NAME, data_bytestring)
 
 def get_random_maps(num):
