@@ -566,9 +566,9 @@ export default class GameWorld {
     }
 
     // Process logs
-    if (this.config.processLogs) {
-      this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
-    }
+    if (this.config.processLogs) this.parseLogs(delta.roundID(), delta.logs() ? <string> delta.logs(flatbuffers.Encoding.UTF16_STRING) : "");
+    else this.logsShift++;
+
     while (this.logs.length >= 25) {
       this.logs.shift();
       this.logsShift++;

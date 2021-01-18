@@ -89,7 +89,7 @@ export default class TileForm {
       this.pass.value = !isNaN(this.getPass()) ? this.validate(this.getPass(), 0.1, 1) : "";
     };
     this.brush.onchange = () => {
-        this.brush.value = !isNaN(this.getBrush()) ? this.validate(this.getBrush(), 0) : "";
+        this.brush.value = !isNaN(this.getBrush()) ? this.validate(this.getBrush(), 1) : "";
       };
   }
 

@@ -160,7 +160,7 @@ export function defaults(supplied?: any): Config {
     showGrid: false,
     viewSwamp: true,
     shorterLogHeader: false,
-    processLogs: false,
+    processLogs: true,
     useProfiler: true,
     doProfiling: true
   };
