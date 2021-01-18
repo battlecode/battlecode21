@@ -166,10 +166,10 @@ export default class MapEditorForm {
         let inBrush: (dx, dy) => boolean = () => true;
         switch (this.tiles.getStyle()) {
           case "Circle":
-            inBrush = (dx, dy) => dx*dx + dy*dy <= r*r;
+            inBrush = (dx, dy) => dx*dx + dy*dy < r*r;
             break;
           case "Square":
-            inBrush = (dx, dy) => Math.max(Math.abs(dx), Math.abs(dy)) <= r;
+            inBrush = (dx, dy) => Math.max(Math.abs(dx), Math.abs(dy)) < r;
             break;
           case "Cow":
             inBrush = (dx,dy) => (Math.abs(dx) < r && Math.abs(dy) < r && cow[Math.floor(20*(1+dx/r))][Math.floor(20*(1-dy/r))]);
