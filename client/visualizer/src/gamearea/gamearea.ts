@@ -63,15 +63,21 @@ export default class GameArea {
   loadSplashDiv() {
     
     let splashTitle = document.createElement("h1");
-    splashTitle.id = "splashTitle";
-    splashTitle.appendChild(document.createTextNode("Battlecode 2021 Client"));
-    this.splashDiv.appendChild(splashTitle);
-    
     let splashSubtitle = document.createElement("h3");
+    splashTitle.id = "splashTitle";
     splashSubtitle.id = "splashSubtitle";
-    splashSubtitle.appendChild(document.createTextNode("v" + this.conf.gameVersion));
-    this.splashDiv.appendChild(splashSubtitle);
+
+    if (!this.conf.tournamentMode) {
+      splashTitle.appendChild(document.createTextNode("Battlecode 2021 Client"));
+      splashSubtitle.appendChild(document.createTextNode("v" + this.conf.gameVersion));
+    }
+    else {
+      splashTitle.appendChild(document.createTextNode("Loading..."));      
+    }
     
+    this.splashDiv.appendChild(splashTitle);
+    this.splashDiv.appendChild(splashSubtitle);
+
     if (process.env.ELECTRON) {
       (async function (splashDiv, version) {
       

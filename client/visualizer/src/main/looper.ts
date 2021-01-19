@@ -294,10 +294,14 @@ export default class Looper {
      */
     private updateStats(world: GameWorld, meta: Metadata) {
         var totalInfluence = 0;
+        let teamIDs: number[] = [];
+        let teamNames: string[] = [];
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
             totalInfluence += teamStats.influence.reduce((a, b) => a + b);
+            teamIDs.push(teamID);
+            teamNames.push(meta.teams[team].name);
         }
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
@@ -315,6 +319,9 @@ export default class Looper {
             this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b), 
                 totalInfluence);
             this.stats.setBuffs(teamID, teamStats.numBuffs);
+        }
+        if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
+            this.stats.setWinner(this.match.winner, teamNames, teamIDs);
         }
     }
 

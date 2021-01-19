@@ -19,12 +19,12 @@ export default class Controls {
   div: HTMLDivElement;
   wrapper: HTMLDivElement;
 
-  readonly timeReadout: Text;
+  readonly timeReadout: HTMLSpanElement;
   readonly speedReadout: HTMLSpanElement;
-  readonly tileInfo: Text;
+  readonly tileInfo: HTMLSpanElement;
   readonly infoString: HTMLTableDataCellElement;
   
-  winnerDiv: HTMLDivElement;
+  //winnerDiv: HTMLDivElement;
 
   /**
    * Callbacks initialized from outside Controls
@@ -57,8 +57,10 @@ export default class Controls {
 
   constructor(conf: Config, images: imageloader.AllImages, runner: Runner) {
     this.div = this.baseDiv();
-    this.timeReadout = document.createTextNode('No match loaded');
-    this.tileInfo = document.createTextNode('X | Y | Passability');
+    this.timeReadout = document.createElement('span');
+    this.timeReadout.innerHTML = 'No match loaded';
+    this.tileInfo = document.createElement('span');
+    this.tileInfo.innerHTML = 'X | Y | Passability';
     this.speedReadout = document.createElement('span');
     this.speedReadout.style.cssFloat = 'right';
     this.speedReadout.textContent = 'UPS: 0 FPS: 0';
@@ -86,14 +88,8 @@ export default class Controls {
     let timeline = document.createElement("td");
     timeline.className = "timeline";
     timeline.vAlign = "top";
-    if (this.conf.tournamentMode) {
-      timeline.style.width = '300px';
-    }
+
     timeline.appendChild(this.timeline());
-    if (this.conf.tournamentMode) {
-      this.winnerDiv = document.createElement("div");
-      timeline.append(this.winnerDiv);
-    }
     timeline.appendChild(document.createElement("br"));
     timeline.appendChild(this.timeReadout);
     timeline.appendChild(this.speedReadout);
@@ -220,7 +216,7 @@ export default class Controls {
     this.ctx.fillStyle = "white";
     this.canvas = canvas;
     if (this.conf.tournamentMode) {
-      canvas.style.display = 'none'; // we don't wanna reveal how many rounds there are!
+      //canvas.style.display = 'none'; // we don't wanna reveal how many rounds there are!
     }
     return canvas;
   }
@@ -347,38 +343,38 @@ export default class Controls {
    */
   onFinish(match: Match, meta: Metadata) {
     if (this.runner.looper && !this.runner.looper.isPaused()) this.pause();
-    if (this.conf.tournamentMode) {
-      // also update the winner text
-      this.setWinner(match, meta);
-    }
+    // if (this.conf.tournamentMode) {
+    //   // also update the winner text
+    //   this.setWinner(match, meta);
+    // }
   }
 
-  setWinner(match: Match, meta: Metadata) {
-    console.log('winner: ' + match.winner);
-    const matchWinner = this.winnerTeam(meta.teams, match.winner);
-    while (this.winnerDiv.firstChild) {
-      this.winnerDiv.removeChild(this.winnerDiv.firstChild);
-    }
-    this.winnerDiv.appendChild(matchWinner);
-  }
+  // setWinner(match: Match, meta: Metadata) {
+  //   console.log('winner: ' + match.winner);
+  //   const matchWinner = this.winnerTeam(meta.teams, match.winner);
+  //   while (this.winnerDiv.firstChild) {
+  //     this.winnerDiv.removeChild(this.winnerDiv.firstChild);
+  //   }
+  //   this.winnerDiv.appendChild(matchWinner);
+  // }
   
-  private winnerTeam(teams, winnerID: number | null): HTMLSpanElement {
-    const span = document.createElement("span");
-    if (winnerID === null) {
-      return span;
-    } else {
-      // Find the winner
-      let teamNumber = 1;
-      for (let team in teams) {
-        if (teams[team].teamID === winnerID) {
-          span.className += team === "1" ? " red" : " blue";
-          span.innerHTML = teams[team].name + " wins!";
-          break;
-        }
-      }
-    }
-    return span;
-  }
+  // private winnerTeam(teams, winnerID: number | null): HTMLSpanElement {
+  //   const span = document.createElement("span");
+  //   if (winnerID === null) {
+  //     return span;
+  //   } else {
+  //     // Find the winner
+  //     let teamNumber = 1;
+  //     for (let team in teams) {
+  //       if (teams[team].teamID === winnerID) {
+  //         span.className += team === "1" ? " red" : " blue";
+  //         span.innerHTML = teams[team].name + " wins!";
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return span;
+  // }
 
   /**
    * Redraws the timeline and sets the current round displayed in the controls.
@@ -386,10 +382,12 @@ export default class Controls {
   // TODO scale should be constant; should not depend on loadedTime
   setTime(time: number, loadedTime: number, upsUnpaused: number, paused: Boolean, fps: number, lagging: Boolean) {
 
-    if (!this.conf.tournamentMode) {
+    if (this.conf.tournamentMode) loadedTime = 1500;
+
+   // if (!this.conf.tournamentMode) {
       // Redraw the timeline
+
       const scale = this.canvas.width / loadedTime;
-      // const scale = this.canvas.width / cst.MAX_ROUND_NUM;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       this.ctx.fillStyle = "rgb(39, 39, 39)";
@@ -400,12 +398,12 @@ export default class Controls {
 
       this.ctx.fillStyle = 'rgb(255,0,0)';
       this.ctx.fillRect(time * scale, 0, 2, this.canvas.height);
-    }
+   // }
 
     let speedText = (lagging ? '(Lagging) ' : '') + `UPS: ${upsUnpaused | 0}` + (paused ? ' (Paused)' : '') + ` FPS: ${fps | 0}`;
     speedText = speedText.padStart(32);
     this.speedReadout.textContent = speedText;
-    this.timeReadout.textContent = (this.conf.tournamentMode ? `Round: ${time}` : `Round: ${time}/${loadedTime}`);
+    this.timeReadout.innerHTML = (this.conf.tournamentMode ? `Round: <b>${time}</b>` : `Round: <b>${time}</b>/${loadedTime}`);
 
   }
 
@@ -414,11 +412,11 @@ export default class Controls {
    */
   setTileInfo(x: number, y: number, xrel: number, yrel: number, passability: number): void {
     let content: string = "";
-    content += 'X: ' + `${xrel}`.padStart(3) + ` (${x})`.padStart(3);
-    content += ' | Y: ' + `${yrel}`.padStart(3) + ` (${y})`.padStart(3);
-    content += ' | Passability: ' + `${passability.toFixed(3)}`;
+    content += 'X: ' + `<b>${xrel}</b>`.padStart(3) + ` (${x})`.padStart(3);
+    content += ' | Y: ' + `<b>${yrel}</b>`.padStart(3) + ` (${y})`.padStart(3);
+    content += ' | Passability: ' + `<b>${passability.toFixed(3)}</b>`;
 
-    this.tileInfo.textContent = content;
+    this.tileInfo.innerHTML = content;
   }
 
   /**

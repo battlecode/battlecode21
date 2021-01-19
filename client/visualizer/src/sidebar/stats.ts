@@ -34,6 +34,8 @@ export default class Stats {
 
   private readonly tourIndexJump: HTMLInputElement;
 
+  private teamNameNodes: HTMLSpanElement[] = [];
+
   // Key is the team ID
   private robotTds: Map<number, Map<string, Map<number, HTMLTableCellElement>>> = new Map();
 
@@ -75,9 +77,11 @@ export default class Stats {
     let teamHeader: HTMLDivElement = document.createElement("div");
     teamHeader.className += ' teamHeader';
 
-    let teamNameNode = document.createTextNode(teamName);
+    let teamNameNode = document.createElement('span');
+    teamNameNode.innerHTML = teamName;
     teamHeader.style.backgroundColor = hex[inGameID];
     teamHeader.appendChild(teamNameNode);
+    this.teamNameNodes[inGameID] = teamNameNode;
     return teamHeader;
   }
 
@@ -440,5 +444,10 @@ export default class Stats {
   setBuffs(teamID: number, numBuffs: number) {
     this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
     this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(2));
+  }
+
+  setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {
+    const name = teamNames[teamIDs.indexOf(teamID)];
+    this.teamNameNodes[teamID].innerHTML  = "<b>" + name + "</b> " +  `<span style="color: yellow">&#x1f31f</span>`;
   }
 }
