@@ -1,3 +1,5 @@
+# Requires achallonge, and _not_ pychal. Make sure to `pip uninstall pychal`, `pip install achallonge` etc before using.
+
 # Usage:
 # python challonge_pubber.py argv
 # argv[1]: a json produced by running the tournmanet
@@ -5,6 +7,7 @@
 # argv[3]: optional; the challonge match number of the last Challonge match to be published, _exclusive_.
 
 # IMPORTANT -- Before running this:
+# Ensure you have achallonge, and not pychal, installed as Python packages.
 # Get the Challonge API Key, substitute it for API_KEY below. DON'T PUSH IT!
 # Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart)
 # Get the lowest Challonge match id (see some commented code for an example). Set it to lowest_id.
