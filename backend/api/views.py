@@ -1052,6 +1052,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             except:
                 return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
+            if scrimmage.status in ('redwon', 'bluewon'):
+                return Response({'message': 'Success response already received for this scrimmage'}, status.HTTP_400_BAD_REQUEST)
+
             response = accept_scrimmage_helper(scrimmage.id)
             return response
         else:
