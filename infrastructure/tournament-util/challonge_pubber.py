@@ -63,9 +63,9 @@ async def run():
             await api_match.attach_url(replayurl)
 
         if player1_score > player2_score:
-            await api_match.report_winner(api_player_1, f'{player1_score}-{player2_score}')
+            await api_match.report_winner(api_player1, f'{player1_score}-{player2_score}')
         else:
-            await api_match.report_winner(api_player_2, f'{player1_score}-{player2_score}')
+            await api_match.report_winner(api_player2, f'{player1_score}-{player2_score}')
 
 
 loop = asyncio.get_event_loop()
