@@ -1,10 +1,20 @@
+# Usage:
+# python challonge_pubber.py argv
+# argv[1]: a json produced by running the tournmanet
+# argv[2]: the challonge match number (as shown on the bracket page) of the first Challonge match (or, if argv[3] not specified, the only challonge match) whose result is to be published
+# argv[3]: optional; the challonge match number of the last Challonge match to be published, _inclusive_
+
+# IMPORTANT -- Before running this:
+# Get the Challonge API Key, substitute it for API_KEY below. DON'T PUSH IT!
+# Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart)
+# Get the lowest Challonge match id (see some commented code for an example). Set it to lowest_id.
+# Ensure the tournament is started and attachments are allowed (see some commented code for more info).
+
 import sys, json, challonge, asyncio
 
 replay_file_name = sys.argv[1]
 match_no = int(sys.argv[2])
 
-# Before running this:
-# Get the challonge API Key, substitute it for API_KEY below. DON'T PUSH IT!
 
 async def run():
     with open(replay_file_name, 'r') as replay_file:
