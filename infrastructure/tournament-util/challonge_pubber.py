@@ -20,7 +20,7 @@ async def run():
     with open(replay_file_name, 'r') as replay_file:
         
         replays = json.load(replay_file)
-        match = replays[match_no - 1]
+        match = replays[match_no - 1] # note -1, for proper indexing: challonge is 1-indexed while the json is 0
 
         user = await challonge.get_user('mitbattlecode','API_KEY')
         
