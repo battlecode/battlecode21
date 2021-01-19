@@ -153,7 +153,7 @@ export function defaults(supplied?: any): Config {
     websocketURL: null,
     matchFileURL: null,
     pollEvery: 500,
-    tournamentMode: true,
+    tournamentMode: false,
     interpolate: true,
     indicators: false,
     allIndicators: false,
