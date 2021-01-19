@@ -119,6 +119,11 @@ export interface Config {
    * Whether to do profiling on profiled match files, assuming the profiler is loaded.
    */
   doProfiling: boolean;
+
+  /**
+   * Get rid of this after sprint...
+   */
+  rotate: boolean;
 }
 
 /**
@@ -148,7 +153,7 @@ export function defaults(supplied?: any): Config {
     websocketURL: null,
     matchFileURL: null,
     pollEvery: 500,
-    tournamentMode: false,
+    tournamentMode: true,
     interpolate: true,
     indicators: false,
     allIndicators: false,
@@ -162,7 +167,8 @@ export function defaults(supplied?: any): Config {
     shorterLogHeader: false,
     processLogs: true,
     useProfiler: true,
-    doProfiling: true
+    doProfiling: true,
+    rotate: false
   };
   return Object.assign(conf, supplied);
 }

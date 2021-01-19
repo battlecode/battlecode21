@@ -51,6 +51,11 @@ export default class Looper {
         // Cancel previous games if they're running
         this.clearScreen();
 
+        // rotate tall maps
+        if (this.conf.tournamentMode) {
+            this.conf.rotate = (match.current.maxCorner.y - match.current.minCorner.y) > (match.current.maxCorner.x - match.current.minCorner.x);
+        }
+
         // Reset the canvas
         this.gamearea.setCanvasDimensions(match.current);
 

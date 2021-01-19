@@ -48,11 +48,12 @@ export default class Renderer {
     // setup correct rendering
     const viewWidth = viewMax.x - viewMin.x
     const viewHeight = viewMax.y - viewMin.y
-    const scale = this.canvas.width / viewWidth;
+    const scale = this.canvas.width / (!this.conf.rotate ? viewWidth : viewHeight);
 
     this.ctx.save();
     this.ctx.scale(scale, scale);
-    this.ctx.translate(-viewMin.x, -viewMin.y);
+    if (!this.conf.rotate) this.ctx.translate(-viewMin.x, -viewMin.y);
+    else this.ctx.translate(-viewMin.y, -viewMin.x);
 
     this.renderBackground(world);
 
@@ -77,17 +78,18 @@ export default class Renderer {
     this.ctx.fillStyle = "white";
     this.ctx.globalAlpha = 1;
 
-    const minX = world.minCorner.x;
-    const minY = world.minCorner.y;
-    const width = world.maxCorner.x - world.minCorner.x;
-    const height = world.maxCorner.y - world.minCorner.y;
+    let minX = world.minCorner.x;
+    let minY = world.minCorner.y;
+    let width = world.maxCorner.x - world.minCorner.x;
+    let height = world.maxCorner.y - world.minCorner.y;
 
     const scale = 20;
 
     this.ctx.scale(1/scale, 1/scale);
 
     // scale the background pattern
-    this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
+    if (!this.conf.rotate) this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
+    else this.ctx.fillRect(minY*scale, minX*scale, height*scale, width*scale);
 
     const map = world.mapStats;
 
@@ -102,13 +104,15 @@ export default class Renderer {
       // Fetch and draw tile image
       const swampLevel = cst.getLevel(map.passability[idxVal]);
       const tileImg = this.imgs.tiles[swampLevel];
-      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      if (!this.conf.rotate) this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      else this.ctx.drawImage(tileImg, cy, cx, scale, scale);
 
       // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;
-        this.ctx.strokeRect(cx, cy, scale, scale);
+        if (!this.conf.rotate) this.ctx.strokeRect(cx, cy, scale, scale);
+        else this.ctx.strokeRect(cy, cx, scale, scale);
       }
     }
 
@@ -118,7 +122,8 @@ export default class Renderer {
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
       this.ctx.strokeStyle = 'red';
       this.ctx.globalAlpha = 1;
-      this.ctx.strokeRect(cx, cy, scale, scale);
+      if (!this.conf.rotate) this.ctx.strokeRect(cx, cy, scale, scale);
+      else this.ctx.strokeRect(cy, cx, scale, scale);
     }
 
     this.ctx.restore();
@@ -221,6 +226,7 @@ export default class Renderer {
    * Draws a cirlce centered at (x,y) with given squared radius and color.
    */
   private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
+    if (this.conf.rotate) [x,y] = [y,x];
     this.ctx.beginPath();
     this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
@@ -250,6 +256,7 @@ export default class Renderer {
    * Draws an image centered at (x, y) with the given radius
    */
   private drawImage(img: HTMLImageElement, x: number, y: number, radius: number) {
+    if (this.conf.rotate) [x,y] = [y,x];
     this.ctx.drawImage(img, x-radius, y-radius, radius*2, radius*2);
   }
 
@@ -257,6 +264,7 @@ export default class Renderer {
    * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
   private drawBot(img: HTMLImageElement, x: number, y: number) {
+    if (this.conf.rotate) [x,y] = [y,x];
     let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
     let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
     this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
@@ -327,10 +335,18 @@ export default class Renderer {
     const height = world.maxCorner.y - world.minCorner.y;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y - 1;
-    const x = width * event.offsetX / this.canvas.offsetWidth + world.minCorner.x;
-    const _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
-    const y = this.flip(_y, minY, maxY)
-    return {x: Math.floor(x), y: Math.floor(y+1)};
+    var _x: number;
+    var _y: number;
+    if (!this.conf.rotate) {
+      _x = width * event.offsetX / this.canvas.offsetWidth + world.minCorner.x;
+      _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
+      _y = this.flip(_y, minY, maxY)
+    }
+    else {
+      _y = (world.maxCorner.y - world.minCorner.y - 1) - height * event.offsetX / this.canvas.offsetWidth + world.minCorner.y;
+      _x = width * event.offsetY / this.canvas.offsetHeight + world.minCorner.x;
+    }
+    return {x: Math.floor(_x), y: Math.floor(_y+1)};
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {
