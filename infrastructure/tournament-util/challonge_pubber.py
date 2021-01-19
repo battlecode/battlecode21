@@ -17,7 +17,7 @@ match_no_start = int(sys.argv[2])
 try:
     match_no_end = int(sys.argv[3])
 except:
-    match_no_end = match_no_start
+    match_no_end = match_no_start+1
 
 
 async def run():
