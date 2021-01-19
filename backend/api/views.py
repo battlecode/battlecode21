@@ -1043,7 +1043,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
-    @action(methods=['patch'], detail=True)
+    @action(methods=['post'], detail=True)
     def requeue(self, request, league_id, team, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
         if is_admin:
