@@ -40,7 +40,8 @@ export default class Looper {
         private conf: config.Config, private imgs: imageloader.AllImages,
         private controls: Controls, private stats: Stats,
         private gamearea: GameArea, cconsole: Console,
-        private matchqueue: MatchQueue, private profiler?: Profiler) {
+        private matchqueue: MatchQueue, private profiler?: Profiler,
+        private mapinfo?: string) {
         
         this.console = cconsole;
 
@@ -80,7 +81,8 @@ export default class Looper {
         };
         const onMouseover = (x: number, y: number, xrel: number, yrel: number, passability: number) => {
             // Better make tile type and hand that over
-            controls.setTileInfo(x, y, xrel, yrel, passability);
+            const extraInfo = (mapinfo || "") + (this.conf.rotate ? " (rotated and flipped)" : "");
+            controls.setTileInfo(x, y, xrel, yrel, passability, mapinfo);
         };
 
         // Configure renderer for this match
@@ -182,6 +184,7 @@ export default class Looper {
         this.goalUPS = 0;
         this.controls.pause();
         this.controls.removeInfoString();
+        this.controls.setDefaultText();
     }
 
     private loop(curTime) {

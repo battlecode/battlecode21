@@ -58,12 +58,11 @@ export default class Controls {
   constructor(conf: Config, images: imageloader.AllImages, runner: Runner) {
     this.div = this.baseDiv();
     this.timeReadout = document.createElement('span');
-    this.timeReadout.innerHTML = 'No match loaded';
     this.tileInfo = document.createElement('span');
-    this.tileInfo.innerHTML = 'X | Y | Passability';
     this.speedReadout = document.createElement('span');
     this.speedReadout.style.cssFloat = 'right';
-    this.speedReadout.textContent = 'UPS: 0 FPS: 0';
+
+    this.setDefaultText();
 
     // initialize the images
     this.conf = conf;
@@ -153,9 +152,10 @@ export default class Controls {
     function changeTime(dragEvent: MouseEvent) {
       // jump to a frame when clicking the controls timeline
       if (runner.looper) {
+        const loadedTime = !conf.tournamentMode ? runner.looper.match['_farthest'].turn : 1500;
         let width: number = (<HTMLCanvasElement>this).width;
-        let turn: number = dragEvent.offsetX / width * runner.looper.match['_farthest'].turn;
-        turn = Math.round(Math.min(runner.looper.match['_farthest'].turn, turn));
+        let turn: number = dragEvent.offsetX / width * loadedTime;
+        turn = Math.round(Math.min(loadedTime, turn));
     
         runner.looper.onSeek(turn);
       }
@@ -219,6 +219,12 @@ export default class Controls {
       //canvas.style.display = 'none'; // we don't wanna reveal how many rounds there are!
     }
     return canvas;
+  }
+
+  setDefaultText() {
+    this.timeReadout.innerHTML = 'No match loaded';
+    this.tileInfo.innerHTML = 'X | Y | Passability';
+    this.speedReadout.textContent = 'UPS:  FPS: ';
   }
 
   /**
@@ -410,11 +416,12 @@ export default class Controls {
   /**
    * Updates the location readout
    */
-  setTileInfo(x: number, y: number, xrel: number, yrel: number, passability: number): void {
+  setTileInfo(x: number, y: number, xrel: number, yrel: number, passability: number, extraInfo?: string): void {
     let content: string = "";
     content += 'X: ' + `<b>${xrel}</b>`.padStart(3) + ` (${x})`.padStart(3);
     content += ' | Y: ' + `<b>${yrel}</b>`.padStart(3) + ` (${y})`.padStart(3);
     content += ' | Passability: ' + `<b>${passability.toFixed(3)}</b>`;
+    if (extraInfo) content += ` ||${extraInfo}`;
 
     this.tileInfo.innerHTML = content;
   }
