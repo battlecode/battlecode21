@@ -84,7 +84,6 @@ def game_worker(gameinfo):
         tourmode = False
         if 'tourmode' in gameinfo and gameinfo['tourmode'] == True:
             tourmode = True
-        print("Tour mode:", tourmode)
 
         # For reverse-compatibility
         if 'name1' in gameinfo:
