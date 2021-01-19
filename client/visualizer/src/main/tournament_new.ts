@@ -83,7 +83,7 @@ export class Tournament {
   // }
 
   isLastMatchInGame(): boolean {
-    return this.matchI === this.games[this.gameI].length - 1 || (Math.abs(this.wins()[1] - this.wins()[2]) >= 2);
+    return this.matchI === this.games[this.gameI].length - 1 || (Math.abs(this.wins()[this.current().team1] - this.wins()[this.current().team2]) >= 2);
   }
 
   isFirstMatchInGame(): boolean {
@@ -127,9 +127,14 @@ export class Tournament {
   }
 
   wins() {
-    const wins = {1: 0, 2: 0};
+    const team1 = this.current().team1;
+    const team2 = this.current().team2;
+    const wins = {};
+    wins[team1] = 0;
+    wins[team2] = 0;
     for (let matchI = 0; matchI <= this.matchI; matchI++) {
-      wins[this.games[this.gameI][matchI].winner]++;
+      const match = this.games[this.gameI][matchI];
+      wins[match.winner == 1 ? match.team1 : match.team2]++;
     }
     return wins;
   }

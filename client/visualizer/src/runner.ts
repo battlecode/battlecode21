@@ -378,8 +378,10 @@ export default class Runner {
       } else if (this.tournamentState === TournamentState.END_SPLASH) {
         const wins = this.tournament.wins();
         let result: string = "";
-        if (wins[1] > wins[2]) result = `${this.tournament.current().team1} wins ${wins[1]}-${wins[2]}!`;
-        else result = `${this.tournament.current().team2} wins ${wins[2]}-${wins[1]}!`;        
+        const team1 = this.tournament.current().team1;
+        const team2 = this.tournament.current().team2;
+        if (wins[team1] > wins[team2]) result = `${team1} wins ${wins[team1]}-${wins[team2]}!`;
+        else result = `${team2} wins ${wins[team2]}-${wins[team1]}!`;        
         Splash.addWinnerScreen(this.conf, this.root, result);
       } else if (this.tournamentState === TournamentState.MID_GAME) {
         this.loadGameFromURL(this.tournament.current().url);
