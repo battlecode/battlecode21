@@ -8,12 +8,12 @@
 
 # IMPORTANT -- Before running this:
 # Ensure you have achallonge, and not pychal, installed as Python packages.
-# Get the Challonge API Key, substitute it for API_KEY below. DON'T PUSH IT!
-# Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart)
-# Get the lowest Challonge match id (see some commented code for an example). Set it to lowest_id.
+# Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH IT!
+# Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to an env, CHALLONGE_TOUR_URL.
+# Get the lowest Challonge match id (see some commented code for an example). Set it to an env, CHALLONGE_LOWEST_ID.
 # Ensure the tournament is started and attachments are allowed (see some commented code for more info).
 
-import sys, json, challonge, asyncio
+import sys, json, challonge, asyncio, os
 
 replay_file_name = sys.argv[1]
 match_no_start = int(sys.argv[2])
@@ -26,9 +26,11 @@ except:
 async def run():
     with open(replay_file_name, 'r') as replay_file:
         replays = json.load(replay_file)
-        user = await challonge.get_user('mitbattlecode','API_KEY')
+        api_key = os.getenv('CHALLONGE_API_KEY')
+        user = await challonge.get_user('mitbattlecode',api_key)
         
-        tournament = await user.get_tournament(url = 'guxnrz5')
+        tour_url = os.getenv('CHALLONGE_TOUR_URL')
+        tournament = await user.get_tournament(url = tour_url)
         # # To ensure tournament is started and attachments are allowed; only needs to be run once
         # await tournament.start()
         # await tournament.allow_attachments(True)
@@ -38,7 +40,8 @@ async def run():
         # for m in tournament_matches:
         #     print(m.id)
         # # (then look through this)
-        lowest_id = 225020428
+        lowest_id = int(os.getenv('CHALLONGE_LOWEST_ID'))
+
 
         for match_no in range(match_no_start, match_no_end):
             print(f'Reporting Challonge match {match_no}')
