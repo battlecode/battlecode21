@@ -102,6 +102,8 @@ export class Tournament {
     if (this.matchI < 0) {
       this.gameI--;
       this.matchI = this.games[this.gameI].length - 1;
+      this.matchI--;
+      if (Math.abs(this.wins()[this.current().team1] - this.wins()[this.current().team2]) < 2) this.matchI++;
     }
     console.log(`game index: ${this.gameI}\n match index: ${this.matchI}`);
   }

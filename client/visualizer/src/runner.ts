@@ -410,7 +410,7 @@ export default class Runner {
 
     this.looper = new Looper(match, meta, this.conf, this.imgs,
       this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler,
-      this.tournament ? ` Map: ${this.tournament?.current().map}` : undefined);
+      this.tournament ? ` Map: <b>${this.tournament?.current().map}</b>` : undefined);
 
     //   if (this.profiler)
     //    this.profiler.load(match);
