@@ -3,7 +3,6 @@ import * as cst from '../../constants';
 
 import {GameWorld, schema} from 'battlecode-playback';
 import {AllImages} from '../../imageloader';
-import Victor = require('victor');
 
 import {GameMap, MapUnit} from '../index';
 
@@ -21,9 +20,9 @@ export default class MapRenderer {
 
   // Callbacks for clicking robots and trees on the canvas
   readonly onclickUnit: (id: number) => void;
-  readonly onclickBlank: (loc: Victor) => void;
+  readonly onclickBlank: (x, y) => void;
   readonly onMouseover: (x: number, y: number, passability: number) => void
-  readonly onDrag: (loc: Victor) => void
+  readonly onDrag: (x, y) => void
 
   // Other useful values
   readonly bgPattern: CanvasPattern;
@@ -33,9 +32,9 @@ export default class MapRenderer {
   private map: GameMap; //the current map
 
   constructor(canvas: HTMLCanvasElement, imgs: AllImages, conf: config.Config,
-    onclickUnit: (id: number) => void, onclickBlank: (loc: Victor) => void,
+    onclickUnit: (id: number) => void, onclickBlank: (x: number, y: number) => void,
     onMouseover: (x: number, y: number, passability: number) => void,
-    onDrag: (loc: Victor) => void) {
+    onDrag: (x: number, y: number) => void) {
     this.canvas = canvas;
     this.conf = conf;
     this.imgs = imgs;
@@ -59,6 +58,7 @@ export default class MapRenderer {
    * Renders the game map.
    */
   render(map: GameMap): void {
+    console.log("map:", map);
     const scale = this.canvas.width / map.width;
     this.width = map.width;
     this.height = map.height;
@@ -128,8 +128,8 @@ export default class MapRenderer {
   }
 
   private renderBody(body: MapUnit) {
-    const x = body.loc.x;
-    const y = this.flip(body.loc.y, this.map.height);
+    const x = body.x;
+    const y = this.flip(body.y, this.map.height);
     const radius = body.radius;
     let img: HTMLImageElement;
 
@@ -149,25 +149,22 @@ export default class MapRenderer {
     const whilemousedown = () => {
       if (hoverPos !== null) {
         const {x,y} = hoverPos;
-        let loc : Victor = new Victor(x, y);
-        this.onDrag(loc);
+        this.onDrag(x, y);
       }
     };
 
     var interval: number;
     this.canvas.onmousedown = (event: MouseEvent) => {
       const {x,y} = this.getIntegerLocation(event, this.map);
-      let loc : Victor = new Victor(x, y);
-
       // Get the ID of the selected unit
       let selectedID;
       this.map.originalBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.isEqualTo(body.loc)) {
+        if (x == body.x && y == body.y) {
           selectedID = id;
         }
       });
       this.map.symmetricBodies.forEach(function(body: MapUnit, id: number) {
-        if (loc.isEqualTo(body.loc)) {
+        if (x == body.x && y == body.y) {
           selectedID = id;
         }
       });
@@ -175,7 +172,7 @@ export default class MapRenderer {
       if (selectedID) {
         this.onclickUnit(selectedID);
       } else {
-        this.onclickBlank(loc);
+        this.onclickBlank(x, y);
       }
 
       interval = window.setInterval(whilemousedown, 50);

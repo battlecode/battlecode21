@@ -35,8 +35,8 @@ export default class MapValidator {
     // Invariant: bodies in originalBodies don't overlap with each other, and
     //            bodies in symmetricBodies don't overlap with each other
     map.originalBodies.forEach((unit: MapUnit, id: number) => {
-      let x = unit.loc.x;
-      let y = unit.loc.y;
+      let x = unit.x;
+      let y = unit.y;
       if (x < 0 || y < 0 || x > map.width || y > map.height) {
         errors.push(`ID ${id} is off the map.`);
       }
@@ -45,7 +45,7 @@ export default class MapValidator {
     // Bodies must not overlap
     map.originalBodies.forEach((unitA: MapUnit, idA: number) => {
       map.symmetricBodies.forEach((unitB: MapUnit, idB: number) => {
-        if (unitA.loc.distanceSq(unitB.loc) == 0) {
+        if (unitA.x === unitB.x && unitA.y === unitB.y) {
           errors.push (`IDs ${idA} and ${idB} are overlapping.`);
         }
       });
@@ -74,8 +74,8 @@ export default class MapValidator {
 
     // Remove bodies that are off the map
     map.originalBodies.forEach((unit: MapUnit, id: number) => {
-      let x = unit.loc.x;
-      let y = unit.loc.y;
+      let x = unit.x;
+      let y = unit.y;
       let distanceToWall = Math.min(x, y, map.width - x, map.height - y);
       if (unit.radius > distanceToWall || x < 0 || y < 0 || x > map.width || y > map.height) {
         map.originalBodies.delete(id);
@@ -88,7 +88,9 @@ export default class MapValidator {
     //            bodies in symmetricBodies don't overlap with each other
     map.originalBodies.forEach((unitA: MapUnit, idA: number) => {
       map.symmetricBodies.forEach((unitB: MapUnit, idB: number) => {
-        if (unitA.loc.distance(unitB.loc) <= unitA.radius + unitB.radius) {
+        // no radii this year
+        // if (unitA.loc.distance(unitB.loc) <= unitA.radius + unitB.radius) { 
+        if (unitA.x === unitB.x && unitA.y === unitB.y) {
           map.originalBodies.delete(idA);
           map.originalBodies.delete(idB);
           actions.push (`Removed IDs ${idA} and ${idB}. (overlapping)`);
