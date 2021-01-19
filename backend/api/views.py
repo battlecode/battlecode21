@@ -118,18 +118,18 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
 
     # If applicable, immediately accept scrimmage, rather than wait for the other team to accept.
     if accept:
-        result = accept_scrimmage_helper(scrimmage.id)
+        result = queue_scrimmage_helper(scrimmage.id)
     else:
         scrimmage.status = 'pending'
         scrimmage.save()
         result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
     return result
 
-def accept_scrimmage_helper(scrimmage_id):
+def queue_scrimmage_helper(scrimmage_id):
     scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
     # put onto pubsub
     # TODO if called through create_scrimmage_helper, then a lot of these queries are performed twice in succession, once in each method. Could use optimization.
-    # for example, pass data from create_scrimmage_helper into accept_scrimmage_helper, as an argument, and get your values from there.
+    # for example, pass data from create_scrimmage_helper into queue_scrimmage_helper, as an argument, and get your values from there.
     red_team_id = scrimmage.red_team.id
     blue_team_id = scrimmage.blue_team.id
     red_submission_id = scrimmage.red_submission_id
@@ -1004,7 +1004,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-            result = accept_scrimmage_helper(scrimmage.id)
+            result = queue_scrimmage_helper(scrimmage.id)
             return result
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
@@ -1055,7 +1055,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status in ('redwon', 'bluewon'):
                 return Response({'message': 'Success response already received for this scrimmage'}, status.HTTP_400_BAD_REQUEST)
 
-            response = accept_scrimmage_helper(scrimmage.id)
+            response = queue_scrimmage_helper(scrimmage.id)
             return response
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
