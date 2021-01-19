@@ -82,7 +82,7 @@ def game_worker(gameinfo):
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
         tourmode = False
-        if 'tourmode' in gameinfo and gameinfo['tourmode'] == 'True':
+        if 'tourmode' in gameinfo and gameinfo['tourmode'] == True:
             tourmode = True
         print("Tour mode:", tourmode)
 

@@ -171,7 +171,7 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'name2': str(blue_team_name),
         'maps': str(map_ids),
         'replay': scrimmage_replay,
-        'tourmode': str(tourmode)
+        'tourmode': tourmode
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     # In testing, it's helpful to comment out the actual pubsub call, and print what would be added instead, so you can see it.
