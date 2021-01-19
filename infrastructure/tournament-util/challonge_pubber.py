@@ -59,8 +59,8 @@ async def run():
             else:
                 player2_score += 1
 
-            replayurl = f'(http://2021.battlecode.org/visualizer.html?tournamentMode&https://2021.battlecode.org/replays/{replay}.bc21)'
-            await api_match.attach_text(replayurl)
+            replayurl = f'http://2021.battlecode.org/visualizer.html?tournamentMode&https://2021.battlecode.org/replays/{replay}.bc21'
+            await api_match.attach_url(replayurl)
 
         if player1_score > player2_score:
             await api_match.report_winner(api_player_1, f'{player1_score}-{player2_score}')
