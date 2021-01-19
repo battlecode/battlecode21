@@ -1051,6 +1051,9 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                 scrimmage = Scrimmage.objects.all().get(pk=pk)
             except:
                 return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
+
+            response = accept_scrimmage_helper(scrimmage.id)
+            return response
         else:
             return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
