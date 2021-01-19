@@ -38,6 +38,7 @@ async def run():
         lowest_id = 225020428
 
         for match_no in range(match_no_start, match_no_end):
+            print(f'Reporting Challonge match {match_no}')
             match = replays[match_no - 1] # note -1, for proper indexing: challonge is 1-indexed while the json is 0
             api_match = await tournament.get_match(match_no + lowest_id - 1) # note -1, for proper indexing: lowest_id corresponds to match number 1
             api_player1 = await tournament.get_participant( api_match.player1_id )
@@ -69,6 +70,8 @@ async def run():
                 await api_match.report_winner(api_player1, f'{player1_score}-{player2_score}')
             else:
                 await api_match.report_winner(api_player2, f'{player1_score}-{player2_score}')
+
+            print(f'Challonge match {match_no} reported!')
 
 
 loop = asyncio.get_event_loop()
