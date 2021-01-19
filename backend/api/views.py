@@ -23,7 +23,7 @@ import os, tempfile, datetime, argparse, time, json, random, binascii, threading
 GCLOUD_PROJECT = "battlecode18"
 GCLOUD_SUB_BUCKET = "bc21-submissions"
 GCLOUD_SUB_COMPILE_NAME  = 'bc21-compile'
-GCLOUD_SUB_SCRIMMAGE_NAME = 'bc21-game'
+GCLOUD_SUB_SCRIMMAGE_NAME = 'bc21-game-test'
 GCLOUD_RES_BUCKET = "bc21-resumes"
 SUBMISSION_FILENAME = lambda submission_id: f"{submission_id}/source.zip"
 RESUME_FILENAME = lambda user_id: f"{user_id}/resume.pdf"
@@ -1042,6 +1042,17 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             return Response(serializer.data, status.HTTP_200_OK)
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
+
+    @action(methods=['patch'], detail=True)
+    def requeue(self, request, league_id, team, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            try:
+                scrimmage = Scrimmage.objects.all().get(pk=pk)
+            except:
+                return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
 
     @action(methods=['patch'], detail=True)
     def set_outcome(self, request, league_id, team, pk=None):
