@@ -24,15 +24,19 @@ async def run():
 
         user = await challonge.get_user('mitbattlecode','API_KEY')
         
-        tournament = await user.get_tournament(url = 'rajiqb0b')
-                
-        # print(tournament.name)
-        # api_matches = await tournament.get_matches()
-        # for api_match in api_matches:
-        #     print(api_match.id)
-        #     print(api_match.location)
+        tournament = await user.get_tournament(url = 'guxnrz5')
+        # # To ensure tournament is started and attachments are allowed; only needs to be run once
+        # await tournament.start()
+        # await tournament.allow_attachments(True)
 
-        api_match = await tournament.get_match(match_no + 224454681)
+        # # For getting the lowest challonge match id:
+        # tournament_matches = await tournament.get_matches()
+        # for m in tournament_matches:
+        #     print(m.id)
+        # # (then look through this)
+        lowest_id = 225020428
+
+        api_match = await tournament.get_match(match_no + lowest_id - 1) # note -1, for proper indexing: lowest_id corresponds to match number 1
         api_player1 = await tournament.get_participant( api_match.player1_id )
         api_player2 = await tournament.get_participant( api_match.player2_id )
 
