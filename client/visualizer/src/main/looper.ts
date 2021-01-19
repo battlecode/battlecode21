@@ -82,7 +82,7 @@ export default class Looper {
         const onMouseover = (x: number, y: number, xrel: number, yrel: number, passability: number) => {
             // Better make tile type and hand that over
             const extraInfo = (mapinfo || "") + (this.conf.rotate ? " (rotated and flipped)" : "");
-            controls.setTileInfo(x, y, xrel, yrel, passability, mapinfo);
+            controls.setTileInfo(x, y, xrel, yrel, passability, extraInfo);
         };
 
         // Configure renderer for this match
