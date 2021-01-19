@@ -83,7 +83,7 @@ export class Tournament {
   // }
 
   isLastMatchInGame(): boolean {
-    return this.matchI === this.games[this.gameI].length - 1 || Math.abs(this.wins()[1] - this.wins()[2]) >= 2;
+    return this.matchI === this.games[this.gameI].length - 1 || (Math.abs(this.wins()[1] - this.wins()[2]) >= 2);
   }
 
   isFirstMatchInGame(): boolean {

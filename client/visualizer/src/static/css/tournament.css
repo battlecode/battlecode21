@@ -98,7 +98,7 @@
 #winner {
     top: 45%;
     left: 50%;
-    color: orange;
+    font-weight: bold;
 }
 
 @keyframes slide-in {

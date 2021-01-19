@@ -9,7 +9,6 @@ import Victor = require('victor');
 
 import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap, UploadedMap} from './index';
 import { env } from 'process';
-import MapReader from './action/reader';
 
 /**
  * Allows the user to download a .map21 file representing the map generated

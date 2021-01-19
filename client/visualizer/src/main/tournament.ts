@@ -1,6 +1,6 @@
 import {path, fs} from './electron-modules';
 
-export function readTournament(jsonFile: File, cb: (err: Error | null, t: Tournament | null) => void) {
+export function readTournament(jsonFile: File, cbTournament: (t: Tournament) => void, cbError: (err: Error) => void) {
   /*if (!process.env.ELECTRON) {
     cb(new Error("Can't read tournaments outside of electron"), null);
     return;
@@ -11,18 +11,18 @@ export function readTournament(jsonFile: File, cb: (err: Error | null, t: Tourna
     console.log('reader RESULT');
     console.log(reader.result);
     if (reader.error) {
-      cb(reader.error, null);
+      cbError(reader.error);
       return;
     }
     
-    var tournament;
+    var tournament: Tournament;
     try {
       tournament = new Tournament(JSON.parse(<string>reader.result));
     } catch (e) {
-      cb(e, null);
+      cbError(e);
       return;
     }
-    cb(null, tournament);
+    cbTournament(tournament);
   };
   reader.readAsText(jsonFile);
 }
