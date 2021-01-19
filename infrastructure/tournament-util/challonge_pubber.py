@@ -3,13 +3,16 @@ import sys, json, challonge, asyncio
 replay_file_name = sys.argv[1]
 match_no = int(sys.argv[2])
 
+# Before running this:
+# Get the challonge API Key, substitute it for API_KEY below. DON'T PUSH IT!
+
 async def run():
     with open(replay_file_name, 'r') as replay_file:
         
         replays = json.load(replay_file)
         match = replays[match_no - 1]
 
-        user = await challonge.get_user('mitbattlecode','PASSWORD')
+        user = await challonge.get_user('mitbattlecode','API_KEY')
         
         tournament = await user.get_tournament(url = 'rajiqb0b')
                 
