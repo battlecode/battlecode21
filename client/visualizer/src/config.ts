@@ -121,9 +121,14 @@ export interface Config {
   doProfiling: boolean;
 
   /**
-   * Get rid of this after sprint...
+   * Whether to rotate tall maps.
    */
-  rotate: boolean;
+  doRotate: boolean;
+
+  /**
+   * Whether the map is currently rotated. TODO: don't make this a global variable.
+   */
+  doingRotate: boolean;
 }
 
 /**
@@ -168,7 +173,8 @@ export function defaults(supplied?: any): Config {
     processLogs: true,
     useProfiler: true,
     doProfiling: true,
-    rotate: false
+    doRotate: false,
+    doingRotate: false
   };
   return Object.assign(conf, supplied);
 }

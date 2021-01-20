@@ -46,6 +46,8 @@ export default class Stats {
 
   private buffDisplays: BuffDisplay[];
 
+  private extraInfo: HTMLDivElement;
+
   private robotConsole: HTMLDivElement;
 
   private runner: Runner; //needed for file uploading in tournament mode
@@ -381,6 +383,11 @@ export default class Stats {
     this.buffDisplays = this.initBuffDisplays(teamIDs);
     const buffDivsElement = this.getBuffDisplaysElement(teamIDs);
     this.div.appendChild(buffDivsElement);
+
+    this.div.appendChild(document.createElement("br"));
+    this.extraInfo = document.createElement('div');
+    this.extraInfo.className = "extra-info";
+    this.div.appendChild(this.extraInfo);
   }
 
   tourIndexJumpFun(e) {
@@ -450,4 +457,8 @@ export default class Stats {
     const name = teamNames[teamIDs.indexOf(teamID)];
     this.teamNameNodes[teamID].innerHTML  = "<b>" + name + "</b> " +  `<span style="color: yellow">&#x1f31f</span>`;
   }
+  setExtraInfo(info: string) {
+    this.extraInfo.innerHTML = info;
+  }
+
 }

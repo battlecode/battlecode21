@@ -489,12 +489,13 @@ export default class Runner {
           this.console.setNotLoggingDiv();
           break;
         case 81: // 'q' - Toggle profiler
-          console.log(this.profiler);
           if (this.profiler) {
             this.conf.doProfiling = !this.conf.doProfiling;
             this.profiler.setNotProfilingDiv();
           }
           break;
+        case 90: // 'z' - Toggle rotate
+          this.conf.doRotate = !this.conf.doRotate;
       }
     }
 

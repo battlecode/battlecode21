@@ -53,9 +53,8 @@ export default class Looper {
         this.clearScreen();
 
         // rotate tall maps
-        if (this.conf.tournamentMode) {
-            this.conf.rotate = (match.current.maxCorner.y - match.current.minCorner.y) > (match.current.maxCorner.x - match.current.minCorner.x);
-        }
+        if (this.conf.doRotate) this.conf.doingRotate = (match.current.maxCorner.y - match.current.minCorner.y) > (match.current.maxCorner.x - match.current.minCorner.x);
+        else this.conf.doingRotate = false;
 
         // Reset the canvas
         this.gamearea.setCanvasDimensions(match.current);
@@ -68,6 +67,8 @@ export default class Looper {
             teamIDs.push(meta.teams[team].teamID);
         }
         this.stats.initializeGame(teamNames, teamIDs);
+        const extraInfo = (this.mapinfo ? this.mapinfo + "\n" : "") + (this.conf.doingRotate ? " (Map rotated and flipped! Disable for new matches with 'Z'.)" : "");
+        this.stats.setExtraInfo(extraInfo);
 
         // keep around to avoid reallocating
         this.nextStep = new NextStep();
@@ -81,8 +82,7 @@ export default class Looper {
         };
         const onMouseover = (x: number, y: number, xrel: number, yrel: number, passability: number) => {
             // Better make tile type and hand that over
-            const extraInfo = (mapinfo || "") + (this.conf.rotate ? " (rotated and flipped)" : "");
-            controls.setTileInfo(x, y, xrel, yrel, passability, extraInfo);
+            controls.setTileInfo(x, y, xrel, yrel, passability);
         };
 
         // Configure renderer for this match
