@@ -1,17 +1,19 @@
 # Requires achallonge, and _not_ pychal. Make sure to `pip uninstall pychal`, `pip install achallonge` etc before using.
 
-# Usage:
-# python challonge_pubber.py argv
-# argv[1]: a json produced by running the tournmanet
-# argv[2]: the challonge match number (as shown on the bracket page) of the first Challonge match (or, if argv[3] not specified, the only challonge match) whose result is to be published
-# argv[3]: optional; the challonge match number of the last Challonge match to be published, _exclusive_.
-
-# IMPORTANT -- Before running this:
-# Ensure you have achallonge, and not pychal, installed as Python packages.
+# IMPORTANT -- BEFORE RUNNING THIS:
 # Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH IT!
 # Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to an env, CHALLONGE_TOUR_URL.
-# Get the lowest Challonge match id (see some commented code for an example). Set it to an env, CHALLONGE_LOWEST_ID.
-# Ensure the tournament is started and attachments are allowed (see some commented code for more info).
+# Then, run `python challonge_pubber.py init`.
+# This will give you the lowest Challonge match id. Set it to an env, CHALLONGE_LOWEST_ID.
+# Now with all those set, run the script as specified directly below:
+
+# Usage:
+# python challonge_pubber.py path/to/json.json start end
+# path/to/json: a json produced by running the tour. Get this from someone who ran the tournament.
+# start: the challonge match number (as shown on the bracket page) of the first Challonge match (or, if argv[3] not specified, the only challonge match) whose result is to be published
+# end: optional; the challonge match number of the last Challonge match to be published, _exclusive_.
+# e.g. python challonge_pubber.py path/to/replay_dump.json 1 4
+# will publish the results of the Challonge bracket's matches 1, 2, and 3.
 
 import sys, json, challonge, asyncio, os
 
