@@ -52,7 +52,23 @@ SERVER_MAPS = [
   "NotAPuzzle",
   "Rainbow",
   "SlowMusic",
-  "Snowflake"
+  "Snowflake",
+  "BadSnowflake",
+  "CringyAsF",
+  "FindYourWay",
+  "GetShrekt",
+  "Goldfish",
+  "HexesAndOhms",
+  "Licc",
+  "MainCampus",
+  "Punctuation",
+  "Radial",
+  "SeaFloor",
+  "Sediment",
+  "Smile",
+  "SpaceInvaders",
+  "Surprised",
+  "VideoGames",
 ]
 
 # this is the constant used in the ELO calculation
