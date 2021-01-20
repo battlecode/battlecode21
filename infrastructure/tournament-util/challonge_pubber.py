@@ -48,22 +48,11 @@ async def run():
 
     with open(replay_file_name, 'r') as replay_file:
         replays = json.load(replay_file)
-        api_key = os.getenv('CHALLONGE_API_KEY')
-        user = await challonge.get_user('mitbattlecode',api_key)
-        
-        tour_url = os.getenv('CHALLONGE_TOUR_URL')
-        tournament = await user.get_tournament(url = tour_url)
-        # # To ensure tournament is started and attachments are allowed; only needs to be run once
-        # await tournament.start()
-        # await tournament.allow_attachments(True)
-
-        # # For getting the lowest challonge match id:
-        # tournament_matches = await tournament.get_matches()
-        # for m in tournament_matches:
-        #     print(m.id)
-        # # (then look through this)
-        lowest_id = int(os.getenv('CHALLONGE_LOWEST_ID'))
-
+        try: 
+            lowest_id = int(os.getenv('CHALLONGE_LOWEST_ID'))
+        except:
+            print("Make sure you have properly configured CHALLONGE_LOWEST_ID, see the comments at the top of this file for instructions.")
+            return
 
         for match_no in range(match_no_start, match_no_end):
             print(f'Reporting Challonge match {match_no}')
