@@ -58,7 +58,9 @@ export type TeamStats = {
   votes: number,
   influence: [number, number, number, number, number],
   conviction: [number, number, number, number, number],
-  numBuffs: number
+  numBuffs: number,
+  bidderID: number,
+  bid: number
 };
 
 export type IndicatorDotsSchema = {
@@ -238,7 +240,9 @@ export default class GameWorld {
           votes: 0,
           influence: [0, 0, 0, 0, 0],
           conviction: [0, 0, 0, 0, 0],
-          numBuffs: 0
+          numBuffs: 0,
+          bidderID: -1,
+          bid: 0
         });
     }
 
@@ -374,6 +378,8 @@ export default class GameWorld {
 
       statObj.votes += delta.teamVotes(i);
       statObj.numBuffs = delta.teamNumBuffs(i);
+      statObj.bidderID = delta.teamBidderIDs(i);
+      statObj.bid = delta.teamBidderIDs(i);
 
       this.teamStats.set(teamID, statObj);
   }
@@ -476,6 +482,10 @@ export default class GameWorld {
           case schema.Action.PLACE_BID:
             this.bodies.alter({id: robotID, bid: target});
             this.bidRobots.push(robotID);
+
+            var team = this.bodies.lookup(robotID).team;
+            var statObj = this.teamStats.get(team);
+            if (robotID === statObj.bidderID) statObj.bid = target;
             break;
           /// A robot can change team after being empowered
           /// Target: teamID
