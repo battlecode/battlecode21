@@ -15,15 +15,35 @@
 
 import sys, json, challonge, asyncio, os
 
-replay_file_name = sys.argv[1]
-match_no_start = int(sys.argv[2])
-try:
-    match_no_end = int(sys.argv[3])
-except:
-    match_no_end = match_no_start+1
-
-
 async def run():
+    api_key = os.getenv('CHALLONGE_API_KEY')
+    user = await challonge.get_user('mitbattlecode',api_key)
+    
+    tour_url = os.getenv('CHALLONGE_TOUR_URL')
+    tournament = await user.get_tournament(url = tour_url)
+
+    if sys.argv[1] == 'init':
+        # To ensure tournament is started and attachments are allowed; only needs to be run once
+        await tournament.start()
+        await tournament.allow_attachments(True)
+
+        # For getting the lowest challonge match id:
+        tournament_matches = await tournament.get_matches()
+        lowest_id = float('inf')
+        for m in tournament_matches:
+            if m.id < lowest_id:
+                lowest_id = m.id
+        print('Set the env CHALLONGE_LOWEST_ID to the following:')
+        print(lowest_id)
+        return
+
+    replay_file_name = sys.argv[1]
+    match_no_start = int(sys.argv[2])
+    try:
+        match_no_end = int(sys.argv[3])
+    except:
+        match_no_end = match_no_start+1
+
     with open(replay_file_name, 'r') as replay_file:
         replays = json.load(replay_file)
         api_key = os.getenv('CHALLONGE_API_KEY')
