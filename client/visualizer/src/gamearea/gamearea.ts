@@ -53,7 +53,7 @@ export default class GameArea {
     const width = world.minCorner.absDistanceX(world.maxCorner);
     const height = world.minCorner.absDistanceY(world.maxCorner);
     const scale = this.conf.upscale / Math.sqrt(width * height);
-    if (!this.conf.rotate) {
+    if (!this.conf.doingRotate) {
       this.canvas.width = width * scale;
       this.canvas.height = height * scale;
     }

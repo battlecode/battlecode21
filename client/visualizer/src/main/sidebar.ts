@@ -150,6 +150,7 @@ export default class Sidebar {
     B - Toggle Interpolation<br>
     L - Toggle whether to process logs.<br>
     Q - Toggle whether to profile matches.<br>
+    Z - Toggle whether to rotate tall maps.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>

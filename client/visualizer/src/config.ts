@@ -121,9 +121,14 @@ export interface Config {
   doProfiling: boolean;
 
   /**
-   * Get rid of this after sprint...
+   * Whether to rotate tall maps.
    */
-  rotate: boolean;
+  doRotate: boolean;
+
+  /**
+   * Whether the map is currently rotated. TODO: don't make this a global variable.
+   */
+  doingRotate: boolean;
 }
 
 /**
@@ -144,7 +149,7 @@ export enum Mode {
  */
 export function defaults(supplied?: any): Config {
   let conf: Config = {
-    gameVersion: "2021.2.4.1", //TODO: Change this on each release!
+    gameVersion: "2021.2.4.2", //TODO: Change this on each release!
     fullscreen: false,
     width: 600,
     height: 600,
@@ -168,7 +173,8 @@ export function defaults(supplied?: any): Config {
     processLogs: true,
     useProfiler: true,
     doProfiling: true,
-    rotate: false
+    doRotate: false,
+    doingRotate: false
   };
   return Object.assign(conf, supplied);
 }

@@ -48,11 +48,11 @@ export default class Renderer {
     // setup correct rendering
     const viewWidth = viewMax.x - viewMin.x
     const viewHeight = viewMax.y - viewMin.y
-    const scale = this.canvas.width / (!this.conf.rotate ? viewWidth : viewHeight);
+    const scale = this.canvas.width / (!this.conf.doingRotate ? viewWidth : viewHeight);
 
     this.ctx.save();
     this.ctx.scale(scale, scale);
-    if (!this.conf.rotate) this.ctx.translate(-viewMin.x, -viewMin.y);
+    if (!this.conf.doingRotate) this.ctx.translate(-viewMin.x, -viewMin.y);
     else this.ctx.translate(-viewMin.y, -viewMin.x);
 
     this.renderBackground(world);
@@ -88,7 +88,7 @@ export default class Renderer {
     this.ctx.scale(1/scale, 1/scale);
 
     // scale the background pattern
-    if (!this.conf.rotate) this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
+    if (!this.conf.doingRotate) this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
     else this.ctx.fillRect(minY*scale, minX*scale, height*scale, width*scale);
 
     const map = world.mapStats;
@@ -104,14 +104,14 @@ export default class Renderer {
       // Fetch and draw tile image
       const swampLevel = cst.getLevel(map.passability[idxVal]);
       const tileImg = this.imgs.tiles[swampLevel];
-      if (!this.conf.rotate) this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      if (!this.conf.doingRotate) this.ctx.drawImage(tileImg, cx, cy, scale, scale);
       else this.ctx.drawImage(tileImg, cy, cx, scale, scale);
 
       // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;
-        if (!this.conf.rotate) this.ctx.strokeRect(cx, cy, scale, scale);
+        if (!this.conf.doingRotate) this.ctx.strokeRect(cx, cy, scale, scale);
         else this.ctx.strokeRect(cy, cx, scale, scale);
       }
     }
@@ -122,7 +122,7 @@ export default class Renderer {
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
       this.ctx.strokeStyle = 'red';
       this.ctx.globalAlpha = 1;
-      if (!this.conf.rotate) this.ctx.strokeRect(cx, cy, scale, scale);
+      if (!this.conf.doingRotate) this.ctx.strokeRect(cx, cy, scale, scale);
       else this.ctx.strokeRect(cy, cx, scale, scale);
     }
 
@@ -226,7 +226,7 @@ export default class Renderer {
    * Draws a cirlce centered at (x,y) with given squared radius and color.
    */
   private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
-    if (this.conf.rotate) [x,y] = [y,x];
+    if (this.conf.doingRotate) [x,y] = [y,x];
     this.ctx.beginPath();
     this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
@@ -256,7 +256,7 @@ export default class Renderer {
    * Draws an image centered at (x, y) with the given radius
    */
   private drawImage(img: HTMLImageElement, x: number, y: number, radius: number) {
-    if (this.conf.rotate) [x,y] = [y,x];
+    if (this.conf.doingRotate) [x,y] = [y,x];
     this.ctx.drawImage(img, x-radius, y-radius, radius*2, radius*2);
   }
 
@@ -264,7 +264,7 @@ export default class Renderer {
    * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
   private drawBot(img: HTMLImageElement, x: number, y: number) {
-    if (this.conf.rotate) [x,y] = [y,x];
+    if (this.conf.doingRotate) [x,y] = [y,x];
     let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
     let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
     this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
@@ -337,7 +337,7 @@ export default class Renderer {
     const maxY = world.maxCorner.y - 1;
     var _x: number;
     var _y: number;
-    if (!this.conf.rotate) {
+    if (!this.conf.doingRotate) {
       _x = width * event.offsetX / this.canvas.offsetWidth + world.minCorner.x;
       _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
       _y = this.flip(_y, minY, maxY)
@@ -396,7 +396,7 @@ export default class Renderer {
     this.ctx.lineWidth = cst.INDICATOR_LINE_WIDTH;
 
     for (let i = 0; i < lines.length; i++) {
-      if (linesID[i] === this.lastSelectedID) {
+      if (linesID[i] === this.lastSelectedID || this.conf.allIndicators) {
         const red = linesRed[i];
         const green = linesGreen[i];
         const blue = linesBlue[i];
