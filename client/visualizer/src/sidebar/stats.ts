@@ -11,7 +11,8 @@ const hex: Object = {
 
 type VoteBar = {
   bar: HTMLDivElement,
-  label: HTMLSpanElement
+  votes: HTMLSpanElement,
+  bid: HTMLSpanElement
 };
 
 type BuffDisplay = {
@@ -142,11 +143,14 @@ export default class Stats {
       votes.className = "stat-bar";
       votes.style.backgroundColor = hex[teamID];
       let votesSpan = document.createElement("span");
+      let bidSpan = document.createElement("span");
       votesSpan.innerHTML = "0";
+      bidSpan.innerHTML = "0";
       // Store the stat bars
       voteBars[teamID] = {
         bar: votes,
-        label: votesSpan
+        votes: votesSpan,
+        bid: bidSpan
       };
     });
     return voteBars;
@@ -154,16 +158,46 @@ export default class Stats {
 
   private getVoteBarElement(teamIDs: Array<number>): HTMLTableElement {
     const table = document.createElement("table");
+    const title = document.createElement('td');
     const bars = document.createElement("tr");
     const counts = document.createElement("tr");
+    const bids = document.createElement("tr");
     table.id = "stats-table";
     bars.id = "stats-bars";
     table.setAttribute("align", "center");
+    
+    // column management
+    
+    const colgroup = document.createElement('colgroup');
+    const onLeft = document.createElement('col');
+    onLeft.style.width = "10%";
+    colgroup.appendChild(onLeft);
+    
+    for (let i = 0; i < 2; i++) {
+      const text = document.createElement('col');
+      text.style.width = "45%";
+      colgroup.appendChild(text);
+    }
+    
+    table.appendChild(colgroup);
+    
+    title.colSpan = 3;
 
-    const title = document.createElement('td');
-    title.colSpan = 2;
+    bars.appendChild(document.createElement('td'));
+
+    const votesTitle = document.createElement('td');
+    votesTitle.innerHTML = "<b>Votes</b>";
+    counts.appendChild(votesTitle);
+
+    const bidsTitle = document.createElement('td');
+    bidsTitle.innerHTML = "<b>Bid</b>";
+    bids.appendChild(bidsTitle);
+
+    // build table
+
     const label = document.createElement('h3');
     label.innerText = 'Votes';
+    title.appendChild(label);
 
     teamIDs.forEach((id: number) => {
       const bar = document.createElement("td");
@@ -173,14 +207,18 @@ export default class Stats {
       bars.appendChild(bar);
 
       const count = document.createElement("td");
-      count.appendChild(this.voteBars[id].label);
+      count.appendChild(this.voteBars[id].votes);
       counts.appendChild(count);
+
+      const bid = document.createElement("td");
+      bid.appendChild(this.voteBars[id].bid);
+      bids.appendChild(bid);
     });
 
-    title.appendChild(label);
     table.appendChild(title);
     table.appendChild(bars);
     table.appendChild(counts);
+    table.appendChild(bids);
     return table;
   }
 
@@ -367,10 +405,6 @@ export default class Stats {
 
     this.div.appendChild(document.createElement("hr"));
 
-    // TODO relative bar
-    // this.div.appendChild(this.relativeBarElement);
-    // console.log(this.relativeBarElement)
-
     // Add stats table
     this.voteBars = this.initVoteBars(teamIDs);
     const voteBarsElement = this.getVoteBarElement(teamIDs);
@@ -427,7 +461,7 @@ export default class Stats {
   setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
     const statBar: VoteBar = this.voteBars[teamID];
-    statBar.label.innerText = String(count);
+    statBar.votes.innerText = String(count);
     this.maxVotes = Math.max(this.maxVotes, count);
     statBar.bar.style.height = `${Math.min(100 * count / this.maxVotes, 100)}%`;
 
@@ -457,6 +491,21 @@ export default class Stats {
     const name = teamNames[teamIDs.indexOf(teamID)];
     this.teamNameNodes[teamID].innerHTML  = "<b>" + name + "</b> " +  `<span style="color: yellow">&#x1f31f</span>`;
   }
+
+  setBid(teamID: number, bid: number) {
+    // TODO: figure out if statbars.get(id) can actually be null??
+    const statBar: VoteBar = this.voteBars[teamID];
+    statBar.bid.innerText = String(bid);
+    // TODO add reactions to relative bars
+    // TODO get total votes to get ratio
+    // this.relBars[teamID].width;
+
+    // TODO winner gets star?
+    // if (this.images.star.parentNode === statBar.bar) {
+    //   this.images.star.remove();
+    // }
+  }
+
   setExtraInfo(info: string) {
     this.extraInfo.innerHTML = info;
   }

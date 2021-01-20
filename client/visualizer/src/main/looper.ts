@@ -327,6 +327,7 @@ export default class Looper {
             this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b), 
                 totalInfluence);
             this.stats.setBuffs(teamID, teamStats.numBuffs);
+            this.stats.setBid(teamID, teamStats.bid);
         }
         if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
             this.stats.setWinner(this.match.winner, teamNames, teamIDs);
