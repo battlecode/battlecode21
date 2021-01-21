@@ -271,8 +271,11 @@ class UserViewSet(viewsets.GenericViewSet,
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def resume_upload(self, request, pk=None):
+        # Note that post requests always include Origin headers
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin
+        # https://stackoverflow.com/questions/42239643/when-do-browsers-send-the-origin-header-when-do-browsers-set-the-origin-to-null
         origin = request.headers['Origin']        
         upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET, origin)
         user = self.queryset.get(pk=pk)
