@@ -379,7 +379,7 @@ export default class GameWorld {
       statObj.votes += delta.teamVotes(i);
       statObj.numBuffs = delta.teamNumBuffs(i);
       statObj.bidderID = delta.teamBidderIDs(i);
-      statObj.bid = delta.teamBidderIDs(i);
+      statObj.bid = 0;
 
       this.teamStats.set(teamID, statObj);
   }
