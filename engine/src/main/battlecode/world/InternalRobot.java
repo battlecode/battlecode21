@@ -385,14 +385,13 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 numBotsWithExtraConviction--;
             }
 
-            boolean convertAtZeroConviction = false;
             if (bot.type == RobotType.ENLIGHTENMENT_CENTER && bot.team == this.team) {
                 // conviction doesn't get buffed, do nothing
             } else if (bot.type == RobotType.ENLIGHTENMENT_CENTER) {
                 // complicated stuff
                 double buff = this.gameWorld.getTeamInfo().getBuff(this.team);
                 long convNeededToConvert = (long) (bot.conviction / buff);
-                while (convNeededToConvert * buff <= bot.conviction)
+                while (convNeededToConvert * buff < bot.conviction)
                     convNeededToConvert++;
                 
                 if (conv < convNeededToConvert) {
@@ -401,14 +400,13 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 } else {
                     // conviction buffed until conversion
                     conv = bot.conviction + (conv - convNeededToConvert);
-                    convertAtZeroConviction = true;
                 }
             } else {
                 // buff applied, cast down
                 conv = (long) (conv * this.gameWorld.getTeamInfo().getBuff(this.team));
             }
 
-            bot.empowered(this, (int) conv, this.team, convertAtZeroConviction);
+            bot.empowered(this, (int) conv, this.team);
         }
 
         // create new bots
@@ -437,7 +435,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * @param amount the amount this robot is empowered by, must be positive
      * @param newTeam the team of the robot that empowered
      */
-    public void empowered(InternalRobot caller, int amount, Team newTeam, boolean convertAtZeroConviction) {
+    public void empowered(InternalRobot caller, int amount, Team newTeam) {
         if (this.team != newTeam)
             amount = -amount;
 
@@ -446,7 +444,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         else
             addConviction(amount);
 
-        if (this.conviction < 0 || (this.conviction == 0 && convertAtZeroConviction)) {
+        if (this.conviction < 0) {
             if (this.type.canBeConverted()) {
                 int newInfluence = Math.abs(this.influence);
                 int newConviction = -this.conviction;
@@ -454,10 +452,6 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
             }
             this.gameWorld.destroyRobot(getID());
         }
-    }
-
-    public void empowered(InternalRobot caller, int amount, Team newTeam) {
-        empowered(caller, amount, newTeam, false);
     }
 
     /**
