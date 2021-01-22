@@ -366,7 +366,7 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         if (numBots == 0)
             return;
         
-        long convictionToGive = (long) (((long) this.conviction) * this.gameWorld.getTeamInfo().getBuff(this.team));
+        long convictionToGive = this.conviction;
         convictionToGive -= GameConstants.EMPOWER_TAX;
         if (convictionToGive <= 0)
             return;
@@ -384,8 +384,28 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
                 conv++;
                 numBotsWithExtraConviction--;
             }
-            // HACK[jerry]: this is the maximum amount the unit can be affected by
-            conv = Math.min(conv, GameConstants.ROBOT_INFLUENCE_LIMIT * 2);
+
+            if (bot.type == RobotType.ENLIGHTENMENT_CENTER && bot.team == this.team) {
+                // conviction doesn't get buffed, do nothing
+            } else if (bot.type == RobotType.ENLIGHTENMENT_CENTER) {
+                // complicated stuff
+                double buff = this.gameWorld.getTeamInfo().getBuff(this.team);
+                long convNeededToConvert = (long) (bot.conviction / buff);
+                while (convNeededToConvert * buff < bot.conviction)
+                    convNeededToConvert++;
+                
+                if (conv < convNeededToConvert) {
+                    // all of conviction is buffed
+                    conv = (long) (conv * this.gameWorld.getTeamInfo().getBuff(this.team));
+                } else {
+                    // conviction buffed until conversion
+                    conv = bot.conviction + (conv - convNeededToConvert);
+                }
+            } else {
+                // buff applied, cast down
+                conv = (long) (conv * this.gameWorld.getTeamInfo().getBuff(this.team));
+            }
+
             bot.empowered(this, (int) conv, this.team);
         }
 
