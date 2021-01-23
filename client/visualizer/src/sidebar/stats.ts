@@ -264,7 +264,7 @@ export default class Stats {
       buff.style.color = hex[id];
       buff.style.fontWeight = "bold";
       numBuffs.textContent = "0";
-      buff.textContent = "1.00";
+      buff.textContent = "1.000";
       buffDisplays[id] = {numBuffs: numBuffs, buff: buff};
     });
     return buffDisplays;
@@ -284,9 +284,9 @@ export default class Stats {
 
     teamIDs.forEach((id: number) => {
       const cell = document.createElement("td");
-      cell.appendChild(document.createTextNode("1.001"));
-      cell.appendChild(this.buffDisplays[id].numBuffs);
-      cell.appendChild(document.createTextNode(" = "));
+      // cell.appendChild(document.createTextNode("1.001"));
+      // cell.appendChild(this.buffDisplays[id].numBuffs);
+      // cell.appendChild(document.createTextNode(" = "));
       cell.appendChild(this.buffDisplays[id].buff);
       row.appendChild(cell);
     });
@@ -483,8 +483,9 @@ export default class Stats {
   }
 
   setBuffs(teamID: number, numBuffs: number) {
-    this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
-    this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(2));
+    //this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
+    this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(3));
+    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.max(12, cst.buffFactor(numBuffs))) + "px";
   }
 
   setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {

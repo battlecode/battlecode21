@@ -35,7 +35,7 @@ export const passiveInfluenceRate = (round: number): number => {
 }
 
 export const buffFactor = (numBuffs: number): number => {
-  return Math.pow(1.001, numBuffs);
+  return 1 + 0.001 * numBuffs;
 }
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
