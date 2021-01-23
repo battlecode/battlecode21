@@ -35,13 +35,13 @@ public class TeamInfo {
 
     // returns current buff
     public double getBuff(Team t) {
-        return Math.pow(GameConstants.EXPOSE_BUFF_FACTOR, this.numBuffs[t.ordinal()]);
+        return 1 + GameConstants.EXPOSE_BUFF_FACTOR * this.numBuffs[t.ordinal()];
     }
 
     // returns the buff at specified round
     public double getBuff(Team t, int roundNumber) {
         int buffs = getNumBuffs(t, roundNumber);
-        return Math.pow(GameConstants.EXPOSE_BUFF_FACTOR, buffs);
+        return 1 + GameConstants.EXPOSE_BUFF_FACTOR * buffs;
     }
 
     // returns the number of buffs at specified round

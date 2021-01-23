@@ -53,7 +53,7 @@ public class GameConstants {
     public static final int EMPOWER_TAX = 10;
 
     /** The buff factor from exposing Slanderers. */
-    public static final double EXPOSE_BUFF_FACTOR = 1.001;
+    public static final double EXPOSE_BUFF_FACTOR = 0.001;
     
     /** The number of rounds a buff is applied. */
     public static final int EXPOSE_BUFF_NUM_ROUNDS = 50;
