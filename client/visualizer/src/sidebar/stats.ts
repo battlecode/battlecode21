@@ -485,7 +485,7 @@ export default class Stats {
   setBuffs(teamID: number, numBuffs: number) {
     //this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
     this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(3));
-    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.max(12, cst.buffFactor(numBuffs))) + "px";
+    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.min(12, cst.buffFactor(numBuffs))) + "px";
   }
 
   setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {
