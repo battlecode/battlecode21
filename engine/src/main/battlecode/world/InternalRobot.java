@@ -1,6 +1,5 @@
 package battlecode.world;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import battlecode.common.*;
 import battlecode.schema.Action;
@@ -365,47 +364,36 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
         int numBots = robots.length - 1; // excluding self
         if (numBots == 0)
             return;
-        
-        long convictionToGive = this.conviction;
-        convictionToGive -= GameConstants.EMPOWER_TAX;
+
+        double convictionToGive = this.conviction - GameConstants.EMPOWER_TAX;
         if (convictionToGive <= 0)
             return;
-        
-        long convictionPerBot = convictionToGive / numBots;
-        long numBotsWithExtraConviction = convictionToGive % numBots;
 
-        Arrays.sort(robots);
+        final double convictionPerBot = convictionToGive / numBots;
+        final double buff = this.gameWorld.getTeamInfo().getBuff(this.team);
+
         for (InternalRobot bot : robots) {
             // check if this robot
             if (bot.equals(this))
                 continue;
-            long conv = convictionPerBot;
-            if (numBotsWithExtraConviction > 0) {
-                conv++;
-                numBotsWithExtraConviction--;
-            }
 
+            double conv = convictionPerBot;
             if (bot.type == RobotType.ENLIGHTENMENT_CENTER && bot.team == this.team) {
                 // conviction doesn't get buffed, do nothing
             } else if (bot.type == RobotType.ENLIGHTENMENT_CENTER) {
                 // complicated stuff
-                double buff = this.gameWorld.getTeamInfo().getBuff(this.team);
-                long convNeededToConvert = (long) (bot.conviction / buff);
-                while (convNeededToConvert * buff < bot.conviction)
-                    convNeededToConvert++;
-                
-                if (conv < convNeededToConvert) {
+                double convNeededToConvert = bot.conviction / buff;
+                if (conv <= convNeededToConvert) {
                     // all of conviction is buffed
-                    conv = (long) (conv * this.gameWorld.getTeamInfo().getBuff(this.team));
+                    conv *= buff;
                 } else {
                     // conviction buffed until conversion
                     conv = bot.conviction + (conv - convNeededToConvert);
                 }
             } else {
                 // buff applied, cast down
-                conv = (long) (conv * this.gameWorld.getTeamInfo().getBuff(this.team));
+                conv *= buff;
             }
-
             bot.empowered(this, (int) conv, this.team);
         }
 
@@ -432,10 +420,10 @@ public strictfp class InternalRobot implements Comparable<InternalRobot> {
      * Called when a Politician Empowers.
      * If conviction becomes negative, the robot switches teams or is destroyed.
      *
-     * @param amount the amount this robot is empowered by, must be positive
+     * @param amount the amount this robot's conviction changes by (including all buffs)
      * @param newTeam the team of the robot that empowered
      */
-    public void empowered(InternalRobot caller, int amount, Team newTeam) {
+    private void empowered(InternalRobot caller, int amount, Team newTeam) {
         if (this.team != newTeam)
             amount = -amount;
 
