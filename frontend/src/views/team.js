@@ -295,6 +295,7 @@ class ResumeStatus extends Component {
 }
 
 // pass change handler in props.change and team in props.team
+// NOTE: If you are ever working with teams' eligility (for example, to pull teams for the newbie tournament), please see backend/docs/ELIGIBILITY.md before you do anything! The variable names here are poorly named (because columns in the database are poorly named). 
 class EligibiltyOptions extends Component {
     render() {
         return (
