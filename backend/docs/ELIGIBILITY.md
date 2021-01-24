@@ -4,7 +4,7 @@ In our team table of the database are four columns: `high_school`, `internationa
 
 `high_school=True` means that the team is all high school students. (This should be a strict subset of `student` -- that is, `student` can not be false while `high_school` is true, unless someone filled something out wrong.)
 
-`international=True` means that the team is **not [all (US students)]**. (i.e. at least one non-student and/or one int'l person.) The value of `international` is the boolean opposite of the "US students" checkbox in the frontend. **A team is full of international students if and only if `international=True` and `student=True`.**
+`international=True` means that the team is **not [all (US students)]**. (i.e. at least one non-student and/or one int'l person.) The value of `international` is the boolean opposite of the "US students" checkbox in the frontend. **A team participates in the Intl Tournament if and only if `international=True` and `student=True`.**
 
 `mit=True` means that the team is all **newbies**.
 
