@@ -2,6 +2,8 @@
 
 Written in Django Rest Framework. Based on `battlecode19/api`.
 
+NOTE: If you are ever working with teams' eligility (for example, to pull teams for the newbie tournament), note that the columns in the database are poorly named. Please see backend/docs/ELIGIBILITY.md before you do anything!
+
 ## Local Development
 
 The best way to run the backend locally is to run `docker-compose up --build backend` from the repo's root directory.
