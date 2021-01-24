@@ -21,11 +21,11 @@ then
 	# TODO check git status
 	# (on master, up-to-date)
 
-	rm public/specs -r
+	rm -r public/specs
 	mkdir public/specs
 	cp -r ../specs public
 
-	rm public/javadoc -r
+	rm -r public/javadoc
 	cd ..
 	# Assumes version as second arg to deploy script
 	./gradlew release_docs_zip -Prelease_version=$2
@@ -38,7 +38,7 @@ then
 	# Gets generated somewhere in the javadoc process; is better not to have, to ensure that a different bucket (the battleaccess bucket) always holds this.
 	rm public/version.txt
 
-	rm public/out -r
+	rm -r public/out
 	cd ../client
 	npm install
 	cd playback
@@ -46,15 +46,15 @@ then
 	cd ../visualizer
 	npm run prod
 	mkdir ../../frontend/public/out
-	cp out ../../frontend/public -r
+	cp -r out ../../frontend/public
 	cd ../../frontend
 
     npm install
 	npm run build
 
 	rm -r public/specs
-	rm public/javadoc -r
-	rm public/out -r
+	rm -r public/javadoc
+	rm -r public/out
 	cd build
 	gsutil -m rm gs://battlecode21-frontend/**
 	gsutil -m cp -r * gs://battlecode21-frontend
