@@ -90,6 +90,9 @@ class Tournaments extends Component {
                                         <li>
                                             <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
                                         </li>
+                                        <li>
+                                            <b>Sprint Tournament 2 <a href="https://challonge.com/6b6fjvnq">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
