@@ -30,7 +30,7 @@ then
 	# Assumes version as second arg to deploy script
 	./gradlew release_docs_zip -Prelease_version=$2
 	mv battlecode-javadoc-$2.zip javadoc.zip
-	unzip javadoc.zip -d javadoc
+	unzip -d javadoc javadoc.zip
 	rm javadoc.zip
 	mkdir frontend/public/javadoc
 	mv javadoc frontend/public
