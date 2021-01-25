@@ -5,7 +5,8 @@
     top: 0px;
     left: 0px;
 
-    background-color: black;
+    background-color: rebeccapurple;
+    opacity: 100%;
     color: white;
     font-size: 50px;
     text-align: center;
@@ -14,8 +15,7 @@
 
 .blackout-container {
     margin-top: 10vh;
-    margin-left: 16vw;
-    margin-right: 16vw;
+    height: 100%
 }
 
 .tournament-header {
@@ -60,4 +60,47 @@
     margin-top: 3px;
     font-size: 40px;
     margin-bottom: 32px;
+}
+
+#team1, #team2, #versus, #winner {
+    position: absolute;
+    width: fit-content;    
+    text-align: center;
+    font-size: 80px;
+    font-family: "Luminari";
+    transform: translateX(-50%);
+}
+
+#team1 {
+    top: 36%;
+    left: 35%;
+    font-weight: bold;
+    transform: translateX(-1000px);
+    animation: slide-in 0.6s forwards;
+    -webkit-animation: slide-in 0.6s forwards;
+}
+
+#team2 {
+    top: 54%;
+    left: 65%;
+    font-weight: bold;
+    transform: translateX(1000px);
+    animation: slide-in 0.6s forwards;
+    -webkit-animation: slide-in 0.6s forwards;
+}
+
+#versus {
+    top: 45%;
+    left: 50%;
+    color: orange;
+}
+
+#winner {
+    top: 45%;
+    left: 50%;
+    font-weight: bold;
+}
+
+@keyframes slide-in {
+    100% { transform: translateX(-50%); }
 }

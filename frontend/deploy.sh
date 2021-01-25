@@ -16,10 +16,10 @@ then
 	# done
 	echo "Proceding with deploy!"
 	mkdir public/specs
-	cp ../specs public -r
+	cp -r ../specs public
         npm install
 	npm run build
-	rm public/specs -r
+	rm -r public/specs
 	cd build
 	gsutil -m rm gs://battlecode21-frontend/**
 	gsutil -m cp -r * gs://battlecode21-frontend

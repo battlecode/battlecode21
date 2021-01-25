@@ -174,8 +174,15 @@ input[type='file'] {
     width: 100%;
 }
 
+/* TODO: rename this class */
 .not-logging-div {
     color: red;
+    margin-top: 0.5em;
+    font-size: 14px;
+}
+
+.extra-info {
+    color: blue;
     margin-top: 0.5em;
     font-size: 14px;
 }
@@ -559,7 +566,6 @@ h4 {
 }
 
 #stats-table td {
-    width: 25%;
     padding: .2em;
 }
 

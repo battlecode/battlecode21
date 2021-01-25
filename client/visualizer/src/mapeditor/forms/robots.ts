@@ -1,7 +1,6 @@
 import * as cst from '../../constants';
 
 import {schema} from 'battlecode-playback';
-import Victor = require('victor');
 
 import {MapUnit} from '../index';
 
@@ -193,9 +192,9 @@ export default class RobotForm {
     this.y.value = "";
   }
 
-  setForm(loc: Victor, body?: MapUnit, id?: number): void {
-    this.x.value = String(loc.x);
-    this.y.value = String(loc.y);
+  setForm(x, y, body?: MapUnit, id?: number): void {
+    this.x.value = String(x);
+    this.y.value = String(y);
     this.id.textContent = id === undefined ? "" : String(id);
     if (body && id) {
       this.type.value = String(body.type);
@@ -217,7 +216,8 @@ export default class RobotForm {
       return undefined;
     }
     return {
-      loc: new Victor(this.getX(), this.getY()),
+      x: this.getX(),
+      y: this.getY(),
       radius: 0.5,
       type: this.getType(),
       teamID: this.getTeam(),

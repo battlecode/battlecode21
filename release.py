@@ -17,7 +17,7 @@ import subprocess
 import os
 import datetime
 
-def main(version):
+def main():
     # generate_comparison_link()
 
     # TODO change to use right file name. also, make that file name a easy-to-set variable
@@ -27,7 +27,7 @@ def main(version):
     # fancy_specs()
     client()
 
-    deploy_frontend()
+    #deploy_frontend()
 
     # These steps are used for a Python-based engine, eg Battlehack 2020.
     # When running a Python game, these commands should be maintained and used, instead.
@@ -147,12 +147,6 @@ def client():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument('version', help='Version number, e.g. 2021.0.1.1')
 
-    args = parser.parse_args()
 
-    main(args.version)
+    main()

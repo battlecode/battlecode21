@@ -410,6 +410,7 @@ public strictfp class GameWorld {
                 // Didn't win. If didn't place bid, halfBid == 0
                 int halfBid = (highestBids[i] + 1) / 2;
                 highestBidders[i].addInfluenceAndConviction(-halfBid);
+                teamBidderIDs[i] = highestBidders[i].getID(); 
             }
         }
 

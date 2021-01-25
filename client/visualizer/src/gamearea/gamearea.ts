@@ -53,8 +53,14 @@ export default class GameArea {
     const width = world.minCorner.absDistanceX(world.maxCorner);
     const height = world.minCorner.absDistanceY(world.maxCorner);
     const scale = this.conf.upscale / Math.sqrt(width * height);
-    this.canvas.width = width * scale;
-    this.canvas.height = height * scale;
+    if (!this.conf.doingRotate) {
+      this.canvas.width = width * scale;
+      this.canvas.height = height * scale;
+    }
+    else {
+      this.canvas.width = height * scale;
+      this.canvas.height = width * scale;
+    }
   }
   
   /**
@@ -63,15 +69,21 @@ export default class GameArea {
   loadSplashDiv() {
     
     let splashTitle = document.createElement("h1");
-    splashTitle.id = "splashTitle";
-    splashTitle.appendChild(document.createTextNode("Battlecode 2021 Client"));
-    this.splashDiv.appendChild(splashTitle);
-    
     let splashSubtitle = document.createElement("h3");
+    splashTitle.id = "splashTitle";
     splashSubtitle.id = "splashSubtitle";
-    splashSubtitle.appendChild(document.createTextNode("v" + this.conf.gameVersion));
-    this.splashDiv.appendChild(splashSubtitle);
+
+    if (!this.conf.tournamentMode) {
+      splashTitle.appendChild(document.createTextNode("Battlecode 2021 Client"));
+      splashSubtitle.appendChild(document.createTextNode("v" + this.conf.gameVersion));
+    }
+    else {
+      splashTitle.appendChild(document.createTextNode("Loading..."));      
+    }
     
+    this.splashDiv.appendChild(splashTitle);
+    this.splashDiv.appendChild(splashSubtitle);
+
     if (process.env.ELECTRON) {
       (async function (splashDiv, version) {
       

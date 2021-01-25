@@ -40,7 +40,8 @@ export default class Looper {
         private conf: config.Config, private imgs: imageloader.AllImages,
         private controls: Controls, private stats: Stats,
         private gamearea: GameArea, cconsole: Console,
-        private matchqueue: MatchQueue, private profiler?: Profiler) {
+        private matchqueue: MatchQueue, private profiler?: Profiler,
+        private mapinfo?: string) {
         
         this.console = cconsole;
 
@@ -50,6 +51,10 @@ export default class Looper {
 
         // Cancel previous games if they're running
         this.clearScreen();
+
+        // rotate tall maps
+        if (this.conf.doRotate) this.conf.doingRotate = (match.current.maxCorner.y - match.current.minCorner.y) > (match.current.maxCorner.x - match.current.minCorner.x);
+        else this.conf.doingRotate = false;
 
         // Reset the canvas
         this.gamearea.setCanvasDimensions(match.current);
@@ -62,6 +67,8 @@ export default class Looper {
             teamIDs.push(meta.teams[team].teamID);
         }
         this.stats.initializeGame(teamNames, teamIDs);
+        const extraInfo = (this.mapinfo ? this.mapinfo + "\n" : "") + (this.conf.doingRotate ? " (Map rotated and flipped! Disable for new matches with 'Z'.)" : "");
+        this.stats.setExtraInfo(extraInfo);
 
         // keep around to avoid reallocating
         this.nextStep = new NextStep();
@@ -177,6 +184,7 @@ export default class Looper {
         this.goalUPS = 0;
         this.controls.pause();
         this.controls.removeInfoString();
+        this.controls.setDefaultText();
     }
 
     private loop(curTime) {
@@ -294,10 +302,14 @@ export default class Looper {
      */
     private updateStats(world: GameWorld, meta: Metadata) {
         var totalInfluence = 0;
+        let teamIDs: number[] = [];
+        let teamNames: string[] = [];
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
             totalInfluence += teamStats.influence.reduce((a, b) => a + b);
+            teamIDs.push(teamID);
+            teamNames.push(meta.teams[team].name);
         }
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
@@ -315,6 +327,10 @@ export default class Looper {
             this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b), 
                 totalInfluence);
             this.stats.setBuffs(teamID, teamStats.numBuffs);
+            this.stats.setBid(teamID, teamStats.bid);
+        }
+        if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
+            this.stats.setWinner(this.match.winner, teamNames, teamIDs);
         }
     }
 

@@ -35,7 +35,7 @@ export const passiveInfluenceRate = (round: number): number => {
 }
 
 export const buffFactor = (numBuffs: number): number => {
-  return Math.pow(1.001, numBuffs);
+  return 1 + 0.001 * numBuffs;
 }
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
@@ -100,7 +100,23 @@ export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
   ["NotAPuzzle", MapType.SPRINT_1],
   ["Rainbow", MapType.SPRINT_1],
   ["SlowMusic", MapType.SPRINT_1],
-  ["Snowflake", MapType.SPRINT_1]
+  ["Snowflake", MapType.SPRINT_1],
+  ["BadSnowflake", MapType.SPRINT_2],
+  ["CringyAsF", MapType.SPRINT_2],
+  ["FindYourWay", MapType.SPRINT_2],
+  ["GetShrekt", MapType.SPRINT_2],
+  ["Goldfish", MapType.SPRINT_2],
+  ["HexesAndOhms", MapType.SPRINT_2],
+  ["Licc", MapType.SPRINT_2],
+  ["MainCampus", MapType.SPRINT_2],
+  ["Punctuation", MapType.SPRINT_2],
+  ["Radial", MapType.SPRINT_2],
+  ["SeaFloor", MapType.SPRINT_2],
+  ["Sediment", MapType.SPRINT_2],
+  ["Smile", MapType.SPRINT_2],
+  ["SpaceInvaders", MapType.SPRINT_2],
+  ["Surprised", MapType.SPRINT_2],
+  ["VideoGames", MapType.SPRINT_2]
 ]);
 
 export function bodyTypeToString(bodyType: schema.BodyType) {

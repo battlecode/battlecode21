@@ -135,4 +135,4 @@ def compile_worker(submissionid):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_COMPILE_NAME, compile_worker, give_up=True)
+    subscription.subscribe(GCLOUD_SUB_COMPILE_NAME, compile_worker, give_up=False)

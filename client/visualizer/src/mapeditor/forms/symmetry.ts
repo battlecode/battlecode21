@@ -1,7 +1,5 @@
 import * as cst from '../../constants';
 
-import Victor = require('victor');
-
 import {MapUnit} from '../index';
 
 export enum Symmetry {
@@ -9,7 +7,6 @@ export enum Symmetry {
   HORIZONTAL,
   VERTICAL
 };
-
 export default class SymmetryForm {
 
   // The public div
@@ -21,7 +18,7 @@ export default class SymmetryForm {
   // Callback on input change to redraw the canvas
   private cb: () => void;
 
-  // Constants
+  // Constants. TODO: make these and assosciated methods static
   private readonly SYMMETRY_OPTIONS: Symmetry[] = [
     Symmetry.ROTATIONAL, Symmetry.HORIZONTAL, Symmetry.VERTICAL
   ];
@@ -77,21 +74,25 @@ export default class SymmetryForm {
   /**
    * The symmetry of the map currently selected
    */
-  private getSymmetry(): Symmetry {
+  getSymmetry(): Symmetry {
     return parseInt(this.select.options[this.select.selectedIndex].value);
   }
 
+  setSymmetry(symmetry) {
+    this.select.value = symmetry;
+  }
+
     // Whether or not loc lies on the point or line of symmetry
-  private onSymmetricLine(loc: Victor, width: number, height: number): boolean {
+  private onSymmetricLine(x, y, width: number, height: number): boolean {
     const midX = width / 2 - 0.5;
     const midY = height / 2 - 0.5;
     switch(this.getSymmetry()) {
       case(Symmetry.ROTATIONAL):
-      return loc.x === midX && loc.y === midY;
+      return x === midX && y === midY;
       case(Symmetry.HORIZONTAL):
-      return loc.y === midY;
+      return y === midY;
       case(Symmetry.VERTICAL):
-      return loc.x === midX;
+      return x === midX;
     }
   };
 
@@ -100,7 +101,12 @@ export default class SymmetryForm {
   }
 
   // Returns the symmetric location on the canvas
-  transformLoc (loc: Victor, width: number, height: number): Victor {
+  transformLoc (x, y, width: number, height: number) {
+    return this.transformLocStatic(x, y, width, height, this.getSymmetry());
+  };
+
+  // TODO: make this actually static!
+  transformLocStatic(x, y, width, height, symmetry: Symmetry) {
     function reflect(x: number, mid: number): number {
       if (x > mid) {
         return mid - Math.abs(x - mid);
@@ -111,15 +117,15 @@ export default class SymmetryForm {
 
     const midX = width / 2 - 0.5;
     const midY = height / 2 - 0.5;
-    switch(this.getSymmetry()) {
+    switch(symmetry) {
       case(Symmetry.ROTATIONAL):
-      return new Victor(reflect(loc.x, midX), reflect(loc.y, midY));
+      return {x: reflect(x, midX), y: reflect(y, midY)};
       case(Symmetry.HORIZONTAL):
-      return new Victor(loc.x, reflect(loc.y, midY));
+      return {x: x, y: reflect(y, midY)};
       case(Symmetry.VERTICAL):
-      return new Victor(reflect(loc.x, midX), loc.y);
+      return {x: reflect(x, midX), y: y};
     }
-  };
+  }
 
   /**
    * Uses the bodies stored internally to create a mapping of original body
@@ -132,11 +138,13 @@ export default class SymmetryForm {
 
     const symmetricBodies: Map<number, MapUnit> = new Map<number, MapUnit>();
     bodies.forEach((body: MapUnit, id: number) => {
-      if (!this.onSymmetricLine(body.loc, width, height)) {
+      if (!this.onSymmetricLine(body.x, body.y, width, height)) {
         const type = body.type;
         const teamID = body.teamID === undefined? 0 : body.teamID;
+        const newLoc = this.transformLoc(body.x, body.y, width, height);
         symmetricBodies.set(id, {
-          loc: this.transformLoc(body.loc, width, height),
+          x: newLoc.x,
+          y: newLoc.y,
           radius: body.radius,
           type: type,
           teamID: this.flipTeamID(teamID),
@@ -146,5 +154,41 @@ export default class SymmetryForm {
     });
 
     return symmetricBodies;
+  }
+
+  /**
+   * Given a list of units and passability, finds a compatible symmetry.
+   */
+  discoverSymmetryAndBodies(mapUnits: MapUnit[], passability: number[], width: number, height: number): {symmetry: Symmetry, originalBodies: Map<number, MapUnit>} | null {
+    for (const symmetry of this.SYMMETRY_OPTIONS) {
+
+      var possible: boolean = true;
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+          const newLoc = this.transformLocStatic(x, y, width, height, symmetry);
+          if (passability[y * width + x] !== passability[newLoc.y * width + newLoc.x]) {
+            possible = false;
+          }
+        }
+      }
+      
+      const originalBodies = new Map<number, MapUnit>();
+      const matched = new Array(originalBodies.size);
+      var id = 1;
+      for (let i = 0; i < mapUnits.length; i++) {
+        if (matched[i]) continue;
+        const unit1 = mapUnits[i];
+        const newLoc = this.transformLocStatic(unit1.x, unit1.y, width, height, symmetry);
+        for (let j = i; j < mapUnits.length; j++) {
+          const unit2 = mapUnits[j];
+          if (unit2.x == newLoc.x && unit2.y == newLoc.y) {
+            originalBodies.set(id++, unit1);
+            matched[i] = matched[j] = true;
+          }
+        }
+      }
+      if (possible) return {symmetry: symmetry, originalBodies: originalBodies}
+    }
+    return null;
   }
 }

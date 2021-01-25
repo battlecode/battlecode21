@@ -16,7 +16,7 @@
 
 **Battlecode: Campaign**
   *The formal specification of the Battlecode 2021 game.*
-  Current version: 2021.2.4.1
+  Current version: 2021.3.0.2
 
 Welcome to Battlecode 2021: Campaign.
 This is a high-level overview of this year's game.
@@ -227,11 +227,10 @@ The politician is then destroyed, as delivering speeches is tremendously exhaust
     if the politician has less than 10 conviction, the speech will not affect other robots at all.
   - If there are $n$ nearby robots,
     then the remaining conviction will be divided into $n$ equal parts.
-    If it cannot be equally divided,
-    the extra conviction will be distributed with priority given first to later creation,
-    with ties broken by smaller robot ID.
   - Each friendly unit will gain conviction, capped at the unit's initial conviction.
+    Any buffs from Muckrakers **will** be applied here.
   - Each friendly building will gain conviction.
+    Friendly buildings **do not receive** buffs from Muckrakers.
   - Each non-friendly (enemy or neutral) robot will lose conviction.
     If its conviction becomes negative, then:
     - Politicians will be **converted** to your team,
@@ -239,7 +238,7 @@ The politician is then destroyed, as delivering speeches is tremendously exhaust
       capped at the robot's initial conviction.
     - Slanderers and muckrakers will be destroyed.
     - Buildings will be **converted** to your team,
-      with conviction equal to the absolute value of the difference.
+      although the excess conviction **does not receive** any buffs from Muckrakers.
   - Unused conviction (i.e. conviction lost due to conviction caps) will be lost forever,
     with echoes of the speech carried away by the Martian wind.
 
@@ -275,9 +274,9 @@ Muckrakers search the map, exposing the lies of enemy slanderers.
 - **Expose (active ability)**: Targets an enemy slanderer, exposing its lies and destroying it.
   For the next 50 turns,
   all speeches made by the muckraker's team will have a multiplicative factor of
-  $1.001^\text{slanderer's influence}$ applied to the total conviction of the speech,
-  before the 10 units of conviction are deducted.
-  If multiple slanderers are exposed, these factors are combined multiplicatively.
+  $1+0.001\cdot(\text{slanderer's influence})$ applied to the total conviction of the speech,
+  after the 10 units of conviction are deducted.
+  If multiple slanderers are exposed, the total slanderer influence accumulates.
 
 ### Enlightenment Centers
 
@@ -473,6 +472,27 @@ If something is unclear, direct your questions to our [Discord](https://discord.
 We'll update this spec as the competition progresses.
 
 # Changelog
+
+- Version 2021.3.0.2 (1/23/21)
+    - Fix client buff display
+
+- Version 2021.3.0.1 (1/22/21)
+    - No changes: redeploy was needed for technical reasons
+
+- Version 2021.3.0.0 (1/22/21)
+    - Muckraker buff changed from exponential to linear (1st order Taylor expansion)
+    - Buff has no effect on friendly enlightnment centers
+    - Empowering now gets taxed before buff is applied
+
+- Version 2021.2.4.3 (1/20/21)
+    - Make new maps visible in Client
+    - Fix bid tracking
+
+- Version 2021.2.4.2 (1/20/21)
+    - Release Sprint 2 maps
+    - Client
+      - Allow upload of .map21 files in map editor
+      - Track max bids (losing bids are only tracked for new replays)
 
 - Version 2021.2.4.1 (1/16/21)
     - Client

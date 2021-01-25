@@ -158,10 +158,10 @@ class Submissions extends Component {
         } else {
             switch (key) {
                 case 'tour_sprint':
-                    add_data = ['Sprint', data]
+                    add_data = ['Sprint 1', data]
                     break
                 case 'tour_seed':
-                    add_data = ['Seeding', data]
+                    add_data = ['Sprint 2', data]
                     break
                 case 'tour_qual':
                     add_data = ['Qualifying', data]

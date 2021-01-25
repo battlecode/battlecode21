@@ -27,7 +27,7 @@ def worker():
         if result == None:
             scrim_queue.put(scrim)
 
-@sched.scheduled_job('cron', hour='*/6')
+@sched.scheduled_job('cron', hour='*/3')
 def matchmake():
     try:
         logging.info('Obtaining scrimmage list')

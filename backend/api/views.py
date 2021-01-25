@@ -118,18 +118,18 @@ def create_scrimmage_helper(red_team_id, blue_team_id, ranked, requested_by, is_
 
     # If applicable, immediately accept scrimmage, rather than wait for the other team to accept.
     if accept:
-        result = accept_scrimmage_helper(scrimmage.id)
+        result = queue_scrimmage_helper(scrimmage.id)
     else:
         scrimmage.status = 'pending'
         scrimmage.save()
         result = Response({'message': scrimmage.id}, status.HTTP_200_OK)
     return result
 
-def accept_scrimmage_helper(scrimmage_id):
+def queue_scrimmage_helper(scrimmage_id):
     scrimmage = Scrimmage.objects.get(pk=scrimmage_id)
     # put onto pubsub
     # TODO if called through create_scrimmage_helper, then a lot of these queries are performed twice in succession, once in each method. Could use optimization.
-    # for example, pass data from create_scrimmage_helper into accept_scrimmage_helper, as an argument, and get your values from there.
+    # for example, pass data from create_scrimmage_helper into queue_scrimmage_helper, as an argument, and get your values from there.
     red_team_id = scrimmage.red_team.id
     blue_team_id = scrimmage.blue_team.id
     red_submission_id = scrimmage.red_submission_id
@@ -138,7 +138,8 @@ def accept_scrimmage_helper(scrimmage_id):
     blue_team_name = Team.objects.get(pk=blue_team_id).name
     replay = scrimmage.replay
     map_ids = scrimmage.map_ids
-    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids)
+    tourmode = (scrimmage.tournament_id != -1)
+    scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage.id, replay, map_ids, tourmode)
 
     # save the scrimmage, again, to mark save
     if red_submission_id is None or blue_submission_id is None:
@@ -150,7 +151,7 @@ def accept_scrimmage_helper(scrimmage_id):
 
     return Response({'message': scrimmage.id}, status.HTTP_200_OK)
 
-def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids):
+def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name, blue_team_name, scrimmage_id, scrimmage_replay, map_ids, tourmode):
 
     if red_submission_id is None and blue_submission_id is None:
         return Response({'message': 'Both teams do not have a submission.'}, status.HTTP_400_BAD_REQUEST)
@@ -169,7 +170,8 @@ def scrimmage_pub_sub_call(red_submission_id, blue_submission_id, red_team_name,
         'name1': str(red_team_name),
         'name2': str(blue_team_name),
         'maps': str(map_ids),
-        'replay': scrimmage_replay
+        'replay': scrimmage_replay,
+        'tourmode': tourmode
     }
     data_bytestring = json.dumps(scrimmage_server_data).encode('utf-8')
     # In testing, it's helpful to comment out the actual pubsub call, and print what would be added instead, so you can see it.
@@ -269,8 +271,11 @@ class UserViewSet(viewsets.GenericViewSet,
     serializer_class = FullUserSerializer
     permission_classes = (IsAuthenticatedAsRequestedUser,)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def resume_upload(self, request, pk=None):
+        # Note that post requests always include Origin headers
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin
+        # https://stackoverflow.com/questions/42239643/when-do-browsers-send-the-origin-header-when-do-browsers-set-the-origin-to-null
         origin = request.headers['Origin']        
         upload_url = GCloudUploadDownload.signed_upload_url(RESUME_FILENAME(pk), GCLOUD_RES_BUCKET, origin)
         user = self.queryset.get(pk=pk)
@@ -1004,7 +1009,7 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
             if scrimmage.status != 'pending':
                 return Response({'message': 'Scrimmage is not pending.'}, status.HTTP_400_BAD_REQUEST)
             
-            result = accept_scrimmage_helper(scrimmage.id)
+            result = queue_scrimmage_helper(scrimmage.id)
             return result
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
@@ -1043,6 +1048,23 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
         except Scrimmage.DoesNotExist:
             return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
 
+    @action(methods=['post'], detail=True)
+    def requeue(self, request, league_id, team, pk=None):
+        is_admin = User.objects.all().get(username=request.user).is_superuser
+        if is_admin:
+            try:
+                scrimmage = Scrimmage.objects.all().get(pk=pk)
+            except:
+                return Response({'message': 'Scrimmage does not exist.'}, status.HTTP_404_NOT_FOUND)
+
+            if scrimmage.status in ('redwon', 'bluewon'):
+                return Response({'message': 'Success response already received for this scrimmage'}, status.HTTP_400_BAD_REQUEST)
+
+            response = queue_scrimmage_helper(scrimmage.id)
+            return response
+        else:
+            return Response({'message': 'make this request from server account'}, status.HTTP_401_UNAUTHORIZED)
+
     @action(methods=['patch'], detail=True)
     def set_outcome(self, request, league_id, team, pk=None):
         is_admin = User.objects.all().get(username=request.user).is_superuser
@@ -1069,6 +1091,11 @@ class ScrimmageViewSet(viewsets.GenericViewSet,
                     scrimmage.status = sc_status
                     scrimmage.winscore = sc_winscore
                     scrimmage.losescore = sc_losescore
+
+                    if 'new_replay' in request.data:
+                        sc_new_replay = request.data['new_replay']
+                        if sc_new_replay is not None:
+                            scrimmage.replay = sc_new_replay
 
                     # if tournament, then return here
                     if scrimmage.tournament_id != -1:

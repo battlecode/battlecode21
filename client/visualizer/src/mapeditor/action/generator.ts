@@ -1,12 +1,10 @@
 import * as cst from '../../constants';
 
-import {schema, flatbuffers} from 'battlecode-playback';
-import Victor = require('victor');
-
-import {MapUnit, GameMap} from '../index';
+import { schema, flatbuffers } from 'battlecode-playback';
+import { MapUnit, GameMap } from '../index';
 
 // Bodies information
-export type BodiesSchema = {
+type BodiesSchema = {
   robotIDs: number[],
   teamIDs: number[],
   types: schema.BodyType[],
@@ -14,6 +12,14 @@ export type BodiesSchema = {
   ys: number[],
   influences: number[]
 };
+
+export type UploadedMap = {
+  name: string,
+  width: number,
+  height: number,
+  passability: number[],
+  bodies: MapUnit[]
+}
 
 /**
  * Generates a .map21 file from a GameMap. Assumes the given GameMap represents
@@ -68,15 +74,15 @@ export default class MapGenerator {
   /**
    * Adds multiple bodies to the internal array with the given teamID.
    */
-  private static addBodies(bodies: Map<number, MapUnit>, minCorner: Victor) {
+  private static addBodies(bodies: Map<number, MapUnit>, minCornerX, minCornerY) {
 
     bodies.forEach((unit: MapUnit, id: number) => {
       this.addBody(
         id,
         unit.teamID || 0, // Must be set if not a neutral tree
         unit.type,
-        unit.loc.x,
-        unit.loc.y,
+        unit.x,
+        unit.y,
         unit.influence
       );
     });
@@ -100,13 +106,14 @@ export default class MapGenerator {
 
     // Get header information from form
     let name: string = map.name;
-    let minCorner: Victor = new Victor(Math.random()*20000 + 10000, Math.random()*20000 + 10000);
-    let maxCorner: Victor = minCorner.clone();
-    maxCorner.add(new Victor(map.width, map.height));
-    let randomSeed: number = Math.round(Math.random()*1000);
+    const minCornerX = Math.random() * 20000 + 10000;
+    const minCornerY = Math.random() * 20000 + 10000;
+    let maxCornerX = minCornerX + map.width;
+    let maxCornerY = minCornerY + map.height;
+    let randomSeed: number = Math.round(Math.random() * 1000);
 
     // Get body information from form and convert to arrays
-    this.addBodies(this.combineBodies(map.originalBodies, map.symmetricBodies), minCorner);
+    this.addBodies(this.combineBodies(map.originalBodies, map.symmetricBodies), minCornerX, minCornerY);
 
     // Create the spawned bodies table
     let robotIDsVectorB = schema.SpawnedBodyTable.createRobotIDsVector(builder, this.bodiesArray.robotIDs);
@@ -128,8 +135,8 @@ export default class MapGenerator {
     let nameP = builder.createString(name);
     schema.GameMap.startGameMap(builder);
     schema.GameMap.addName(builder, nameP);
-    schema.GameMap.addMinCorner(builder, schema.Vec.createVec(builder, minCorner.x, minCorner.y));
-    schema.GameMap.addMaxCorner(builder, schema.Vec.createVec(builder, maxCorner.x, maxCorner.y));
+    schema.GameMap.addMinCorner(builder, schema.Vec.createVec(builder, minCornerX, minCornerY));
+    schema.GameMap.addMaxCorner(builder, schema.Vec.createVec(builder, maxCornerX, maxCornerY));
     schema.GameMap.addBodies(builder, bodies);
     schema.GameMap.addPassability(builder, passability);
     schema.GameMap.addRandomSeed(builder, randomSeed);
@@ -159,9 +166,47 @@ export default class MapGenerator {
       link.click();
       link.remove();
 
-      setTimeout(function() {
+      setTimeout(function () {
         return window.URL.revokeObjectURL(url);
       }, 30000);
     }
+  }
+
+  /**
+   * Reads a .map21 file.
+   */
+  static readMap(file: ArrayBuffer): UploadedMap {
+    const data = new Uint8Array(file);
+    const map = schema.GameMap.getRootAsGameMap(
+      new flatbuffers.ByteBuffer(data)
+    );
+    const minCorner = map.minCorner()!;
+    const maxCorner = map.maxCorner()!;
+
+    const bodies = map.bodies()!;
+    const influences = bodies.influencesArray()!;
+    const types = bodies.typesArray()!;
+    const teamIDs = bodies.teamIDsArray()!;
+    const xs = bodies.locs()!.xsArray()!;
+    const ys = bodies.locs()!.ysArray()!;
+
+    const mapUnits: MapUnit[] = [];
+    for (let i = 0; i < bodies.robotIDsLength(); i++) {
+      mapUnits.push({
+        x: xs[i],
+        y: ys[i],
+        type: types[i],
+        teamID: teamIDs[i],
+        influence: influences[i],
+        radius: 0.5
+      });
+    }
+    return {
+      name: map.name()!,
+      width: maxCorner.x() - minCorner.x(),
+      height: maxCorner.y() - minCorner.y(),
+      passability: Array.from(map.passabilityArray()!),
+      bodies: mapUnits
+    };
   }
 }

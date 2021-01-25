@@ -1,5 +1,6 @@
 import {MapUnit} from './form';
 import MapGenerator from './action/generator';
+import {UploadedMap}from './action/generator';
 import MapRenderer from './action/renderer';
 import MapValidator from './action/validator';
 
@@ -12,6 +13,6 @@ import {GameMap} from './form';
 import MapEditorForm from './form';
 import MapEditor from './mapeditor';
 
-export {MapGenerator, MapUnit, MapRenderer, MapValidator}
+export {MapGenerator, MapUnit, MapRenderer, MapValidator, UploadedMap}
 export {HeaderForm, RobotForm, Symmetry, SymmetryForm, TileForm}
 export {GameMap, MapEditorForm, MapEditor};

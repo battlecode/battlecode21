@@ -18,13 +18,13 @@
                     match_url = "";
                 }
             }
+
+            var config = {websocketURL: "ws://localhost:6175"};
+            if (match_url) config.matchFileURL = match_url;
+            if (tournamentMode) config.tournamentMode = tournamentMode;
             window.battleClient = window.battlecode.mount(
                 document.getElementById('client'),
-                {
-                    websocketURL: "ws://localhost:6175",
-                    matchFileURL: match_url,
-                    tournamentMode: tournamentMode
-                }
+                config
             );
         </script>
     </body>
