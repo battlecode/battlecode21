@@ -90,6 +90,9 @@ class Tournaments extends Component {
                                         <li>
                                             <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
                                         </li>
+                                        <li>
+                                            <b>Sprint Tournament 2 <a href="https://challonge.com/6b6fjvnq">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -144,7 +147,40 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. More eligibility details can be found <a href="https://battlecode.org#about">here</a>.
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament.
+                                    </p>
+                                    <p>Your team must meet <b>all three conditions</b> to be eligible for the Qualifying and Final tournaments by the submission deadline:
+                                        <ol>
+                                            <li>
+                                                Have uploaded a bot
+                                            </li>
+                                            <li>
+                                                Have indicated your eligibility on your Team Profile page
+                                            </li>
+                                            <li>
+                                                Have all members upload a resume, at your personal profile page.
+                                            </li>
+                                        </ol>
+                                    </p>
+                                        <p>As a reminder, the tournament divisions are:
+                                        <ul>
+                                            <li>
+                                                <b>Full-time US teams</b>, consisting entirely of US students studying full-time, or in a transition phase. We may ask for some documentation to verify your student status if you advance to the finals. The <b>top 12 teams</b> in this division will earn a place out of 16 final tournament spots; eligibility is <i><b>conditioned on attendance</b> to our virtual finalists celebration on the evening of Friday 1/29.</i>
+                                            </li>
+                                            <li>
+                                                <b>Full-time international teams</b>, consisting entirely of students studying full-time, or in a transition phase, where at least one team member is not a US student. We may ask for some documentation to verify your student status if you advance to the finals. The <b>top 4 teams</b> in this division will earn a place out of 16 final tournament spots.
+                                            </li>
+                                            <li>
+                                                <b>US High-school teams</b>, consisting entirely of high school students in the US. The <b>top 2 teams</b> will have the final match played during the final tournament.
+                                            </li>
+                                            <li>
+                                                <b>Newbie teams</b>, consisting entirely of MIT students who have never competed in Battlecode before. <b>The top 2 teams</b> will have their final match played during the final tournament.
+                                            </li>
+                                        </ul>
+                                    </p>
+
+                                    <p>
+                                        More eligibility details can be found <a href="https://battlecode.org#about">here</a>.
                                     </p>
                                     
                                     <p>
