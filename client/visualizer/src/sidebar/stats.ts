@@ -64,7 +64,7 @@ export default class Stats {
 
   private incomeChart: Chart;
   
-  lastSetTurn: number = -1;
+  private teamMapToTurnsIncomeSet: Map<number, Set<number>> = new Map();
 
   // Note: robot types and number of teams are currently fixed regardless of
   // match info. Keep in mind if we ever change these, or implement this less
@@ -594,16 +594,20 @@ export default class Stats {
 
   setIncome(teamID: number, income: number, turn: number) {
     this.incomeDisplays[teamID].income.textContent = String(income);
-    //@ts-ignore
-    this.incomeChart.data.datasets![teamID - 1].data?.push({y:income, x: turn});
-    this.lastSetTurn = turn;
-    this.incomeChart.update();
-  }
-  sortIncomeGraph() {
-    this.incomeChart.data.datasets?.forEach((d) => {
-      d.data?.sort((a, b) => a.x - b.x);
-    });
-    this.incomeChart.update();
+    if (!this.teamMapToTurnsIncomeSet.has(teamID)) {
+      this.teamMapToTurnsIncomeSet.set(teamID, new Set());
+    }
+    let teamTurnsIncomeSet = this.teamMapToTurnsIncomeSet.get(teamID);
+    
+    if (!teamTurnsIncomeSet!.has(turn)) {
+      //@ts-ignore
+      this.incomeChart.data.datasets![teamID - 1].data?.push({y:income, x: turn});
+      this.incomeChart.data.datasets?.forEach((d) => {
+        d.data?.sort((a, b) => a.x - b.x);
+      });
+      teamTurnsIncomeSet?.add(turn);
+      this.incomeChart.update();
+    }
   }
 
   setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {

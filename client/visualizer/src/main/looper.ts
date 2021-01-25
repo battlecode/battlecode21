@@ -229,10 +229,6 @@ export default class Looper {
         // this may look innocuous, but it's a large chunk of the run time
         this.match.compute(30 /* ms */); // An ideal FPS is around 30 = 1000/30, so when compute takes its full time
                                          // FPS is lowered significantly. But I think it's a worthwhile tradeoff.
-            if (this.match.snapshots.length > 1) {
-                console.log(this.match.snapshots[1].turn);
-                console.log(this.match.snapshotEvery)
-            }
         // update the info string in controls
         if (this.lastSelectedID !== undefined) {
             let bodies = this.match.current.bodies.arrays;
@@ -351,10 +347,6 @@ export default class Looper {
             this.stats.setBid(teamID, teamStats.bid);
             this.stats.setIncome(teamID, income[teamID], world.turn);
         }
-
-        // if (this.match.current.turn - this.stats.lastSetTurn != 1) {
-        this.stats.sortIncomeGraph();
-        // }
 
         if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
             this.stats.setWinner(this.match.winner, teamNames, teamIDs);
