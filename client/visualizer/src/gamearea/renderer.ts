@@ -134,6 +134,7 @@ export default class Renderer {
     const length = bodies.length;
     const types = bodies.arrays.type;
     const teams = bodies.arrays.team;
+    const convictions = bodies.arrays.conviction;
     const ids = bodies.arrays.id;
     const xs = bodies.arrays.x;
     const ys = bodies.arrays.y;
@@ -172,12 +173,12 @@ export default class Renderer {
       const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
       const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
       const effectImg = effectImgs[whichImg];
-      this.drawBot(effectImg, x, y);
+      this.drawBot(effectImg, x, y, 0);
     }
 
     const renderBot = (i: number) => {
       const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
-      this.drawBot(img, realXs[i], realYs[i]);
+      this.drawBot(img, realXs[i], realYs[i], convictions[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
       // draw effect
@@ -263,11 +264,16 @@ export default class Renderer {
   /**
    * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
-  private drawBot(img: HTMLImageElement, x: number, y: number) {
+  private drawBot(img: HTMLImageElement, x: number, y: number, c: number) {
     if (this.conf.doingRotate) [x,y] = [y,x];
     let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
     let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
-    this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
+    const sigmoid = (x) => {
+      return 1 /  (1 + Math.exp(-x))
+    }
+    this.ctx.filter = `brightness(${sigmoid(c - 100) * 30 + 90}%)`;
+    let size = sigmoid(c / 100) * 1 + 0.3;
+    this.ctx.drawImage(img, x+(1-realWidth * size)/2, y+(1-realHeight * size)/2, realWidth * size, realHeight * size);
   }
 
   private setInfoStringEvent(world: GameWorld,

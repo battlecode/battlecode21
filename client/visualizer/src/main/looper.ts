@@ -229,7 +229,10 @@ export default class Looper {
         // this may look innocuous, but it's a large chunk of the run time
         this.match.compute(30 /* ms */); // An ideal FPS is around 30 = 1000/30, so when compute takes its full time
                                          // FPS is lowered significantly. But I think it's a worthwhile tradeoff.
-
+            if (this.match.snapshots.length > 1) {
+                console.log(this.match.snapshots[1].turn);
+                console.log(this.match.snapshotEvery)
+            }
         // update the info string in controls
         if (this.lastSelectedID !== undefined) {
             let bodies = this.match.current.bodies.arrays;
@@ -304,13 +307,28 @@ export default class Looper {
         var totalInfluence = 0;
         let teamIDs: number[] = [];
         let teamNames: string[] = [];
+        let income = {
+
+        }
+        
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
             totalInfluence += teamStats.influence.reduce((a, b) => a + b);
             teamIDs.push(teamID);
             teamNames.push(meta.teams[team].name);
+            income[teamID] = 0;
         }
+        world.bodies.arrays.type.forEach((type, i) => {
+            let team = world.bodies.arrays.team[i];
+            let ability = world.bodies.arrays.ability[i];
+            let influence = world.bodies.arrays.influence[i];
+            if (cst.abilityToEffectString(ability) === "embezzle") {
+                income[team] += Math.floor(1/50 + 0.03 * Math.exp(-0.001 * influence) * influence);
+            } else if (cst.bodyTypeToString(type) === "enlightenmentCenter") {
+                income[team] += Math.ceil(0.2 * Math.sqrt(world.turn));
+            }
+        })
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
@@ -320,7 +338,10 @@ export default class Looper {
                 this.stats.setRobotCount(teamID, type, teamStats.robots[type]);
                 this.stats.setRobotConviction(teamID, type, teamStats.conviction[type]);
                 this.stats.setRobotInfluence(teamID, type, teamStats.influence[type]);
+
             });
+            
+            
 
             // Set votes
             this.stats.setVotes(teamID, teamStats.votes);
@@ -328,7 +349,13 @@ export default class Looper {
                 totalInfluence);
             this.stats.setBuffs(teamID, teamStats.numBuffs);
             this.stats.setBid(teamID, teamStats.bid);
+            this.stats.setIncome(teamID, income[teamID], world.turn);
         }
+
+        // if (this.match.current.turn - this.stats.lastSetTurn != 1) {
+        this.stats.sortIncomeGraph();
+        // }
+
         if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
             this.stats.setWinner(this.match.winner, teamNames, teamIDs);
         }
