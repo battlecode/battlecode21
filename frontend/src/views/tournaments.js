@@ -149,7 +149,20 @@ class Tournaments extends Component {
                                     <p>
                                         Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament.
                                     </p>
-                                    <p>You must meet <b>all three conditions</b> to be entered into the tournaments. As a reminder, the tournament divisions are:
+                                    <p>Your team must meet <b>all three conditions</b> to be eligible for the Qualifying and Final tournaments by the submission deadline:
+                                        <ol>
+                                            <li>
+                                                Have uploaded a bot
+                                            </li>
+                                            <li>
+                                                Have indicated your eligibility on your Team Profile page
+                                            </li>
+                                            <li>
+                                                Have all members upload a resume, at your personal profile page.
+                                            </li>
+                                        </ol>
+                                    </p>
+                                        <p>As a reminder, the tournament divisions are:
                                         <ul>
                                             <li>
                                                 <b>Full-time US teams</b>, consisting entirely of US students studying full-time, or in a transition phase. We may ask for some documentation to verify your student status if you advance to the finals. The <b>top 12 teams</b> in this division will earn a place out of 16 final tournament spots; eligibility is <i><b>conditioned on attendance</b> to our virtual finalists celebration on the evening of Friday 1/29.</i>
