@@ -3,6 +3,7 @@ import * as cst from '../constants';
 import { AllImages } from '../imageloader';
 import { schema } from 'battlecode-playback';
 import Runner from '../runner';
+import Chart = require('chart.js');
 
 const hex: Object = {
   1: "#db3627",
@@ -18,6 +19,10 @@ type VoteBar = {
 type BuffDisplay = {
   numBuffs: HTMLSpanElement,
   buff: HTMLSpanElement
+}
+
+type IncomeDisplay = {
+  income: HTMLSpanElement
 }
 
 /**
@@ -43,6 +48,9 @@ export default class Stats {
   private voteBars: VoteBar[];
   private maxVotes: number;
   
+
+  private incomeDisplays: IncomeDisplay[];
+
   private relativeBars: HTMLDivElement[];
   
   private buffDisplays: BuffDisplay[];
@@ -56,6 +64,9 @@ export default class Stats {
   private conf: Config;
 
   private tourneyUpload: HTMLDivElement;
+  private incomeChart: Chart;
+  
+  private teamMapToTurnsIncomeSet: Map<number, Set<number>> = new Map();
 
   // Note: robot types and number of teams are currently fixed regardless of
   // match info. Keep in mind if we ever change these, or implement this less
@@ -271,6 +282,17 @@ export default class Stats {
     });
     return buffDisplays;
   }
+  private initIncomeDisplays(teamIDs: Array<number>) {
+    const incomeDisplays: IncomeDisplay[] = [];
+    teamIDs.forEach((id: number) => {
+      const income = document.createElement("span");
+      income.style.color = hex[id];
+      income.style.fontWeight = "bold";
+      income.textContent = "1";
+      incomeDisplays[id] = {income: income};
+    });
+    return incomeDisplays;
+  }
 
   private getBuffDisplaysElement(teamIDs: Array<number>): HTMLElement {
     const table = document.createElement("table");
@@ -298,6 +320,42 @@ export default class Stats {
     table.appendChild(row);
 
     return table;
+  }
+
+  private getIncomeDisplaysElement(teamIDs: Array<number>): HTMLElement {
+    const table = document.createElement("table");
+    table.id = "income-table";
+    table.style.width = "100%";
+
+    const title = document.createElement('td');
+    title.colSpan = 2;
+    const label = document.createElement('h3');
+    label.innerText = 'Total Income Per Turn';
+
+    const row = document.createElement("tr");
+
+    teamIDs.forEach((id: number) => {
+      const cell = document.createElement("td");
+      // cell.appendChild(document.createTextNode("1.001"));
+      // cell.appendChild(this.buffDisplays[id].numBuffs);
+      // cell.appendChild(document.createTextNode(" = "));
+      cell.appendChild(this.incomeDisplays[id].income);
+      row.appendChild(cell);
+    });
+
+    title.appendChild(label);
+    table.appendChild(title);
+    table.appendChild(row);
+
+    return table;
+  }
+
+  private getIncomeDominationGraph() {
+    const canvas = document.createElement("canvas");
+    canvas.id = "myChart";
+    canvas.width = 400;
+    canvas.height = 400;
+    return canvas;
   }
 
   // private drawBuffsGraph(ctx: CanvasRenderingContext2D, upto: number) {
@@ -429,6 +487,57 @@ export default class Stats {
     this.buffDisplays = this.initBuffDisplays(teamIDs);
     const buffDivsElement = this.getBuffDisplaysElement(teamIDs);
     this.div.appendChild(buffDivsElement);
+
+    this.incomeDisplays = this.initIncomeDisplays(teamIDs);
+    const incomeElement = this.getIncomeDisplaysElement(teamIDs);
+    this.div.appendChild(incomeElement);
+
+    const canvasElement = this.getIncomeDominationGraph();
+    this.div.appendChild(canvasElement);
+    this.incomeChart = new Chart(canvasElement, {
+      type: 'line',
+      data: {
+          datasets: [{
+            label: 'Red',
+            data: [],
+            backgroundColor: 'rgba(255, 99, 132, 0)',
+            borderColor: 'rgb(219, 54, 39)',
+            pointRadius: 0,
+          },
+          {
+            label: 'Blue',
+            data: [],
+            backgroundColor: 'rgba(54, 162, 235, 0)',
+            borderColor: 'rgb(79, 126, 230)',
+            pointRadius: 0,
+          }]
+      },
+      options: {
+          scales: {
+            xAxes: [{
+              type: 'linear',
+              ticks: {
+                beginAtZero: true
+            },
+              scaleLabel: {
+                display: true,
+                labelString: "Turn"
+              }
+            }],
+              yAxes: [{
+                type: 'linear',
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+
+    this.div.appendChild(document.createElement("br"));
+    this.extraInfo = document.createElement('div');
+    this.extraInfo.className = "extra-info";
+    this.div.appendChild(this.extraInfo);
   }
 
   tourIndexJumpFun(e) {
@@ -493,6 +602,24 @@ export default class Stats {
     //this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
     this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(3));
     this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.min(12, cst.buffFactor(numBuffs))) + "px";
+  }
+
+  setIncome(teamID: number, income: number, turn: number) {
+    this.incomeDisplays[teamID].income.textContent = String(income);
+    if (!this.teamMapToTurnsIncomeSet.has(teamID)) {
+      this.teamMapToTurnsIncomeSet.set(teamID, new Set());
+    }
+    let teamTurnsIncomeSet = this.teamMapToTurnsIncomeSet.get(teamID);
+    
+    if (!teamTurnsIncomeSet!.has(turn)) {
+      //@ts-ignore
+      this.incomeChart.data.datasets![teamID - 1].data?.push({y:income, x: turn});
+      this.incomeChart.data.datasets?.forEach((d) => {
+        d.data?.sort((a, b) => a.x - b.x);
+      });
+      teamTurnsIncomeSet?.add(turn);
+      this.incomeChart.update();
+    }
   }
 
   setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {
