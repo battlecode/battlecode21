@@ -18,11 +18,16 @@
 import sys, json, challonge, asyncio, os
 
 async def run():
-    api_key = os.getenv('CHALLONGE_API_KEY')
-    user = await challonge.get_user('mitbattlecode',api_key)
-    
-    tour_url = os.getenv('CHALLONGE_TOUR_URL')
-    tournament = await user.get_tournament(url = tour_url)
+    try: 
+        api_key = os.getenv('CHALLONGE_API_KEY')
+        user = await challonge.get_user('mitbattlecode',api_key)
+        
+        tour_url = os.getenv('CHALLONGE_TOUR_URL')
+        tournament = await user.get_tournament(url = tour_url)
+    except:
+        print("Make sure you have properly configured CHALLONGE_API_KEY and CHALLONGE_TOUR_URL.")
+        print("Run the pubber with the `init` argument, see the comments at the top of this file for instructions.")
+        return
 
     if sys.argv[1] == 'init':
         # To ensure tournament is started and attachments are allowed; only needs to be run once
