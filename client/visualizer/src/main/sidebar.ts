@@ -71,8 +71,8 @@ export default class Sidebar {
     if (conf.useProfiler) this.profiler = new Profiler(conf);
     this.matchqueue = new MatchQueue(conf, images, runner);
     this.stats = new Stats(conf, images, runner);
-    this.help = this.initializeHelp();
     this.conf = conf;
+    this.help = this.initializeHelp();
 
     // Initialize div structure
     this.loadStyles();
@@ -119,7 +119,7 @@ export default class Sidebar {
    * Initializes the help div
    */
   private initializeHelp(): HTMLDivElement {
-    const innerHTML: string =
+    var innerHTML: string =
     `
     <b class="red" style="font-size: 16px">Beware of too much logging!</b>
     <br>
@@ -217,6 +217,15 @@ export default class Sidebar {
     map.) <br>
     <br>
     Exported file name must be the same as the map name chosen above. For instance, <code>DefaultMap.bc21</code>.`;
+
+    if (this.conf.tournamentMode) {
+      innerHTML += 
+      `<br><br>
+      <b class="blue">Tournament Mode Keyboard Shortcuts</b><br>
+      D - Next match<br>
+      A - Previous match<br>
+      [ - Hide/unhide tourney upload button.`
+    }
 
     const div = document.createElement("div");
     div.id = "helpDiv";

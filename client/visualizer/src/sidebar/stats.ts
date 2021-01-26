@@ -42,18 +42,20 @@ export default class Stats {
 
   private voteBars: VoteBar[];
   private maxVotes: number;
-
+  
   private relativeBars: HTMLDivElement[];
-
+  
   private buffDisplays: BuffDisplay[];
-
+  
   private extraInfo: HTMLDivElement;
-
+  
   private robotConsole: HTMLDivElement;
-
+  
   private runner: Runner; //needed for file uploading in tournament mode
-
+  
   private conf: Config;
+
+  private tourneyUpload: HTMLDivElement;
 
   // Note: robot types and number of teams are currently fixed regardless of
   // match info. Keep in mind if we ever change these, or implement this less
@@ -357,20 +359,30 @@ export default class Stats {
     this.relativeBars = [];
     this.maxVotes = 1500;
 
+    this.div.appendChild(document.createElement("br"));
+
     if (this.conf.tournamentMode) {
       // FOR TOURNAMENT
+      this.tourneyUpload = document.createElement('div');
+      
       let uploadButton = this.runner.getUploadButton();
       let tempdiv = document.createElement("div");
       tempdiv.className = "upload-button-div";
       tempdiv.appendChild(uploadButton);
-      this.div.appendChild(tempdiv);
+      this.tourneyUpload.appendChild(tempdiv);
 
       // add text input field
       this.tourIndexJump.type = "text";
       this.tourIndexJump.onkeyup = (e) => { this.tourIndexJumpFun(e) };
       this.tourIndexJump.onchange = (e) => { this.tourIndexJumpFun(e) };
-      this.div.appendChild(this.tourIndexJump);
+      this.tourneyUpload.appendChild(this.tourIndexJump);
+
+      this.div.appendChild(this.tourneyUpload);
     }
+
+    this.extraInfo = document.createElement('div');
+    this.extraInfo.className = "extra-info";
+    this.div.appendChild(this.extraInfo);
 
     // Populate with new info
     // Add a section to the stats bar for each team in the match
@@ -417,11 +429,6 @@ export default class Stats {
     this.buffDisplays = this.initBuffDisplays(teamIDs);
     const buffDivsElement = this.getBuffDisplaysElement(teamIDs);
     this.div.appendChild(buffDivsElement);
-
-    this.div.appendChild(document.createElement("br"));
-    this.extraInfo = document.createElement('div');
-    this.extraInfo.className = "extra-info";
-    this.div.appendChild(this.extraInfo);
   }
 
   tourIndexJumpFun(e) {
@@ -511,4 +518,8 @@ export default class Stats {
     this.extraInfo.innerHTML = info;
   }
 
+  hideTourneyUpload() {
+    console.log(this.tourneyUpload);
+    this.tourneyUpload.style.display = this.tourneyUpload.style.display === "none" ? "" : "none";
+  }
 }

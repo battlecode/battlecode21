@@ -41,7 +41,8 @@ export default class Looper {
         private controls: Controls, private stats: Stats,
         private gamearea: GameArea, cconsole: Console,
         private matchqueue: MatchQueue, private profiler?: Profiler,
-        private mapinfo?: string) {
+        private mapinfo: string = "",
+        showTourneyUpload: boolean = true) {
         
         this.console = cconsole;
 
@@ -69,6 +70,7 @@ export default class Looper {
         this.stats.initializeGame(teamNames, teamIDs);
         const extraInfo = (this.mapinfo ? this.mapinfo + "\n" : "") + (this.conf.doingRotate ? " (Map rotated and flipped! Disable for new matches with 'Z'.)" : "");
         this.stats.setExtraInfo(extraInfo);
+        if (!showTourneyUpload) this.stats.hideTourneyUpload();
 
         // keep around to avoid reallocating
         this.nextStep = new NextStep();

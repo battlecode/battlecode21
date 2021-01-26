@@ -1,5 +1,8 @@
 import { path, fs } from './electron-modules';
 
+// matches required to win a tourney game
+const goal = 3;
+
 export function readTournament(jsonFile: File, cbTournament: (t: Tournament) => void, cbError: (err: Error) => void) {
   const reader = new FileReader();
   reader.onload = () => {
@@ -19,7 +22,7 @@ export function readTournament(jsonFile: File, cbTournament: (t: Tournament) => 
         winner: arr[3],
         url: "https://2021.battlecode.org/replays/" + arr[4] + ".bc21"
       }));
-      const desc: TournamentMatch[][] = data.map((game) => (game.map(parseMatch)));
+      const desc: TournamentMatch[][] = data.filter(game => game != null).map((game) => (game.map(parseMatch)));
       const tournament = new Tournament(desc);
       cbTournament(tournament);
     } catch (e) {
@@ -83,7 +86,7 @@ export class Tournament {
   // }
 
   isLastMatchInGame(): boolean {
-    return this.matchI === this.games[this.gameI].length - 1 || (Math.abs(this.wins()[this.current().team1] - this.wins()[this.current().team2]) >= 2);
+    return this.matchI === this.games[this.gameI].length - 1 || (Math.max(this.wins()[this.current().team1], this.wins()[this.current().team2]) >= goal);
   }
 
   isFirstMatchInGame(): boolean {
@@ -101,9 +104,8 @@ export class Tournament {
     this.matchI--;
     if (this.matchI < 0) {
       this.gameI--;
-      this.matchI = this.games[this.gameI].length - 1;
-      this.matchI--;
-      if (Math.abs(this.wins()[this.current().team1] - this.wins()[this.current().team2]) < 2) this.matchI++;
+      this.matchI = 0;
+      while (!this.isLastMatchInGame()) this.matchI++;
     }
     console.log(`game index: ${this.gameI}\n match index: ${this.matchI}`);
   }
@@ -128,17 +130,22 @@ export class Tournament {
     return this.games[this.gameI];
   }
 
-  wins() {
+  wins(uptoMatchI?: number) {
+    if (uptoMatchI === undefined) uptoMatchI = this.matchI;
     const team1 = this.current().team1;
     const team2 = this.current().team2;
     const wins = {};
     wins[team1] = 0;
     wins[team2] = 0;
-    for (let matchI = 0; matchI <= this.matchI; matchI++) {
+    for (let matchI = 0; matchI <= uptoMatchI; matchI++) {
       const match = this.games[this.gameI][matchI];
       wins[match.winner == 1 ? match.team1 : match.team2]++;
     }
     return wins;
+  }
+
+  totalWins() {
+    return this.wins(this.games[this.gameI].length - 1);
   }
 }
 

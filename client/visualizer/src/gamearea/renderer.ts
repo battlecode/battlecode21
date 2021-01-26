@@ -120,7 +120,8 @@ export default class Renderer {
     if (this.hoverPos != null) {
       const {x, y} = this.hoverPos;
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
-      this.ctx.strokeStyle = 'red';
+      this.ctx.strokeStyle = 'purple';
+      this.ctx.lineWidth *= 2;
       this.ctx.globalAlpha = 1;
       if (!this.conf.doingRotate) this.ctx.strokeRect(cx, cy, scale, scale);
       else this.ctx.strokeRect(cy, cx, scale, scale);

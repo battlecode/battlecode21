@@ -40,6 +40,7 @@ export default class Runner {
 
   tournament?: Tournament;
   tournamentState: TournamentState;
+  showTourneyUpload: boolean = true;
 
   currentGame: number | null;
   currentMatch: number | null;
@@ -280,7 +281,7 @@ export default class Runner {
   onTournamentLoaded(jsonFile: File) {
     readTournament(jsonFile, (tournament) => {
       this.tournament = tournament;
-  
+
       // Choose starting round
       tournament.seek(0, 0);
       this.tournamentState = TournamentState.START_SPLASH;
@@ -377,11 +378,16 @@ export default class Runner {
         Splash.addScreen(this.conf, this.root, this.tournament.current().team1, this.tournament.current().team2);
       } else if (this.tournamentState === TournamentState.END_SPLASH) {
         const wins = this.tournament.wins();
+        const totalWins = this.tournament.totalWins();
         let result: string = "";
         const team1 = this.tournament.current().team1;
         const team2 = this.tournament.current().team2;
         if (wins[team1] > wins[team2]) result = `${team1} wins ${wins[team1]}-${wins[team2]}!`;
-        else result = `${team2} wins ${wins[team2]}-${wins[team1]}!`;        
+        else result = `${team2} wins ${wins[team2]}-${wins[team1]}!`;
+        if (totalWins[team1] != wins[team1] || totalWins[team2] != wins[team2]) {
+          if (totalWins[team1] > totalWins[team2]) result += ` (Final score ${totalWins[team1]}-${totalWins[team2]})`;
+          else result += ` (Final score ${totalWins[team2]}-${totalWins[team1]})`;
+        }
         Splash.addWinnerScreen(this.conf, this.root, result);
       } else if (this.tournamentState === TournamentState.MID_GAME) {
         this.loadGameFromURL(this.tournament.current().url);
@@ -408,9 +414,18 @@ export default class Runner {
 
     if (this.looper) this.looper.die();
 
+    var infoString = "";
+
+    if (this.tournament) {
+      const wins = this.tournament.wins(this.tournament.matchI - 1);
+      infoString += `Map: <b>${this.tournament?.current().map}</b>`;
+      infoString += `<br>`;
+      infoString +=  `Score: <b class="red">${wins[this.tournament.current().team1]}</b> - <b class="blue">${wins[this.tournament.current().team2]}</b>`;
+    }
+
     this.looper = new Looper(match, meta, this.conf, this.imgs,
-      this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler,
-      this.tournament ? ` Map: <b>${this.tournament?.current().map}</b>` : undefined);
+      this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler, infoString,
+      this.showTourneyUpload);
 
     //   if (this.profiler)
     //    this.profiler.load(match);
@@ -483,6 +498,10 @@ export default class Runner {
         case 68: // 'd' - next tournament match
           this.nextTournamentState();
           this.processTournamentState();
+          break;
+        case 219: // '[' - hide tourney upload button in stats (temporary code)
+          this.stats.hideTourneyUpload();
+          this.showTourneyUpload = !this.showTourneyUpload;
           break;
         case 76: // 'l' - Toggle process logs
           this.conf.processLogs = !this.conf.processLogs;

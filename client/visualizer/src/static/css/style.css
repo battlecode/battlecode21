@@ -182,9 +182,7 @@ input[type='file'] {
 }
 
 .extra-info {
-    color: blue;
-    margin-top: 0.5em;
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .custom-button:active, button:target {
