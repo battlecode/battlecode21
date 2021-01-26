@@ -26,7 +26,7 @@ async def run():
         tournament = await user.get_tournament(url = tour_url)
     except:
         print("Make sure you have properly configured CHALLONGE_API_KEY and CHALLONGE_TOUR_URL.")
-        print("Run the pubber with the `init` argument, see the comments at the top of this file for instructions.")
+        print("See the comments at the top of this file for instructions.")
         return
 
     if sys.argv[1] == 'init':
