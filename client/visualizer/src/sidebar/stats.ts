@@ -535,9 +535,6 @@ export default class Stats {
   });
 
     this.div.appendChild(document.createElement("br"));
-    this.extraInfo = document.createElement('div');
-    this.extraInfo.className = "extra-info";
-    this.div.appendChild(this.extraInfo);
   }
 
   tourIndexJumpFun(e) {
