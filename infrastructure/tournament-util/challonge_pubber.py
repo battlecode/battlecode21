@@ -3,8 +3,6 @@
 # IMPORTANT -- BEFORE RUNNING THIS:
 # Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH IT!
 # Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to an env, CHALLONGE_TOUR_URL.
-# Then, run `python challonge_pubber.py init`.
-# This will give you the lowest Challonge match id. Set it to an env, CHALLONGE_LOWEST_ID.
 # Now with all those set, run the script as specified directly below:
 
 # Usage:
@@ -34,15 +32,14 @@ async def run():
         await tournament.start()
         await tournament.allow_attachments(True)
 
-        # For getting the lowest challonge match id:
-        tournament_matches = await tournament.get_matches()
-        lowest_id = float('inf')
-        for m in tournament_matches:
-            if m.id < lowest_id:
-                lowest_id = m.id
-        print('Set the env CHALLONGE_LOWEST_ID to the following:')
-        print(lowest_id)
-        return
+    # We map matches' suggested play order to their match objects, so that we can easily access the matches.
+    # This is because we (battlecode) play matches in their suggested play order, and so suggested play order is the index that we use.
+    # There's no way to directly access the match objects by their suggested play order, so we need some preprocessing.
+    match_play_order_dict = dict()
+    tournament_matches = await tournament.get_matches()
+    for m in tournament_matches:
+        suggested_play_order = m.suggested_play_order
+        match_play_order_dict[suggested_play_order] = m
 
     replay_file_name = sys.argv[1]
     match_no_start = int(sys.argv[2])
@@ -53,16 +50,11 @@ async def run():
 
     with open(replay_file_name, 'r') as replay_file:
         replays = json.load(replay_file)
-        try: 
-            lowest_id = int(os.getenv('CHALLONGE_LOWEST_ID'))
-        except:
-            print("Make sure you have properly configured CHALLONGE_LOWEST_ID, see the comments at the top of this file for instructions.")
-            return
 
         for match_no in range(match_no_start, match_no_end):
             print(f'Reporting Challonge match {match_no}')
             match = replays[match_no - 1] # note -1, for proper indexing: challonge is 1-indexed while the json is 0
-            api_match = await tournament.get_match(match_no + lowest_id - 1) # note -1, for proper indexing: lowest_id corresponds to match number 1
+            api_match = match_play_order_dict[match_no]
             api_player1 = await tournament.get_participant( api_match.player1_id )
             api_player2 = await tournament.get_participant( api_match.player2_id )
 
