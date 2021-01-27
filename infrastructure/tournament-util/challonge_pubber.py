@@ -2,7 +2,7 @@
 
 # IMPORTANT -- BEFORE RUNNING THIS:
 # Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH NOR SCREENSHARE/STREAM IT!
-# Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to an env, CHALLONGE_TOUR_URL.
+# Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to the tour_url variable.
 # Now with all those set, run the script as specified directly below:
 
 # Usage:
@@ -15,16 +15,16 @@
 
 import sys, json, challonge, asyncio, os
 
+tour_url = 'example'
+
 async def run():
     print("Setting up...\n")
     try: 
         api_key = os.getenv('CHALLONGE_API_KEY')
         user = await challonge.get_user('mitbattlecode',api_key)
-        
-        tour_url = os.getenv('CHALLONGE_TOUR_URL')
         tournament = await user.get_tournament(url = tour_url)
     except:
-        print("Make sure you have properly configured CHALLONGE_API_KEY and CHALLONGE_TOUR_URL.")
+        print("Make sure you have properly configured CHALLONGE_API_KEY and tour_url.")
         print("See the comments at the top of this file for instructions.")
         raise Exception
 
