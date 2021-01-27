@@ -69,6 +69,8 @@ async def run():
                 print("Match's player names on json do not match those on Challonge.")
                 print("Check proper entry/order of participants on Challonge, and correct match ordering in json.")
                 raise Exception
+            # For a sanity check, to ensure you're publishing the match that you want to publish. 
+            print(f'{player1} vs {player2}')
 
             player1_score = 0
             player2_score = 0
