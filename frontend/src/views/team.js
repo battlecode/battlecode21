@@ -332,7 +332,7 @@ class EligibiltyOptions extends Component {
                         <label>High School Students</label>
                         <Floater content={
                             <div>
-                            <p>Teams of only high school (and earlier) students are eligible for the High School Tournament.</p></div> } showCloseButton={true}>
+                            <p>Teams of only high school (and earlier) students are eligible for the US High School Tournament. (Note that you must also be all US students to be eligible -- <b>if you're all US students, don't forget to check that box, too!</b>)</p></div> } showCloseButton={true}>
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="high_school" checked={this.props.team.high_school} />
