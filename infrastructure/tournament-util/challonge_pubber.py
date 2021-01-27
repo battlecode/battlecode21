@@ -27,10 +27,12 @@ async def run():
         print("See the comments at the top of this file for instructions.")
         return
 
-    if sys.argv[1] == 'init':
-        # To ensure tournament is started and attachments are allowed; only needs to be run once
-        await tournament.start()
-        await tournament.allow_attachments(True)
+    # To ensure tournament is started and attachments are allowed. 
+    # Only needs to be run once per tournament.
+    # But, we run it every time the script is run: this can be run unlimited times, and is pretty quick.
+    # Also makes the script much simpler to use.
+    await tournament.start()
+    await tournament.allow_attachments(True)
 
     # We map matches' suggested play order to their match objects, so that we can easily access the matches.
     # This is because we (battlecode) play matches in their suggested play order, and so suggested play order is the index that we use.
