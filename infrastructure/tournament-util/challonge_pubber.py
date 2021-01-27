@@ -58,6 +58,11 @@ async def run():
             print(f'Reporting match {match_no}')
             match = replays[match_no - 1] # note -1, for proper indexing: challonge is 1-indexed while the json is 0
             api_match = match_play_order_dict[match_no]
+            if api_match.state == 'pending':
+                print('Match is not ready to have results reported.')
+                print('Check that necessary previous matches have been reported, so that participants are set.')
+                raise Exception
+
             api_player1 = await tournament.get_participant( api_match.player1_id )
             api_player2 = await tournament.get_participant( api_match.player2_id )
 
