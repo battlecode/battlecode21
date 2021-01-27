@@ -25,7 +25,7 @@ async def run():
     except:
         print("Make sure you have properly configured CHALLONGE_API_KEY and CHALLONGE_TOUR_URL.")
         print("See the comments at the top of this file for instructions.")
-        return
+        raise Exception
 
     # To ensure tournament is started and attachments are allowed. 
     # Only needs to be run once per tournament.
