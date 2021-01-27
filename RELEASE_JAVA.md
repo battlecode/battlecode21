@@ -32,7 +32,7 @@ push to master btw!
 
 Set BC21_GITUSERNAME: `export BC21_GITUSERNAME=n8kim1`, etc
 
-Set BC21_GITKEY similarly
+Set BC21_GITKEY similarly. This git key is the string discussed above.
 
 ./gradlew publish
 
