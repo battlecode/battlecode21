@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 """
+In general, this script is out of date. Make any changes as necessary.
+(e.g. repo names, year numbers, new frontend deploy process, different specs)
 Here's what this script does:
 * Generates a comparison link to review the changes
 * Adds version number and changelog to specs/specs.md
