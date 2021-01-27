@@ -64,6 +64,11 @@ async def run():
             player1 = match[0][0]
             player2 = match[0][1]
 
+            if (api_player1.display_name != player1) or (api_player2.display_name != player2):
+                print("Match's player names on json do not match those on Challonge.")
+                print("Check proper entry/order of participants on Challonge, and correct match ordering in json.")
+                raise Exception
+
             player1_score = 0
             player2_score = 0
 
