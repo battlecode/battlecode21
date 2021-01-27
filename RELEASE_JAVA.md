@@ -14,11 +14,11 @@ Make sure you have all the most recent updates to the repo! (Ideally they're pus
 
 ## Update some version numbers
 
-Client/visualizer/src/config or smth
+`client/visualizer/src/config` -- find ``gameVersion`, and update that.
 
-gradle properties
+`gradle.properties` -- update `release_version`.
 
-push this to master!
+Make sure these updates are pushed to master!
 
 ## Update specs and javadoc
 
