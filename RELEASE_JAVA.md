@@ -40,12 +40,4 @@ Now set version.txt in gcloud (also set cache policy to no-store)
 
 ## Deploy frontend
 
-Delete frontend/public/javadoc, and frontend/public/out, if they exist, in order to produce new version of them.
-
-Produce a new javadoc folder and copy it into public. (see the top level readme)
-
-Also build a production version of the client and copy it into public. (see some notes, somewhere)
-
-Remove version.txt
-
-Then run the deploy.sh script.
+Run the deploy.sh script! For arguments, follow the instructions in the file. For example: `bash ./deploy.sh deploy 2021.3.0.2`
