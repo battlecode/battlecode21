@@ -16,7 +16,7 @@
 import sys, json, challonge, asyncio, os
 
 async def run():
-    print("Setting up...")
+    print("Setting up...\n")
     try: 
         api_key = os.getenv('CHALLONGE_API_KEY')
         user = await challonge.get_user('mitbattlecode',api_key)
@@ -93,7 +93,7 @@ async def run():
             else:
                 await api_match.report_winner(api_player2, f'{player1_score}-{player2_score}')
 
-            print(f'Match {match_no} reported!')
+            print(f'Match {match_no} reported!\n')
 
 
 loop = asyncio.get_event_loop()
