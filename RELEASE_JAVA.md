@@ -2,7 +2,7 @@
 
 ## Prereqs
 
-a bash-like shell (windows command prompt won't work for this)
+a bash-like shell (windows command prompt won't work for this). Also, zsh (and perhaps other shell environments) don't work to run the frontend deploy script. bash seems to work.
 
 npm
 
