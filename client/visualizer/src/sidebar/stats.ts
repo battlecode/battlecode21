@@ -66,7 +66,7 @@ export default class Stats {
   private tourneyUpload: HTMLDivElement;
   private incomeChart: Chart;
   
-  private teamMapToTurnsIncomeSet: Map<number, Set<number>> = new Map();
+  private teamMapToTurnsIncomeSet: Map<number, Set<number>>;
 
   // Note: robot types and number of teams are currently fixed regardless of
   // match info. Keep in mind if we ever change these, or implement this less
@@ -416,6 +416,7 @@ export default class Stats {
     this.voteBars = [];
     this.relativeBars = [];
     this.maxVotes = 1500;
+    this.teamMapToTurnsIncomeSet = new Map();
 
     this.div.appendChild(document.createElement("br"));
 
