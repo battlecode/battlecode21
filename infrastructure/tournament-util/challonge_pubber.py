@@ -1,7 +1,7 @@
 # Requires achallonge, and _not_ pychal. Make sure to `pip uninstall pychal`, `pip install achallonge` etc before using.
 
 # IMPORTANT -- BEFORE RUNNING THIS:
-# Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH IT!
+# Get the Challonge API Key. Set it to an env, CHALLONGE_API_KEY. DON'T PUSH NOR SCREENSHARE/STREAM IT!
 # Get the tournament url, it's the alphanumeric string at the end of the tournament website's url. (e.g. http://challonge.com/thispart). Set it to an env, CHALLONGE_TOUR_URL.
 # Now with all those set, run the script as specified directly below:
 
@@ -16,6 +16,7 @@
 import sys, json, challonge, asyncio, os
 
 async def run():
+    print("Setting up...")
     try: 
         api_key = os.getenv('CHALLONGE_API_KEY')
         user = await challonge.get_user('mitbattlecode',api_key)
@@ -54,7 +55,7 @@ async def run():
         replays = json.load(replay_file)
 
         for match_no in range(match_no_start, match_no_end):
-            print(f'Reporting Challonge match {match_no}')
+            print(f'Reporting match {match_no}')
             match = replays[match_no - 1] # note -1, for proper indexing: challonge is 1-indexed while the json is 0
             api_match = match_play_order_dict[match_no]
             api_player1 = await tournament.get_participant( api_match.player1_id )
@@ -92,7 +93,7 @@ async def run():
             else:
                 await api_match.report_winner(api_player2, f'{player1_score}-{player2_score}')
 
-            print(f'Challonge match {match_no} reported!')
+            print(f'Match {match_no} reported!')
 
 
 loop = asyncio.get_event_loop()
