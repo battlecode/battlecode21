@@ -147,7 +147,7 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament.
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team, and participate in matches and the Sprint Tournaments.
                                     </p>
                                     <p>Your team must meet <b>all three conditions</b> to be eligible for the Qualifying and Final tournaments by the submission deadline:
                                         <ol>
