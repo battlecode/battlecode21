@@ -242,7 +242,7 @@ class Submissions extends Component {
                     <div className="content">
                         {/* TODO could this paragraph be dynamically filled? that'd be amazing */}
                         <p>
-                            <b>The submission deadline for both US & International Qualifying Tournaments are 7 pm ET on Monday 1/25.</b> Make sure to have indicated your eligibility on your Team Profile page. Also make sure to have all members upload a resume, at your personal profile page.
+                            <b>The submission deadline for both Newbie & High School Tournaments are 7 pm ET on Wednesday 1/27.</b> Make sure to have indicated your eligibility on your Team Profile page. Also make sure to have all members upload a resume, at your personal profile page.
                             <b>**See the Eligibility Rules in the Tournaments page for more info**</b>
                         </p>
                         <p>
