@@ -34,7 +34,8 @@ export type BodiesSchema = {
   bytecodesUsed: Int32Array, // TODO: is this needed?
   ability: Int8Array,
   bid: Int32Array,
-  parent: Int32Array
+  parent: Int32Array,
+  income: Int32Array
 };
 
 // NOTE: consider changing MapStats to schema to use SOA for better performance, if it has large data
@@ -60,7 +61,8 @@ export type TeamStats = {
   conviction: [number, number, number, number, number],
   numBuffs: number,
   bidderID: number,
-  bid: number
+  bid: number,
+  income: number
 };
 
 export type IndicatorDotsSchema = {
@@ -221,7 +223,8 @@ export default class GameWorld {
       bytecodesUsed: new Int32Array(0),
       ability: new Int8Array(0),
       bid: new Int32Array(0),
-      parent: new Int32Array(0)
+      parent: new Int32Array(0),
+      income: new Int32Array(0)
     }, 'id');
 
 
@@ -242,7 +245,8 @@ export default class GameWorld {
           conviction: [0, 0, 0, 0, 0],
           numBuffs: 0,
           bidderID: -1,
-          bid: 0
+          bid: 0,
+          income: 0
         });
     }
 
@@ -373,8 +377,8 @@ export default class GameWorld {
 
     // Process team info changes
     for (var i = 0; i < delta.teamIDsLength(); i++) {
-      var teamID = delta.teamIDs(i);
-      var statObj = this.teamStats.get(teamID);
+      let teamID = delta.teamIDs(i);
+      let statObj = this.teamStats.get(teamID);
 
       statObj.votes += delta.teamVotes(i);
       statObj.numBuffs = delta.teamNumBuffs(i);
@@ -417,6 +421,8 @@ export default class GameWorld {
         const action = delta.actions(i);
         const robotID = delta.actionIDs(i);
         const target = delta.actionTargets(i);
+        const body = this.bodies.lookup(robotID);
+        const teamStatsObj: TeamStats = this.teamStats.get(body.team);
         switch (action) {
           // TODO: validate actions?
           // Actions list from battlecode.fbs enum Action
@@ -425,10 +431,7 @@ export default class GameWorld {
           /// Target: none
           case schema.Action.EMPOWER:
             //this.bodies.alter({ id: robotID, ability: 1});
-            var x = this.bodies.lookup(robotID).x;
-            var y = this.bodies.lookup(robotID).y;
-            var team = this.bodies.lookup(robotID).team;
-            this.empowered.insert({'id': robotID, 'x': x, 'y': y, 'team': team, 'radius': target});
+            this.empowered.insert({'id': robotID, 'x': body.x, 'y': body.y, 'team': body.team, 'radius': target});
             this.abilityRobots.push(robotID);
             break;
           /// Slanderers passively generate influence for the
@@ -441,25 +444,22 @@ export default class GameWorld {
           /// Slanderers turn into Politicians.
           /// Target: none
           case schema.Action.CAMOUFLAGE:
-            var team = this.bodies.lookup(robotID).team;
-            var type = this.bodies.lookup(robotID).type;
-            if (type !== schema.BodyType.SLANDERER) {
+
+            if (body.type !== schema.BodyType.SLANDERER) {
               throw new Error("non-slanderer camouflaged");
             }
             this.bodies.alter({ id: robotID, type: schema.BodyType.POLITICIAN});
-            this.bodies.alter({ id: robotID, ability: (team == 1 ? 4 : 5)});
+            this.bodies.alter({ id: robotID, ability: (body.team == 1 ? 4 : 5)});
             this.abilityRobots.push(robotID);
 
-            this.teamStats.get(team).robots[schema.BodyType.SLANDERER]--;
-            this.teamStats.get(team).robots[schema.BodyType.POLITICIAN]++;
+            teamStatsObj.robots[schema.BodyType.SLANDERER]--;
+            teamStatsObj.robots[schema.BodyType.POLITICIAN]++;
 
-            var conviction = this.bodies.lookup(robotID).conviction;
-            this.teamStats.get(team).conviction[schema.BodyType.SLANDERER] -= conviction;
-            this.teamStats.get(team).conviction[schema.BodyType.POLITICIAN] += conviction;
+            teamStatsObj.conviction[schema.BodyType.SLANDERER] -= body.conviction;
+            teamStatsObj.conviction[schema.BodyType.POLITICIAN] += body.conviction;
 
-            var influence = this.bodies.lookup(robotID).influence;
-            this.teamStats.get(team).influence[schema.BodyType.SLANDERER] -= influence;
-            this.teamStats.get(team).influence[schema.BodyType.POLITICIAN] += influence;
+            teamStatsObj.influence[schema.BodyType.SLANDERER] -= body.influence;
+            teamStatsObj.influence[schema.BodyType.POLITICIAN] += body.influence;
             break;
           /// Muckrakers can expose a scandal.
           /// Target: an enemy body.
@@ -483,9 +483,7 @@ export default class GameWorld {
             this.bodies.alter({id: robotID, bid: target});
             this.bidRobots.push(robotID);
 
-            var team = this.bodies.lookup(robotID).team;
-            var statObj = this.teamStats.get(team);
-            if (robotID === statObj.bidderID) statObj.bid = target;
+            if (robotID === teamStatsObj.bidderID) teamStatsObj.bid = target;
             break;
           /// A robot can change team after being empowered
           /// Target: teamID
@@ -495,28 +493,20 @@ export default class GameWorld {
           /// A robot's influence changes.
           /// Target: delta value
           case schema.Action.CHANGE_INFLUENCE:
-            var old_influence = this.bodies.lookup(robotID).influence;
-            var type = this.bodies.lookup(robotID).type;
-            this.bodies.alter({ id: robotID, influence: old_influence + target});
-            
-            var team = this.bodies.lookup(robotID).team; 
-            var statObj = this.teamStats.get(team);
-            if(!statObj) {continue;} // In case this is a neutral bot
-            statObj.influence[type] += target;
-            this.teamStats.set(team, statObj);
+            this.bodies.alter({ id: robotID, influence: body.influence + target});
+
+            if(!teamStatsObj) {continue;} // In case this is a neutral bot
+            teamStatsObj.influence[body.type] += target;
+            this.teamStats.set(body.team, teamStatsObj);
             break;
           /// A robot's conviction changes.
           /// Target: delta value, i.e. red 5 -> blue 3 is -2
           case schema.Action.CHANGE_CONVICTION:
-            var old_conviction = this.bodies.lookup(robotID).conviction;
-            this.bodies.alter({ id: robotID, conviction: old_conviction + target});
+            this.bodies.alter({ id: robotID, conviction: body.conviction + target});
 
-            var team = this.bodies.lookup(robotID).team;
-            var type = this.bodies.lookup(robotID).type;
-            var statObj = this.teamStats.get(team);
-            if(!statObj) {continue;} // In case this is a neutral bot
-            statObj.conviction[type] += target;
-            this.teamStats.set(team, statObj);
+            if(!teamStatsObj) {continue;} // In case this is a neutral bot
+            teamStatsObj.conviction[body.type] += target;
+            this.teamStats.set(body.team, teamStatsObj);
             break;
     
           case schema.Action.DIE_EXCEPTION:
@@ -530,6 +520,35 @@ export default class GameWorld {
       }
     }
 
+    for (let team in this.meta.teams) {
+      let teamID = this.meta.teams[team].teamID;
+      let teamStats = this.teamStats.get(teamID) as TeamStats;
+      teamStats.income = 0;
+    }
+
+    // income
+    this.bodies.arrays.type.forEach((type, i) => {
+      let robotID = this.bodies.arrays.id[i];
+      let team = this.bodies.arrays.team[i];
+      let ability = this.bodies.arrays.ability[i];
+      let influence = this.bodies.arrays.influence[i];
+      let income = this.bodies.arrays.income[i];
+      let parent = this.bodies.arrays.parent[i];
+      var teamStatsObj = this.teamStats.get(team);
+      if (ability === 3) {
+          let delta = Math.floor((1/50 + 0.03 * Math.exp(-0.001 * influence)) * influence);
+          teamStatsObj.income += delta;
+          this.bodies.alter({id: parent, income: delta});
+      } else if (type === schema.BodyType.ENLIGHTENMENT_CENTER && teamStatsObj) {
+         let delta = Math.ceil(0.2 * Math.sqrt(this.turn));
+         teamStatsObj.income += delta;
+         this.bodies.alter({id: robotID, income: delta});
+      } else if (income !== 0) {
+        this.bodies.alter({id: robotID, income: 0});
+      }
+      this.teamStats.set(team, teamStatsObj);
+    })
+
     // Died bodies
     if (delta.diedIDsLength() > 0) {
       // Update team stats
@@ -538,7 +557,7 @@ export default class GameWorld {
           let index = indices[i];
           let team = this.bodies.arrays.team[index];
           let type = this.bodies.arrays.type[index];
-          var statObj = this.teamStats.get(team);
+          let statObj = this.teamStats.get(team);
           if(!statObj) {continue;} // In case this is a neutral bot
           statObj.robots[type] -= 1;
           let influence = this.bodies.arrays.influence[index];
