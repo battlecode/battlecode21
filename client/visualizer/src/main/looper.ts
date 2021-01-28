@@ -259,10 +259,13 @@ export default class Looper {
             this.controls.removeInfoString();
         }
 
-        this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
-        this.console.seekRound(this.match.current.turn);
-        this.lastTime = curTime;
-        this.lastTurn = this.match.current.turn;
+        if (this.match.current.turn != this.lastTurn) {
+            this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
+            this.console.seekRound(this.match.current.turn);
+            this.lastTime = curTime;
+            this.lastTurn = this.match.current.turn;
+            this.updateStats(this.match.current, this.meta);
+        }
 
         // @ts-ignore
         // renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner);
@@ -293,7 +296,7 @@ export default class Looper {
             this.loadedProfiler = true;
         }
 
-        this.updateStats(this.match.current, this.meta);
+        //this.updateStats(this.match.current, this.meta);
         this.loopID = window.requestAnimationFrame((curTime) => this.loop.call(this, curTime));
     }
 
@@ -302,14 +305,24 @@ export default class Looper {
      * team in the current game world.
      */
     private updateStats(world: GameWorld, meta: Metadata) {
-        var totalInfluence = 0;
+        let totalInfluence = 0;
+        let totalConviction = 0;
         let teamIDs: number[] = [];
         let teamNames: string[] = [];
+
+        this.stats.resetECs();
+        for (let i = 0; i < world.bodies.length; i++) {
+            const type = world.bodies.arrays.type[i];
+            if (type === schema.BodyType.ENLIGHTENMENT_CENTER) {
+                this.stats.addEC(world.bodies.arrays.team[i]);
+            }
+        }
 
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
             totalInfluence += teamStats.influence.reduce((a, b) => a + b);
+            totalConviction += teamStats.conviction.reduce((a, b) => a + b);
             teamIDs.push(teamID);
             teamNames.push(meta.teams[team].name);
         }
@@ -321,9 +334,8 @@ export default class Looper {
             // Update each robot count
             this.stats.robots.forEach((type: schema.BodyType) => {
                 this.stats.setRobotCount(teamID, type, teamStats.robots[type]);
-                this.stats.setRobotConviction(teamID, type, teamStats.conviction[type]);
+                this.stats.setRobotConviction(teamID, type, teamStats.conviction[type], totalConviction);
                 this.stats.setRobotInfluence(teamID, type, teamStats.influence[type]);
-
             });
 
             // Set votes

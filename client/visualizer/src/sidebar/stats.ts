@@ -43,11 +43,11 @@ export default class Stats {
   private teamNameNodes: HTMLSpanElement[] = [];
 
   // Key is the team ID
+  private robotImages: Map<string, Array<HTMLImageElement>> = new Map(); // the robot image elements in the unit statistics display 
   private robotTds: Map<number, Map<string, Map<number, HTMLTableCellElement>>> = new Map();
 
   private voteBars: VoteBar[];
   private maxVotes: number;
-  
 
   private incomeDisplays: IncomeDisplay[];
 
@@ -64,7 +64,10 @@ export default class Stats {
   private conf: Config;
 
   private tourneyUpload: HTMLDivElement;
+
   private incomeChart: Chart;
+
+  private ECs: HTMLDivElement;
   
   private teamMapToTurnsIncomeSet: Map<number, Set<number>>;
 
@@ -77,6 +80,12 @@ export default class Stats {
   constructor(conf: Config, images: AllImages, runner: Runner) {
     this.conf = conf;
     this.images = images;
+
+    for (const robot in this.images.robots) {
+      let robotImages: Array<HTMLImageElement> = this.images.robots[robot];
+      this.robotImages[robot] = robotImages.map((image) => image.cloneNode() as HTMLImageElement);
+    }
+    
     this.div = document.createElement("div");
     this.tourIndexJump = document.createElement("input");
     this.runner = runner;
@@ -128,10 +137,12 @@ export default class Stats {
       let robotName: string = cst.bodyTypeToString(robot);
       let tdRobot: HTMLTableCellElement = document.createElement("td");
       tdRobot.className = "robotSpriteStats";
+      tdRobot.style.height = "100px";
+      tdRobot.style.width = "100px";
 
-      const img = this.images.robots[robotName][inGameID];
-      img.style.width = "64px";
-      img.style.height = "64px";
+      const img: HTMLImageElement = this.robotImages[robotName][inGameID];
+      img.style.width = "60%";
+      img.style.height = "60%";
 
       tdRobot.appendChild(img);
       robotImages.appendChild(tdRobot);
@@ -139,6 +150,10 @@ export default class Stats {
       for (let value in this.robotTds[teamID]) {
         let tdCount: HTMLTableCellElement = this.robotTds[teamID][value][robot];
         robotCounts[value].appendChild(tdCount);
+        if (robot === schema.BodyType.ENLIGHTENMENT_CENTER && value === "count") {
+          tdCount.style.fontWeight = "bold";
+          tdCount.style.fontSize = "18px";          
+        }
       }
     }
     table.appendChild(robotImages);
@@ -213,8 +228,8 @@ export default class Stats {
     });
 
     votesDiv.appendChild(title);
-    box.appendChild(votes);
     box.appendChild(bids);
+    box.appendChild(votes);
     box.appendChild(bars);
     votesDiv.appendChild(box);
     return votesDiv;
@@ -335,9 +350,17 @@ export default class Stats {
   private getIncomeDominationGraph() {
     const canvas = document.createElement("canvas");
     canvas.id = "myChart";
-    canvas.width = 400;
-    canvas.height = 400;
     return canvas;
+  }
+
+  private getECDivElement() {
+    const div = document.createElement('div');
+    const label = document.createElement('div');
+    label.className = "stats-header";
+    label.innerText = 'EC Control';
+    div.appendChild(label);
+    div.appendChild(this.ECs);
+    return div;
   }
 
   // private drawBuffsGraph(ctx: CanvasRenderingContext2D, upto: number) {
@@ -397,9 +420,10 @@ export default class Stats {
     }
     this.voteBars = [];
     this.relativeBars = [];
-    this.maxVotes = 1500;
+    this.maxVotes = 750;
     this.teamMapToTurnsIncomeSet = new Map();
 
+    this.div.appendChild(document.createElement("br"));
     if (this.conf.tournamentMode) {
       // FOR TOURNAMENT
       this.tourneyUpload = document.createElement('div');
@@ -493,6 +517,7 @@ export default class Stats {
           }]
       },
       options: {
+          aspectRatio: 1.5,
           scales: {
             xAxes: [{
               type: 'linear',
@@ -512,7 +537,12 @@ export default class Stats {
               }]
           }
       }
-  });
+    });
+
+    this.ECs = document.createElement("div");
+    this.ECs.style.height = "100px";
+    this.ECs.style.display = "flex";
+    this.div.appendChild(this.getECDivElement());
 
     this.div.appendChild(document.createElement("br"));
   }
@@ -535,9 +565,16 @@ export default class Stats {
   /**
    * Change the robot conviction on the stats bar
    */
-  setRobotConviction(teamID: number, robotType: schema.BodyType, conviction: number) {
+  setRobotConviction(teamID: number, robotType: schema.BodyType, conviction: number, totalConviction: number) {
     let td: HTMLTableCellElement = this.robotTds[teamID]["conviction"][robotType];
     td.innerHTML = String(conviction);
+
+    const robotName: string = cst.bodyTypeToString(robotType);
+    let img = this.robotImages[robotName][teamID];
+
+    const size = (55 + 45 * conviction / totalConviction);
+    img.style.width = size + "%";
+    img.style.height = size + "%";
   }
 
   /**
@@ -625,5 +662,22 @@ export default class Stats {
   hideTourneyUpload() {
     console.log(this.tourneyUpload);
     this.tourneyUpload.style.display = this.tourneyUpload.style.display === "none" ? "" : "none";
+  }
+
+  resetECs() {
+    // while (this.ECs.lastChild) this.ECs.removeChild(this.ECs.lastChild);
+    // console.log(this.ECs);
+    this.ECs.innerHTML = "";
+  }
+
+  addEC(teamID: number) {
+    const div = document.createElement("div");
+    div.style.width = "35px";
+    div.style.height = "35px";
+    const img = this.images.robots["enlightenmentCenter"][teamID].cloneNode() as HTMLImageElement;
+    img.style.width = "64px";
+    img.style.height = "64px"; // update dynamically later
+    div.appendChild(img);
+    this.ECs.appendChild(div);
   }
 }

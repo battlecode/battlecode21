@@ -16,6 +16,7 @@ import { TeamStats } from 'battlecode-playback/out/gameworld';
 
 import { Tournament, readTournament } from './main/tournament_new';
 import Looper from './main/looper';
+import Sidebar from './main/sidebar';
 
 
 /**
@@ -31,6 +32,7 @@ export default class Runner {
   private console: Console;
   private profiler?: Profiler;
   private asyncRequests: XMLHttpRequest[] = [];
+  private sidebar: Sidebar;
   looper: Looper | null;
 
   // Match logic
@@ -61,7 +63,8 @@ export default class Runner {
   * Marks the client as fully loaded.
   */
   ready(controls: Controls, stats: Stats, gamearea: GameArea,
-    cconsole: Console, matchqueue: MatchQueue, profiler?: Profiler) {
+    cconsole: Console, matchqueue: MatchQueue, sidebar: Sidebar,
+    profiler?: Profiler) {
 
     this.controls = controls;
     this.stats = stats;
@@ -69,6 +72,7 @@ export default class Runner {
     this.console = cconsole;
     this.matchqueue = matchqueue;
     this.profiler = profiler;
+    this.sidebar = sidebar;
 
     this.gamearea.setCanvas();
 
@@ -499,7 +503,8 @@ export default class Runner {
           this.nextTournamentState();
           this.processTournamentState();
           break;
-        case 219: // '[' - hide tourney upload button in stats (temporary code)
+        case 219: // '[' - hide sidebar
+          this.sidebar.hidePanel();
           this.stats.hideTourneyUpload();
           this.showTourneyUpload = !this.showTourneyUpload;
           break;
