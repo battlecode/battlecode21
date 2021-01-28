@@ -40,10 +40,11 @@ then
 
 	rm -r public/out
 	cd ../client
-	npm install
 	cd playback
+	npm install
 	npm run build
 	cd ../visualizer
+	npm install
 	npm run prod
 	mkdir ../../frontend/public/out
 	cp -r out ../../frontend/public
