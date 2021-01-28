@@ -12,7 +12,7 @@ const hex: Object = {
 
 type VoteBar = {
   bar: HTMLDivElement,
-  votes: HTMLSpanElement,
+  vote: HTMLSpanElement,
   bid: HTMLSpanElement
 };
 
@@ -162,77 +162,62 @@ export default class Stats {
       // Store the stat bars
       voteBars[teamID] = {
         bar: votes,
-        votes: votesSpan,
+        vote: votesSpan,
         bid: bidSpan
       };
     });
     return voteBars;
   }
 
-  private getVoteBarElement(teamIDs: Array<number>): HTMLTableElement {
-    const table = document.createElement("table");
-    const title = document.createElement('td');
-    const bars = document.createElement("tr");
-    const counts = document.createElement("tr");
-    const bids = document.createElement("tr");
-    table.id = "stats-table";
-    bars.id = "stats-bars";
-    table.setAttribute("align", "center");
-    
-    // column management
-    
-    const colgroup = document.createElement('colgroup');
-    const onLeft = document.createElement('col');
-    onLeft.style.width = "10%";
-    colgroup.appendChild(onLeft);
-    
-    for (let i = 0; i < 2; i++) {
-      const text = document.createElement('col');
-      text.style.width = "45%";
-      colgroup.appendChild(text);
-    }
-    
-    table.appendChild(colgroup);
-    
-    title.colSpan = 3;
+  private getVoteBarElement(teamIDs: Array<number>): HTMLElement {
+    const votesDiv = document.createElement('div');
 
-    bars.appendChild(document.createElement('td'));
+    const box = document.createElement('div');
+    box.className = "votes-box";
 
-    const votesTitle = document.createElement('td');
+    const title = document.createElement('div');
+    title.className = "stats-header";
+    
+    const bars = document.createElement('div');
+    bars.id = "vote-bars";
+    bars.appendChild(document.createElement('div'));
+
+    const votes = document.createElement('div');
+    votes.className = "votes-info";
+    const bids = document.createElement('div');
+    bids.className = "votes-info";
+
+    title.innerHTML = "Voting";
+
+    const votesTitle = document.createElement('div');
     votesTitle.innerHTML = "<b>Votes</b>";
-    counts.appendChild(votesTitle);
+    votes.appendChild(votesTitle);
 
-    const bidsTitle = document.createElement('td');
+    const bidsTitle = document.createElement('div');
     bidsTitle.innerHTML = "<b>Bid</b>";
     bids.appendChild(bidsTitle);
 
     // build table
 
-    const label = document.createElement('h3');
-    label.innerText = 'Votes';
-    title.appendChild(label);
-
     teamIDs.forEach((id: number) => {
-      const bar = document.createElement("td");
-      bar.height = "120";
-      bar.vAlign = "bottom";
-      bar.appendChild(this.voteBars[id].bar);
-      bars.appendChild(bar);
 
-      const count = document.createElement("td");
-      count.appendChild(this.voteBars[id].votes);
-      counts.appendChild(count);
+      const vote = document.createElement('div');
+      vote.appendChild(this.voteBars[id].vote);
+      votes.appendChild(vote);
 
-      const bid = document.createElement("td");
+      const bid = document.createElement('div');
       bid.appendChild(this.voteBars[id].bid);
       bids.appendChild(bid);
+
+      bars.appendChild(this.voteBars[id].bar);
     });
 
-    table.appendChild(title);
-    table.appendChild(bars);
-    table.appendChild(counts);
-    table.appendChild(bids);
-    return table;
+    votesDiv.appendChild(title);
+    box.appendChild(votes);
+    box.appendChild(bids);
+    box.appendChild(bars);
+    votesDiv.appendChild(box);
+    return votesDiv;
   }
 
   private initRelativeBars(teamIDs: Array<number>) {
@@ -252,12 +237,14 @@ export default class Stats {
   private getRelativeBarsElement(teamIDs: Array<number>): HTMLElement {
     const div = document.createElement("div");
     div.setAttribute("align", "center");
+    div.id = "relative-bars";
 
-    const label = document.createElement('h3');
+    const label = document.createElement('div');
+    label.className = "stats-header";
     label.innerText = 'Total Influence';
 
     const frame = document.createElement("div");
-    frame.style.width = "250px";
+    frame.style.width = "90%";
 
     teamIDs.forEach((id: number) => {
       frame.appendChild(this.relativeBars[id]);
@@ -295,31 +282,25 @@ export default class Stats {
   }
 
   private getBuffDisplaysElement(teamIDs: Array<number>): HTMLElement {
-    const table = document.createElement("table");
-    table.id = "buffs-table";
-    table.style.width = "100%";
+    const div = document.createElement("div");
+    div.id = "buffs";
 
-    const title = document.createElement('td');
-    title.colSpan = 2;
-    const label = document.createElement('h3');
+    const label = document.createElement('div');
+    label.className = "stats-header";
     label.innerText = 'Buffs';
-
-    const row = document.createElement("tr");
+    div.appendChild(label);
 
     teamIDs.forEach((id: number) => {
-      const cell = document.createElement("td");
+      const buffDiv = document.createElement("div");
+      buffDiv.className = "buff-div";
       // cell.appendChild(document.createTextNode("1.001"));
       // cell.appendChild(this.buffDisplays[id].numBuffs);
       // cell.appendChild(document.createTextNode(" = "));
-      cell.appendChild(this.buffDisplays[id].buff);
-      row.appendChild(cell);
+      buffDiv.appendChild(this.buffDisplays[id].buff);
+      div.appendChild(buffDiv);
     });
 
-    title.appendChild(label);
-    table.appendChild(title);
-    table.appendChild(row);
-
-    return table;
+    return div;
   }
 
   private getIncomeDisplaysElement(teamIDs: Array<number>): HTMLElement {
@@ -329,7 +310,8 @@ export default class Stats {
 
     const title = document.createElement('td');
     title.colSpan = 2;
-    const label = document.createElement('h3');
+    const label = document.createElement('div');
+    label.className = "stats-header";
     label.innerText = 'Total Income Per Turn';
 
     const row = document.createElement("tr");
@@ -418,8 +400,6 @@ export default class Stats {
     this.maxVotes = 1500;
     this.teamMapToTurnsIncomeSet = new Map();
 
-    this.div.appendChild(document.createElement("br"));
-
     if (this.conf.tournamentMode) {
       // FOR TOURNAMENT
       this.tourneyUpload = document.createElement('div');
@@ -469,7 +449,6 @@ export default class Stats {
       // Add the team name banner and the robot count table
       teamDiv.appendChild(this.teamHeaderNode(teamName, inGameID));
       teamDiv.appendChild(this.robotTable(teamID, inGameID));
-      teamDiv.appendChild(document.createElement("br"));
 
       this.div.appendChild(teamDiv);
     }
@@ -575,9 +554,9 @@ export default class Stats {
   setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
     const statBar: VoteBar = this.voteBars[teamID];
-    statBar.votes.innerText = String(count);
+    statBar.vote.innerText = String(count);
     this.maxVotes = Math.max(this.maxVotes, count);
-    statBar.bar.style.height = `${Math.min(100 * count / this.maxVotes, 100)}%`;
+    statBar.bar.style.width = `${Math.min(100 * count / this.maxVotes, 100)}%`;
 
     // TODO add reactions to relative bars
     // TODO get total votes to get ratio
@@ -599,7 +578,7 @@ export default class Stats {
   setBuffs(teamID: number, numBuffs: number) {
     //this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
     this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(3));
-    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.min(12, cst.buffFactor(numBuffs))) + "px";
+    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.min(9, cst.buffFactor(numBuffs))) + "px";
   }
 
   setIncome(teamID: number, income: number, turn: number) {
