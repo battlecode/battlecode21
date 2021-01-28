@@ -187,6 +187,7 @@ export default class Looper {
         this.controls.pause();
         this.controls.removeInfoString();
         this.controls.setDefaultText();
+        this.controls.setDefaultUPS();
     }
 
     private loop(curTime) {
