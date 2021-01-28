@@ -67,7 +67,7 @@ class Tournaments extends Component {
                                                 <b>Newbie Tournament: 1/28.</b> The top newbie teams compete for a smaller prize pool. The final match between the top 2 teams will be run at the Final Tournament.
                                             </li>
                                             <li>
-                                                <b>High School Tournament: 1/28.</b> The top high school teams compete for a smaller prize pool. Like the Newbie Tournament, the final match will be run at the Final Tournament.
+                                                <b>US High School Tournament: 1/28.</b> The top US high school teams compete for a smaller prize pool. Like the Newbie Tournament, the final match will be run at the Final Tournament.
                                             </li>
                                             <li>
                                                 <b>Final Tournament: 1/30.</b> The top 16 teams, as determined by the qualifying tournaments, compete for glory, fame and a big prize pool. The tournament will take place live, and will be streamed online for 2021. There will not be a component on MIT campus this year.
@@ -128,7 +128,7 @@ class Tournaments extends Component {
                                         Thanks to our gold sponsor, Five Rings!
                                         <ul>
                                             <li><b>1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed). Smaller prizes for subsequent placers.</li>
-                                            <li>Smaller prizes for top placers in other non-final (newbie, high school, sprint) tournaments.</li>                                           
+                                            <li>Smaller prizes for top placers in other non-final (newbie, US high school, sprint) tournaments.</li>                                           
                                             <li><b>More prizes???</b> TBA, maybe 👀
                                                 <ul>
                                                     <li>Historically, we have given out prizes for creative strategies, major bugs found, and other game-specific topics. Have fun with your strategies, write-ups, and overall participation in Battlecode!</li>
@@ -147,7 +147,7 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament.
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team, and participate in matches and the Sprint Tournaments.
                                     </p>
                                     <p>Your team must meet <b>all three conditions</b> to be eligible for the Qualifying and Final tournaments by the submission deadline:
                                         <ol>

@@ -1,4 +1,6 @@
-# HOW TO RELEASE
+# HOW TO RELEASE A PYTHON GAME
+
+In general, this guide and script may be out of date. Make any changes as necessary.
 
 ### Preliminaries
 - Install the frontend using `npm install`.
