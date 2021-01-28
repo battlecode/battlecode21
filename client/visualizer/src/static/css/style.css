@@ -314,6 +314,9 @@ input, select {
     font-size: 1.17em;
     font-weight: bold;
     padding: 5px;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
 }
 
 h4 {
