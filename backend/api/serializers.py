@@ -95,6 +95,7 @@ class FullUserSerializer(serializers.HyperlinkedModelSerializer):
         """
         Update and return an existing user object, given the validated data.
         """
+        instance.email = validated_data.get('email', instance.email)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
