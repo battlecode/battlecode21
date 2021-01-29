@@ -114,6 +114,9 @@ class Account extends Component {
                                         <h4 className="title">Edit Profile</h4>
                                     </div>
                                     <div className="content">
+                                        <h5>
+                                            Make sure to press the "Update Info" button, and wait for confirmation!
+                                        </h5>
                                         <div className="row">
                                             <div className="col-md-6">
                                                 <div className="form-group">
