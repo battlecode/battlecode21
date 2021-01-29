@@ -121,7 +121,7 @@ class Account extends Component {
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Username</label>
-                                                    <input type="text" className="form-control" id="username" onChange={this.changeHandler} value={this.state.user.username} />
+                                                    <input type="text" className="form-control" readOnly id="username" onChange={this.changeHandler} value={this.state.user.username} />
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
