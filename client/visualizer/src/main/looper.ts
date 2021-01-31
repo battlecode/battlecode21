@@ -260,10 +260,11 @@ export default class Looper {
             this.controls.removeInfoString();
         }
 
+        this.lastTime = curTime;
+
         if (this.match.current.turn != this.lastTurn) {
             this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
             this.console.seekRound(this.match.current.turn);
-            this.lastTime = curTime;
             this.lastTurn = this.match.current.turn;
             this.updateStats(this.match.current, this.meta);
         }
