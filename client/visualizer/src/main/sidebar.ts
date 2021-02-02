@@ -40,6 +40,9 @@ export default class Sidebar {
   // Update texts
   private updateText: HTMLDivElement;
 
+  // Mode panel
+  private modePanel: HTMLTableElement;
+
   // Callback to update the game area when changing modes
   cb: () => void;
 
@@ -79,8 +82,8 @@ export default class Sidebar {
     this.div.appendChild(this.screamForUpdate());
     this.div.appendChild(this.battlecodeLogo());
 
-    const modePanel = document.createElement('table');
-    modePanel.className = 'modepanel';
+    this.modePanel = document.createElement('table');
+    this.modePanel.className = 'modepanel';
 
     const modePanelRow1 = document.createElement('tr');
     const modePanelRow2 = document.createElement('tr');
@@ -94,10 +97,10 @@ export default class Sidebar {
     modePanelRow2.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
     modePanelRow2.appendChild(this.modeButton(Mode.HELP, "Help"));
 
-    modePanel.appendChild(modePanelRow1);
-    modePanel.appendChild(modePanelRow2);
+    this.modePanel.appendChild(modePanelRow1);
+    this.modePanel.appendChild(modePanelRow2);
 
-    this.div.appendChild(modePanel);
+    this.div.appendChild(this.modePanel);
 
     this.div.appendChild(this.innerDiv);
 
@@ -151,6 +154,7 @@ export default class Sidebar {
     L - Toggle whether to process logs.<br>
     Q - Toggle whether to profile matches.<br>
     Z - Toggle whether to rotate tall maps.<br>
+    [ - Hide/unhide sidebar navigation.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>
@@ -223,8 +227,7 @@ export default class Sidebar {
       `<br><br>
       <b class="blue">Tournament Mode Keyboard Shortcuts</b><br>
       D - Next match<br>
-      A - Previous match<br>
-      [ - Hide/unhide tourney upload button.`
+      A - Previous match`
     }
 
     const div = document.createElement("div");
@@ -365,5 +368,9 @@ export default class Sidebar {
     if (this.cb !== undefined) {
       this.cb();
     }
+  }
+
+  hidePanel() {
+    this.modePanel.style.display = (this.modePanel.style.display === "" ? "none" : "");
   }
 }

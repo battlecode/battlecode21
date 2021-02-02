@@ -93,11 +93,8 @@ export default class Controls {
     timeline.appendChild(this.timeReadout);
     timeline.appendChild(this.speedReadout);
 
-    this.curUPS = 16;
-    if (this.conf.tournamentMode) {
-      this.curUPS = 8; // for tournament!!!
-    }
-
+    this.setDefaultUPS();
+    
     // create the button controls
     let buttons = document.createElement("td");
     buttons.vAlign = "top";
@@ -232,6 +229,13 @@ export default class Controls {
    */
   getUPS(): number {
     return this.curUPS;
+  }
+
+  setDefaultUPS() {
+    this.curUPS = 16;
+    if (this.conf.tournamentMode) {
+      this.curUPS = 8; // for tournament!!!
+    }
   }
 
   /**

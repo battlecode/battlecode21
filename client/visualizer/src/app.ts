@@ -81,7 +81,7 @@ export default class Client {
       this.root.appendChild(this.loadSidebar());
       this.root.appendChild(this.loadGameArea());
       this.loadScaffold();
-      this.runner.ready(this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler);
+      this.runner.ready(this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.sidebar, this.profiler);
     });
   }
 
