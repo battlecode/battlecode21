@@ -9,8 +9,6 @@ from dev_settings_sensitive import GOOGLE_APPLICATION_CREDENTIALS
 
 # constants, please configure
 GCLOUD_BUCKET_RESUMES = 'bc20-resumes'
-BUCKET_MIN = 1600
-BUCKET_MAX = 5000
 USERS_ALL_PATH = os.path.join(FILE_PATH, 'users_all.csv')
 USERS_TEAMS_PATH = os.path.join(FILE_PATH, 'users_teams.csv')
 
