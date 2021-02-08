@@ -2,8 +2,10 @@ import os, csv
 from google.oauth2 import service_account
 from google.cloud import storage
 FILE_PATH = os.path.dirname(__file__)
+# cd up, to be able to import GOOGLE_APPLICATION_CREDENTIALS
+# (we still preserve the original path to use later)
 os.sys.path.append(os.path.join(FILE_PATH, '..'))
-from dev_settings_real import GOOGLE_APPLICATION_CREDENTIALS
+from dev_settings_sensitive import GOOGLE_APPLICATION_CREDENTIALS
 
 # constants, please configure
 GCLOUD_BUCKET_RESUMES = 'bc20-resumes'
