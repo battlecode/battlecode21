@@ -20,9 +20,6 @@ export default class MapFilter {
   private readonly filterName: HTMLInputElement;
   private readonly filterType: Map<MapType, HTMLInputElement>;
 
-  // Map types available (NOTE: Update after each tournament)
-  private readonly types: MapType[] = [MapType.DEFAULT, MapType.CUSTOM, MapType.SPRINT_1, MapType.SPRINT_2];
-
   // All the maps displayed on the client
   private maps: Array<MapSchema>;
 
@@ -111,7 +108,7 @@ export default class MapFilter {
     this.filterName.onchange = () => { this.applyFilter() };
 
     // Filter for map type
-    for (let type of this.types) {
+    for (let type of cst.mapTypes) {
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.value = String(type);
@@ -148,10 +145,8 @@ export default class MapFilter {
       case MapType.DEFAULT: return "Default";
       case MapType.SPRINT_1: return "Sprint 1";
       case MapType.SPRINT_2: return "Sprint 2";
-      case MapType.INTL_QUALIFYING: return "Intl Quals";
-      case MapType.US_QUALIFYING: return "US Quals";
-      case MapType.HS: return "HS";
-      case MapType.NEWBIE: return "Newbie";
+      case MapType.QUALIFYING: return "Quals";
+      case MapType.HS_NEWBIE: return "HS and Newbie";
       case MapType.FINAL: return "Final";
       default: return "Custom";
     }
