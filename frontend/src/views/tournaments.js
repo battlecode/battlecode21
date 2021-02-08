@@ -85,15 +85,41 @@ class Tournaments extends Component {
                                     <h4 className="title">Tournament Results</h4>
                                 </div>
                                 <div className="content">
-                                    <p>Congratulations to the winners!</p>
+                                    <p>View tournament brackets here:</p>
                                     <ul>
-                                        <li>
-                                            <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
-                                        </li>
-                                        <li>
-                                            <b>Sprint Tournament 2 <a href="https://challonge.com/6b6fjvnq">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
-                                        </li>
+                                        <li><a href="https://challonge.com/rajiqb0b">Sprint Tournament 1</a></li>
+                                        <li><a href="https://challonge.com/6b6fjvnq">Sprint Tournament 2</a></li>
+                                        <li><a href="https://challonge.com/bc21_quals_59fe2da">US Qualifying Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_quals_b9d3af0">International Qualifying Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_hs">High School Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_newbie">Newbie Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_final">Final Tournament</a></li>
                                     </ul>
+                                    <p>Congratulations to our prizewinning teams!</p>
+                                    <pre>
+{`                                         1st      $5000  babyducks
+                                         2nd      $3000  Producing Perfection
+                                         3rd      $2500  Chicken
+                                         4th      $1500  Malott Fat Cats
+                                         5-6th    $1250  Kryptonite
+                                         5-6th    $1250  monky
+                                         7-8th    $1000  Nikola
+                                         7-8th    $1000  wololo
+                                         9-12th    $750  3 Musketeers
+                                         9-12th    $750  Chop Suey
+                                         9-12th    $750  confused
+                                         9-12th    $750  smite
+                                         13-16th   $500  BattlePath
+                                         13-16th   $500  Bytecode Mafia
+                                         13-16th   $500  GoreTeks
+                                         13-16th   $500  waffle
+Most adaptive strategy (sponsored by Five Rings)  $1500  Chop Suey
+                      Sprint Tournament 1 Winner   $500  Super Cow Powers
+                      Sprint Tournament 2 Winner   $500  Super Cow Powers
+                                 High School 1st   $500  idrc
+                                 High School 2nd   $200  java :ghosthug:
+                                      Newbie 1st   $500  Dis Team
+                                      Newbie 2nd   $200  $nowball`}</pre>
                                 </div>
                             </div>
 
