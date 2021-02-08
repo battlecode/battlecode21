@@ -109,8 +109,6 @@ def download_user(user, bucket, files_dir):
         short_file_name = user["first_name"] + user["last_name"]
     full_file_name = subfolder + '/' + short_file_name +'.pdf'
 
-    # TODO check if file exists already
-    # if exists, note that we're skipping it
     download(user_id, full_file_name, bucket, files_dir)
 
 ids_users_downloaded = set()
