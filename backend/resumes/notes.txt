@@ -1,0 +1,11 @@
+(see sql.txt for some scripts)
+
+download a list of all verified ids
+
+pull all resumes (for all verified ones), preserve user ids
+for each group of users (hs us, hs intl, college us, college intl, others that aren't devs): 
+	in ascending scrim rank, find associated resume
+	rename to "#elo FirstLastResume"
+Also for users in users_all not in users_teams find resume as "FirstLastResume"
+
+

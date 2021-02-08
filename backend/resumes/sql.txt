@@ -1,0 +1,14 @@
+Downloading all users with resumes:
+SELECT api_user.id, api_user.first_name, api_user.last_name FROM api_user
+WHERE api_user.verified=True
+ORDER BY api_user.id
+
+-----
+
+Downloading all competitive resume users _on teams_ and team info:
+SELECT api_user.id, api_user.first_name, api_user.last_name, api_team_users.team_id, api_team.score, api_team.high_school, api_team.international, api_team.student
+FROM api_user
+LEFT JOIN api_team_users on api_user.id=api_team_users.user_id
+LEFT JOIN api_team on api_team_users.team_id=api_team.id
+WHERE api_user.verified=True and api_team.staff_team=False
+ORDER BY api_user.id
