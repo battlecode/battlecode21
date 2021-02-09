@@ -64,3 +64,4 @@ infrastructure/worker/app/gcloud-key.json
 
 # Resumes
 backend/resumes/files/*
+backend/resumes/*.csv
