@@ -11,6 +11,7 @@ from dev_settings_sensitive import GOOGLE_APPLICATION_CREDENTIALS
 GCLOUD_BUCKET_RESUMES = 'bc20-resumes'
 USERS_ALL_PATH = os.path.join(FILE_PATH, 'users_all.csv')
 USERS_TEAMS_PATH = os.path.join(FILE_PATH, 'users_teams.csv')
+NUM_RETRIES = 5
 
 # load up the sql query results, as list of dictionaries
 users_all = []
@@ -70,16 +71,18 @@ os.chmod(files_dir, 0o777)
 
 # download helper!
 def download(user_id, file_name, bucket, files_dir):
-    try:
-        blob = bucket.get_blob(os.path.join(str(user_id), 'resume.pdf'))
-        with open(os.path.join(files_dir, file_name), 'wb+') as file_obj:
-            blob.download_to_file(file_obj)
-            file_obj.close()
-    except PermissionError:
-        print("Could not obtain permissions to save; try running as sudo")
-    except Exception as e:
-        print("Could not retrieve source file from bucket, user id", user_id)
-        print("Exception:", e)
+    for i in range (NUM_RETRIES):
+        try:
+            blob = bucket.get_blob(os.path.join(str(user_id), 'resume.pdf'))
+            with open(os.path.join(files_dir, file_name), 'wb+') as file_obj:
+                blob.download_to_file(file_obj)
+                file_obj.close()
+            break
+        except PermissionError:
+            print("Could not obtain permissions to save; try running as sudo")
+        except Exception as e:
+            print("Could not retrieve source file from bucket, user id", user_id)
+            print("Exception:", e)
 
 # actually download resumes, first from users_teams
 def download_user(user, bucket, files_dir):
