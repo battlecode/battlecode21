@@ -8,7 +8,8 @@ os.sys.path.append(os.path.join(FILE_PATH, '..'))
 from dev_settings_sensitive import GOOGLE_APPLICATION_CREDENTIALS
 
 # constants, please configure
-GCLOUD_BUCKET_RESUMES = 'bc20-resumes'
+# NOTE - Make sure to update GCLOUD_BUCKET_RESUMES!
+GCLOUD_BUCKET_RESUMES = 'bc21-resumes'
 USERS_ALL_PATH = os.path.join(FILE_PATH, 'users_all.csv')
 USERS_TEAMS_PATH = os.path.join(FILE_PATH, 'users_teams.csv')
 NUM_RETRIES = 5

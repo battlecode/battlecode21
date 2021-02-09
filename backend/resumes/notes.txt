@@ -1,6 +1,7 @@
 First, we need info about all of the users. See `sql.txt` for two scripts, that produce two files (users_all.csv, users_teams.csv). Run the scripts and save the csvs, according to the instructions in sql.txt.
 
-Next, run the `download.py` script. For posterity, here's an outline of what it does:
+Next, run the `download.py` script. **Make sure to update GCLOUD_BUCKET_RESUMES!**
+For posterity, here's an outline of what it does:
 pull all resumes (for all verified ones), preserve user ids
 for each group of users (hs us, hs intl, college us, college intl, others that aren't devs): 
 	in ascending scrim rank, find associated resume
