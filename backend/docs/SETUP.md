@@ -100,6 +100,7 @@ Finally, in the "Firewall" section's checkboxes, allow both HTTP and HTTPS traff
 ### Instance Group
 Now go to "Compute Engine" -> "Instance groups". Click "create instance group".
 For name, again just do something nice that follows a convention, as before.
+**Make sure to set the same region and zone as the database's.** This leads to speedups and lower costs.
 Click on "specify port name mapping", and then add two items: port name "http" and port number "80", and port name "https" and port number "80" as well. (since at least for now, the backend takes in requests through port 80)
 Set the "instance template" to the instance template you've just created.
 Under "autohealing", select a health check. I think the k8s check works best, but feel free to play around with this.
