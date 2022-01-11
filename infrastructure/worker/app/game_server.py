@@ -52,7 +52,8 @@ def game_worker(gameinfo):
         name2:    string, team name of the blue player
         maps:     string, comma separated list of maps
         replay:   string, a unique identifier for the name of the replay
-        tourmode: string, "True" to use an experimental tournament mode which alternates team sides for each match, and saves replays as a comma-separated list of replay ids for each game
+        tourmode: string, "True" to use an expiremental tournament mode
+
 
     Filesystem structure:
     /box/
@@ -82,7 +83,8 @@ def game_worker(gameinfo):
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
         tourmode = False
-        if 'tourmode' in gameinfo and gameinfo['tourmode'] == True:
+
+        if 'tourmode' in gameinfo and gameinfo['tourmode'] == 'True':
             tourmode = True
 
         # For reverse-compatibility
@@ -164,33 +166,20 @@ def game_worker(gameinfo):
         else:
             maps = [maps]
 
-        # Initialize win count, to count for each game
-        wins_overall = [0, 0]
-
-        # Initialize a list of all the replay ids, in case we have to use multiple replay links for the same match
-        replay_ids = []
-
         # For tour mode, game_number represents which game (of a match) we're in;
         # in regular mode, game_number only takes on a value of 0 and doesn't really mean much
         # (since all the maps get played in the the same engine run)
         for game_number in range (0, len(maps)):
-            # Prep game arguments, making sure to switch teams each game.
-            # If game_number is even, then team A in the engine is player1, etc.
-            teamA_is_player1 = (game_number%2==0)
-            player1_info = (teamname1, os.path.join(classdir, 'player1'), package1)
-            player2_info = (teamname2, os.path.join(classdir, 'player2'), package2)
-            (teamA_arg, classLocationA_arg, packageNameA_arg) = player1_info if teamA_is_player1 else player2_info
-            (teamB_arg, classLocationB_arg, packageNameB_arg) = player2_info if teamA_is_player1 else player1_info
             maps_arg = maps[game_number]
             # Execute game
             result = util.monitor_command(
                 ['./gradlew', 'run',
-                    '-PteamA={}'.format(teamA_arg),
-                    '-PteamB={}'.format(teamB_arg),
-                    '-PclassLocationA={}'.format(classLocationA_arg),
-                    '-PclassLocationB={}'.format(classLocationB_arg),
-                    '-PpackageNameA={}'.format(packageNameA_arg),
-                    '-PpackageNameB={}'.format(packageNameB_arg),
+                    '-PteamA={}'.format(teamname1),
+                    '-PteamB={}'.format(teamname2),
+                    '-PclassLocationA={}'.format(os.path.join(classdir, 'player1')),
+                    '-PclassLocationB={}'.format(os.path.join(classdir, 'player2')),
+                    '-PpackageNameA={}'.format(package1),
+                    '-PpackageNameB={}'.format(package2),
                     '-Pmaps={}'.format(maps_arg),
                     '-Preplay=replay.bc21'
                 ],
@@ -205,13 +194,13 @@ def game_worker(gameinfo):
             replay_id = replay
             if tourmode:
                 replay_id += '-' + str(game_number)
-            replay_ids.append(replay_id)
             bucket = client.get_bucket(GCLOUD_BUCKET_REPLAY)
             try:
                 with open(os.path.join(rootdir, 'replay.bc21'), 'rb') as file_obj:
                     bucket.blob(os.path.join('replays', '{}.bc21'.format(replay_id))).upload_from_file(file_obj)
             except:
                 game_log_error(gametype, gameid, 'Could not send replay file to bucket')
+
 
             # Interpret game result
             server_output = result[1].split('\n')
@@ -233,25 +222,14 @@ def game_worker(gameinfo):
             except:
                 game_log_error(gametype, gameid, 'Could not determine winner')
             else:
-                # Tally up these wins
-                # wins_overall is in order [player1, player2]
-                # wins is in order [teamA, teamB]
-                if teamA_is_player1:
-                    wins_overall[0] += wins[0]
-                    wins_overall[1] += wins[1]
-                else:
-                    wins_overall[0] += wins[1]
-                    wins_overall[1] += wins[0]
 
-        # Find the overall winner
-        logging.info('Match ended. Result {}:{}'.format(wins_overall[0], wins_overall[1]))
-        replay_ids_string = ','.join(replay_ids)
-        if wins_overall[0] > wins_overall[1]:
-            game_report_result(gametype, gameid, GAME_REDWON, wins_overall[0], wins_overall[1], replay_ids_string)
-        elif wins_overall[1] > wins_overall[0]:
-            game_report_result(gametype, gameid, GAME_BLUEWON, wins_overall[1], wins_overall[0], replay_ids_string)
-        else:
-            game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
+                if wins[0] > wins[1]:
+                    game_report_result(gametype, gameid, GAME_REDWON, wins[0], wins[1])
+                elif wins[1] > wins[0]:
+                    game_report_result(gametype, gameid, GAME_BLUEWON, wins[1], wins[0])
+                else:
+                    game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
+
 
     finally:
         # Clean up working directory
