@@ -117,6 +117,8 @@ class Team(models.Model):
     draws                = models.IntegerField(default=0)
     
     #eligibility
+    # NOTE -- these columns are unfortunately poorly named.
+    # If you want to work with them, see backend/docs/ELIGIBILITY.md!
     student = models.BooleanField(default=False)
     mit = models.BooleanField(default=False)
     high_school = models.BooleanField(default=False)

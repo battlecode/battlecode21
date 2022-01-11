@@ -114,11 +114,14 @@ class Account extends Component {
                                         <h4 className="title">Edit Profile</h4>
                                     </div>
                                     <div className="content">
+                                        <h5>
+                                            Make sure to press the "Update Info" button, and wait for confirmation!
+                                        </h5>
                                         <div className="row">
                                             <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Username</label>
-                                                    <input type="text" className="form-control" id="username" onChange={this.changeHandler} value={this.state.user.username} />
+                                                    <input type="text" className="form-control" readOnly id="username" onChange={this.changeHandler} value={this.state.user.username} />
                                                 </div>
                                             </div>
                                             <div className="col-md-6">

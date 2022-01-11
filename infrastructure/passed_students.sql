@@ -22,14 +22,14 @@ SELECT
   api_user.last_name,
   mit_students.email,
   collated_results.max_wins_out_of_10,
-  (collated_results.max_wins_out_of_10 >= 8) AS passed
+  (collated_results.max_wins_out_of_10 >= 7) AS passed
 FROM
   api_user
 INNER JOIN
   api_team_users
 ON
   api_user.id = api_team_users.user_id
-INNER JOIN (
+LEFT JOIN (
   SELECT
     team_id,
     MAX(wins_out_of_10) AS max_wins_out_of_10
@@ -63,7 +63,7 @@ INNER JOIN (
       FROM
         api_scrimmage
       CROSS JOIN (
-        VALUES (919)
+        VALUES (1790)
       ) AS consts(ref_team_id)
       WHERE
         red_team_id = consts.ref_team_id OR blue_team_id = consts.ref_team_id
@@ -78,10 +78,10 @@ INNER JOIN (
       )
     ) AS last_10
     CROSS JOIN (
-      VALUES (CAST ('2020-01-17 16:57:35.785685+00' AS TIMESTAMP))
+      VALUES (CAST ('2021-01-25 08:54:31.889726+00' AS TIMESTAMP))
     ) AS consts(ref_timestamp)
     WHERE
-      oldest_scrim >= consts.ref_timestamp
+      oldest_scrim >= consts.ref_timestamp OR oldest_scrim IS NULL
   ) AS result_dump
   GROUP BY
     team_id

@@ -431,7 +431,7 @@ class Api {
   }
 
   static resumeUpload(resume_file, callback) {
-    $.get(`${Cookies.get('user_url')}resume_upload/`, (data, succcess) => {
+    $.post(`${Cookies.get('user_url')}resume_upload/`, (data, succcess) => {
       $.ajax({
         url: data['upload_url'], 
         method: "PUT",
@@ -592,9 +592,9 @@ class Api {
   static getNextTournament(callback) {
     // TODO: actually use real API for this
     callback({
-      "est_date_str": '7 PM ET on January 18, 2021',
-      "seconds_until": (Date.parse(new Date('January 18, 2021 19:00:00-5:00')) - Date.parse(new Date())) / 1000,
-      "tournament_name": "Sprint Tournament 2"
+      "est_date_str": '7 PM ET on January 28, 2021',
+      "seconds_until": (Date.parse(new Date('January 28, 2021 19:00:00-5:00')) - Date.parse(new Date())) / 1000,
+      "tournament_name": "Final Tournament"
     });
     // callback({
     //   "est_date_str": '8 PM EDT on April 22, 2020',

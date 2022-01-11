@@ -40,6 +40,9 @@ export default class Sidebar {
   // Update texts
   private updateText: HTMLDivElement;
 
+  // Mode panel
+  private modePanel: HTMLTableElement;
+
   // Callback to update the game area when changing modes
   cb: () => void;
 
@@ -71,16 +74,16 @@ export default class Sidebar {
     if (conf.useProfiler) this.profiler = new Profiler(conf);
     this.matchqueue = new MatchQueue(conf, images, runner);
     this.stats = new Stats(conf, images, runner);
-    this.help = this.initializeHelp();
     this.conf = conf;
+    this.help = this.initializeHelp();
 
     // Initialize div structure
     this.loadStyles();
     this.div.appendChild(this.screamForUpdate());
     this.div.appendChild(this.battlecodeLogo());
 
-    const modePanel = document.createElement('table');
-    modePanel.className = 'modepanel';
+    this.modePanel = document.createElement('table');
+    this.modePanel.className = 'modepanel';
 
     const modePanelRow1 = document.createElement('tr');
     const modePanelRow2 = document.createElement('tr');
@@ -94,10 +97,10 @@ export default class Sidebar {
     modePanelRow2.appendChild(this.modeButton(Mode.MAPEDITOR, "Map Editor"));
     modePanelRow2.appendChild(this.modeButton(Mode.HELP, "Help"));
 
-    modePanel.appendChild(modePanelRow1);
-    modePanel.appendChild(modePanelRow2);
+    this.modePanel.appendChild(modePanelRow1);
+    this.modePanel.appendChild(modePanelRow2);
 
-    this.div.appendChild(modePanel);
+    this.div.appendChild(this.modePanel);
 
     this.div.appendChild(this.innerDiv);
 
@@ -119,7 +122,7 @@ export default class Sidebar {
    * Initializes the help div
    */
   private initializeHelp(): HTMLDivElement {
-    const innerHTML: string =
+    var innerHTML: string =
     `
     <b class="red" style="font-size: 16px">Beware of too much logging!</b>
     <br>
@@ -150,6 +153,8 @@ export default class Sidebar {
     B - Toggle Interpolation<br>
     L - Toggle whether to process logs.<br>
     Q - Toggle whether to profile matches.<br>
+    Z - Toggle whether to rotate tall maps.<br>
+    [ - Hide/unhide sidebar navigation.<br>
     <br>
     <b class="blue">Keyboard Shortcuts (Map Editor)</b><br
     <br>
@@ -216,6 +221,14 @@ export default class Sidebar {
     map.) <br>
     <br>
     Exported file name must be the same as the map name chosen above. For instance, <code>DefaultMap.bc21</code>.`;
+
+    if (this.conf.tournamentMode) {
+      innerHTML += 
+      `<br><br>
+      <b class="blue">Tournament Mode Keyboard Shortcuts</b><br>
+      D - Next match<br>
+      A - Previous match`
+    }
 
     const div = document.createElement("div");
     div.id = "helpDiv";
@@ -355,5 +368,9 @@ export default class Sidebar {
     if (this.cb !== undefined) {
       this.cb();
     }
+  }
+
+  hidePanel() {
+    this.modePanel.style.display = (this.modePanel.style.display === "" ? "none" : "");
   }
 }

@@ -67,7 +67,7 @@ class Tournaments extends Component {
                                                 <b>Newbie Tournament: 1/28.</b> The top newbie teams compete for a smaller prize pool. The final match between the top 2 teams will be run at the Final Tournament.
                                             </li>
                                             <li>
-                                                <b>High School Tournament: 1/28.</b> The top high school teams compete for a smaller prize pool. Like the Newbie Tournament, the final match will be run at the Final Tournament.
+                                                <b>US High School Tournament: 1/28.</b> The top US high school teams compete for a smaller prize pool. Like the Newbie Tournament, the final match will be run at the Final Tournament.
                                             </li>
                                             <li>
                                                 <b>Final Tournament: 1/30.</b> The top 16 teams, as determined by the qualifying tournaments, compete for glory, fame and a big prize pool. The tournament will take place live, and will be streamed online for 2021. There will not be a component on MIT campus this year.
@@ -85,12 +85,41 @@ class Tournaments extends Component {
                                     <h4 className="title">Tournament Results</h4>
                                 </div>
                                 <div className="content">
-                                    <p>Congratulations to the winners!</p>
+                                    <p>View tournament brackets here:</p>
                                     <ul>
-                                        <li>
-                                            <b>Sprint Tournament 1 <a href="https://challonge.com/rajiqb0b">(See bracket here)</a> :</b> Super Cow Powers (tscmoo)
-                                        </li>
+                                        <li><a href="https://challonge.com/rajiqb0b">Sprint Tournament 1</a></li>
+                                        <li><a href="https://challonge.com/6b6fjvnq">Sprint Tournament 2</a></li>
+                                        <li><a href="https://challonge.com/bc21_quals_59fe2da">US Qualifying Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_quals_b9d3af0">International Qualifying Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_hs">High School Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_newbie">Newbie Tournament</a></li>
+                                        <li><a href="https://challonge.com/bc21_final">Final Tournament</a></li>
                                     </ul>
+                                    <p>Congratulations to our prizewinning teams!</p>
+                                    <pre>
+{`                                         1st      $5000  babyducks
+                                         2nd      $3000  Producing Perfection
+                                         3rd      $2500  Chicken
+                                         4th      $1500  Malott Fat Cats
+                                         5-6th    $1250  Kryptonite
+                                         5-6th    $1250  monky
+                                         7-8th    $1000  Nikola
+                                         7-8th    $1000  wololo
+                                         9-12th    $750  3 Musketeers
+                                         9-12th    $750  Chop Suey
+                                         9-12th    $750  confused
+                                         9-12th    $750  smite
+                                         13-16th   $500  BattlePath
+                                         13-16th   $500  Bytecode Mafia
+                                         13-16th   $500  GoreTeks
+                                         13-16th   $500  waffle
+Most adaptive strategy (sponsored by Five Rings)  $1500  Chop Suey
+                      Sprint Tournament 1 Winner   $500  Super Cow Powers
+                      Sprint Tournament 2 Winner   $500  Super Cow Powers
+                                 High School 1st   $500  idrc
+                                 High School 2nd   $200  java :ghosthug:
+                                      Newbie 1st   $500  Dis Team
+                                      Newbie 2nd   $200  $nowball`}</pre>
                                 </div>
                             </div>
 
@@ -125,7 +154,7 @@ class Tournaments extends Component {
                                         Thanks to our gold sponsor, Five Rings!
                                         <ul>
                                             <li><b>1st Place prize:</b> to whosoever has the highest rating at the end (hacks not allowed). Smaller prizes for subsequent placers.</li>
-                                            <li>Smaller prizes for top placers in other non-final (newbie, high school, sprint) tournaments.</li>                                           
+                                            <li>Smaller prizes for top placers in other non-final (newbie, US high school, sprint) tournaments.</li>                                           
                                             <li><b>More prizes???</b> TBA, maybe 👀
                                                 <ul>
                                                     <li>Historically, we have given out prizes for creative strategies, major bugs found, and other game-specific topics. Have fun with your strategies, write-ups, and overall participation in Battlecode!</li>
@@ -144,7 +173,40 @@ class Tournaments extends Component {
                                 </div>
                                 <div className="content">
                                     <p>
-                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team and participate in the tournament. More eligibility details can be found <a href="https://battlecode.org#about">here</a>.
+                                        Anyone is welcome to participate in Battlecode! Anyone can write a bot, create a team, and participate in matches and the Sprint Tournaments.
+                                    </p>
+                                    <p>Your team must meet <b>all three conditions</b> to be eligible for the Qualifying and Final tournaments by the submission deadline:
+                                        <ol>
+                                            <li>
+                                                Have uploaded a bot
+                                            </li>
+                                            <li>
+                                                Have indicated your eligibility on your Team Profile page
+                                            </li>
+                                            <li>
+                                                Have all members upload a resume, at your personal profile page.
+                                            </li>
+                                        </ol>
+                                    </p>
+                                        <p>As a reminder, the tournament divisions are:
+                                        <ul>
+                                            <li>
+                                                <b>Full-time US teams</b>, consisting entirely of US students studying full-time, or in a transition phase. We may ask for some documentation to verify your student status if you advance to the finals. The <b>top 12 teams</b> in this division will earn a place out of 16 final tournament spots; eligibility is <i><b>conditioned on attendance</b> to our virtual finalists celebration on the evening of Friday 1/29.</i>
+                                            </li>
+                                            <li>
+                                                <b>Full-time international teams</b>, consisting entirely of students studying full-time, or in a transition phase, where at least one team member is not a US student. We may ask for some documentation to verify your student status if you advance to the finals. The <b>top 4 teams</b> in this division will earn a place out of 16 final tournament spots.
+                                            </li>
+                                            <li>
+                                                <b>US High-school teams</b>, consisting entirely of high school students in the US. The <b>top 2 teams</b> will have the final match played during the final tournament.
+                                            </li>
+                                            <li>
+                                                <b>Newbie teams</b>, consisting entirely of MIT students who have never competed in Battlecode before. <b>The top 2 teams</b> will have their final match played during the final tournament.
+                                            </li>
+                                        </ul>
+                                    </p>
+
+                                    <p>
+                                        More eligibility details can be found <a href="https://battlecode.org#about">here</a>.
                                     </p>
                                     
                                     <p>

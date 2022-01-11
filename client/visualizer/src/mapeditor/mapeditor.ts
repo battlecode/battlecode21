@@ -7,7 +7,7 @@ import {electron} from '../main/electron-modules';
 import {schema, flatbuffers} from 'battlecode-playback';
 import Victor = require('victor');
 
-import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap} from './index';
+import {MapUnit, MapValidator, MapGenerator, MapEditorForm, GameMap, UploadedMap} from './index';
 import { env } from 'process';
 
 /**
@@ -52,9 +52,10 @@ export default class MapEditor {
     // TODO
     // div.appendChild(this.removeInvalidButton());
     div.appendChild(this.resetButton());
-    div.appendChild(document.createElement("br"));
-    div.appendChild(this.getMapJSONButton());
-    div.appendChild(this.pasteMapJSONButton());
+    //div.appendChild(document.createElement("br"));
+    // div.appendChild(this.getMapJSONButton());
+    // div.appendChild(this.pasteMapJSONButton());
+    div.appendChild(this.importMapButton());
     div.appendChild(document.createElement("br"));
 
     div.appendChild(this.exportButton());
@@ -167,6 +168,7 @@ export default class MapEditor {
     const button = document.createElement("button");
     button.type = "button";
     button.className = 'form-button custom-button';
+    button.style.backgroundColor = "mediumslateblue";
     button.appendChild(document.createTextNode("Reset Map"));
     button.onclick = () => {
       this.form.reset();
@@ -174,38 +176,67 @@ export default class MapEditor {
     return button;
   }
 
-  private getMapJSONButton(): HTMLButtonElement {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = 'form-button custom-button';
-    button.appendChild(document.createTextNode(process.env.ELECTRON ? "Copy Map JSON to Clipboard" : "Get Map JSON"));
-    button.onclick = () => {
-      // from https://stackoverflow.com/questions/17591559/how-to-copy-text-of-alert-box
-      if (!process.env.ELECTRON) {
-        const newWin = window.open();
-        if (newWin) {
-          newWin.document.write(this.form.getMapJSON());
-          newWin.document.close();
-        }
-      }
-      else {
-       // prompt("Copy to clipboard: Ctrl+C, Enter", this.form.getMapJSON());
-       electron.clipboard.writeText(this.form.getMapJSON());
-      }
-    };
-    return button;
-  }
+  // private getMapJSONButton(): HTMLButtonElement {
+  //   const button = document.createElement("button");
+  //   button.type = "button";
+  //   button.className = 'form-button custom-button';
+  //   button.appendChild(document.createTextNode(process.env.ELECTRON ? "Copy Map JSON to Clipboard" : "Get Map JSON"));
+  //   button.onclick = () => {
+  //     // from https://stackoverflow.com/questions/17591559/how-to-copy-text-of-alert-box
+  //     if (!process.env.ELECTRON) {
+  //       const newWin = window.open();
+  //       if (newWin) {
+  //         newWin.document.write(this.form.getMapJSON());
+  //         newWin.document.close();
+  //       }
+  //     }
+  //     else {
+  //      // prompt("Copy to clipboard: Ctrl+C, Enter", this.form.getMapJSON());
+  //      electron.clipboard.writeText(this.form.getMapJSON());
+  //     }
+  //   };
+  //   return button;
+  // }
 
-  private pasteMapJSONButton(): HTMLButtonElement {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = 'form-button custom-button';
-    button.appendChild(document.createTextNode(process.env.ELECTRON ? "Input Map JSON from Clipboard" : "Input Map JSON"));
-    button.onclick = () => {
-      if (!process.env.ELECTRON) this.form.setMap(prompt("Paste Map JSON: Ctrl+V, Enter"));
-      else this.form.setMap(electron.clipboard.readText());
-    };
-    return button;
+  // private pasteMapJSONButton(): HTMLButtonElement {
+  //   const button = document.createElement("button");
+  //   button.type = "button";
+  //   button.className = 'form-button custom-button';
+  //   button.appendChild(document.createTextNode(process.env.ELECTRON ? "Input Map JSON from Clipboard" : "Input Map JSON"));
+  //   button.onclick = () => {
+  //     if (!process.env.ELECTRON) this.form.setMap(prompt("Paste Map JSON: Ctrl+V, Enter"));
+  //     else this.form.setMap(electron.clipboard.readText());
+  //   };
+  //   return button;
+  // }
+
+  private importMapButton() {
+    let uploadLabel = document.createElement("label");
+    uploadLabel.setAttribute("for", "file-upload");
+    uploadLabel.setAttribute("class", "custom-button");
+    uploadLabel.innerText = 'Upload a .map21 file';
+    uploadLabel.style.backgroundColor = "mediumslateblue"; // TODO: move to CSS
+    // create the functional button
+    let upload = document.createElement('input');
+    upload.textContent = 'upload';
+    upload.id = "file-upload";
+    upload.setAttribute('type', 'file');
+    upload.accept = '.map21';
+    upload.onchange = () => {
+      if (upload.files) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const map: UploadedMap = MapGenerator.readMap(<ArrayBuffer>reader.result);
+          console.log(map);
+          this.form.setUploadedMap(map);
+        };
+        reader.readAsArrayBuffer(upload.files[0]);
+      }
+    }
+    upload.onclick = () => upload.value = "";
+    uploadLabel.appendChild(upload);
+
+    return uploadLabel;
   }
 
   private exportButton(): HTMLButtonElement {

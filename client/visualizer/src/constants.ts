@@ -35,7 +35,7 @@ export const passiveInfluenceRate = (round: number): number => {
 }
 
 export const buffFactor = (numBuffs: number): number => {
-  return Math.pow(1.001, numBuffs);
+  return 1 + 0.001 * numBuffs;
 }
 
 export const ACTION_RADIUS_COLOR = "#46ff00";
@@ -73,13 +73,21 @@ export enum MapType {
   DEFAULT,
   SPRINT_1,
   SPRINT_2,
-  INTL_QUALIFYING,
-  US_QUALIFYING,
-  HS,
-  NEWBIE,
+  QUALIFYING,
+  HS_NEWBIE,
   FINAL,
   CUSTOM
 };
+
+// Map types to filter in runner
+export const mapTypes: MapType[] = [MapType.DEFAULT,
+  MapType.SPRINT_1,
+  MapType.SPRINT_2,
+  MapType.QUALIFYING,
+  MapType.HS_NEWBIE,
+  MapType.FINAL,
+  MapType.CUSTOM];
+
 export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
   ["maptestsmall", MapType.DEFAULT],
   ["circle", MapType.DEFAULT],
@@ -100,7 +108,63 @@ export const SERVER_MAPS: Map<string, MapType> = new Map<string, MapType>([
   ["NotAPuzzle", MapType.SPRINT_1],
   ["Rainbow", MapType.SPRINT_1],
   ["SlowMusic", MapType.SPRINT_1],
-  ["Snowflake", MapType.SPRINT_1]
+  ["Snowflake", MapType.SPRINT_1],
+  ["BadSnowflake", MapType.SPRINT_2],
+  ["CringyAsF", MapType.SPRINT_2],
+  ["FindYourWay", MapType.SPRINT_2],
+  ["GetShrekt", MapType.SPRINT_2],
+  ["Goldfish", MapType.SPRINT_2],
+  ["HexesAndOhms", MapType.SPRINT_2],
+  ["Licc", MapType.SPRINT_2],
+  ["MainCampus", MapType.SPRINT_2],
+  ["Punctuation", MapType.SPRINT_2],
+  ["Radial", MapType.SPRINT_2],
+  ["SeaFloor", MapType.SPRINT_2],
+  ["Sediment", MapType.SPRINT_2],
+  ["Smile", MapType.SPRINT_2],
+  ["SpaceInvaders", MapType.SPRINT_2],
+  ["Surprised", MapType.SPRINT_2],
+  ["VideoGames", MapType.SPRINT_2],
+  ["AmidstWe", MapType.QUALIFYING],
+  ["BattleCode", MapType.QUALIFYING],
+  ["BattleCodeToo", MapType.QUALIFYING],
+  ["BlobWithLegs", MapType.QUALIFYING],
+  ["ButtonsAndBows", MapType.QUALIFYING],
+  ["CowTwister", MapType.QUALIFYING],
+  ["Extensions", MapType.QUALIFYING],
+  ["Hourglass", MapType.QUALIFYING],
+  ["Maze", MapType.QUALIFYING],
+  ["NextHouse", MapType.QUALIFYING],
+  ["Superposition", MapType.QUALIFYING],
+  ["TicTacTie", MapType.QUALIFYING],
+  ["UnbrandedWordGame", MapType.QUALIFYING],
+  ["Z", MapType.QUALIFYING],
+  ["Zodiac", MapType.QUALIFYING],
+  ["Flawars", MapType.HS_NEWBIE],
+  ["FrogOrBath", MapType.HS_NEWBIE],
+  ["HappyBoba", MapType.HS_NEWBIE],
+  ["Networking", MapType.HS_NEWBIE],
+  ["NoInternet", MapType.HS_NEWBIE],
+  ["PaperWindmill", MapType.HS_NEWBIE],
+  ["Randomized", MapType.HS_NEWBIE],
+  ["Star", MapType.HS_NEWBIE],
+  ["Tiger", MapType.HS_NEWBIE],
+  ["WhatISeeInMyDreams", MapType.HS_NEWBIE],
+  ["Yoda", MapType.HS_NEWBIE],
+  ["Blotches", MapType.FINAL],
+  ["CToE", MapType.FINAL],
+  ["Circles", MapType.FINAL],
+  ["EggCarton", MapType.FINAL],
+  ["InaccurateBritishFlag", MapType.FINAL],
+  ["JerryIsEvil", MapType.FINAL],
+  ["Legends", MapType.FINAL],
+  ["Mario", MapType.FINAL],
+  ["Misdirection", MapType.FINAL],
+  ["OneCallAway", MapType.FINAL],
+  ["Saturn", MapType.FINAL],
+  ["Stonks", MapType.FINAL],
+  ["TheClientMapEditorIsSuperiorToGoogleSheetsEom", MapType.FINAL],
+  ["TheSnackThatSmilesBack", MapType.FINAL]
 ]);
 
 export function bodyTypeToString(bodyType: schema.BodyType) {

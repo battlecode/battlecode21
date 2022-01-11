@@ -61,3 +61,7 @@ test.sh
 backend/dev_settings_sensitive.py
 
 infrastructure/worker/app/gcloud-key.json
+
+# Resumes
+backend/resumes/files/*
+backend/resumes/*.csv

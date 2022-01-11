@@ -102,7 +102,7 @@ class YesTeam extends Component {
                         <div className="content">
                             {/* <ResumeStatus team={this.state.team} /> */}
                             <p>We need to know a little about your team in order to determine which prizes your team is eligible for.
-                                Check all boxes that apply to your team. 
+                                Check all boxes that apply to all members your team. 
                             </p>
                             <EligibiltyOptions change={this.changeHandler} team={this.state.team} update={this.updateTeam} up_but={this.state.up} />
                         </div>
@@ -295,6 +295,7 @@ class ResumeStatus extends Component {
 }
 
 // pass change handler in props.change and team in props.team
+// NOTE: If you are ever working with teams' eligility (for example, to pull teams for the newbie tournament), please see backend/docs/ELIGIBILITY.md before you do anything! The variable names here are poorly named (because columns in the database are poorly named). 
 class EligibiltyOptions extends Component {
     render() {
         return (
@@ -309,7 +310,7 @@ class EligibiltyOptions extends Component {
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="student" checked={this.props.team.student} />
                     </div>
-                    {/* <div className="form-group" style={{display: "flex"}}>
+                    <div className="form-group" style={{display: "flex"}}>
                         <label>US Students</label>
                         <Floater content={
                             <div>
@@ -317,25 +318,25 @@ class EligibiltyOptions extends Component {
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="international" checked={!this.props.team.international} />
-                    </div> */}
+                    </div>
                     <div className="form-group" style={{display: "flex"}}>
-                        <label>MIT Prefrosh</label>
+                        <label>Newbie</label>
                         <Floater content={
                             <div>
-                            <p>Look it up! (If you don't know, you probably aren't one...)</p></div> } showCloseButton={true}>
+                            <p>Teams consisting entirely of MIT students who have never competed in Battlecode before are eligible for the Newbie Tournament.</p></div> } showCloseButton={true}>
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="mit" checked={this.props.team.mit} />
                     </div>
-                    {/* <div className="form-group" style={{display: "flex"}}>
+                    <div className="form-group" style={{display: "flex"}}>
                         <label>High School Students</label>
                         <Floater content={
                             <div>
-                            <p>Teams of only high school (and earlier) students are eligible for the High School Tournament.</p></div> } showCloseButton={true}>
+                            <p>Teams of only high school (and earlier) students are eligible for the US High School Tournament. (Note that you must also be all US students to be eligible -- <b>if you're all US students, don't forget to check that box, too!</b>)</p></div> } showCloseButton={true}>
                              <i className="pe-7s-info pe-fw" />
                         </Floater>
                         <input type="checkbox" className="form-control" onChange={this.props.change} style={{width: "20px", height: "20px", margin: "0 0 0 10px" }} id="high_school" checked={this.props.team.high_school} />
-                    </div> */}
+                    </div>
                      <button type="button" onClick={ this.props.update } className="btn btn-info btn-fill pull-right" dangerouslySetInnerHTML={{__html:this.props.up_but }}></button>
                 </div>
             </div>

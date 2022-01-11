@@ -11,7 +11,7 @@ import sys, os, shutil, logging, requests, json, re
 from google.cloud import storage
 
 
-def game_report_result(gametype, gameid, result, winscore=None, losescore=None, reason=''):
+def game_report_result(gametype, gameid, result, winscore=None, losescore=None, new_replay=None, reason=''):
 
     """Sends the result of the run to the API endpoint"""
     try:
@@ -20,6 +20,7 @@ def game_report_result(gametype, gameid, result, winscore=None, losescore=None, 
             'status': result,
             'winscore': winscore,
             'losescore': losescore,
+            'new_replay': new_replay,
             'error_msg': reason
         }, headers={
             'Authorization': 'Bearer {}'.format(auth_token)
@@ -53,6 +54,7 @@ def game_worker(gameinfo):
         replay:   string, a unique identifier for the name of the replay
         tourmode: string, "True" to use an expiremental tournament mode
 
+
     Filesystem structure:
     /box/
         `-- classes/
@@ -81,6 +83,7 @@ def game_worker(gameinfo):
         maps     = gameinfo['maps']
         replay   = gameinfo['replay']
         tourmode = False
+
         if 'tourmode' in gameinfo and gameinfo['tourmode'] == 'True':
             tourmode = True
 
@@ -198,6 +201,7 @@ def game_worker(gameinfo):
             except:
                 game_log_error(gametype, gameid, 'Could not send replay file to bucket')
 
+
             # Interpret game result
             server_output = result[1].split('\n')
 
@@ -218,12 +222,14 @@ def game_worker(gameinfo):
             except:
                 game_log_error(gametype, gameid, 'Could not determine winner')
             else:
+
                 if wins[0] > wins[1]:
                     game_report_result(gametype, gameid, GAME_REDWON, wins[0], wins[1])
                 elif wins[1] > wins[0]:
                     game_report_result(gametype, gameid, GAME_BLUEWON, wins[1], wins[0])
                 else:
                     game_log_error(gametype, gameid, 'Ended in draw, which should not happen')
+
 
     finally:
         # Clean up working directory
@@ -236,4 +242,4 @@ def game_worker(gameinfo):
 
 
 if __name__ == '__main__':
-    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=True)
+    subscription.subscribe(GCLOUD_SUB_GAME_NAME, game_worker, give_up=False)

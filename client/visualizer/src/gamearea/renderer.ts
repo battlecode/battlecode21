@@ -48,11 +48,12 @@ export default class Renderer {
     // setup correct rendering
     const viewWidth = viewMax.x - viewMin.x
     const viewHeight = viewMax.y - viewMin.y
-    const scale = this.canvas.width / viewWidth;
+    const scale = this.canvas.width / (!this.conf.doingRotate ? viewWidth : viewHeight);
 
     this.ctx.save();
     this.ctx.scale(scale, scale);
-    this.ctx.translate(-viewMin.x, -viewMin.y);
+    if (!this.conf.doingRotate) this.ctx.translate(-viewMin.x, -viewMin.y);
+    else this.ctx.translate(-viewMin.y, -viewMin.x);
 
     this.renderBackground(world);
 
@@ -77,17 +78,18 @@ export default class Renderer {
     this.ctx.fillStyle = "white";
     this.ctx.globalAlpha = 1;
 
-    const minX = world.minCorner.x;
-    const minY = world.minCorner.y;
-    const width = world.maxCorner.x - world.minCorner.x;
-    const height = world.maxCorner.y - world.minCorner.y;
+    let minX = world.minCorner.x;
+    let minY = world.minCorner.y;
+    let width = world.maxCorner.x - world.minCorner.x;
+    let height = world.maxCorner.y - world.minCorner.y;
 
     const scale = 20;
 
     this.ctx.scale(1/scale, 1/scale);
 
     // scale the background pattern
-    this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
+    if (!this.conf.doingRotate) this.ctx.fillRect(minX*scale, minY*scale, width*scale, height*scale);
+    else this.ctx.fillRect(minY*scale, minX*scale, height*scale, width*scale);
 
     const map = world.mapStats;
 
@@ -102,13 +104,15 @@ export default class Renderer {
       // Fetch and draw tile image
       const swampLevel = cst.getLevel(map.passability[idxVal]);
       const tileImg = this.imgs.tiles[swampLevel];
-      this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      if (!this.conf.doingRotate) this.ctx.drawImage(tileImg, cx, cy, scale, scale);
+      else this.ctx.drawImage(tileImg, cy, cx, scale, scale);
 
       // Draw grid
       if (this.conf.showGrid) {
         this.ctx.strokeStyle = 'gray';
         this.ctx.globalAlpha = 1;
-        this.ctx.strokeRect(cx, cy, scale, scale);
+        if (!this.conf.doingRotate) this.ctx.strokeRect(cx, cy, scale, scale);
+        else this.ctx.strokeRect(cy, cx, scale, scale);
       }
     }
 
@@ -116,9 +120,11 @@ export default class Renderer {
     if (this.hoverPos != null) {
       const {x, y} = this.hoverPos;
       const cx = (minX+x)*scale, cy = (minY+(height-y-1))*scale;
-      this.ctx.strokeStyle = 'red';
+      this.ctx.strokeStyle = 'purple';
+      this.ctx.lineWidth *= 2;
       this.ctx.globalAlpha = 1;
-      this.ctx.strokeRect(cx, cy, scale, scale);
+      if (!this.conf.doingRotate) this.ctx.strokeRect(cx, cy, scale, scale);
+      else this.ctx.strokeRect(cy, cx, scale, scale);
     }
 
     this.ctx.restore();
@@ -129,6 +135,7 @@ export default class Renderer {
     const length = bodies.length;
     const types = bodies.arrays.type;
     const teams = bodies.arrays.team;
+    const convictions = bodies.arrays.conviction;
     const ids = bodies.arrays.id;
     const xs = bodies.arrays.x;
     const ys = bodies.arrays.y;
@@ -167,12 +174,12 @@ export default class Renderer {
       const effectImgs: HTMLImageElement[] = this.imgs.effects[effect];
       const whichImg = (Math.floor(curTime / cst.EFFECT_STEP) % effectImgs.length);
       const effectImg = effectImgs[whichImg];
-      this.drawBot(effectImg, x, y);
+      this.drawBot(effectImg, x, y, 0);
     }
 
     const renderBot = (i: number) => {
       const img: HTMLImageElement = this.imgs.robots[cst.bodyTypeToString(types[i])][teams[i]];
-      this.drawBot(img, realXs[i], realYs[i]);
+      this.drawBot(img, realXs[i], realYs[i], convictions[i]);
       this.drawSightRadii(realXs[i], realYs[i], types[i], ids[i] === this.lastSelectedID);
 
       // draw effect
@@ -221,6 +228,7 @@ export default class Renderer {
    * Draws a cirlce centered at (x,y) with given squared radius and color.
    */
   private drawBotRadius(x: number, y: number, radiusSquared: number, color: string) {
+    if (this.conf.doingRotate) [x,y] = [y,x];
     this.ctx.beginPath();
     this.ctx.arc(x+0.5, y+0.5, Math.sqrt(radiusSquared), 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
@@ -250,16 +258,23 @@ export default class Renderer {
    * Draws an image centered at (x, y) with the given radius
    */
   private drawImage(img: HTMLImageElement, x: number, y: number, radius: number) {
+    if (this.conf.doingRotate) [x,y] = [y,x];
     this.ctx.drawImage(img, x-radius, y-radius, radius*2, radius*2);
   }
 
   /**
    * Draws an image centered at (x, y), such that an image with default size covers a 1x1 cell
    */
-  private drawBot(img: HTMLImageElement, x: number, y: number) {
+  private drawBot(img: HTMLImageElement, x: number, y: number, c: number) {
+    if (this.conf.doingRotate) [x,y] = [y,x];
     let realWidth = img.naturalWidth/cst.IMAGE_SIZE;
     let realHeight = img.naturalHeight/cst.IMAGE_SIZE;
-    this.ctx.drawImage(img, x+(1-realWidth)/2, y+(1-realHeight)/2, realWidth, realHeight);
+    const sigmoid = (x) => {
+      return 1 /  (1 + Math.exp(-x))
+    }
+    //this.ctx.filter = `brightness(${sigmoid(c - 100) * 30 + 90}%)`;
+    let size = sigmoid(c / 100) * 1 + 0.3;
+    this.ctx.drawImage(img, x+(1-realWidth * size)/2, y+(1-realHeight * size)/2, realWidth * size, realHeight * size);
   }
 
   private setInfoStringEvent(world: GameWorld,
@@ -327,10 +342,18 @@ export default class Renderer {
     const height = world.maxCorner.y - world.minCorner.y;
     const minY = world.minCorner.y;
     const maxY = world.maxCorner.y - 1;
-    const x = width * event.offsetX / this.canvas.offsetWidth + world.minCorner.x;
-    const _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
-    const y = this.flip(_y, minY, maxY)
-    return {x: Math.floor(x), y: Math.floor(y+1)};
+    var _x: number;
+    var _y: number;
+    if (!this.conf.doingRotate) {
+      _x = width * event.offsetX / this.canvas.offsetWidth + world.minCorner.x;
+      _y = height * event.offsetY / this.canvas.offsetHeight + world.minCorner.y;
+      _y = this.flip(_y, minY, maxY)
+    }
+    else {
+      _y = (world.maxCorner.y - world.minCorner.y - 1) - height * event.offsetX / this.canvas.offsetWidth + world.minCorner.y;
+      _x = width * event.offsetY / this.canvas.offsetHeight + world.minCorner.x;
+    }
+    return {x: Math.floor(_x), y: Math.floor(_y+1)};
   }
 
   private renderIndicatorDotsLines(world: GameWorld) {
@@ -380,7 +403,7 @@ export default class Renderer {
     this.ctx.lineWidth = cst.INDICATOR_LINE_WIDTH;
 
     for (let i = 0; i < lines.length; i++) {
-      if (linesID[i] === this.lastSelectedID) {
+      if (linesID[i] === this.lastSelectedID || this.conf.allIndicators) {
         const red = linesRed[i];
         const green = linesGreen[i];
         const blue = linesBlue[i];

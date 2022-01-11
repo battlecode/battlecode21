@@ -40,8 +40,10 @@ export default class Looper {
         private conf: config.Config, private imgs: imageloader.AllImages,
         private controls: Controls, private stats: Stats,
         private gamearea: GameArea, cconsole: Console,
-        private matchqueue: MatchQueue, private profiler?: Profiler) {
-        
+        private matchqueue: MatchQueue, private profiler?: Profiler,
+        private mapinfo: string = "",
+        showTourneyUpload: boolean = true) {
+
         this.console = cconsole;
 
         this.conf.mode = config.Mode.GAME;
@@ -50,6 +52,10 @@ export default class Looper {
 
         // Cancel previous games if they're running
         this.clearScreen();
+
+        // rotate tall maps
+        if (this.conf.doRotate) this.conf.doingRotate = (match.current.maxCorner.y - match.current.minCorner.y) > (match.current.maxCorner.x - match.current.minCorner.x);
+        else this.conf.doingRotate = false;
 
         // Reset the canvas
         this.gamearea.setCanvasDimensions(match.current);
@@ -62,6 +68,9 @@ export default class Looper {
             teamIDs.push(meta.teams[team].teamID);
         }
         this.stats.initializeGame(teamNames, teamIDs);
+        const extraInfo = (this.mapinfo ? this.mapinfo + "\n" : "") + (this.conf.doingRotate ? " (Map rotated and flipped! Disable for new matches with 'Z'.)" : "");
+        this.stats.setExtraInfo(extraInfo);
+        if (!showTourneyUpload) this.stats.hideTourneyUpload();
 
         // keep around to avoid reallocating
         this.nextStep = new NextStep();
@@ -84,11 +93,11 @@ export default class Looper {
             this.conf, meta as Metadata, onRobotSelected, onMouseover);
 
         // How fast the simulation should progress
-      //  this.goalUPS = this.controls.getUPS();
-       // if (this.conf.tournamentMode) {
+        //  this.goalUPS = this.controls.getUPS();
+        // if (this.conf.tournamentMode) {
         // Always pause on load. Mitigates funky behaviour like 100 rounds playing before any rendering occurs.
         this.goalUPS = 0;
-       // }
+        // }
 
         // A variety of stuff to track how fast the simulation is going
         this.rendersPerSecond = new TickCounter(.5, 100);
@@ -103,9 +112,9 @@ export default class Looper {
         this.externalSeek = false;
 
         this.controls.updatePlayPauseButton(this.isPaused());
-        
+
         if (this.profiler)
-           this.profiler.reset();
+            this.profiler.reset();
 
         this.loadedProfiler = false;
 
@@ -177,10 +186,12 @@ export default class Looper {
         this.goalUPS = 0;
         this.controls.pause();
         this.controls.removeInfoString();
+        this.controls.setDefaultText();
+        this.controls.setDefaultUPS();
     }
 
     private loop(curTime) {
-        
+
         let delta = 0;
         if (this.lastTime === null) {
             // first simulation step
@@ -220,8 +231,7 @@ export default class Looper {
         // run simulation
         // this may look innocuous, but it's a large chunk of the run time
         this.match.compute(30 /* ms */); // An ideal FPS is around 30 = 1000/30, so when compute takes its full time
-                                         // FPS is lowered significantly. But I think it's a worthwhile tradeoff.
-
+        // FPS is lowered significantly. But I think it's a worthwhile tradeoff.
         // update the info string in controls
         if (this.lastSelectedID !== undefined) {
             let bodies = this.match.current.bodies.arrays;
@@ -241,8 +251,8 @@ export default class Looper {
                 let parent = bodies.parent[index];
                 let bid = bodies.bid[index];
 
-                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes, flag, 
-                bid !== 0 ? bid : undefined, parent !== 0 ? parent : undefined);
+                this.controls.setInfoString(id, x, y, influence, conviction, cst.bodyTypeToString(type), bytecodes, flag,
+                    bid !== 0 ? bid : undefined, parent !== 0 ? parent : undefined);
             }
         }
 
@@ -250,10 +260,14 @@ export default class Looper {
             this.controls.removeInfoString();
         }
 
-        this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
-        this.console.seekRound(this.match.current.turn);
         this.lastTime = curTime;
-        this.lastTurn = this.match.current.turn;
+
+        if (this.match.current.turn != this.lastTurn) {
+            this.console.setLogsRef(this.match.current.logs, this.match.current.logsShift);
+            this.console.seekRound(this.match.current.turn);
+            this.lastTurn = this.match.current.turn;
+            this.updateStats(this.match.current, this.meta);
+        }
 
         // @ts-ignore
         // renderer.render(this.match.current, this.match.current.minCorner, this.match.current.maxCorner);
@@ -284,7 +298,7 @@ export default class Looper {
             this.loadedProfiler = true;
         }
 
-        this.updateStats(this.match.current, this.meta);
+        //this.updateStats(this.match.current, this.meta);
         this.loopID = window.requestAnimationFrame((curTime) => this.loop.call(this, curTime));
     }
 
@@ -293,12 +307,28 @@ export default class Looper {
      * team in the current game world.
      */
     private updateStats(world: GameWorld, meta: Metadata) {
-        var totalInfluence = 0;
+        let totalInfluence = 0;
+        let totalConviction = 0;
+        let teamIDs: number[] = [];
+        let teamNames: string[] = [];
+
+        this.stats.resetECs();
+        for (let i = 0; i < world.bodies.length; i++) {
+            const type = world.bodies.arrays.type[i];
+            if (type === schema.BodyType.ENLIGHTENMENT_CENTER) {
+                this.stats.addEC(world.bodies.arrays.team[i]);
+            }
+        }
+
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
             totalInfluence += teamStats.influence.reduce((a, b) => a + b);
+            totalConviction += teamStats.conviction.reduce((a, b) => a + b);
+            teamIDs.push(teamID);
+            teamNames.push(meta.teams[team].name);
         }
+
         for (let team in meta.teams) {
             let teamID = meta.teams[team].teamID;
             let teamStats = world.teamStats.get(teamID) as TeamStats;
@@ -306,15 +336,21 @@ export default class Looper {
             // Update each robot count
             this.stats.robots.forEach((type: schema.BodyType) => {
                 this.stats.setRobotCount(teamID, type, teamStats.robots[type]);
-                this.stats.setRobotConviction(teamID, type, teamStats.conviction[type]);
+                this.stats.setRobotConviction(teamID, type, teamStats.conviction[type], totalConviction);
                 this.stats.setRobotInfluence(teamID, type, teamStats.influence[type]);
             });
 
             // Set votes
             this.stats.setVotes(teamID, teamStats.votes);
-            this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b), 
+            this.stats.setTeamInfluence(teamID, teamStats.influence.reduce((a, b) => a + b),
                 totalInfluence);
             this.stats.setBuffs(teamID, teamStats.numBuffs);
+            this.stats.setBid(teamID, teamStats.bid);
+            this.stats.setIncome(teamID, teamStats.income, world.turn);
+        }
+
+        if (this.match.winner && this.match.current.turn == this.match.lastTurn) {
+            this.stats.setWinner(this.match.winner, teamNames, teamIDs);
         }
     }
 

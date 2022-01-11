@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 """
+In general, this script is out of date. Make any changes as necessary.
+(e.g. repo names, year numbers, new frontend deploy process, different specs)
 Here's what this script does:
 * Generates a comparison link to review the changes
 * Adds version number and changelog to specs/specs.md
@@ -18,24 +20,20 @@ import os
 import datetime
 
 def main(version):
-    # generate_comparison_link()
+    generate_comparison_link()
 
-    # TODO change to use right file name. also, make that file name a easy-to-set variable
-    # specs(version)
+    specs(version)
 
     # TODO should be adapted now that we use markdeep instead
-    # fancy_specs()
-    client()
+    fancy_specs()
 
     deploy_frontend()
 
-    # These steps are used for a Python-based engine, eg Battlehack 2020.
-    # When running a Python game, these commands should be maintained and used, instead.
-    # update_setup_py_version(version)
+    update_setup_py_version(version)
 
-    # publish_pypi()
+    publish_pypi()
 
-    # commit_tag_push(version)
+    commit_tag_push(version)
 
 
 def generate_comparison_link():
@@ -131,27 +129,13 @@ def commit_tag_push(version):
     subprocess.call('git push', shell=True)
     subprocess.call('git push --tags', shell=True)
 
-def client():
-    """
-    Build client for web.
-    """
-    # TODO this should be in the npm script too, to get this to run during local development.
-    os.chdir("client/visualizer")
-    # TODO apparently need to run npm install first.
-    # This is okay in the deploy script. (we run npm install for the frontend folder too)
-    # However, for development, devs should run npm install in client dir. Can just drop a note about this in readme. (also note that if client ever looks out of date, do npm run install-all, npm run build again.)
-    # Easiest to do each of these builds thru npm run install-all, npm run build. in top client folder.
-    subprocess.call("npm run prod", shell=True)
-    subprocess.call("cp -r out ../../frontend/public", shell=True)
-    os.chdir("../../frontend")
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('version', help='Version number, e.g. 2021.0.1.1')
+    parser.add_argument('version', help='Version number, e.g. 0.1.1')
 
     args = parser.parse_args()
 

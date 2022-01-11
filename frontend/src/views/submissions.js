@@ -158,10 +158,10 @@ class Submissions extends Component {
         } else {
             switch (key) {
                 case 'tour_sprint':
-                    add_data = ['Sprint', data]
+                    add_data = ['Sprint 1', data]
                     break
                 case 'tour_seed':
-                    add_data = ['Seeding', data]
+                    add_data = ['Sprint 2', data]
                     break
                 case 'tour_qual':
                     add_data = ['Qualifying', data]
@@ -170,7 +170,7 @@ class Submissions extends Component {
                     add_data = ['Final', data]
                     break
                 case 'tour_hs':
-                    add_data = ['High School', data]
+                    add_data = ['US High School', data]
                     break
                 case 'tour_intl_qual':
                     add_data = ['International Qualifying', data]
@@ -242,7 +242,11 @@ class Submissions extends Component {
                     <div className="content">
                         {/* TODO could this paragraph be dynamically filled? that'd be amazing */}
                         <p>
-                            <b>The submission deadline for Sprint Tour 2 is 7 pm ET on Monday 1/18.</b> Submit your code using the button below. For peace of mind, submit 15 minutes before and make sure it compiles and shows up under "Latest Submissions."
+                            <b>The submission deadline for the Final Tournament is 7 pm ET on Thursday 1/28.</b> Make sure to have indicated your eligibility on your Team Profile page. Also make sure to have all members upload a resume, at your personal profile page.
+                            <b>**See the Eligibility Rules in the Tournaments page for more info**</b>
+                        </p>
+                        <p>
+                            Submit your code using the button below. For peace of mind, submit 15 minutes before and make sure it compiles and shows up under "Latest Submissions."
                             We will have a 5-minute grace period; if you're having trouble submitting, send us your code on Discord before 7:05. If the code you submit to us on Discord has only minor differences to the code submitted on time through the website (e.g., 1 or 2 lines), we will accept it. <b>We will not accept anything submitted after 7:05 pm.</b>
                         </p>
                         <p>

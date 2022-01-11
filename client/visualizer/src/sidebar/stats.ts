@@ -3,6 +3,7 @@ import * as cst from '../constants';
 import { AllImages } from '../imageloader';
 import { schema } from 'battlecode-playback';
 import Runner from '../runner';
+import Chart = require('chart.js');
 
 const hex: Object = {
   1: "#db3627",
@@ -11,12 +12,17 @@ const hex: Object = {
 
 type VoteBar = {
   bar: HTMLDivElement,
-  label: HTMLSpanElement
+  vote: HTMLSpanElement,
+  bid: HTMLSpanElement
 };
 
 type BuffDisplay = {
   numBuffs: HTMLSpanElement,
   buff: HTMLSpanElement
+}
+
+type IncomeDisplay = {
+  income: HTMLSpanElement
 }
 
 /**
@@ -34,21 +40,36 @@ export default class Stats {
 
   private readonly tourIndexJump: HTMLInputElement;
 
+  private teamNameNodes: HTMLSpanElement[] = [];
+
   // Key is the team ID
+  private robotImages: Map<string, Array<HTMLImageElement>> = new Map(); // the robot image elements in the unit statistics display 
   private robotTds: Map<number, Map<string, Map<number, HTMLTableCellElement>>> = new Map();
 
   private voteBars: VoteBar[];
   private maxVotes: number;
 
+  private incomeDisplays: IncomeDisplay[];
+
   private relativeBars: HTMLDivElement[];
-
+  
   private buffDisplays: BuffDisplay[];
-
+  
+  private extraInfo: HTMLDivElement;
+  
   private robotConsole: HTMLDivElement;
-
+  
   private runner: Runner; //needed for file uploading in tournament mode
-
+  
   private conf: Config;
+
+  private tourneyUpload: HTMLDivElement;
+
+  private incomeChart: Chart;
+
+  private ECs: HTMLDivElement;
+  
+  private teamMapToTurnsIncomeSet: Map<number, Set<number>>;
 
   // Note: robot types and number of teams are currently fixed regardless of
   // match info. Keep in mind if we ever change these, or implement this less
@@ -59,6 +80,12 @@ export default class Stats {
   constructor(conf: Config, images: AllImages, runner: Runner) {
     this.conf = conf;
     this.images = images;
+
+    for (const robot in this.images.robots) {
+      let robotImages: Array<HTMLImageElement> = this.images.robots[robot];
+      this.robotImages[robot] = robotImages.map((image) => image.cloneNode() as HTMLImageElement);
+    }
+    
     this.div = document.createElement("div");
     this.tourIndexJump = document.createElement("input");
     this.runner = runner;
@@ -75,9 +102,11 @@ export default class Stats {
     let teamHeader: HTMLDivElement = document.createElement("div");
     teamHeader.className += ' teamHeader';
 
-    let teamNameNode = document.createTextNode(teamName);
+    let teamNameNode = document.createElement('span');
+    teamNameNode.innerHTML = teamName;
     teamHeader.style.backgroundColor = hex[inGameID];
     teamHeader.appendChild(teamNameNode);
+    this.teamNameNodes[inGameID] = teamNameNode;
     return teamHeader;
   }
 
@@ -108,10 +137,12 @@ export default class Stats {
       let robotName: string = cst.bodyTypeToString(robot);
       let tdRobot: HTMLTableCellElement = document.createElement("td");
       tdRobot.className = "robotSpriteStats";
+      tdRobot.style.height = "100px";
+      tdRobot.style.width = "100px";
 
-      const img = this.images.robots[robotName][inGameID];
-      img.style.width = "64px";
-      img.style.height = "64px";
+      const img: HTMLImageElement = this.robotImages[robotName][inGameID];
+      img.style.width = "60%";
+      img.style.height = "60%";
 
       tdRobot.appendChild(img);
       robotImages.appendChild(tdRobot);
@@ -119,6 +150,10 @@ export default class Stats {
       for (let value in this.robotTds[teamID]) {
         let tdCount: HTMLTableCellElement = this.robotTds[teamID][value][robot];
         robotCounts[value].appendChild(tdCount);
+        if (robot === schema.BodyType.ENLIGHTENMENT_CENTER && value === "count") {
+          tdCount.style.fontWeight = "bold";
+          tdCount.style.fontSize = "18px";          
+        }
       }
     }
     table.appendChild(robotImages);
@@ -136,46 +171,68 @@ export default class Stats {
       votes.className = "stat-bar";
       votes.style.backgroundColor = hex[teamID];
       let votesSpan = document.createElement("span");
+      let bidSpan = document.createElement("span");
       votesSpan.innerHTML = "0";
+      bidSpan.innerHTML = "0";
       // Store the stat bars
       voteBars[teamID] = {
         bar: votes,
-        label: votesSpan
+        vote: votesSpan,
+        bid: bidSpan
       };
     });
     return voteBars;
   }
 
-  private getVoteBarElement(teamIDs: Array<number>): HTMLTableElement {
-    const table = document.createElement("table");
-    const bars = document.createElement("tr");
-    const counts = document.createElement("tr");
-    table.id = "stats-table";
-    bars.id = "stats-bars";
-    table.setAttribute("align", "center");
+  private getVoteBarElement(teamIDs: Array<number>): HTMLElement {
+    const votesDiv = document.createElement('div');
 
-    const title = document.createElement('td');
-    title.colSpan = 2;
-    const label = document.createElement('h3');
-    label.innerText = 'Votes';
+    const box = document.createElement('div');
+    box.className = "votes-box";
+
+    const title = document.createElement('div');
+    title.className = "stats-header";
+    
+    const bars = document.createElement('div');
+    bars.id = "vote-bars";
+    bars.appendChild(document.createElement('div'));
+
+    const votes = document.createElement('div');
+    votes.className = "votes-info";
+    const bids = document.createElement('div');
+    bids.className = "votes-info";
+
+    title.innerHTML = "Voting";
+
+    const votesTitle = document.createElement('div');
+    votesTitle.innerHTML = "<b>Votes</b>";
+    votes.appendChild(votesTitle);
+
+    const bidsTitle = document.createElement('div');
+    bidsTitle.innerHTML = "<b>Bid</b>";
+    bids.appendChild(bidsTitle);
+
+    // build table
 
     teamIDs.forEach((id: number) => {
-      const bar = document.createElement("td");
-      bar.height = "120";
-      bar.vAlign = "bottom";
-      bar.appendChild(this.voteBars[id].bar);
-      bars.appendChild(bar);
 
-      const count = document.createElement("td");
-      count.appendChild(this.voteBars[id].label);
-      counts.appendChild(count);
+      const vote = document.createElement('div');
+      vote.appendChild(this.voteBars[id].vote);
+      votes.appendChild(vote);
+
+      const bid = document.createElement('div');
+      bid.appendChild(this.voteBars[id].bid);
+      bids.appendChild(bid);
+
+      bars.appendChild(this.voteBars[id].bar);
     });
 
-    title.appendChild(label);
-    table.appendChild(title);
-    table.appendChild(bars);
-    table.appendChild(counts);
-    return table;
+    votesDiv.appendChild(title);
+    box.appendChild(bids);
+    box.appendChild(votes);
+    box.appendChild(bars);
+    votesDiv.appendChild(box);
+    return votesDiv;
   }
 
   private initRelativeBars(teamIDs: Array<number>) {
@@ -195,12 +252,14 @@ export default class Stats {
   private getRelativeBarsElement(teamIDs: Array<number>): HTMLElement {
     const div = document.createElement("div");
     div.setAttribute("align", "center");
+    div.id = "relative-bars";
 
-    const label = document.createElement('h3');
+    const label = document.createElement('div');
+    label.className = "stats-header";
     label.innerText = 'Total Influence';
 
     const frame = document.createElement("div");
-    frame.style.width = "250px";
+    frame.style.width = "90%";
 
     teamIDs.forEach((id: number) => {
       frame.appendChild(this.relativeBars[id]);
@@ -220,30 +279,64 @@ export default class Stats {
       buff.style.color = hex[id];
       buff.style.fontWeight = "bold";
       numBuffs.textContent = "0";
-      buff.textContent = "1.00";
+      buff.textContent = "1.000";
       buffDisplays[id] = {numBuffs: numBuffs, buff: buff};
     });
     return buffDisplays;
   }
+  private initIncomeDisplays(teamIDs: Array<number>) {
+    const incomeDisplays: IncomeDisplay[] = [];
+    teamIDs.forEach((id: number) => {
+      const income = document.createElement("span");
+      income.style.color = hex[id];
+      income.style.fontWeight = "bold";
+      income.textContent = "1";
+      incomeDisplays[id] = {income: income};
+    });
+    return incomeDisplays;
+  }
 
   private getBuffDisplaysElement(teamIDs: Array<number>): HTMLElement {
+    const div = document.createElement("div");
+    div.id = "buffs";
+
+    const label = document.createElement('div');
+    label.className = "stats-header";
+    label.innerText = 'Buffs';
+    div.appendChild(label);
+
+    teamIDs.forEach((id: number) => {
+      const buffDiv = document.createElement("div");
+      buffDiv.className = "buff-div";
+      // cell.appendChild(document.createTextNode("1.001"));
+      // cell.appendChild(this.buffDisplays[id].numBuffs);
+      // cell.appendChild(document.createTextNode(" = "));
+      buffDiv.appendChild(this.buffDisplays[id].buff);
+      div.appendChild(buffDiv);
+    });
+
+    return div;
+  }
+
+  private getIncomeDisplaysElement(teamIDs: Array<number>): HTMLElement {
     const table = document.createElement("table");
-    table.id = "buffs-table";
+    table.id = "income-table";
     table.style.width = "100%";
 
     const title = document.createElement('td');
     title.colSpan = 2;
-    const label = document.createElement('h3');
-    label.innerText = 'Buffs';
+    const label = document.createElement('div');
+    label.className = "stats-header";
+    label.innerText = 'Total Income Per Turn';
 
     const row = document.createElement("tr");
 
     teamIDs.forEach((id: number) => {
       const cell = document.createElement("td");
-      cell.appendChild(document.createTextNode("1.001"));
-      cell.appendChild(this.buffDisplays[id].numBuffs);
-      cell.appendChild(document.createTextNode(" = "));
-      cell.appendChild(this.buffDisplays[id].buff);
+      // cell.appendChild(document.createTextNode("1.001"));
+      // cell.appendChild(this.buffDisplays[id].numBuffs);
+      // cell.appendChild(document.createTextNode(" = "));
+      cell.appendChild(this.incomeDisplays[id].income);
       row.appendChild(cell);
     });
 
@@ -252,6 +345,22 @@ export default class Stats {
     table.appendChild(row);
 
     return table;
+  }
+
+  private getIncomeDominationGraph() {
+    const canvas = document.createElement("canvas");
+    canvas.id = "myChart";
+    return canvas;
+  }
+
+  private getECDivElement() {
+    const div = document.createElement('div');
+    const label = document.createElement('div');
+    label.className = "stats-header";
+    label.innerText = 'EC Control';
+    div.appendChild(label);
+    div.appendChild(this.ECs);
+    return div;
   }
 
   // private drawBuffsGraph(ctx: CanvasRenderingContext2D, upto: number) {
@@ -311,22 +420,32 @@ export default class Stats {
     }
     this.voteBars = [];
     this.relativeBars = [];
-    this.maxVotes = 1500;
+    this.maxVotes = 750;
+    this.teamMapToTurnsIncomeSet = new Map();
 
+    this.div.appendChild(document.createElement("br"));
     if (this.conf.tournamentMode) {
       // FOR TOURNAMENT
+      this.tourneyUpload = document.createElement('div');
+      
       let uploadButton = this.runner.getUploadButton();
       let tempdiv = document.createElement("div");
       tempdiv.className = "upload-button-div";
       tempdiv.appendChild(uploadButton);
-      this.div.appendChild(tempdiv);
+      this.tourneyUpload.appendChild(tempdiv);
 
       // add text input field
       this.tourIndexJump.type = "text";
       this.tourIndexJump.onkeyup = (e) => { this.tourIndexJumpFun(e) };
       this.tourIndexJump.onchange = (e) => { this.tourIndexJumpFun(e) };
-      this.div.appendChild(this.tourIndexJump);
+      this.tourneyUpload.appendChild(this.tourIndexJump);
+
+      this.div.appendChild(this.tourneyUpload);
     }
+
+    this.extraInfo = document.createElement('div');
+    this.extraInfo.className = "extra-info";
+    this.div.appendChild(this.extraInfo);
 
     // Populate with new info
     // Add a section to the stats bar for each team in the match
@@ -354,16 +473,11 @@ export default class Stats {
       // Add the team name banner and the robot count table
       teamDiv.appendChild(this.teamHeaderNode(teamName, inGameID));
       teamDiv.appendChild(this.robotTable(teamID, inGameID));
-      teamDiv.appendChild(document.createElement("br"));
 
       this.div.appendChild(teamDiv);
     }
 
     this.div.appendChild(document.createElement("hr"));
-
-    // TODO relative bar
-    // this.div.appendChild(this.relativeBarElement);
-    // console.log(this.relativeBarElement)
 
     // Add stats table
     this.voteBars = this.initVoteBars(teamIDs);
@@ -377,6 +491,60 @@ export default class Stats {
     this.buffDisplays = this.initBuffDisplays(teamIDs);
     const buffDivsElement = this.getBuffDisplaysElement(teamIDs);
     this.div.appendChild(buffDivsElement);
+
+    this.incomeDisplays = this.initIncomeDisplays(teamIDs);
+    const incomeElement = this.getIncomeDisplaysElement(teamIDs);
+    this.div.appendChild(incomeElement);
+
+    const canvasElement = this.getIncomeDominationGraph();
+    this.div.appendChild(canvasElement);
+    this.incomeChart = new Chart(canvasElement, {
+      type: 'line',
+      data: {
+          datasets: [{
+            label: 'Red',
+            data: [],
+            backgroundColor: 'rgba(255, 99, 132, 0)',
+            borderColor: 'rgb(219, 54, 39)',
+            pointRadius: 0,
+          },
+          {
+            label: 'Blue',
+            data: [],
+            backgroundColor: 'rgba(54, 162, 235, 0)',
+            borderColor: 'rgb(79, 126, 230)',
+            pointRadius: 0,
+          }]
+      },
+      options: {
+          aspectRatio: 1.5,
+          scales: {
+            xAxes: [{
+              type: 'linear',
+              ticks: {
+                beginAtZero: true
+            },
+              scaleLabel: {
+                display: true,
+                labelString: "Turn"
+              }
+            }],
+              yAxes: [{
+                type: 'linear',
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+    });
+
+    this.ECs = document.createElement("div");
+    this.ECs.style.height = "100px";
+    this.ECs.style.display = "flex";
+    this.div.appendChild(this.getECDivElement());
+
+    this.div.appendChild(document.createElement("br"));
   }
 
   tourIndexJumpFun(e) {
@@ -397,9 +565,16 @@ export default class Stats {
   /**
    * Change the robot conviction on the stats bar
    */
-  setRobotConviction(teamID: number, robotType: schema.BodyType, conviction: number) {
+  setRobotConviction(teamID: number, robotType: schema.BodyType, conviction: number, totalConviction: number) {
     let td: HTMLTableCellElement = this.robotTds[teamID]["conviction"][robotType];
     td.innerHTML = String(conviction);
+
+    const robotName: string = cst.bodyTypeToString(robotType);
+    let img = this.robotImages[robotName][teamID];
+
+    const size = (55 + 45 * conviction / totalConviction);
+    img.style.width = size + "%";
+    img.style.height = size + "%";
   }
 
   /**
@@ -416,9 +591,9 @@ export default class Stats {
   setVotes(teamID: number, count: number) {
     // TODO: figure out if statbars.get(id) can actually be null??
     const statBar: VoteBar = this.voteBars[teamID];
-    statBar.label.innerText = String(count);
+    statBar.vote.innerText = String(count);
     this.maxVotes = Math.max(this.maxVotes, count);
-    statBar.bar.style.height = `${Math.min(100 * count / this.maxVotes, 100)}%`;
+    statBar.bar.style.width = `${Math.min(100 * count / this.maxVotes, 100)}%`;
 
     // TODO add reactions to relative bars
     // TODO get total votes to get ratio
@@ -438,7 +613,71 @@ export default class Stats {
   }
 
   setBuffs(teamID: number, numBuffs: number) {
-    this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
-    this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(2));
+    //this.buffDisplays[teamID].numBuffs.textContent = String(numBuffs);
+    this.buffDisplays[teamID].buff.textContent = String(cst.buffFactor(numBuffs).toFixed(3));
+    this.buffDisplays[teamID].buff.style.fontSize = 14 * Math.sqrt(Math.min(9, cst.buffFactor(numBuffs))) + "px";
+  }
+
+  setIncome(teamID: number, income: number, turn: number) {
+    this.incomeDisplays[teamID].income.textContent = String(income);
+    if (!this.teamMapToTurnsIncomeSet.has(teamID)) {
+      this.teamMapToTurnsIncomeSet.set(teamID, new Set());
+    }
+    let teamTurnsIncomeSet = this.teamMapToTurnsIncomeSet.get(teamID);
+    
+    if (!teamTurnsIncomeSet!.has(turn)) {
+      //@ts-ignore
+      this.incomeChart.data.datasets![teamID - 1].data?.push({y:income, x: turn});
+      this.incomeChart.data.datasets?.forEach((d) => {
+        d.data?.sort((a, b) => a.x - b.x);
+      });
+      teamTurnsIncomeSet?.add(turn);
+      this.incomeChart.update();
+    }
+  }
+
+  setWinner(teamID: number, teamNames: Array<string>, teamIDs: Array<number>) {
+    const name = teamNames[teamIDs.indexOf(teamID)];
+    this.teamNameNodes[teamID].innerHTML  = "<b>" + name + "</b> " +  `<span style="color: yellow">&#x1f31f</span>`;
+  }
+
+  setBid(teamID: number, bid: number) {
+    // TODO: figure out if statbars.get(id) can actually be null??
+    const statBar: VoteBar = this.voteBars[teamID];
+    statBar.bid.innerText = String(bid);
+    // TODO add reactions to relative bars
+    // TODO get total votes to get ratio
+    // this.relBars[teamID].width;
+
+    // TODO winner gets star?
+    // if (this.images.star.parentNode === statBar.bar) {
+    //   this.images.star.remove();
+    // }
+  }
+
+  setExtraInfo(info: string) {
+    this.extraInfo.innerHTML = info;
+  }
+
+  hideTourneyUpload() {
+    console.log(this.tourneyUpload);
+    this.tourneyUpload.style.display = this.tourneyUpload.style.display === "none" ? "" : "none";
+  }
+
+  resetECs() {
+    // while (this.ECs.lastChild) this.ECs.removeChild(this.ECs.lastChild);
+    // console.log(this.ECs);
+    this.ECs.innerHTML = "";
+  }
+
+  addEC(teamID: number) {
+    const div = document.createElement("div");
+    div.style.width = "35px";
+    div.style.height = "35px";
+    const img = this.images.robots["enlightenmentCenter"][teamID].cloneNode() as HTMLImageElement;
+    img.style.width = "64px";
+    img.style.height = "64px"; // update dynamically later
+    div.appendChild(img);
+    this.ECs.appendChild(div);
   }
 }

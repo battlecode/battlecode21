@@ -4,13 +4,13 @@ import {AllImages} from '../imageloader';
 import {cow_border as cow} from '../cow';
 
 import {schema, flatbuffers} from 'battlecode-playback';
-import Victor = require('victor');
 
-import {MapRenderer, HeaderForm, SymmetryForm, RobotForm, TileForm} from './index';
+import {MapRenderer, HeaderForm, SymmetryForm, RobotForm, TileForm, UploadedMap} from './index';
 import { SSL_OP_NO_QUERY_MTU } from 'constants';
 
 export type MapUnit = {
-  loc: Victor,
+  x: number,
+  y: number,
   type: schema.BodyType,
   radius: 0.5,
   teamID?: number,
@@ -144,12 +144,12 @@ export default class MapEditorForm {
         // Set the corresponding form appropriately
         let body: MapUnit = this.originalBodies.get(id)!;
         this.robotsRadio.click();
-        this.robots.setForm(body.loc, body, id);
+        this.robots.setForm(body.x, body.y, body, id);
       }
     };
 
-    const onclickBlank = (loc: Victor) => {
-      this.getActiveForm().setForm(loc);
+    const onclickBlank = (x, y) => {
+      this.getActiveForm().setForm(x, y);
     };
 
     const onMouseover = (x: number, y: number, passability: number) => {
@@ -160,7 +160,7 @@ export default class MapEditorForm {
       this.tileInfo.textContent = content;
     };
 
-    const onDrag = (loc: Victor) => {
+    const onDrag = (x, y) => {
       if (this.getActiveForm() === this.tiles && this.tiles.isValid()) {
         let r: number = this.tiles.getBrush();
         let inBrush: (dx, dy) => boolean = () => true;
@@ -174,7 +174,7 @@ export default class MapEditorForm {
           case "Cow":
             inBrush = (dx,dy) => (Math.abs(dx) < r && Math.abs(dy) < r && cow[Math.floor(20*(1+dx/r))][Math.floor(20*(1-dy/r))]);
         }
-        this.setAreaPassability(loc.x, loc.y, this.tiles.getPass(), inBrush);
+        this.setAreaPassability(x, y, this.tiles.getPass(), inBrush);
         this.render();
       }
     }
@@ -369,26 +369,25 @@ export default class MapEditorForm {
    * If an id is given, does not consider the body with the corresponding id to
    * overlap with the given coordinates.
    */
-  private maxRadius(x: number, y: number, ignoreID?: number): number {
-    // Min distance to wall
-    let maxRadius = Math.min(x, y, this.header.getWidth()-x, this.header.getHeight()-y);
-    const loc = new Victor(x, y);
+  // private maxRadius(x: number, y: number, ignoreID?: number): number {
+  //   // Min distance to wall
+  //   let maxRadius = Math.min(x, y, this.header.getWidth()-x, this.header.getHeight()-y);
 
-    // Min distance to tree or body
-    ignoreID = ignoreID || -1;
-    this.originalBodies.forEach((body: MapUnit, id: number) => {
-      if (id != ignoreID) {
-        maxRadius = Math.min(maxRadius, loc.distance(body.loc) - body.radius);
-      }
-    });
-    this.symmetricBodies.forEach((body: MapUnit, id: number) => {
-      if (id != ignoreID) {
-        maxRadius = Math.min(maxRadius, loc.distance(body.loc) - body.radius);
-      }
-    });
+  //   // Min distance to tree or body
+  //   ignoreID = ignoreID || -1;
+  //   this.originalBodies.forEach((body: MapUnit, id: number) => {
+  //     if (id != ignoreID) {
+  //       maxRadius = Math.min(maxRadius, loc.distance(body.loc) - body.radius);
+  //     }
+  //   });
+  //   this.symmetricBodies.forEach((body: MapUnit, id: number) => {
+  //     if (id != ignoreID) {
+  //       maxRadius = Math.min(maxRadius, loc.distance(body.loc) - body.radius);
+  //     }
+  //   });
 
-    return Math.max(0, maxRadius - cst.DELTA);
-  }
+  //   return Math.max(0, maxRadius - cst.DELTA);
+  // }
 
   /**
    * If a unit with the given ID already exists, updates the existing unit.
@@ -428,8 +427,8 @@ export default class MapEditorForm {
 
   private setPassability(x: number, y: number, pass: number) {
     if (this.randomMode) pass = this.randomLow + (this.randomHigh - this.randomLow) * Math.random();
-    const translated: Victor = this.symmetry.transformLoc(new Victor(x, y), this.header.getWidth(), this.header.getHeight());
-    this.passability[y*this.header.getWidth() + x] = this.passability[translated.y*this.header.getWidth() + translated.x] = pass;
+    const {x: translated_x, y: translated_y} = this.symmetry.transformLoc(x, y, this.header.getWidth(), this.header.getHeight());
+    this.passability[y*this.header.getWidth() + x] = this.passability[translated_y*this.header.getWidth() + translated_x] = pass;
   }
 
   private setAreaPassability(x0: number, y0: number, pass: number, inBrush: (dx, dy) => boolean) {
@@ -491,42 +490,63 @@ export default class MapEditorForm {
     };
   }
 
-  getMapJSON(): string {
-    // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
-    const map = this.getMap();
-    function replacer(key, value) {
-      const originalObject = this[key];
-      if(originalObject instanceof Map) {
-        return {
-          dataType: 'Map',
-          value: Array.from(originalObject.entries()), // or with spread: value: [...originalObject]
-        };
-      } else {
-        return value;
-      }
-    }
-    return JSON.stringify(map, replacer);
-  }
+  // getMapJSON(): string {
+  //   // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
+  //   const map = this.getMap();
+  //   function replacer(key, value) {
+  //     const originalObject = this[key];
+  //     if(originalObject instanceof Map) {
+  //       return {
+  //         dataType: 'Map',
+  //         value: Array.from(originalObject.entries()), // or with spread: value: [...originalObject]
+  //       };
+  //     } else {
+  //       return value;
+  //     }
+  //   }
+  //   return JSON.stringify(map, replacer);
+  // }
 
-  setMap(mapJSON) {
-    // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
-    function reviver(key, value) {
-      if(typeof value === 'object' && value !== null) {
-        if (value.dataType === 'Map') {
-          return new Map(value.value);
-        }
-      }
-      return value;
-    }
-    const map = JSON.parse(mapJSON, reviver);
+  // setMap(mapJSON) {
+  //   // from https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map/56150320
+  //   function reviver(key, value) {
+  //     if(typeof value === 'object' && value !== null) {
+  //       if (value.dataType === 'Map') {
+  //         return new Map(value.value);
+  //       }
+  //     }
+  //     return value;
+  //   }
+  //   const map = JSON.parse(mapJSON, reviver);
+  //   this.header.setName(map.name);
+  //   this.header.setWidth(map.width);
+  //   this.header.setHeight(map.height);
+
+  //   this.originalBodies = map.originalBodies;
+  //   this.symmetricBodies = map.symmetricBodies;
+  //   this.symmetry.setSymmetry(map.symmetry);
+  //   this.passability = map.passability;
+  //   this.render();
+  // }
+
+  // TODO: types
+  setUploadedMap(map: UploadedMap) {
+
+    const symmetryAndBodies = this.symmetry.discoverSymmetryAndBodies(map.bodies, map.passability, map.width, map.height);
+    console.log(symmetryAndBodies);
+    if (symmetryAndBodies === null) return;
+
+    this.reset();
     this.header.setName(map.name);
     this.header.setWidth(map.width);
     this.header.setHeight(map.height);
+    this.symmetry.setSymmetry(symmetryAndBodies.symmetry);
+    this.originalBodies = symmetryAndBodies.originalBodies;
+    this.lastID = this.originalBodies.size + 1;
+    this.symmetricBodies = this.symmetry.getSymmetricBodies(this.originalBodies, map.width, map.height);
 
-    this.originalBodies = map.originalBodies;
-    this.symmetricBodies = map.symmetricBodies;
-    this.symmetry.setSymmetry(map.symmetry);
     this.passability = map.passability;
+
     this.render();
   }
 

@@ -14,8 +14,9 @@ import WebSocketListener from './main/websocket';
 // import { electron } from './main/electron-modules';
 import { TeamStats } from 'battlecode-playback/out/gameworld';
 
-import { Tournament, readTournament } from './main/tournament';
+import { Tournament, readTournament } from './main/tournament_new';
 import Looper from './main/looper';
+import Sidebar from './main/sidebar';
 
 
 /**
@@ -27,9 +28,11 @@ export default class Runner {
   private matchqueue: MatchQueue;
   private controls: Controls;
   private stats: Stats;
-  private gamearea: GameArea; 
+  private gamearea: GameArea;
   private console: Console;
   private profiler?: Profiler;
+  private asyncRequests: XMLHttpRequest[] = [];
+  private sidebar: Sidebar;
   looper: Looper | null;
 
   // Match logic
@@ -39,6 +42,7 @@ export default class Runner {
 
   tournament?: Tournament;
   tournamentState: TournamentState;
+  showTourneyUpload: boolean = true;
 
   currentGame: number | null;
   currentMatch: number | null;
@@ -58,8 +62,9 @@ export default class Runner {
   /**
   * Marks the client as fully loaded.
   */
-  ready(controls: Controls, stats: Stats, gamearea: GameArea, 
-       cconsole: Console, matchqueue: MatchQueue, profiler?: Profiler) {
+  ready(controls: Controls, stats: Stats, gamearea: GameArea,
+    cconsole: Console, matchqueue: MatchQueue, sidebar: Sidebar,
+    profiler?: Profiler) {
 
     this.controls = controls;
     this.stats = stats;
@@ -67,14 +72,9 @@ export default class Runner {
     this.console = cconsole;
     this.matchqueue = matchqueue;
     this.profiler = profiler;
+    this.sidebar = sidebar;
 
     this.gamearea.setCanvas();
-
-    let toMain = (msg) => {
-      console.log(msg);
-      alert('Error occurred. Check console on your browser');
-      // window.location.assign('/visualizer.html');
-    }
 
     if (this.conf.tournamentMode) {
       this.conf.processLogs = false; // in tournament mode, don't process logs by default
@@ -82,65 +82,9 @@ export default class Runner {
     this.console.setNotLoggingDiv();
 
     if (this.conf.matchFileURL) {
-      // Load a match file
       console.log(`Loading provided match file: ${this.conf.matchFileURL}`);
-
-      const req = new XMLHttpRequest();
-      req.open('GET', this.conf.matchFileURL, true);
-      req.responseType = 'arraybuffer';
-      req.onerror = (error) => {
-        toMain(`Can't load provided match file: ${error}`);
-      };
-
-      req.onload = (event) => {
-        const resp = req.response;
-        if (!resp || req.status !== 200) {
-          toMain(`Can't load file from URL: invalid URL(${req.status})`);
-        }
-        else {
-          let lastGame = this.games.length
-          this.games[lastGame] = new Game(this.conf);
-
-          try {
-            this.games[lastGame].loadFullGameRaw(resp);
-          } catch (error) {
-            toMain(`Can't get file from URL: ${error}`);
-            return;
-          }
-
-          console.log('Successfully loaded provided match file');
-          this.startGame();
-        }
-      };
-
-      req.send();
+      this.loadGameFromURL(this.conf.matchFileURL);
     }
-    // not loading default match file
-    // else {
-    //   console.log('Starting with a default match file (/client/default.bc21)');
-    //   if(_fs.readFile){
-    //     _fs.readFile('../default.bc21', (err, data: ArrayBuffer) => {
-    //       if(err){
-    //         console.log('Error while loading default local file!');
-    //         console.log(err);
-    //         console.log('Starting without any match files. Please upload via upload button in queue tab of sidebar');
-    //         return;
-    //       }
-
-    //       let lastGame = this.games.length
-    //       this.games[lastGame] = new Game();
-    //       // lastGame should be 0?
-    //       try {
-    //         this.games[lastGame].loadFullGameRaw(data);
-    //       } catch (error) {
-    //         console.log(`Error occurred! ${error}`);
-    //       }
-
-    //       console.log('Running game!');
-    //       startGame();
-    //     });
-    //   }
-    // }
 
     if (this.listener != null) {
       this.listener.start(
@@ -230,12 +174,38 @@ export default class Runner {
     }
   }
 
-  onGameLoaded(data: ArrayBuffer) {
-    let lastGame = this.games.length
-    this.games[lastGame] = new Game(this.conf);
-    this.games[lastGame].loadFullGameRaw(data);
+  loadGameFromURL(url: string) {
+    // Load a match file
+    const req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.responseType = 'arraybuffer';
+    req.onerror = (error) => {
+      throw new Error(`Can't load provided match file: ${error}`);
+    };
 
-    this.startGame();
+    req.onload = (event) => {
+      const resp = req.response;
+      if (!resp || req.status !== 200) {
+        throw new Error(`Can't load file from URL: invalid URL(${req.status})`);
+      }
+      else {
+        this.onGameLoaded(resp);
+      }
+    };
+
+    req.send();
+    this.asyncRequests.push(req);
+  }
+
+  onGameLoaded(data: ArrayBuffer) {
+    try {
+      const newGame = new Game(this.conf);
+      newGame.loadFullGameRaw(data);
+      this.games.push(newGame);
+      this.startGame();
+    } catch {
+      throw new Error("game load failed.");
+    }
   };
 
   startGame() {
@@ -246,53 +216,43 @@ export default class Runner {
     this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
   }
 
-  onTournamentLoaded(jsonFile: File) {
-    if (!process.env.ELECTRON) {
-      console.error("Can't load tournament outside of electron!");
-      return;
-    }
-    readTournament(jsonFile, (err, tournament) => {
-      if (err) {
-        console.error(`Can't load tournament: ${err}`);
-        return;
-      }
-      if (tournament) {
-        this.tournament = tournament;
-        const t = this;
-        document.onkeydown = function (event) {
-          // TODO: figure out what this is???
-          if (document.activeElement == null) {
-            throw new Error('idk?????? i dont know what im doing document.actievElement is null??');
-          }
-          let input = document.activeElement.nodeName == "INPUT";
-          if (!input) {
-            // TODO after touching viewoption buttons, the input (at least arrow keys) does not work
-            console.log(event.keyCode);
-            switch (event.keyCode) {
-              case 65: // "a" - previous tournament Match
-                t.previousTournamentThing();
-                t.updateTournamentState();
-                break;
-              case 68: // 'd' - next tournament match
-                console.log('next tournament d!');
-                t.nextTournamentThing();
-                t.updateTournamentState();
-                break;
-            }
-          }
+  removeGame(game: number) {
 
-        };
-        // CHOOSE STARTING ROUND?
-        tournament.seek(0, 0);
-        this.tournamentState = TournamentState.START_SPLASH;
-        this.updateTournamentState();
+    if (game > (this.currentGame as number)) {
+      this.games.splice(game, 1);
+    } else if (this.currentGame == game) {
+      if (game == 0) {
+        // if games.length > 1, remove game, set game to 0, set match to 0
+        if (this.games.length > 1) {
+          this.setGame(0);
+          this.games.splice(game, 1);
+        } else {
+          this.resetAllGames();
+        }
+      } else {
+        this.setGame(game - 1);
+        this.games.splice(game, 1);
       }
-    });
+    } else {
+      // remove game, set game to game - 1
+      this.games.splice(game, 1);
+      this.currentGame = game - 1;
+    }
+
+    this.showBlankCanvas();
+
+    this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
   };
 
-  goNextMatch() {
-    console.log("NEXT MATCH");
+  showBlankCanvas() {
+    if (this.games.length == 0) {
+      this.conf.splash = true;
+      this.gamearea.setCanvas();
+    }
+  }
 
+
+  goNextMatch() {
     if (this.currentGame as number < 0) {
       return; // Special case when deleting games
     }
@@ -310,8 +270,6 @@ export default class Runner {
   }
 
   goPreviousMatch() {
-    console.log("PREV MATCH");
-
     if (this.currentMatch as number > 0) {
       this.setMatch(this.currentMatch as number - 1);
     } else {
@@ -324,64 +282,48 @@ export default class Runner {
 
   };
 
-  seekTournament (num: number) {
+  onTournamentLoaded(jsonFile: File) {
+    readTournament(jsonFile, (tournament) => {
+      this.tournament = tournament;
+
+      // Choose starting round
+      tournament.seek(0, 0);
+      this.tournamentState = TournamentState.START_SPLASH;
+      this.processTournamentState();
+    }, (err) => {
+      console.error(`Can't load tournament: ${err}`);
+      return;
+    });
+  };
+
+  seekTournament(num: number) {
     console.log('seek tournament');
     this.tournament?.seek(num, 0);
-    this.updateTournamentState();
+    this.processTournamentState();
   };
 
-  removeGame(game: number) {
-
-    if (game > (this.currentGame as number)) {
-      this.games.splice(game, 1);
-    } else if (this.currentGame == game) {
-      if (game == 0) {
-        // if games.length > 1, remove game, set game to 0, set match to 0
-        if (this.games.length > 1) {
-          this.setGame(0);
-          this.games.splice(game, 1);
-        } else {
-          this.games.splice(game, 1);
-          if (this.looper) {
-            this.looper.die();
-            this.looper = null;
-          }
-          this.currentGame = -1;
-          this.currentMatch = 0;
-        }
-      } else {
-        this.setGame(game - 1);
-        this.games.splice(game, 1);
-      }
-    } else {
-      // remove game, set game to game - 1
-      this.games.splice(game, 1);
-      this.currentGame = game - 1;
-    }
-
-    if (this.games.length == 0) {
-      this.conf.splash = true;
-      this.gamearea.setCanvas();
-    }
-
+  resetAllGames() {
+    if (this.looper) this.looper.die();
+    this.games = [];
+    this.currentGame = -1;
+    this.currentMatch = 0;
     this.matchqueue.refreshGameList(this.games, this.currentGame ? this.currentGame : 0, this.currentMatch ? this.currentMatch : 0);
-  };
+    this.asyncRequests.forEach((req) => req.abort());
+  }
 
-  private nextTournamentThing() {
+  /**
+   * Transitions tournament state from start splash, to mid game,
+   * to end splash (only if last match in game), to next game.
+   */
+  private nextTournamentState() {
     console.log('actually next tournament thing!');
-    // either displays a splash screen with who won, or displays the next game
-    // activated by some sort of hotkey, ideally
-    // so, we can be in a couple of different states
-    // either a splash screen is showing, in which case we should display the next game,
-    // or a game is showing, in which case we should display either a next game or a splash screen
-
     if (this.tournament) {
       if (this.tournamentState === TournamentState.START_SPLASH) {
         // transition to mid game
         this.tournamentState = TournamentState.MID_GAME;
       } else if (this.tournamentState === TournamentState.MID_GAME) {
         // go to the next game
-        if (this.tournament.hasNext() && !this.tournament.isLastGameInMatch()) {
+        if (this.tournament.hasNext() && !this.tournament.isLastMatchInGame()) {
           this.tournament.next();
         } else {
           // go to end splash
@@ -400,13 +342,7 @@ export default class Runner {
     }
   }
 
-  private previousTournamentThing() {
-    // either displays a splash screen with who won, or displays the next game
-    // activated by some sort of hotkey, ideally
-    // so, we can be in a couple of different states
-    // either a splash screen is showing, in which case we should display the next game,
-    // or a game is showing, in which case we should display either a next game or a splash screen
-
+  private previousTournamentState() {
     if (this.tournament) {
       if (this.tournamentState === TournamentState.START_SPLASH) {
         // transition to mid game
@@ -418,7 +354,7 @@ export default class Runner {
         }
       } else if (this.tournamentState === TournamentState.MID_GAME) {
         // go to the previous game
-        if (this.tournament.hasPrev() && !this.tournament.isFirstGameInMatch()) {
+        if (this.tournament.hasPrev() && !this.tournament.isFirstMatchInGame()) {
           this.tournament.prev();
         } else {
           // go to start splash
@@ -432,31 +368,33 @@ export default class Runner {
     }
   }
 
-  private updateTournamentState() {
+  private processTournamentState() {
     console.log('update tour state!');
     if (this.tournament) {
       console.log('real update tour state!');
       // clear things
       Splash.removeScreen();
-      if (this.looper) this.looper.die();
       // simply updates according to the current tournament state
+      this.resetAllGames();
+      this.showBlankCanvas();
       if (this.tournamentState === TournamentState.START_SPLASH) {
         console.log('go from splash real update tour state!');
-        Splash.addScreen(this.conf, this.root, this.tournament.current(), this.tournament.currentMatch(), this.tournament);
+        Splash.addScreen(this.conf, this.root, this.tournament.current().team1, this.tournament.current().team2);
       } else if (this.tournamentState === TournamentState.END_SPLASH) {
-        Splash.addWinnerScreen(this.conf, this.root, this.tournament, this.tournament.currentMatch());
+        const wins = this.tournament.wins();
+        const totalWins = this.tournament.totalWins();
+        let result: string = "";
+        const team1 = this.tournament.current().team1;
+        const team2 = this.tournament.current().team2;
+        if (wins[team1] > wins[team2]) result = `${team1} wins ${wins[team1]}-${wins[team2]}!`;
+        else result = `${team2} wins ${wins[team2]}-${wins[team1]}!`;
+        if (totalWins[team1] != wins[team1] || totalWins[team2] != wins[team2]) {
+          if (totalWins[team1] > totalWins[team2]) result += ` (Final score ${totalWins[team1]}-${totalWins[team2]})`;
+          else result += ` (Final score ${totalWins[team2]}-${totalWins[team1]})`;
+        }
+        Splash.addWinnerScreen(this.conf, this.root, result);
       } else if (this.tournamentState === TournamentState.MID_GAME) {
-        this.tournament.readCurrent((err, data) => {
-          if (err) throw err;
-          if (!data) throw new Error("No match loaded from tournament?");
-
-          // reset all games so as to save memory
-          // because things can be rough otherwise
-          this.games.pop();
-          this.games = [new Game(this.conf)];
-          this.games[0].loadFullGameRaw(data);
-          this.setGame(0);
-        });
+        this.loadGameFromURL(this.tournament.current().url);
       }
     }
   }
@@ -475,16 +413,26 @@ export default class Runner {
     }
 
     const game = this.games[this.currentGame as number] as Game;
-    const match = game.getMatch(this.currentMatch as number) as Match; 
+    const match = game.getMatch(this.currentMatch as number) as Match;
     const meta = game.meta as Metadata;
 
     if (this.looper) this.looper.die();
 
+    var infoString = "";
+
+    if (this.tournament) {
+      const wins = this.tournament.wins(this.tournament.matchI - 1);
+      infoString += `Map: <b>${this.tournament?.current().map}</b>`;
+      infoString += `<br>`;
+      infoString +=  `Score: <b class="red">${wins[this.tournament.current().team1]}</b> - <b class="blue">${wins[this.tournament.current().team2]}</b>`;
+    }
+
     this.looper = new Looper(match, meta, this.conf, this.imgs,
-      this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler);
-    
- //   if (this.profiler)
-  //    this.profiler.load(match);
+      this.controls, this.stats, this.gamearea, this.console, this.matchqueue, this.profiler, infoString,
+      this.showTourneyUpload);
+
+    //   if (this.profiler)
+    //    this.profiler.load(match);
   }
 
   readonly onkeydown = (event: KeyboardEvent) => {
@@ -536,9 +484,9 @@ export default class Runner {
           break;
         case 77: // "m" - Toggle sensor radius
           this.conf.seeSensorRadius = !this.conf.seeSensorRadius;
-        break;
+          break;
         case 188: // "," - Toggle detection radius
-        this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
+          this.conf.seeDetectionRadius = !this.conf.seeDetectionRadius;
           break;
         case 71: // "g" - Toogle grid view
           this.conf.showGrid = !this.conf.showGrid;
@@ -548,24 +496,30 @@ export default class Runner {
           this.console.updateLogHeader();
           break;
         case 65: // "a" - previous tournament Match
-          this.previousTournamentThing();
-          this.updateTournamentState();
+          this.previousTournamentState();
+          this.processTournamentState();
           break;
         case 68: // 'd' - next tournament match
-          this.nextTournamentThing();
-          this.updateTournamentState();
+          this.nextTournamentState();
+          this.processTournamentState();
+          break;
+        case 219: // '[' - hide sidebar
+          this.sidebar.hidePanel();
+          this.stats.hideTourneyUpload();
+          this.showTourneyUpload = !this.showTourneyUpload;
           break;
         case 76: // 'l' - Toggle process logs
           this.conf.processLogs = !this.conf.processLogs;
           this.console.setNotLoggingDiv();
           break;
         case 81: // 'q' - Toggle profiler
-          console.log(this.profiler);
           if (this.profiler) {
             this.conf.doProfiling = !this.conf.doProfiling;
             this.profiler.setNotProfilingDiv();
           }
           break;
+        case 90: // 'z' - Toggle rotate
+          this.conf.doRotate = !this.conf.doRotate;
       }
     }
 
